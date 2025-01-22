@@ -1,0 +1,8 @@
+[
+    {
+        "appType":"APP",
+        "executable":"kadisk-com",
+        "packageNamespace":"Website.Module/Application.layer/kadisk-com.webgui",
+        "supervisorSocketFileName":"kadisk-com.sock"
+    }
+]

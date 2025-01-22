@@ -1,0 +1,32 @@
+- Ter um pagina
+- Primeiro objetivo é ter a página do projeto no heroku
+- 
+
+
+Websites de referencia
+https://wearemotto.com/
+https://departuremono.com/
+https://www.marchanslin.com/?ref=onepagelove
+
+
+
+
+https://www.heartbeatdrummachine.com/?ref=onepagelove
+https://getserva.com/?ref=onepagelove
+https://wearemotto.com/
+https://ollivere.co/
+https://natesmith.design/scroll-transform-exploration
+https://www.cocokind.com/
+
+https://doubble.group/sg/
+
+https://www.gubrica.com/
+
+https://luxitalia-group.webflow.io/
+
+https://postevand.com/
+
+https://kjphotos.com/
+
+- O portal KADISK precisar ter alguma galerias
+    - Exemplo usado REACT+ algumas CSS framework
