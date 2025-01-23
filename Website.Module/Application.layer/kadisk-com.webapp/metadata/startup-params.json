@@ -1,7 +1,7 @@
 {
     "port":"8880",
     "serverName":"KadiskComWebApptance",
-    "serverManagerUrl": "http://kadisk.com/server-manager/status",
+    "serverManagerUrl": "https://kadisk.com/server-manager/status",
     "RT_ENV_GENERATED_DIR_NAME":".generated_data",
     "isWatch": true
 }
