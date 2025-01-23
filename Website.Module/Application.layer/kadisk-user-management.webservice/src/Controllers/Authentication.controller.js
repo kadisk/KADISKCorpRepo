@@ -1,8 +1,16 @@
 const AuthenticationController = (params) =>{
 
+    const Login = ({ username, password }) => {
+
+    }
+
+    const Logout = () => {
+
+    }
+
     const controllerServiceObject = {
-        controllerName   : "AuthenticationController",
-        ListAPI          : () => {}
+        controllerName : "AuthenticationController",
+        Login, Logout
     }
 
     return Object.freeze(controllerServiceObject)
