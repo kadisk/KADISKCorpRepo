@@ -54,7 +54,7 @@ const HomepageContainer = ({
 		backgroundImage: `url(${backgroundImageUrl})`,
 		backgroundSize: "cover",
 		backgroundPosition: "center",
-		minHeight: "86vh",
+		minHeight: "87vh",
 		display: "flex",
 		flexDirection: "column",
 		justifyContent: "center"
