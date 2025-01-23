@@ -44,16 +44,8 @@ const HomepageContainer = ({
 		<Menu style={{marginBottom:"0", borderRadius:0}} size='huge' inverted>
 			<MenuMenu position='right'>
 				<MenuItem
-					name='virtual-desk'>
+					name='virtual-desk' href="/desk">
 					Virtual Desk
-				</MenuItem>
-				<MenuItem
-					name='my-ecosystem'>
-					My Ecosystem
-				</MenuItem>
-				<MenuItem
-					name='meta-platform'>
-					Meta Platform
 				</MenuItem>
 			</MenuMenu>
 		</Menu>

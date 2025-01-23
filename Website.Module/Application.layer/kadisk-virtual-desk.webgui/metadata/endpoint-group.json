@@ -8,7 +8,7 @@
     "bound-params":[ "serverService" ],
     "endpoints": [
         {
-            "url": "/",
+            "url": "/desk",
             "type": "web-graphic-user-interface",
             "params": {
                 "entrypoint": "index.tsx",
