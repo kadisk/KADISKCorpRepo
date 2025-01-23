@@ -11,7 +11,6 @@ import {
 	MenuMenu
 } from "semantic-ui-react"
 
-
 import { connect }            from "react-redux"
 import { bindActionCreators } from "redux"
 
@@ -55,7 +54,7 @@ const HomepageContainer = ({
 		backgroundImage: `url(${backgroundImageUrl})`,
 		backgroundSize: "cover",
 		backgroundPosition: "center",
-		minHeight: "94.9vh",
+		minHeight: "86vh",
 		display: "flex",
 		flexDirection: "column",
 		justifyContent: "center"
@@ -64,9 +63,16 @@ const HomepageContainer = ({
 		<Container fluid>
 		<img alt='logo' src={logo1svg} style={{marginLeft: "15px","width": "40vh"}}/>
 		</Container>
-	</div></>
+	</div>
+	<Segment inverted vertical style={{ padding: '2em 0em' }}>
+		<Container textAlign='center'>
+			<p>
+				© {new Date().getFullYear()} Kadisk Engenharia de Software LTDA. Todos os direitos reservados.
+			</p>
+		</Container>
+	</Segment>
+	</>
 }
-
 
 const mapDispatchToProps = (dispatch:any) =>
  bindActionCreators({
@@ -76,4 +82,5 @@ const mapDispatchToProps = (dispatch:any) =>
 const mapStateToProps = ({HTTPServerManager}:any) => ({
 	HTTPServerManager
 })
+
 export default connect(mapStateToProps, mapDispatchToProps)(HomepageContainer)
