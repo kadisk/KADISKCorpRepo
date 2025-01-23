@@ -4,5 +4,17 @@
         "executable":"kadisk-com",
         "packageNamespace":"Website.Module/Application.layer/kadisk-com.webapp",
         "supervisorSocketFileName":"kadisk-com.sock"
+    },
+    {
+        "appType":"APP",
+        "executable":"kadisk-gui",
+        "packageNamespace":"Website.Module/Application.layer/kadisk-com.webgui",
+        "supervisorSocketFileName":"kadisk-gui.sock"
+    },
+    {
+        "appType":"APP",
+        "executable":"desk-gui",
+        "packageNamespace":"Website.Module/Application.layer/kadisk-virtual-desk.webgui",
+        "supervisorSocketFileName":"desk-gui.sock"
     }
 ]
