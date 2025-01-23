@@ -2,7 +2,7 @@
     {
         "appType":"APP",
         "executable":"kadisk-com",
-        "packageNamespace":"Website.Module/Application.layer/kadisk-com.webgui",
+        "packageNamespace":"Website.Module/Application.layer/kadisk-com.webapp",
         "supervisorSocketFileName":"kadisk-com.sock"
     }
 ]
