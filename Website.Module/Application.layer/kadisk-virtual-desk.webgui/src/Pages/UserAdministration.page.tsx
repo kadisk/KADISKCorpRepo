@@ -4,6 +4,8 @@ import WelcomeHeader from "../PageComponents/WelcomeHeader"
 import WelcomeMenu from "../PageComponents/WelcomeMenu"
 import WelcomeFooter from "../PageComponents/WelcomeFooter"
 
+import UserAdministrationContainer from "../Containers/UserAdministration.container"
+
 const WelcomePage = () => {
 	return (
 		<>
@@ -13,6 +15,7 @@ const WelcomePage = () => {
 					<WelcomeMenu/>
 				</div>
 				<div className="page-wrapper">
+					<UserAdministrationContainer />
 					<WelcomeFooter/>
 				</div>
 			</div>

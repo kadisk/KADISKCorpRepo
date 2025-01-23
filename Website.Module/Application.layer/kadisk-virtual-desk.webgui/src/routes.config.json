@@ -6,5 +6,21 @@
     {
         "path":"/welcome",
         "page":"WelcomePage"
+    },
+    {
+        "path":"/apps",
+        "page":"MyAppsPage"
+    },
+    {
+        "path":"/workbench",
+        "page":"WorkbenchPage"
+    },
+    {
+        "path":"/user-admin",
+        "page":"UserAdministrationPage"
+    },
+    {
+        "path":"/ecosystem-monitor",
+        "page":"EcosystemMonitorPage"
     }
 ]
