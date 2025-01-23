@@ -1,0 +1,86 @@
+{
+	"name": "Management",
+	"endpoints": [
+		{
+			"path": "/users",
+			"method": "POST",
+			"summary": "CreateNewUser",
+			"parameters": [
+				{
+					"name": "name",
+					"in": "body",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "username",
+					"in": "body",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "email",
+					"in": "body",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "password",
+					"in": "body",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/users/:userId",
+			"method": "GET",
+			"summary": " GetUserDetails",
+			"parameters": [
+				{
+					"name": "userId",
+					"in": "path",
+					"type": "number",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/users/:userId",
+			"method": "POST",
+			"summary": "UpdateUser",
+			"parameters": [
+				{
+					"name": "userId",
+					"in": "path",
+					"type": "number",
+					"required": true
+				},
+				{
+					"name": "name",
+					"in": "body",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/users/disable",
+			"method": "POST",
+			"summary": "DisableUser",
+			"parameters": [
+				{
+					"in": "body",
+					"name": "userId",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/users",
+			"method": "GET",
+			"summary": "ListUsers"
+		}
+	]
+}

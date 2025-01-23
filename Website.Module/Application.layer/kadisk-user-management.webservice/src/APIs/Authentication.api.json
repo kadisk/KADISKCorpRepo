@@ -1,0 +1,29 @@
+{
+	"name": "Authentication",
+	"endpoints": [
+		{
+			"path": "/login",
+			"method": "POST",
+			"summary": "Login",
+			"parameters": [
+				{
+					"name": "username",
+					"in": "body",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "password",
+					"in": "body",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/logout",
+			"method": "POST",
+			"summary": "Logout"
+		}
+	]
+}

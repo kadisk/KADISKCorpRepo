@@ -1,3 +1,27 @@
 {
-    "endpoints": []
+    "bound-params":["serverService"],
+    "endpoints": [
+        {
+            "url": "/auth",
+            "type": "controller",
+            "params": {
+                "api-template": "APIs/Authentication.api.json",
+                "controller": "Controllers/Authentication.controller"
+            },
+            "bound-params": {
+                "serverService":"serverService"
+            }
+        },
+        {
+            "url": "/management",
+            "type": "controller",
+            "params": {
+                "api-template": "APIs/Management.api.json",
+                "controller": "Controllers/Management.controller"
+            },
+            "bound-params": {
+                "serverService":"serverService"
+            }
+        }
+    ]
 }
