@@ -47,6 +47,12 @@
             "bound-params":{
                 "serverService": "@@/server-service"
             }
+        },
+        {
+            "dependency": "@/kadisk-user-management.webservice/endpoint-group",
+            "bound-params":{
+                "serverService": "@@/server-service"
+            }
         }
     ]
 }
