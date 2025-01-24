@@ -1,5 +1,7 @@
 import * as React from "react"
 
+import CreateNewUserModal from "./CreateNewUser.modal"
+
 const UserAdministrationContainer = () => {
     return (
         <>
