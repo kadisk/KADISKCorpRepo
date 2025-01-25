@@ -5,8 +5,8 @@
             "url": "/auth",
             "type": "controller",
             "params": {
-                "api-template": "APIs/Authentication.api.json",
-                "controller": "Controllers/Authentication.controller"
+                "api-template": "APIs/Authenticator.api.json",
+                "controller": "Controllers/Authenticator.controller"
             },
             "bound-params": {
                 "serverService":"serverService"
