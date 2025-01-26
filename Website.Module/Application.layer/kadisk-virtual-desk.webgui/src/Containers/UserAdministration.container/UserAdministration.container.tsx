@@ -35,12 +35,9 @@ const UserAdministrationContainer = ({HTTPServerManager}) => {
 
 
     const fetchUserList = async () => {
-        try {
-            const list = await _GetUserManagementAPI().ListUsers().data
-            setUserList(list)
-        }catch(e){
-            console.log(e)
-        }
+        const api = _GetUserManagementAPI()
+        const list = await api.ListUsers().data
+        setUserList(list)
     }
 
     return (

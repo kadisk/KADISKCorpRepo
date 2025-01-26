@@ -1,11 +1,59 @@
 import * as React from "react"
+import { useForm, Controller } from "react-hook-form"
+import { useState, useEffect } from "react"
+import { connect }            from "react-redux"
+import { bindActionCreators } from "redux"
+
+import GetAPI from "../../Utils/GetAPI"
 
 const CreateNewUserModal = ({
-    onClose
+    onClose,
+    HTTPServerManager
 }) => {
 
+    const [ readyForCreate, setReadyForCreate ] = useState(false)
+    const [ formValues, setFormValues ] = useState({})
+
+    const { 
+        getValues, 
+        reset, 
+        control 
+    } = useForm()
 
 
+    const _GetUserManagementAPI = () => 
+        GetAPI({ 
+            apiName:"UserManagement",  
+            serverManagerInformation: HTTPServerManager
+        })
+
+
+    const formValuesIsValid = () => {
+        const nTotal = Object.keys(formValues).length
+        if(nTotal > 0){
+            const nValidItem =  Object.values(formValues).filter((values) => values && values != "").length
+            return nValidItem === Object.keys(formValues).length
+        }
+        return false
+    }
+
+    useEffect(() => {
+
+        if(formValuesIsValid()){
+            setReadyForCreate(true)
+        }
+
+    }, [formValues])
+
+    const createNewUser = async() => {
+
+        const api = _GetUserManagementAPI()
+        await api.CreateNewUser(formValues)
+    }
+
+    const handleChangeForm = () => setFormValues(getValues())
+
+    const handleCreateNewUser = () => createNewUser()
 
     return <div className="modal modal-blur show" role="dialog" aria-hidden="false" style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.8)" }}>
         <div className="modal-dialog modal-lg" role="document">
@@ -15,39 +63,55 @@ const CreateNewUserModal = ({
                     <button type="button" className="btn-close" onClick={onClose}/>
                 </div>
                 <div className="modal-body">
-                    <div className="row row-cards">
+                    <form className="row row-cards" onChange={() => handleChangeForm()}>
                         <div className="col-sm-6 col-md-6">
                             <div className="mb-3">
                                 <label className="form-label">Name</label>
-                                <input type="text" className="form-control" placeholder="Name" />
+                                <Controller
+                                                name={"name"}
+                                                control={control}
+                                                render={({ field }) => <input type="text" className="form-control" placeholder="Name" {...field}/>} /> 
+                                
                             </div>
                         </div>
                         <div className="col-sm-6 col-md-6">
                             <div className="mb-3">
                                 <label className="form-label">Email</label>
-                                <input type="email" className="form-control" placeholder="Email" />
+                                <Controller
+                                                name={"email"}
+                                                control={control}
+                                                render={({ field }) => <input type="text" className="form-control" placeholder="Email" {...field}/>} />
                             </div>
                         </div>
                         <div className="col-sm-6 col-md-6">
                             <div className="mb-3">
                                 <label className="form-label">Username</label>
-                                <input type="text" className="form-control" placeholder="Username"/>
+                                <Controller
+                                                name={"username"}
+                                                control={control}
+                                                render={({ field }) => <input type="text" className="form-control" placeholder="Username" {...field}/>}/>
                             </div>
                         </div>
                         <div className="col-sm-6 col-md-6">
                             <div className="mb-3">
                                 <label className="form-label">Password</label>
-                                <input type="password" className="form-control"/>
+                                <Controller
+                                                name={"password"}
+                                                control={control}
+                                                render={({ field }) => <input type="password" className="form-control" placeholder="Password" {...field}/>}/>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
 
                 <div className="modal-footer">
                     <button className="btn btn-link link-secondary" onClick={onClose}>
                         Cancel
                     </button>
-                    <a href="#" className="btn btn-primary ms-auto" data-bs-dismiss="modal">
+                    <button 
+                        onClick={handleCreateNewUser}
+                        disabled={!readyForCreate} 
+                        className="btn btn-primary ms-auto" data-bs-dismiss="modal">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="icon"
@@ -58,18 +122,20 @@ const CreateNewUserModal = ({
                             stroke="currentColor"
                             fill="none"
                             stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
+                            stroke-linejoin="round">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                             <path d="M12 5l0 14" />
                             <path d="M5 12l14 0" />
                         </svg>
                         Create new user
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 }
 
-export default CreateNewUserModal
+const mapDispatchToProps = (dispatch:any) => bindActionCreators({}, dispatch)
+const mapStateToProps = ({ HTTPServerManager }:any) => ({ HTTPServerManager })
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateNewUserModal)

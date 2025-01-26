@@ -1,4 +1,4 @@
-const ManagementController = (params) =>{
+const UserManagementController = (params) =>{
 
     const CreateNewUser = ({
         name,
@@ -6,7 +6,12 @@ const ManagementController = (params) =>{
         email,
         password
     }) => {
-        
+        console.log({
+            name,
+            username,
+            email,
+            password
+        })
     }
 
     const GetUserDetails = (userId) => {
@@ -24,7 +29,7 @@ const ManagementController = (params) =>{
     }
 
     const controllerServiceObject = {
-        controllerName   : "ManagementController",
+        controllerName   : "UserManagementController",
         CreateNewUser,
         GetUserDetails,
         UpdateUser,
@@ -35,4 +40,4 @@ const ManagementController = (params) =>{
     return Object.freeze(controllerServiceObject)
 }
 
-module.exports = ManagementController
+module.exports = UserManagementController
