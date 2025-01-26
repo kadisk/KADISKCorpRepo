@@ -1,5 +1,5 @@
 {
-    "bound-params":["serverService"],
+    "bound-params":["serverService", "userManagementService"],
     "endpoints": [
         {
             "url": "/auth",
@@ -20,7 +20,10 @@
                 "controller": "Controllers/UserManagement.controller"
             },
             "bound-params": {
-                "serverService":"serverService"
+                "serverService":"serverService",
+                "controller-params":{
+                    "userManagementService":"userManagementService"
+                }
             }
         }
     ]

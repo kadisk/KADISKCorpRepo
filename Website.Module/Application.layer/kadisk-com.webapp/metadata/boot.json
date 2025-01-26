@@ -4,7 +4,8 @@
         "serverName",
         "serverManagerUrl",
         "RT_ENV_GENERATED_DIR_NAME",
-        "isWatch"
+        "isWatch",
+        "storageFilePath"
     ],
     "services": [
         {
@@ -13,6 +14,13 @@
             "params":{
                 "name":"{{serverName}}",
                 "port": "{{port}}"
+            }
+        },
+        {
+            "namespace": "@@/user-management-service",
+            "dependency": "@/kadisk-user-management.service/services/UserManagementService",
+            "params":{
+                "storageFilePath":"{{storageFilePath}}"
             }
         }
     ],
@@ -51,7 +59,8 @@
         {
             "dependency": "@/kadisk-user-management.webservice/endpoint-group",
             "bound-params":{
-                "serverService": "@@/server-service"
+                "serverService": "@@/server-service",
+                "userManagementService": "@@/user-management-service"
             }
         }
     ]

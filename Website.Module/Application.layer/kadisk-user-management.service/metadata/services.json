@@ -1,0 +1,7 @@
+[
+    {
+        "namespace": "UserManagementService",
+        "path": "Services/UserManagement.service",
+        "params": ["storageFilePath"]
+    }
+]

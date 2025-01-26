@@ -1,12 +1,17 @@
 const UserManagementController = (params) =>{
 
-    const CreateNewUser = ({
+    const {
+        userManagementService
+    } = params
+
+    const CreateNewUser = async ({
         name,
         username,
         email,
         password
     }) => {
-        console.log({
+
+        return await userManagementService.CreateNewUser({
             name,
             username,
             email,
@@ -24,8 +29,8 @@ const UserManagementController = (params) =>{
     const DisableUser = (userId) => {
 
     }
-    const ListUsers = () => {
-
+    const ListUsers = async () => {
+        return await userManagementService.ListUsers()
     }
 
     const controllerServiceObject = {
