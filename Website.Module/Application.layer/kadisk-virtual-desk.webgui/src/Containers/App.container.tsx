@@ -66,9 +66,16 @@ const AppContainer = ({
 				}
 				</Routes>
 			</HashRouter>
-		: <Dimmer active>
-				<Loader>loading web services running...</Loader>
-			</Dimmer>
+		: <div className="page page-center">
+				<div className="container container-slim py-4">
+					<div className="text-center">
+						<div className="text-secondary mb-3">loading web services running...</div>
+						<div className="progress progress-sm">
+							<div className="progress-bar progress-bar-indeterminate"></div>
+						</div>
+					</div>
+				</div>
+			</div>
 	
 }
 
