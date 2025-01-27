@@ -16,10 +16,10 @@ const UserAdministrationContainer = ({HTTPServerManager}) => {
     const [ userList, setUserList ] = useState()
 
     const ativeCreateUserMode = () => setNewUserMode(true)
-    const cancelCreateUserMode = () => setNewUserMode(false)
+    const closeModal = () => setNewUserMode(false)
 
     const handleOpenModalNewUser = () => ativeCreateUserMode()
-    const handleCloseModalNewUser = () => cancelCreateUserMode()
+    const handleCloseModalNewUser = () => closeModal()
 
     useEffect(() => {
         fetchUserList()
@@ -32,9 +32,15 @@ const UserAdministrationContainer = ({HTTPServerManager}) => {
         })
 
     const fetchUserList = async () => {
+        setUserList(undefined)
         const api = _GetUserManagementAPI()
         const response = await api.ListUsers()
         setUserList(response.data)
+    }
+
+    const handleSaveUser = () => {
+        closeModal()
+        fetchUserList()
     }
 
     return (
@@ -69,7 +75,9 @@ const UserAdministrationContainer = ({HTTPServerManager}) => {
             </div>
             {
                 newUserMode
-                && <CreateNewUserModal onClose={handleCloseModalNewUser}/>
+                && <CreateNewUserModal
+                        onSave={handleSaveUser}
+                        onClose={handleCloseModalNewUser}/>
             }
         </>
     )

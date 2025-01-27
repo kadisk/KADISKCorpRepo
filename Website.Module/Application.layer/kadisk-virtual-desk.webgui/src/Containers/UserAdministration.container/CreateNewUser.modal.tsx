@@ -8,11 +8,13 @@ import GetAPI from "../../Utils/GetAPI"
 
 const CreateNewUserModal = ({
     onClose,
+    onSave,
     HTTPServerManager
 }) => {
 
     const [ readyForCreate, setReadyForCreate ] = useState(false)
     const [ formValues, setFormValues ] = useState({})
+    const [ recordingMode, setRecordingMode ] = useState(false)
 
     const { 
         getValues, 
@@ -46,9 +48,10 @@ const CreateNewUserModal = ({
     }, [formValues])
 
     const createNewUser = async() => {
-
+        setRecordingMode(true)
         const api = _GetUserManagementAPI()
         await api.CreateNewUser(formValues)
+        onSave()
     }
 
     const handleChangeForm = () => setFormValues(getValues())
@@ -70,7 +73,7 @@ const CreateNewUserModal = ({
                                 <Controller
                                                 name={"name"}
                                                 control={control}
-                                                render={({ field }) => <input type="text" className="form-control" placeholder="Name" {...field}/>} /> 
+                                                render={({ field }) => <input disabled={recordingMode} type="text" className="form-control" placeholder="Name" {...field}/>} /> 
                                 
                             </div>
                         </div>
@@ -80,7 +83,7 @@ const CreateNewUserModal = ({
                                 <Controller
                                                 name={"email"}
                                                 control={control}
-                                                render={({ field }) => <input type="text" className="form-control" placeholder="Email" {...field}/>} />
+                                                render={({ field }) => <input disabled={recordingMode} type="text" className="form-control" placeholder="Email" {...field}/>} />
                             </div>
                         </div>
                         <div className="col-sm-6 col-md-6">
@@ -89,7 +92,7 @@ const CreateNewUserModal = ({
                                 <Controller
                                                 name={"username"}
                                                 control={control}
-                                                render={({ field }) => <input type="text" className="form-control" placeholder="Username" {...field}/>}/>
+                                                render={({ field }) => <input disabled={recordingMode} type="text" className="form-control" placeholder="Username" {...field}/>}/>
                             </div>
                         </div>
                         <div className="col-sm-6 col-md-6">
@@ -98,7 +101,7 @@ const CreateNewUserModal = ({
                                 <Controller
                                                 name={"password"}
                                                 control={control}
-                                                render={({ field }) => <input type="password" className="form-control" placeholder="Password" {...field}/>}/>
+                                                render={({ field }) => <input disabled={recordingMode} type="password" className="form-control" placeholder="Password" {...field}/>}/>
                             </div>
                         </div>
                     </form>
@@ -110,7 +113,7 @@ const CreateNewUserModal = ({
                     </button>
                     <button 
                         onClick={handleCreateNewUser}
-                        disabled={!readyForCreate} 
+                        disabled={!readyForCreate || recordingMode} 
                         className="btn btn-primary ms-auto" data-bs-dismiss="modal">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
