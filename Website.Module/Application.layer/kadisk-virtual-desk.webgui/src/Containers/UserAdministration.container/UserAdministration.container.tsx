@@ -13,7 +13,7 @@ const PlusIconSVG = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" hei
 const UserAdministrationContainer = ({HTTPServerManager}) => {
 
     const [ newUserMode, setNewUserMode ] = useState(false)
-    const [ userList, setUserList ] = useState([])
+    const [ userList, setUserList ] = useState()
 
     const ativeCreateUserMode = () => setNewUserMode(true)
     const cancelCreateUserMode = () => setNewUserMode(false)
@@ -21,11 +21,9 @@ const UserAdministrationContainer = ({HTTPServerManager}) => {
     const handleOpenModalNewUser = () => ativeCreateUserMode()
     const handleCloseModalNewUser = () => cancelCreateUserMode()
 
-
     useEffect(() => {
         fetchUserList()
     }, [])
-
 
     const _GetUserManagementAPI = () => 
         GetAPI({ 
@@ -33,16 +31,14 @@ const UserAdministrationContainer = ({HTTPServerManager}) => {
             serverManagerInformation: HTTPServerManager
         })
 
-
     const fetchUserList = async () => {
         const api = _GetUserManagementAPI()
-        const list = await api.ListUsers().data
-        setUserList(list)
+        const response = await api.ListUsers()
+        setUserList(response.data)
     }
 
     return (
         <>
-
             <div className="page-header d-print-none">
                 <div className="container-xl">
                     <div className="row g-2 align-items-center">
@@ -66,7 +62,7 @@ const UserAdministrationContainer = ({HTTPServerManager}) => {
                 <div className="container-xl">
                     <div className="col-lg-12">
                         <div className="card">
-                            <UserTableTable/>
+                            <UserTableTable users={userList}/>
                         </div>
                     </div>
                 </div>
