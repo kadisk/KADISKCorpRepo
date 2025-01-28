@@ -40,7 +40,7 @@
         "page":"DefaultParametersPage"
     },
     {
-        "path":"/settings-repositories",
-        "page":"SettingsRepositoriesPage"
+        "path":"/repository-settings",
+        "page":"RepositorySettingsPage"
     }
 ]
