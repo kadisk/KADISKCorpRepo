@@ -1,7 +1,7 @@
 import * as React from "react"
 
-import DefaultPageWithTitle from "../Components/DefaultPageWithTitle"
-import Table from "../Components/Table"
+import DefaultPageWithTitle from "../../Components/DefaultPageWithTitle"
+import Table from "../../Components/Table"
 
 const INSTALLED_APPLICATIONS = [
 	{

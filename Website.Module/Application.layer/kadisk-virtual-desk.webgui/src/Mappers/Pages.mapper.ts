@@ -1,16 +1,18 @@
 import MainPage from "../Pages/Main.page"
 import MyAppsPage from "../Pages/MyApps.page"
 
-import MyStoragesPage from "../Pages/MyStorages.page"
-import MyDatabasesPage from "../Pages/MyDatabases.page"
-import MyDatasourcesPage from "../Pages/MyDatasources.page"
-import WebServiceBuilderPage from "../Pages/WebServiceBuilder.page"
+import MyStoragesPage    from "../Pages/Workbench/MyStorages.page"
+import MyDatabasesPage   from "../Pages/Workbench/MyDatabases.page"
+import MyDatasourcesPage from "../Pages/Workbench/MyDatasources.page"
+
+import WebServiceBuilderPage  from "../Pages/WebServiceBuilder.page"
 import UserAdministrationPage from "../Pages/UserAdministration.page"
 
-import InstanceMonitorPage from "../Pages/InstanceMonitor.page"
-import LoggerExplorerPage from "../Pages/LoggerExplorer.page"
-import DefaultParametersPage from "../Pages/DefaultParameters.page"
-import SettingsRepositoriesPage from "../Pages/SettingsRepositories.page"
+import InstanceMonitorPage from "../Pages/EcosystemMonitoring/InstanceMonitor.page"
+import LoggerExplorerPage  from "../Pages/EcosystemMonitoring/LoggerExplorer.page"
+
+import DefaultParametersPage    from "../Pages/EcosystemSettings/DefaultParameters.page"
+import SettingsRepositoriesPage from "../Pages/EcosystemSettings/SettingsRepositories.page"
 
 export default {
     MainPage,
