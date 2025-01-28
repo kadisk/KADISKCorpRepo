@@ -43,7 +43,45 @@ const INSTALLED_APPLICATIONS = [
 ]
 
 
-const SettingsRepositoriesPage = () => {
+const RepositorySettings = () => {
+	return <div className="row row-cards">
+				<div className="col-12">
+					<div className="card">
+						<div className="card-header">
+							<div className="col">
+								<div className="page-pretitle">Repository Namespace</div>
+								<h2 className="page-title">EssentialRepo</h2>
+							</div>
+						</div>
+						<div className="card-body">
+							<div>
+								<div className="text-secondary">Installation Path</div>
+								<div>/home/kadisk/EcosystemData/repos/EssentialRepo</div>
+							</div>
+						</div>
+						<div className="card-body">
+							<h4>Source Data</h4>
+							<div className="datagrid">
+								<div className="datagrid-item">
+									<div className="datagrid-title">source type</div>
+									<div className="datagrid-content">LOCAL_FS</div>
+								</div>
+								<div className="datagrid-item">
+									<div className="datagrid-title">path</div>
+									<div className="datagrid-content">~/Workspaces/meta-platform-repo/repos/ecosystem-core-repository</div>
+								</div>
+							</div>
+						</div>
+						<div className="card-body">
+							<h4>Installed Applications</h4>
+							<Table list={INSTALLED_APPLICATIONS} columnsDefinition={columnsDefinition}/>
+						</div>
+					</div>
+				</div>
+			</div>
+}
+
+const RepositorySettingsPage = () => {
 
 	const columnsDefinition = {
 		"Executable": "executable",
@@ -54,43 +92,9 @@ const SettingsRepositoriesPage = () => {
 
 	return <DefaultPageWithTitle title="Repository Settings">
 				<div className="container-xl">
-					<div className="row row-cards">
-						<div className="col-12">
-							<div className="card">
-								<div className="card-header">
-									<div className="col">
-										<div className="page-pretitle">Repository Namespace</div>
-										<h2 className="page-title">EssentialRepo</h2>
-									</div>
-								</div>
-								<div className="card-body">
-									<div>
-										<div className="text-secondary">Installation Path</div>
-										<div>/home/kadisk/EcosystemData/repos/EssentialRepo</div>
-									</div>
-								</div>
-								<div className="card-body">
-									<h4>Source Data</h4>
-									<div className="datagrid">
-										<div className="datagrid-item">
-											<div className="datagrid-title">source type</div>
-											<div className="datagrid-content">LOCAL_FS</div>
-										</div>
-										<div className="datagrid-item">
-											<div className="datagrid-title">path</div>
-											<div className="datagrid-content">~/Workspaces/meta-platform-repo/repos/ecosystem-core-repository</div>
-										</div>
-									</div>
-								</div>
-								<div className="card-body">
-									<h4>Installed Applications</h4>
-									<Table list={INSTALLED_APPLICATIONS} columnsDefinition={columnsDefinition}/>
-								</div>
-							</div>
-						</div>
-					</div>
+					<RepositorySettings/>
 				</div>
 			</DefaultPageWithTitle>
 		}
 
-export default SettingsRepositoriesPage
+export default RepositorySettingsPage
