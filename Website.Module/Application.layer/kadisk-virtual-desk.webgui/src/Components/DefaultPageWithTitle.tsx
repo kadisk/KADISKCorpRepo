@@ -1,11 +1,16 @@
 import * as React from "react"
 
-import DefaultPage from "../Componentes/DefaultPage"
+import DefaultPage from "../Components/DefaultPage"
+
+type PageTitleProps = {
+	title : string
+	preTitle ?: string
+}
 
 const PageTitle = ({
 	title,
 	preTitle
-}) =>
+}:PageTitleProps) =>
 	<div className="page-header d-print-none">
 		<div className="container-xl">
 			<div className="row g-2 align-items-center">
@@ -17,11 +22,18 @@ const PageTitle = ({
 		</div>
 	</div>
 
+
+type DefaultPageWithTitleProps = {
+	title : string
+	preTitle ?: string
+	children : any
+}
+
 const DefaultPageWithTitle = ({
     title,
     preTitle,
     children
-}) => {
+}:DefaultPageWithTitleProps) => {
 	return <DefaultPage>
 				<PageTitle title={title} preTitle={preTitle}/>
                 <div className="page-body">{children}</div>

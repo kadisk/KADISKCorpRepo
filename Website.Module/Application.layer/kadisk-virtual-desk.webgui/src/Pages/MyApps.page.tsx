@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import DefaultPage from "../Componentes/DefaultPage"
+import DefaultPage from "../Components/DefaultPage"
 
 const MyAppsPage = () =>
 	<DefaultPage>

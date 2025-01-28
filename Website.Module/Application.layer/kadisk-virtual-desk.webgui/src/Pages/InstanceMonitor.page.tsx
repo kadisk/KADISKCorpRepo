@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import DefaultPageWithTitle from "../Componentes/DefaultPageWithTitle"
+import DefaultPageWithTitle from "../Components/DefaultPageWithTitle"
 
 const DefaultParametersPage = () => {
 	return <DefaultPageWithTitle title="Instance Monitor" preTitle="Ecosystem Monitoring">
