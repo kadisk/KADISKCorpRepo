@@ -1,11 +1,11 @@
 import MainPage from "../Pages/Main.page"
 import MyAppsPage from "../Pages/MyApps.page"
 
-import MyStoragesPage    from "../Pages/Workbench/MyStorages.page"
-import MyDatabasesPage   from "../Pages/Workbench/MyDatabases.page"
-import MyDatasourcesPage from "../Pages/Workbench/MyDatasources.page"
+import MyStoragesPage        from "../Pages/Workbench/MyStorages.page"
+import MyDatabasesPage       from "../Pages/Workbench/MyDatabases.page"
+import MyDatasourcesPage     from "../Pages/Workbench/MyDatasources.page"
+import WebServiceBuilderPage from "../Pages/Workbench/WebServiceBuilder.page"
 
-import WebServiceBuilderPage  from "../Pages/WebServiceBuilder.page"
 import UserAdministrationPage from "../Pages/UserAdministration.page"
 
 import InstanceMonitorPage from "../Pages/EcosystemMonitoring/InstanceMonitor.page"
