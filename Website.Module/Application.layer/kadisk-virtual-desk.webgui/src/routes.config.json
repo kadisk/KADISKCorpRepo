@@ -4,23 +4,43 @@
         "page":"MainPage"
     },
     {
-        "path":"/welcome",
-        "page":"WelcomePage"
-    },
-    {
         "path":"/apps",
         "page":"MyAppsPage"
     },
     {
-        "path":"/workbench",
-        "page":"WorkbenchPage"
+        "path":"/my-storages",
+        "page":"MyStoragesPage"
+    },
+    {
+        "path":"/my-databases",
+        "page":"MyDatabasesPage"
+    },
+    {
+        "path":"/my-datasources",
+        "page":"MyDatasourcesPage"
+    },
+    {
+        "path":"/web-service-builder",
+        "page":"WebServiceBuilderPage"
     },
     {
         "path":"/user-admin",
         "page":"UserAdministrationPage"
     },
     {
-        "path":"/ecosystem-monitor",
-        "page":"EcosystemMonitorPage"
+        "path":"/instance-monitor",
+        "page":"InstanceMonitorPage"
+    },
+    {
+        "path":"/logger-explorer",
+        "page":"LoggerExplorerPage"
+    },
+    {
+        "path":"/default-parameters",
+        "page":"DefaultParametersPage"
+    },
+    {
+        "path":"/settings-repositories",
+        "page":"SettingsRepositoriesPage"
     }
 ]

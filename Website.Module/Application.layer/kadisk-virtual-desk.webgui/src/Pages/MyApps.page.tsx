@@ -1,23 +1,25 @@
 import * as React from "react"
 
-import WelcomeHeader from "../PageComponents/WelcomeHeader"
-import WelcomeMenu from "../PageComponents/WelcomeMenu"
-import WelcomeFooter from "../PageComponents/WelcomeFooter"
+import DefaultPage from "../Componentes/DefaultPage"
 
-const WelcomePage = () => {
-	return (
-		<>
-			<div className="page">
-				<div className="sticky-top">
-					<WelcomeHeader/>
-					<WelcomeMenu/>
-				</div>
-				<div className="page-wrapper">
-					<WelcomeFooter/>
+const MyAppsPage = () =>
+	<DefaultPage>
+		<div className="page-body">
+			<div className="container-xl d-flex flex-column justify-content-center">
+				<div className="empty">
+					<p className="empty-title">Você não possui nenhum "MyApp" ativado no momento!</p>
+					<p className="empty-subtitle text-secondary">
+						Para utilizar os aplicativos, é necessário ativá-los e, em alguns casos, configurá-los previamente, especialmente para apps mais complexos, quando aplicável.
+					</p>
+					<div className="empty-action">
+						<button className="btn btn-primary">
+							Ativar o meu primeiro <strong> "MyApp"</strong>
+						</button>
+					</div>
 				</div>
 			</div>
-		</>
-	)
-}
+		</div>
+	</DefaultPage>
 
-export default WelcomePage
+
+export default MyAppsPage

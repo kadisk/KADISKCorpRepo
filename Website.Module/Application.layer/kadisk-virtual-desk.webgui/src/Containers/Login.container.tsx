@@ -58,7 +58,7 @@ const LoginContainer = () => {
 
 
 							<div className="form-footer">
-								<a className="btn btn-primary w-100" href="#/welcome">
+								<a className="btn btn-primary w-100" href="#/apps">
 									Entrar
 								</a>
 							</div>
