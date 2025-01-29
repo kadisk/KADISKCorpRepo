@@ -8,10 +8,18 @@
     },
     "serverName": {
       "type": "string"
+    },
+    "installDataDirPath": {
+      "type": "string"
+    },
+    "ecosystemDefaultsFileRelativePath": {
+      "type": "string"
     }
   },
   "required": [
     "port",
-    "serverName"
+    "serverName",
+    "installDataDirPath",
+    "ecosystemDefaultsFileRelativePath"
   ]
 }

@@ -1,5 +1,7 @@
 {
-    "port":"9874",
-    "serverName":"KadiskEcosystemSettingsWebService"
+    "port":"8745",
+    "serverName":"KadiskEcosystemSettingsWebService",
+    "installDataDirPath":"~/EcosystemData",
+    "ecosystemDefaultsFileRelativePath":"./config-files/ecosystem-defaults.json"
 }
 

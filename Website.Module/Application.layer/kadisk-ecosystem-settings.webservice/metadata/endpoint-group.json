@@ -2,9 +2,8 @@
     "params": ["ecosystemDefaultsFileRelativePath"],
     "bound-params":[
         "serverService", 
-        "environmentHandlerService",
-        "jsonFileUtilitiesLib",
-        "ecosystemdataHandlerService"
+        "ecosystemdataHandlerService",
+        "jsonFileUtilitiesLib"
     ],
     "endpoints": [
         {
@@ -21,7 +20,6 @@
                 "serverService":"serverService",
                 "controller-params":{
                     "jsonFileUtilitiesLib": "jsonFileUtilitiesLib",
-                    "environmentHandlerService": "environmentHandlerService",
                     "ecosystemdataHandlerService": "ecosystemdataHandlerService"
                 }
             }
@@ -39,8 +37,7 @@
             "bound-params": {
                 "serverService":"serverService",
                 "controller-params":{
-                    "jsonFileUtilitiesLib": "jsonFileUtilitiesLib",
-                    "environmentHandlerService": "environmentHandlerService", 
+                    "jsonFileUtilitiesLib": "jsonFileUtilitiesLib", 
                     "ecosystemdataHandlerService": "ecosystemdataHandlerService"
                 }
             }

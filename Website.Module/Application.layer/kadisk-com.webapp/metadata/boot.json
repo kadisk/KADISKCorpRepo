@@ -5,7 +5,9 @@
         "serverManagerUrl",
         "RT_ENV_GENERATED_DIR_NAME",
         "isWatch",
-        "storageFilePath"
+        "storageFilePath",
+        "installDataDirPath",
+        "ecosystemDefaultsFileRelativePath"
     ],
     "services": [
         {
@@ -21,6 +23,13 @@
             "dependency": "@/kadisk-user-management.service/services/UserManagementService",
             "params":{
                 "storageFilePath":"{{storageFilePath}}"
+            }
+        },
+        {
+            "namespace": "@@/ecosystemdata-handler-service",
+            "dependency": "@/ecosystem-control-panel.service/services/EcosystemDataHandlerService",
+            "params":{
+                "installDataDirPath": "{{installDataDirPath}}"
             }
         }
     ],
@@ -61,6 +70,17 @@
             "bound-params":{
                 "serverService": "@@/server-service",
                 "userManagementService": "@@/user-management-service"
+            }
+        },
+        {
+            "dependency": "@/kadisk-ecosystem-settings.webservice/endpoint-group",
+            "bound-params":{
+                "serverService": "@@/server-service",
+                "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",
+                "jsonFileUtilitiesLib": "@/json-file-utilities.lib"
+            },
+            "params":{
+                "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}"
             }
         }
     ]

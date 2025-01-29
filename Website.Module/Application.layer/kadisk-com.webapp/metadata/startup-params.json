@@ -1,8 +1,10 @@
 {
     "port":"8880",
     "serverName":"KadiskComWebAppInstance",
-    "serverManagerUrl": "https://kadisk.com/server-manager/status",
+    "serverManagerUrl": "http://localhost:8880/server-manager/status",
     "RT_ENV_GENERATED_DIR_NAME":".generated_data",
     "isWatch": true,
-    "storageFilePath": "/home/kadisk/Workspaces/Organizations/Kadisk/KADISKCorpRepo/user.sqlite"
+    "storageFilePath": "/home/kadisk/Workspaces/Organizations/Kadisk/KADISKCorpRepo/user.sqlite",
+    "installDataDirPath":"~/EcosystemData",
+    "ecosystemDefaultsFileRelativePath":"./config-files/ecosystem-defaults.json"
 }

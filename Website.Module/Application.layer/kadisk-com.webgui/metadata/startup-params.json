@@ -1,7 +1,7 @@
 {
     "port":"8880",
     "serverName":"KadiskComWebguiInstance",
-    "serverManagerUrl": "http://localhost:8880/server-manager/status",
+    "serverManagerUrl": "https://localhost:8880/server-manager/status",
     "RT_ENV_GENERATED_DIR_NAME":".generated_data",
     "isWatch": true
 }

@@ -1,7 +1,9 @@
 {
     "params" : [
         "port", 
-        "serverName"
+        "serverName",
+        "installDataDirPath",
+        "ecosystemDefaultsFileRelativePath"
     ],
     "services": [
         {
@@ -10,6 +12,13 @@
             "params":{
                 "name":"{{serverName}}",
                 "port": "{{port}}"
+            }
+        },
+        {
+            "namespace": "@@/ecosystemdata-handler-service",
+            "dependency": "@/ecosystem-control-panel.service/services/EcosystemDataHandlerService",
+            "params":{
+                "installDataDirPath": "{{installDataDirPath}}"
             }
         }
     ],
@@ -22,7 +31,15 @@
             }
         },
         {
-            "dependency": "@//endpoint-group"
+            "dependency": "@//endpoint-group",
+            "bound-params":{
+                "serverService": "@@/server-service",
+                "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",
+                "jsonFileUtilitiesLib": "@/json-file-utilities.lib"
+            },
+            "params":{
+                "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}"
+            }
         }
     ]
 }
