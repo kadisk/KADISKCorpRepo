@@ -1,0 +1,49 @@
+{
+    "params": ["ecosystemDefaultsFileRelativePath"],
+    "bound-params":[
+        "serverService", 
+        "environmentHandlerService",
+        "jsonFileUtilitiesLib",
+        "ecosystemdataHandlerService"
+    ],
+    "endpoints": [
+        {
+            "url": "/default-params",
+            "type": "controller",
+            "params": {
+                "api-template": "APIs/DefaultParameters.api.json",
+                "controller": "Controllers/DefaultParameters.controller",
+                "controller-params":{
+                    "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}"
+                }
+            },
+            "bound-params": {
+                "serverService":"serverService",
+                "controller-params":{
+                    "jsonFileUtilitiesLib": "jsonFileUtilitiesLib",
+                    "environmentHandlerService": "environmentHandlerService",
+                    "ecosystemdataHandlerService": "ecosystemdataHandlerService"
+                }
+            }
+        },
+        {
+            "url": "/repository-settings",
+            "type": "controller",
+            "params": {
+                "api-template": "APIs/RepositorySettings.api.json",
+                "controller": "Controllers/RepositorySettings.controller",
+                "controller-params":{
+                    "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}"
+                }
+            },
+            "bound-params": {
+                "serverService":"serverService",
+                "controller-params":{
+                    "jsonFileUtilitiesLib": "jsonFileUtilitiesLib",
+                    "environmentHandlerService": "environmentHandlerService", 
+                    "ecosystemdataHandlerService": "ecosystemdataHandlerService"
+                }
+            }
+        }
+    ]
+}
