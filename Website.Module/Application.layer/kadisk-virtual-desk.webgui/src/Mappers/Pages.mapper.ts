@@ -13,6 +13,7 @@ import LoggerExplorerPage  from "../Pages/EcosystemMonitoring/LoggerExplorer.pag
 
 import DefaultParametersPage    from "../Pages/EcosystemSettings/DefaultParameters.page"
 import RepositorySettingsPage from "../Pages/EcosystemSettings/RepositorySettings.page"
+import RepositorySourcesPage from "../Pages/EcosystemSettings/RepositorySources.page"
 
 export default {
     MainPage,
@@ -25,5 +26,6 @@ export default {
     InstanceMonitorPage,
     LoggerExplorerPage,
     DefaultParametersPage,
-    RepositorySettingsPage
+    RepositorySettingsPage,
+    RepositorySourcesPage
 }

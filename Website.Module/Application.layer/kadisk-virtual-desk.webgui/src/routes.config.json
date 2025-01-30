@@ -42,5 +42,10 @@
     {
         "path":"/repository-settings",
         "page":"RepositorySettingsPage"
+    },
+    {
+        "path":"/repository-sources",
+        "page":"RepositorySourcesPage"
     }
+    
 ]
