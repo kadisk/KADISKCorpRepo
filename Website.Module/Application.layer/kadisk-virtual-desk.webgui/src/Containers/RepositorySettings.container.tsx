@@ -40,7 +40,7 @@ const RepositorySettings = ({ repositoryData, onGoBack }) => {
 				</div>
 				<div className="card-body">
 					<div>
-						<div className="text-secondary">Installation Path</div>
+						<div className="page-pretitle">Installation Path</div>
 						<div>{installationPath}</div>
 					</div>
 				</div>
@@ -67,7 +67,7 @@ const RepositorySettings = ({ repositoryData, onGoBack }) => {
 }
 
 const RepositoriesTable = ({ list, onSettings }) => {
-    
+
     return <div className="table-responsive">
                 <table className="table table-vcenter table-mobile-md card-table">
                     <tbody>
