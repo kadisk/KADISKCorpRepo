@@ -5,7 +5,7 @@ import { bindActionCreators } from "redux"
 
 import GetAPI from "../Utils/GetAPI"
 
-const DefaultParametersContainer = ({HTTPServerManager}) => {
+const DefaultParametersContainer = ({ HTTPServerManager }) => {
 
     const [ defaultParametersCurrent, setDefaultParametersCurrent ] = useState<any>()
 
