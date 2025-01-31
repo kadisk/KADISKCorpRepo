@@ -5,10 +5,12 @@ const RepositorySettingsController = (params) =>{
     const { 
         ecosystemdataHandlerService,
         ecosystemDefaultsFileRelativePath,
-        jsonFileUtilitiesLib
+        jsonFileUtilitiesLib,
+        ecosystemInstallUtilitiesLib
     } = params
 
     const ReadJsonFile = jsonFileUtilitiesLib.require("ReadJsonFile")
+    const UpdateRepository = ecosystemInstallUtilitiesLib.require("UpdateRepository")
 
     const _GetEcosystemDefaults =  async () => {
         const ecosystemDefaultFilePath = path.resolve(ecosystemdataHandlerService.GetEcosystemDataPath(), ecosystemDefaultsFileRelativePath)
@@ -40,9 +42,25 @@ const RepositorySettingsController = (params) =>{
             })
     }
 
+    const UpdateRepositoryByNamespace = async (repositoryNamespace) => {
+        
+        const repositoriesData = await _ReadConfigFile("REPOS_CONF_FILENAME_REPOS_DATA")
+        const {sourceData} = repositoriesData[repositoryNamespace]
+
+        const ecosystemDefaults = await _GetEcosystemDefaults()
+
+        await UpdateRepository({
+            repositoryNamespace,
+            sourceData,
+            installDataDirPath: ecosystemdataHandlerService.GetEcosystemDataPath(),
+            ecosystemDefaults
+        })
+    }
+
     const controllerServiceObject = {
         controllerName   : "RepositorySettingsController",
-        ListRepositories
+        ListRepositories,
+        UpdateRepository: UpdateRepositoryByNamespace
     }
     return Object.freeze(controllerServiceObject)
 }

@@ -35,7 +35,8 @@
             "bound-params":{
                 "serverService": "@@/server-service",
                 "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",
-                "jsonFileUtilitiesLib": "@/json-file-utilities.lib"
+                "jsonFileUtilitiesLib": "@/json-file-utilities.lib",
+                "ecosystemInstallUtilitiesLib": "@/ecosystem-install-utilities.lib"
             },
             "params":{
                 "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}"

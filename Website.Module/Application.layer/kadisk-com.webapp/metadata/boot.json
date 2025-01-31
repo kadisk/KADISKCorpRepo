@@ -5,7 +5,7 @@
         "serverManagerUrl",
         "RT_ENV_GENERATED_DIR_NAME",
         "isWatch",
-        "storageFilePath",
+        "userManagementServiceStorageFilePath",
         "installDataDirPath",
         "ecosystemDefaultsFileRelativePath"
     ],
@@ -22,7 +22,7 @@
             "namespace": "@@/user-management-service",
             "dependency": "@/kadisk-user-management.service/services/UserManagementService",
             "params":{
-                "storageFilePath":"{{storageFilePath}}"
+                "storageFilePath":"{{userManagementServiceStorageFilePath}}"
             }
         },
         {
@@ -77,7 +77,8 @@
             "bound-params":{
                 "serverService": "@@/server-service",
                 "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",
-                "jsonFileUtilitiesLib": "@/json-file-utilities.lib"
+                "jsonFileUtilitiesLib": "@/json-file-utilities.lib",
+                "ecosystemInstallUtilitiesLib": "@/ecosystem-install-utilities.lib"
             },
             "params":{
                 "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}"

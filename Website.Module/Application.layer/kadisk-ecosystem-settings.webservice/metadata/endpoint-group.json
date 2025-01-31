@@ -3,7 +3,8 @@
     "bound-params":[
         "serverService", 
         "ecosystemdataHandlerService",
-        "jsonFileUtilitiesLib"
+        "jsonFileUtilitiesLib",
+        "ecosystemInstallUtilitiesLib"
     ],
     "endpoints": [
         {
@@ -38,7 +39,8 @@
                 "serverService":"serverService",
                 "controller-params":{
                     "jsonFileUtilitiesLib": "jsonFileUtilitiesLib", 
-                    "ecosystemdataHandlerService": "ecosystemdataHandlerService"
+                    "ecosystemdataHandlerService": "ecosystemdataHandlerService",
+                    "ecosystemInstallUtilitiesLib": "ecosystemInstallUtilitiesLib"
                 }
             }
         }

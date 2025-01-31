@@ -5,6 +5,19 @@
 			"path": "/repositories",
 			"method": "GET",
 			"summary": "ListRepositories"
+		},
+		{
+			"summary": "UpdateRepository",
+			"method": "POST",
+			"path": "/update-repository",
+			"parameters": [
+				{
+					"in": "body",
+					"name": "repositoryNamespace",
+					"type": "string",
+					"required": true
+				}
+			]
 		}
 	]
 }
