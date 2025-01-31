@@ -1,0 +1,10 @@
+{
+	"name": "NotificationHistory",
+	"endpoints": [
+		{
+			"path": "/notification-history",
+			"method": "GET",
+			"summary": "ListNotificationHistory"
+		}
+	]
+}

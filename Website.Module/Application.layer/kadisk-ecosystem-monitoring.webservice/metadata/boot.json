@@ -1,0 +1,36 @@
+{
+    "params" : [
+        "port", 
+        "serverName"
+    ],
+    "services": [
+        {
+            "namespace": "@@/notification-hub-service",
+            "dependency": "@/kadisk-event-manager.service/services/NotificationHubService"
+        },
+        {
+            "namespace": "@@/server-service",
+            "dependency": "@/server-manager.service/services/HTTPServerService",
+            "params":{
+                "name":"{{serverName}}",
+                "port": "{{port}}"
+            }
+        }
+    ],
+    "endpoints": [
+        {
+            "dependency": "@/server-manager.webservice/endpoint-group",
+            "bound-params":{
+               "serverServiceForController":"@@/server-service",
+               "serverService": "@@/server-service"
+            }
+        },
+        {
+            "dependency": "@//endpoint-group",
+            "bound-params":{
+                "serverService": "@@/server-service",
+                "notificationHubService": "@@/notification-hub-service"
+            }
+        }
+    ]
+}

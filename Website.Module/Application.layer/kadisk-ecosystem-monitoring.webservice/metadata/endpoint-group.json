@@ -1,0 +1,22 @@
+{
+    "bound-params":[
+        "serverService", 
+        "notificationHubService"
+    ],
+    "endpoints": [
+        {
+            "url": "/notifications",
+            "type": "controller",
+            "params": {
+                "api-template": "APIs/NotificationHistory.api.json",
+                "controller": "Controllers/NotificationHistory.controller"
+            },
+            "bound-params": {
+                "serverService":"serverService",
+                "controller-params":{
+                    "notificationHubService": "notificationHubService"
+                }
+            }
+        }
+    ]
+}
