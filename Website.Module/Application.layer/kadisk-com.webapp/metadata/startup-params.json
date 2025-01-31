@@ -5,6 +5,7 @@
     "RT_ENV_GENERATED_DIR_NAME":".generated_data",
     "isWatch": true,
     "userManagementServiceStorageFilePath": "/home/kadisk/Workspaces/Organizations/Kadisk/KADISKCorpRepo/databases/user-management-service.sqlite",
+    "eventManagerServiceStorageFilePath": "/home/kadisk/Workspaces/Organizations/Kadisk/KADISKCorpRepo/databases/event-manager-service.sqlite",
     "installDataDirPath":"~/EcosystemData",
     "ecosystemDefaultsFileRelativePath":"./config-files/ecosystem-defaults.json"
 }

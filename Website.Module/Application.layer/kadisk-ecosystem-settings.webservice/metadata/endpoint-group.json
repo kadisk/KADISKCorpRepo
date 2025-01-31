@@ -4,7 +4,8 @@
         "serverService", 
         "ecosystemdataHandlerService",
         "jsonFileUtilitiesLib",
-        "ecosystemInstallUtilitiesLib"
+        "ecosystemInstallUtilitiesLib",
+        "notificationHubService"
     ],
     "endpoints": [
         {
@@ -40,7 +41,8 @@
                 "controller-params":{
                     "jsonFileUtilitiesLib": "jsonFileUtilitiesLib", 
                     "ecosystemdataHandlerService": "ecosystemdataHandlerService",
-                    "ecosystemInstallUtilitiesLib": "ecosystemInstallUtilitiesLib"
+                    "ecosystemInstallUtilitiesLib": "ecosystemInstallUtilitiesLib",
+                    "notificationHubService": "notificationHubService"
                 }
             }
         }

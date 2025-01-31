@@ -28,6 +28,10 @@
         "page":"UserAdministrationPage"
     },
     {
+        "path":"/notification-history",
+        "page":"NotificationHistoryPage"
+    },
+    {
         "path":"/instance-monitor",
         "page":"InstanceMonitorPage"
     },

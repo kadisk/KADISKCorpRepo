@@ -6,10 +6,18 @@
         "RT_ENV_GENERATED_DIR_NAME",
         "isWatch",
         "userManagementServiceStorageFilePath",
+        "eventManagerServiceStorageFilePath",
         "installDataDirPath",
         "ecosystemDefaultsFileRelativePath"
     ],
     "services": [
+        {
+            "namespace": "@@/notification-hub-service",
+            "dependency": "@/kadisk-event-manager.service/services/NotificationHubService",
+            "params":{
+                "storageFilePath": "{{eventManagerServiceStorageFilePath}}"                
+            }
+        },
         {
             "namespace": "@@/server-service",
             "dependency": "@/server-manager.service/services/HTTPServerService",
@@ -78,7 +86,8 @@
                 "serverService": "@@/server-service",
                 "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",
                 "jsonFileUtilitiesLib": "@/json-file-utilities.lib",
-                "ecosystemInstallUtilitiesLib": "@/ecosystem-install-utilities.lib"
+                "ecosystemInstallUtilitiesLib": "@/ecosystem-install-utilities.lib",
+                "notificationHubService": "@@/notification-hub-service"
             },
             "params":{
                 "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}"

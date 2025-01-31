@@ -7,6 +7,10 @@
     ],
     "services": [
         {
+            "namespace": "@@/notification-hub-service",
+            "dependency": "@/kadisk-event-manager.service/services/NotificationHubService"
+        },
+        {
             "namespace": "@@/server-service",
             "dependency": "@/server-manager.service/services/HTTPServerService",
             "params":{
@@ -36,7 +40,8 @@
                 "serverService": "@@/server-service",
                 "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",
                 "jsonFileUtilitiesLib": "@/json-file-utilities.lib",
-                "ecosystemInstallUtilitiesLib": "@/ecosystem-install-utilities.lib"
+                "ecosystemInstallUtilitiesLib": "@/ecosystem-install-utilities.lib",
+                "notificationHubService": "@@/notification-hub-service"
             },
             "params":{
                 "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}"

@@ -12,7 +12,7 @@ const UserManagementService = (params) => {
         storage: storageFilePath
     })
 
-    const User = sequelize.define('User', { 
+    const UserModel = sequelize.define('User', { 
             name: DataTypes.STRING,
             username: DataTypes.STRING,
             email: DataTypes.STRING,
@@ -20,7 +20,6 @@ const UserManagementService = (params) => {
     })
 
     const _Start = async () => {
-
         try {
             await sequelize.authenticate()
             await sequelize.sync()
@@ -33,7 +32,7 @@ const UserManagementService = (params) => {
     _Start()
 
     const _CheckUserExist = async ({ email , username }) => {
-        const existingUser = await User.findOne({
+        const existingUser = await UserModel.findOne({
             where: {
                 [Sequelize.Op.or]: [{ email }, { username }]
             }
@@ -48,7 +47,7 @@ const UserManagementService = (params) => {
             if (existingUser) 
                 throw new Error('User with the same email or username already exists')
 
-            const newUser = await User.create({ name, username, email, password })
+            const newUser = await UserModel.create({ name, username, email, password })
             return newUser
         } catch (error) {
             console.error('Error creating user:', error)
@@ -58,7 +57,7 @@ const UserManagementService = (params) => {
 
     const ListUsers = async () => {
         try {
-            const users = await User.findAll({
+            const users = await UserModel.findAll({
                 attributes: { exclude: ['password'] }
             })
             return users

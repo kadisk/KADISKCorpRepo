@@ -1,3 +1,4 @@
+const EventEmitter = require('node:events')
 const path = require("path")
 
 const RepositorySettingsController = (params) =>{
@@ -6,8 +7,11 @@ const RepositorySettingsController = (params) =>{
         ecosystemdataHandlerService,
         ecosystemDefaultsFileRelativePath,
         jsonFileUtilitiesLib,
-        ecosystemInstallUtilitiesLib
+        ecosystemInstallUtilitiesLib,
+        notificationHubService
     } = params
+
+    const { NotifyEvent } = notificationHubService
 
     const ReadJsonFile = jsonFileUtilitiesLib.require("ReadJsonFile")
     const UpdateRepository = ecosystemInstallUtilitiesLib.require("UpdateRepository")
@@ -48,6 +52,15 @@ const RepositorySettingsController = (params) =>{
         const {sourceData} = repositoriesData[repositoryNamespace]
 
         const ecosystemDefaults = await _GetEcosystemDefaults()
+
+
+        const loggerEmitter = new EventEmitter()
+        loggerEmitter
+            .on("log", (dataLog) => NotifyEvent({
+                origin: "SourcesController.UpdateRepositoryByNamespace",
+                type:"log",
+                content: dataLog
+            }))
 
         await UpdateRepository({
             repositoryNamespace,
