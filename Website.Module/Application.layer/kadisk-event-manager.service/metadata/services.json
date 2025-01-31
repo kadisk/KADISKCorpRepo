@@ -1,0 +1,7 @@
+[
+    ,
+    {
+        "namespace":"NotificationHubService",
+        "path":"Services/NotificationHub.service"
+    }
+]
