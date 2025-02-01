@@ -1,6 +1,8 @@
 const { Sequelize, DataTypes } = require('sequelize')
 const EventEmitter = require('node:events')
 
+const MAX_EVENT_LIST_LIMIT = 10
+
 const GetLocalISODateTime = () => {
 	const now = new Date()
 	const offset = now.getTimezoneOffset() * 60000
@@ -10,7 +12,7 @@ const GetLocalISODateTime = () => {
 const EventHubService = (params) => {
     
     const eventEmitter = new EventEmitter()
-    const EVENT_NOTIFICATION = Symbol()
+    const EVENT = Symbol()
 
     const {
         storageFilePath,
@@ -53,20 +55,21 @@ const EventHubService = (params) => {
 
         EventModel.create({ origin, type, sourceName, level, message })
 
-        eventEmitter.emit(EVENT_NOTIFICATION, {date: eventTime, ...event})
+        eventEmitter.emit(EVENT, {date: eventTime, ...event})
     }
 
     _Start()
 
     const RegisterEventListener = (f) => 
-        eventEmitter.on(EVENT_NOTIFICATION, (event) => f(event))
+        eventEmitter.on(EVENT, (event) => f(event))
 
     const ListEventHistory = async () => {
         try {
-            const notificationHistory = await EventModel.findAll({
-                order:[['id', 'DESC']]
+            const eventHistory = await EventModel.findAll({
+                order:[['id', 'DESC']],
+                limit: MAX_EVENT_LIST_LIMIT,
             })
-            return notificationHistory
+            return eventHistory
         } catch (error) {
             console.error('Error listing history:', error)
             throw error

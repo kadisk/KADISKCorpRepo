@@ -36,8 +36,8 @@
         "page":"InstanceMonitorPage"
     },
     {
-        "path":"/logger-explorer",
-        "page":"LoggerExplorerPage"
+        "path":"/server-status",
+        "page":"ServerStatusPage"
     },
     {
         "path":"/default-parameters",
