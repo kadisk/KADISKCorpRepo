@@ -9,7 +9,7 @@ import WebServiceBuilderPage from "../Pages/Workbench/WebServiceBuilder.page"
 import UserAdministrationPage from "../Pages/UserAdministration.page"
 
 import EventHistoryPage from "../Pages/EcosystemMonitoring/EventHistory.page"
-import InstanceMonitorPage from "../Pages/EcosystemMonitoring/InstanceMonitor.page"
+import InstanceMonitoringPage from "../Pages/EcosystemMonitoring/InstanceMonitoring.page"
 import ServerStatusPage  from "../Pages/EcosystemMonitoring/ServerStatus.page"
 
 import DefaultParametersPage    from "../Pages/EcosystemSettings/DefaultParameters.page"
@@ -25,7 +25,7 @@ export default {
     UserAdministrationPage,
     MyAppsPage,
     EventHistoryPage,
-    InstanceMonitorPage,
+    InstanceMonitoringPage,
     ServerStatusPage,
     DefaultParametersPage,
     RepositorySettingsPage,
