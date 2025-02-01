@@ -60,9 +60,6 @@ const RepositoriesTable = ({
 
     const handleUpdateRepositoryContent = (repositoryNamespace) => updateRepository(repositoryNamespace)
 
-// btn-loading
-    console.log(statuses)
-
     return <div className="table-responsive">
                 <table className="table table-vcenter table-mobile-md card-table">
                     <tbody>

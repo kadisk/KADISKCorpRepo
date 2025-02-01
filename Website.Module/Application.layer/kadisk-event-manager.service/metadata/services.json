@@ -1,6 +1,7 @@
 [
     {
         "namespace":"NotificationHubService",
-        "path":"Services/NotificationHub.service"
+        "path":"Services/NotificationHub.service",
+        "params": ["storageFilePath"]
     }
 ]

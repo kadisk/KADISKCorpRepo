@@ -66,7 +66,8 @@ const RepositorySettingsController = (params) =>{
             repositoryNamespace,
             sourceData,
             installDataDirPath: ecosystemdataHandlerService.GetEcosystemDataPath(),
-            ecosystemDefaults
+            ecosystemDefaults,
+            loggerEmitter
         })
     }
 

@@ -92,6 +92,13 @@
             "params":{
                 "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}"
             }
+        },
+        {
+            "dependency": "@/kadisk-ecosystem-monitoring.webservice/endpoint-group",
+            "bound-params":{
+                "serverService": "@@/server-service",
+                "notificationHubService": "@@/notification-hub-service"
+            }
         }
     ]
 }
