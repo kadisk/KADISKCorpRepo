@@ -1,9 +1,17 @@
 import * as React from "react"
 
+
+type TableProps = {
+    allTdClassName?:string
+    columnsDefinition:any
+    list:any[]
+}
+
 const Table = ({
+    allTdClassName,
     columnsDefinition,
     list
-}) => {
+}: TableProps) => {
 
     const columnsName = Object.keys(columnsDefinition)
     const columnsProperty = Object.values(columnsDefinition)
@@ -24,7 +32,7 @@ const Table = ({
                             <tr>
                                 {
                                     columnsProperty
-                                    .map((property:any) => <td>{data[property]}</td>)
+                                    .map((property:any) => <td className={allTdClassName}>{data[property]}</td>)
                                 }
                             </tr>)
                     }

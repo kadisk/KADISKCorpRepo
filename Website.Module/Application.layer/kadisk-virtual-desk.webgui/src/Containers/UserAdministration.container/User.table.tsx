@@ -2,7 +2,7 @@ import * as React from "react"
 
 import Table from "../../Components/Table"
 
-const UserTableTable = ({ users }) => {
+const UserTable = ({ users }) => {
 
     const columnsDefinition = {
         Name: "name",
@@ -15,4 +15,4 @@ const UserTableTable = ({ users }) => {
     </div>
 }
 
-export default UserTableTable
+export default UserTable

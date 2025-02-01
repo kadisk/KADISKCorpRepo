@@ -4,7 +4,7 @@ import { connect }            from "react-redux"
 import { bindActionCreators } from "redux"
 
 import CreateNewUserModal from "./CreateNewUser.modal"
-import UserTableTable from "./User.table"
+import UserTable from "./User.table"
 
 import GetAPI from "../../Utils/GetAPI"
 
@@ -68,7 +68,7 @@ const UserAdministrationContainer = ({HTTPServerManager}) => {
                 <div className="container-xl">
                     <div className="col-lg-12">
                         <div className="card">
-                            <UserTableTable users={userList}/>
+                            <UserTable users={userList}/>
                         </div>
                     </div>
                 </div>

@@ -22,10 +22,12 @@ const EventHubService = (params) => {
             storage: storageFilePath
     })
 
-    const EventModel = sequelize.define('Event', { 
+    const EventModel = sequelize.define('EventLog', { 
         origin: DataTypes.STRING,
         type: DataTypes.STRING,
-        content: DataTypes.STRING
+        sourceName: DataTypes.STRING,
+        level: DataTypes.STRING,
+        message: DataTypes.STRING,
     })
 
     const _Start = async () => {
@@ -42,7 +44,15 @@ const EventHubService = (params) => {
     const NotifyEvent = (event) => {
         const eventTime = GetLocalISODateTime()
         const { origin, type, content } = event
-        EventModel.create({ origin, type, content })
+
+        const {
+            sourceName,
+            type: level,
+            message
+        } = content
+
+        EventModel.create({ origin, type, sourceName, level, message })
+
         eventEmitter.emit(EVENT_NOTIFICATION, {date: eventTime, ...event})
     }
 
@@ -53,7 +63,9 @@ const EventHubService = (params) => {
 
     const ListEventHistory = async () => {
         try {
-            const notificationHistory = await EventModel.findAll()
+            const notificationHistory = await EventModel.findAll({
+                order:[['id', 'DESC']]
+            })
             return notificationHistory
         } catch (error) {
             console.error('Error listing history:', error)
