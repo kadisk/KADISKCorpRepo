@@ -14,7 +14,7 @@
     {
         "appType":"APP",
         "executable":"desk-gui",
-        "packageNamespace":"Website.Module/Application.layer/kadisk-virtual-desk.webgui",
+        "packageNamespace":"VirtualDesk.Module/UserInterfaces.layer/kadisk-virtual-desk.webgui",
         "supervisorSocketFileName":"desk-gui.sock"
     }
 ]
