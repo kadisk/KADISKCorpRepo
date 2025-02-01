@@ -12,8 +12,8 @@
     ],
     "services": [
         {
-            "namespace": "@@/notification-hub-service",
-            "dependency": "@/kadisk-event-manager.service/services/NotificationHubService",
+            "namespace": "@@/event-hub-service",
+            "dependency": "@/kadisk-event-manager.service/services/EventHubService",
             "params":{
                 "storageFilePath": "{{eventManagerServiceStorageFilePath}}"                
             }
@@ -87,7 +87,7 @@
                 "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",
                 "jsonFileUtilitiesLib": "@/json-file-utilities.lib",
                 "ecosystemInstallUtilitiesLib": "@/ecosystem-install-utilities.lib",
-                "notificationHubService": "@@/notification-hub-service"
+                "eventHubService": "@@/event-hub-service"
             },
             "params":{
                 "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}"
@@ -97,7 +97,7 @@
             "dependency": "@/kadisk-ecosystem-monitoring.webservice/endpoint-group",
             "bound-params":{
                 "serverService": "@@/server-service",
-                "notificationHubService": "@@/notification-hub-service"
+                "eventHubService": "@@/event-hub-service"
             }
         }
     ]

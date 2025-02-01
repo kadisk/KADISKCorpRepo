@@ -1,7 +1,7 @@
 [
     {
-        "namespace":"NotificationHubService",
-        "path":"Services/NotificationHub.service",
+        "namespace":"EventHubService",
+        "path":"Services/EventHub.service",
         "params": ["storageFilePath"]
     }
 ]

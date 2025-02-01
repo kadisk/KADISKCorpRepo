@@ -5,7 +5,7 @@
         "ecosystemdataHandlerService",
         "jsonFileUtilitiesLib",
         "ecosystemInstallUtilitiesLib",
-        "notificationHubService"
+        "eventHubService"
     ],
     "endpoints": [
         {
@@ -42,7 +42,7 @@
                     "jsonFileUtilitiesLib": "jsonFileUtilitiesLib", 
                     "ecosystemdataHandlerService": "ecosystemdataHandlerService",
                     "ecosystemInstallUtilitiesLib": "ecosystemInstallUtilitiesLib",
-                    "notificationHubService": "notificationHubService"
+                    "eventHubService": "eventHubService"
                 }
             }
         }

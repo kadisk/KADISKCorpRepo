@@ -7,7 +7,7 @@ const GetLocalISODateTime = () => {
 	return  (new Date(now - offset)).toISOString()
 }
 
-const NotificationHubService = (params) => {
+const EventHubService = (params) => {
     
     const eventEmitter = new EventEmitter()
     const EVENT_NOTIFICATION = Symbol()
@@ -22,7 +22,7 @@ const NotificationHubService = (params) => {
             storage: storageFilePath
     })
 
-    const NotificationModel = sequelize.define('Notification', { 
+    const EventModel = sequelize.define('Event', { 
         origin: DataTypes.STRING,
         type: DataTypes.STRING,
         content: DataTypes.STRING
@@ -42,18 +42,18 @@ const NotificationHubService = (params) => {
     const NotifyEvent = (event) => {
         const eventTime = GetLocalISODateTime()
         const { origin, type, content } = event
-        NotificationModel.create({ origin, type, content })
+        EventModel.create({ origin, type, content })
         eventEmitter.emit(EVENT_NOTIFICATION, {date: eventTime, ...event})
     }
 
     _Start()
 
-    const RegisterNotificationListener = (f) => 
+    const RegisterEventListener = (f) => 
         eventEmitter.on(EVENT_NOTIFICATION, (event) => f(event))
 
-    const ListNotificationHistory = async () => {
+    const ListEventHistory = async () => {
         try {
-            const notificationHistory = await NotificationModel.findAll()
+            const notificationHistory = await EventModel.findAll()
             return notificationHistory
         } catch (error) {
             console.error('Error listing history:', error)
@@ -62,11 +62,11 @@ const NotificationHubService = (params) => {
     }
 
     return {
-        ListNotificationHistory,
-        RegisterNotificationListener,
+        ListEventHistory,
+        RegisterEventListener,
         NotifyEvent
     }
 
 }
 
-module.exports = NotificationHubService
+module.exports = EventHubService

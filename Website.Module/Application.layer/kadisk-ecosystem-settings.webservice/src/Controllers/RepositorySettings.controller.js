@@ -8,10 +8,10 @@ const RepositorySettingsController = (params) =>{
         ecosystemDefaultsFileRelativePath,
         jsonFileUtilitiesLib,
         ecosystemInstallUtilitiesLib,
-        notificationHubService
+        eventHubService
     } = params
 
-    const { NotifyEvent } = notificationHubService
+    const { NotifyEvent } = eventHubService
 
     const ReadJsonFile = jsonFileUtilitiesLib.require("ReadJsonFile")
     const UpdateRepository = ecosystemInstallUtilitiesLib.require("UpdateRepository")

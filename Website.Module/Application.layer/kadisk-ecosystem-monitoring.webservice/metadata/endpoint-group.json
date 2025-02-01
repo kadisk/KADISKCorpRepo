@@ -1,20 +1,20 @@
 {
     "bound-params":[
         "serverService", 
-        "notificationHubService"
+        "eventHubService"
     ],
     "endpoints": [
         {
             "url": "/notifications",
             "type": "controller",
             "params": {
-                "api-template": "APIs/NotificationHistory.api.json",
-                "controller": "Controllers/NotificationHistory.controller"
+                "api-template": "APIs/EventHistory.api.json",
+                "controller": "Controllers/EventHistory.controller"
             },
             "bound-params": {
                 "serverService":"serverService",
                 "controller-params":{
-                    "notificationHubService": "notificationHubService"
+                    "eventHubService": "eventHubService"
                 }
             }
         }

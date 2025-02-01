@@ -5,21 +5,21 @@ import { bindActionCreators } from "redux"
 
 import GetAPI from "../Utils/GetAPI"
 
-const NotificationHistoryContainer = ({ HTTPServerManager }) => {
+const EventHistoryContainer = ({ HTTPServerManager }) => {
 
     useEffect(() => {
-            fetchNotificationHistory()
+            fetchEventHistory()
     }, [])
 
-    const getNotificationHistoryAPI = () => 
+    const getEventHistoryAPI = () => 
         GetAPI({ 
-            apiName:"NotificationHistory",  
+            apiName:"EventHistory",  
             serverManagerInformation: HTTPServerManager
         })
 
-    const fetchNotificationHistory = async () => {
-        const api = getNotificationHistoryAPI()
-        const response = await api.ListNotificationHistory()
+    const fetchEventHistory = async () => {
+        const api = getEventHistoryAPI()
+        const response = await api.ListEventHistory()
     }
 
     return <></>
@@ -29,4 +29,4 @@ const mapDispatchToProps = (dispatch:any) => bindActionCreators({}, dispatch)
 
 const mapStateToProps = ({ HTTPServerManager }:any) => ({ HTTPServerManager })
 
-export default connect(mapStateToProps, mapDispatchToProps)(NotificationHistoryContainer)
+export default connect(mapStateToProps, mapDispatchToProps)(EventHistoryContainer)

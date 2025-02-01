@@ -5,8 +5,8 @@
     ],
     "services": [
         {
-            "namespace": "@@/notification-hub-service",
-            "dependency": "@/kadisk-event-manager.service/services/NotificationHubService"
+            "namespace": "@@/event-hub-service",
+            "dependency": "@/kadisk-event-manager.service/services/EventHubService"
         },
         {
             "namespace": "@@/server-service",
@@ -29,7 +29,7 @@
             "dependency": "@//endpoint-group",
             "bound-params":{
                 "serverService": "@@/server-service",
-                "notificationHubService": "@@/notification-hub-service"
+                "eventHubService": "@@/event-hub-service"
             }
         }
     ]

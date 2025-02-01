@@ -1,0 +1,10 @@
+{
+	"name": "EventHistory",
+	"endpoints": [
+		{
+			"path": "/event-history",
+			"method": "GET",
+			"summary": "ListEventHistory"
+		}
+	]
+}

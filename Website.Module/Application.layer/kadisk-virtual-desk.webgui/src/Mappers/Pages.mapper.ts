@@ -8,7 +8,7 @@ import WebServiceBuilderPage from "../Pages/Workbench/WebServiceBuilder.page"
 
 import UserAdministrationPage from "../Pages/UserAdministration.page"
 
-import NotificationHistoryPage from "../Pages/EcosystemMonitoring/NotificationHistory.page"
+import EventHistoryPage from "../Pages/EcosystemMonitoring/EventHistory.page"
 import InstanceMonitorPage from "../Pages/EcosystemMonitoring/InstanceMonitor.page"
 import LoggerExplorerPage  from "../Pages/EcosystemMonitoring/LoggerExplorer.page"
 
@@ -24,7 +24,7 @@ export default {
     WebServiceBuilderPage,
     UserAdministrationPage,
     MyAppsPage,
-    NotificationHistoryPage,
+    EventHistoryPage,
     InstanceMonitorPage,
     LoggerExplorerPage,
     DefaultParametersPage,

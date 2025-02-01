@@ -28,8 +28,8 @@
         "page":"UserAdministrationPage"
     },
     {
-        "path":"/notification-history",
-        "page":"NotificationHistoryPage"
+        "path":"/event-history",
+        "page":"EventHistoryPage"
     },
     {
         "path":"/instance-monitor",
