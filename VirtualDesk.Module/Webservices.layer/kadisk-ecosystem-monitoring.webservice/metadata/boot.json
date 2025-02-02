@@ -1,7 +1,10 @@
 {
     "params" : [
         "port", 
-        "serverName"
+        "serverName",
+        "ecosystemDefaultsFileRelativePath",
+        "instanceMonitoringManagerServiceStorageFilePath",
+        "installDataDirPath"
     ],
     "services": [
         {
@@ -9,11 +12,31 @@
             "dependency": "@/kadisk-event-manager.service/services/EventHubService"
         },
         {
+            "namespace": "@@/instance-monitoring-manager-service",
+            "dependency": "@/kadisk-instance-monitoring.service/services/InstanceMonitoringManager",
+            "params":{
+                "ecosystemDefaultsFileRelativePath":"{{ecosystemDefaultsFileRelativePath}}",
+                "storageFilePath": "{{instanceMonitoringManagerServiceStorageFilePath}}"
+            },
+            "bound-params":{
+                "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",
+                "jsonFileUtilitiesLib": "@/json-file-utilities.lib",
+                "supervisorLib": "@/supervisor.lib"
+            }
+        },
+        {
             "namespace": "@@/server-service",
             "dependency": "@/server-manager.service/services/HTTPServerService",
             "params":{
                 "name":"{{serverName}}",
                 "port": "{{port}}"
+            }
+        },
+        {
+            "namespace": "@@/ecosystemdata-handler-service",
+            "dependency": "@/ecosystem-control-panel.service/services/EcosystemDataHandlerService",
+            "params":{
+                "installDataDirPath": "{{installDataDirPath}}"
             }
         }
     ],
@@ -29,7 +52,11 @@
             "dependency": "@//endpoint-group",
             "bound-params":{
                 "serverService": "@@/server-service",
+                "instanceMonitoringManagerService": "@@/instance-monitoring-manager-service",
                 "eventHubService": "@@/event-hub-service"
+            },
+            "params":{
+                "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}"
             }
         }
     ]

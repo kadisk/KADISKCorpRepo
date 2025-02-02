@@ -1,0 +1,10 @@
+{
+	"name": "InstanceMonitoring",
+	"endpoints": [
+		{
+			"path": "/instances-overview",
+			"method": "GET",
+			"summary": "GetInstancesOverview"
+		}
+	]
+}

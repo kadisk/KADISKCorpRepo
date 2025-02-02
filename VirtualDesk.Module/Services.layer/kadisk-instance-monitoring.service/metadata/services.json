@@ -5,9 +5,8 @@
         "bound-params":[ 
             "ecosystemdataHandlerService", 
             "supervisorLib", 
-            "jsonFileUtilitiesLib", 
-            "notificationHubService"
+            "jsonFileUtilitiesLib"
         ],
-        "params": ["ecosystemDefaultsFileRelativePath" ]
+        "params": ["ecosystemDefaultsFileRelativePath", "storageFilePath" ]
     }
 ]

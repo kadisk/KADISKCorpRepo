@@ -1,8 +1,10 @@
 {
     "bound-params":[
         "serverService", 
-        "eventHubService"
+        "eventHubService",
+        "instanceMonitoringManagerService"
     ],
+    "params": [ "ecosystemDefaultsFileRelativePath" ],
     "endpoints": [
         {
             "url": "/notifications",
@@ -15,6 +17,22 @@
                 "serverService":"serverService",
                 "controller-params":{
                     "eventHubService": "eventHubService"
+                }
+            }
+        },{
+            "url":"/instance-monitoring",
+            "type":"controller",
+            "params":{
+                "api-template": "APIs/InstanceMonitoring.api.json",
+                "controller": "Controllers/InstanceMonitoring.controller",
+                "controller-params":{
+                    "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}"
+                }
+            },
+            "bound-params":{
+                "serverService":"serverService",
+                "controller-params":{
+                    "instanceMonitoringManagerService":"instanceMonitoringManagerService"
                 }
             }
         }
