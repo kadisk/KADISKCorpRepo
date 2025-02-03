@@ -4,9 +4,9 @@ import DefaultPage from "../Components/DefaultPage"
 
 import UserAdministrationContainer from "../Containers/UserAdministration.container"
 
-const WelcomePage = () => 
+const UserAdministrationPage = () => 
 	<DefaultPage>
 		<UserAdministrationContainer />
 	</DefaultPage>
 
-export default WelcomePage
+export default UserAdministrationPage

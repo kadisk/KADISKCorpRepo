@@ -10,6 +10,7 @@ import UserAdministrationPage from "../Pages/UserAdministration.page"
 
 import EventHistoryPage from "../Pages/EcosystemMonitoring/EventHistory.page"
 import InstanceMonitoringPage from "../Pages/EcosystemMonitoring/InstanceMonitoring.page"
+import InstanceMonitorPage from "../Pages/EcosystemMonitoring/InstanceMonitor.page"
 import ServerStatusPage  from "../Pages/EcosystemMonitoring/ServerStatus.page"
 
 import DefaultParametersPage    from "../Pages/EcosystemSettings/DefaultParameters.page"
@@ -26,6 +27,7 @@ export default {
     MyAppsPage,
     EventHistoryPage,
     InstanceMonitoringPage,
+    InstanceMonitorPage,
     ServerStatusPage,
     DefaultParametersPage,
     RepositorySettingsPage,

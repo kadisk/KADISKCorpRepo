@@ -36,12 +36,12 @@ const InstanceMonitoringContainer = ({ HTTPServerManager }) => {
 
                                 instanceOverview
                                 && instanceOverview
-                                .map(({ socketFilePath, status, createdAt }) => {
+                                .map(({ socketFilePath, status, createdAt, socketFileId}) => {
                                     return <div className="list-group-item">
                                                 <div className="row align-items-center">
                                                     <div className="col-auto"><span className="badge bg-green text-green-fg">{status}</span></div>
                                                     <div className="col text-truncate">
-                                                        <a href="#" className="text-body d-block">{socketFilePath}</a>
+                                                        <a href={`#instance-monitor?socketFileId=${socketFileId}`} className="text-body d-block">{socketFilePath}</a>
                                                         <div className="d-block text-secondary text-truncate mt-n1">
                                                             {createdAt}
                                                         </div>
