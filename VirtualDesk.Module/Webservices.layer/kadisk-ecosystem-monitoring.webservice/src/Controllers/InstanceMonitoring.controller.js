@@ -2,9 +2,15 @@ const InstanceMonitoringController = (params) => {
 
     const { instanceMonitoringManagerService } = params
 
+    const {
+        GetInstancesOverview,
+        GetInstanceMonitorData
+    } = instanceMonitoringManagerService
+
     const controllerServiceObject = {
         controllerName : "InstanceMonitoringController",
-        GetInstancesOverview: instanceMonitoringManagerService.GetInstancesOverview
+        GetInstancesOverview,
+        GetInstanceMonitorData
     }
     return Object.freeze(controllerServiceObject)
 }

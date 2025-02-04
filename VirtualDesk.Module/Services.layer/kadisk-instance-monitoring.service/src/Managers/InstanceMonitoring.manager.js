@@ -3,9 +3,6 @@ const { Sequelize, DataTypes } = require('sequelize')
 
 const EventEmitter = require('node:events')
 const { resolve } = require("path")
-//const colors = require("colors")
-
-const AreArraysEqual = require("../Utils/AreArraysEqual")
 
 const InstanceConnectionStatus = Object.freeze({
     CONNECTING: "CONNECTING",
@@ -13,19 +10,15 @@ const InstanceConnectionStatus = Object.freeze({
     UNAVAILABLE: "UNAVAILABLE"
 })
 
-const CreateInstanceSocketHandlerManager = require("../Helpers/CreateInstanceSocketHandlerManager")
-
-
 const CreateConnectionClientHandler = () => {
 
     let clients = {}
 
     const AddNewClient = (socketFileId, communicationClient) => {
-        clients[socketFileId] = communicationClient
+        clients[parseInt(socketFileId)] = communicationClient
     }
 
-
-    const GetClient = (socketFileId) => clients[socketFileId]
+    const GetClient = (socketFileId) => clients[parseInt(socketFileId)]
 
     return {
         AddNewClient,
@@ -92,6 +85,35 @@ const InstanceMonitoringManager = (params) => {
         }
     })
 
+    const InstanceInformationModel = sequelize.define("InstanceInformation", {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true
+        },
+        pid: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        platform: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        arch: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        socketFileId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: SocketFileModel,
+                key: 'id'
+            },
+            onDelete: "CASCADE"
+        }
+    })
+
     SocketFileModel.hasMany(ConnectionLogsModel, {
         foreignKey: 'socketFileId',
         onDelete: 'CASCADE'
@@ -101,28 +123,22 @@ const InstanceMonitoringManager = (params) => {
         foreignKey: 'socketFileId'
     })
 
+    SocketFileModel.hasMany(InstanceInformationModel, {
+        foreignKey: 'socketFileId',
+        onDelete: 'CASCADE'
+    })
+    
+    InstanceInformationModel.belongsTo(SocketFileModel, {
+        foreignKey: 'socketFileId'
+    })
 
-    //const WatchSocketDirectory         = supervisorLib.require("WatchSocketDirectory")
+    //const WatchSocketDirectory       = supervisorLib.require("WatchSocketDirectory")
     const ListSocketFilesName          = supervisorLib.require("ListSocketFilesName")
     const CreateCommunicationInterface = supervisorLib.require("CreateCommunicationInterface")
     const ReadJsonFile                 = jsonFileUtilitiesLib.require("ReadJsonFile")
 
     const ecosystemDefaultFilePath = resolve(ecosystemdataHandlerService.GetEcosystemDataPath(), ecosystemDefaultsFileRelativePath)
     let supervisorSocketsDirPath = undefined
-
-    const {
-        //Overview,
-        //TryInitializeSocketMonitoring,
-        //InitializeSocketMonitoring,
-        //GetMonitoringKeysReady,
-        GetSocketMonitoringState,
-        //AddEventListener
-    } = CreateInstanceSocketHandlerManager({
-        helpers:{
-            CreateCommunicationInterface,
-            //NotifyEvent
-        }
-    })
 
     /*const _CreateHandlerSocketDirectoryChange = () => {
         
@@ -219,24 +235,17 @@ const InstanceMonitoringManager = (params) => {
         return socketsDirPath
     }
 
-    //const OverviewChangeListener = AddEventListener
-
-    const _GetConnectionClient = (monitoringStateKey) => {
-        const socketMonitoringState = GetSocketMonitoringState(monitoringStateKey)
-        const communicationClient = socketMonitoringState.GetCommunicationClient()
-        return communicationClient
-    }
-
-    const _CallRPC = async (monitoringStateKey, fname, fArgs) => {
-        const communicationClient = _GetConnectionClient(monitoringStateKey)
+    const _CallRPC = async (socketFileId, fname, fArgs) => {
+        const communicationClient = ConnectionClientHandler.GetClient(socketFileId)
         const responseData = await communicationClient[fname](fArgs)
         return responseData
     }
 /*
     const ListInstanceTasks     = async (monitoringStateKey) =>           await _CallRPC(monitoringStateKey, "ListTasks")
-    const GetTaskInformation    = async ({monitoringStateKey, taskId}) => await _CallRPC(monitoringStateKey, "GetTask", taskId)
-    const GetStartupArguments   = async (monitoringStateKey) =>           await _CallRPC(monitoringStateKey, "GetStartupArguments")
-    const GetProcessInformation = async (monitoringStateKey) =>           await _CallRPC(monitoringStateKey, "GetProcessInformation")*/
+    const GetTaskInformation    = async ({monitoringStateKey, taskId}) => await _CallRPC(monitoringStateKey, "GetTask", taskId)*/
+    const ListInstanceTasks     = async (socketFileId) => await _CallRPC(socketFileId, "ListTasks")
+    const GetStartupArguments   = async (socketFileId) => await _CallRPC(socketFileId, "GetStartupArguments")
+    const GetProcessInformation = async (socketFileId) => await _CallRPC(socketFileId, "GetProcessInformation")
 
     const _GetAllSocketFile = () => 
         SocketFileModel
@@ -299,10 +308,19 @@ const InstanceMonitoringManager = (params) => {
         }
     }
 
+    const GetInstanceMonitorData = async (socketFileId) => {
+        return {
+            startupArguments: await GetStartupArguments(socketFileId),
+            processInformation: await GetProcessInformation(socketFileId),
+            instanceTasks: await ListInstanceTasks(socketFileId)
+        }
+    }
+
     const monitoringObject = {
         //OverviewChangeListener,
         //GetMonitoringKeysReady,
         GetInstancesOverview,
+        GetInstanceMonitorData
        // ListInstanceTasks,
       //  GetTaskInformation,
        // GetStartupArguments,

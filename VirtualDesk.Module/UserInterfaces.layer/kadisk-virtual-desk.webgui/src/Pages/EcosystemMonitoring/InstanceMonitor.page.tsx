@@ -23,18 +23,22 @@ const InstanceMonitorPage = ({
     const location = useLocation()
 	const queryParams = qs.parse(location.search.substr(1))
 
+	const [socketFileId, setSocketFileId] = useState()
+
     useEffect(() => {
 
 		if(Object.keys(queryParams).length > 0){
-
-			console.log("queryParams")
-            console.log(queryParams)
+			//@ts-ignore
+			setSocketFileId(queryParams.socketFileId)
 		}
 		
 	}, [])
 
     return <DefaultPage>
-                <InstanceMonitorContainer/>
+				{
+					socketFileId
+					&& <InstanceMonitorContainer socketFileId={socketFileId}/>
+				}
             </DefaultPage>
 }
 

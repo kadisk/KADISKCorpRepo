@@ -1,7 +1,26 @@
-import * as React from "react"
+import * as React             from "react"
+import {useEffect, useState}  from "react"
+import { connect }            from "react-redux"
+import { bindActionCreators } from "redux"
 
-const InstanceMonitorContainer = () => {
+import GetAPI from "../Utils/GetAPI"
 
+const InstanceMonitorContainer = ({ HTTPServerManager, socketFileId }) => {
+
+    useEffect(() => {
+        fetchInstanceMonitorData()
+    }, [])
+    
+    const _GetInstanceMonitoringAPI = () =>
+        GetAPI({
+            apiName: "InstanceMonitoring",
+            serverManagerInformation: HTTPServerManager
+        })
+
+    const fetchInstanceMonitorData = async () => {
+        const api = _GetInstanceMonitoringAPI()
+        const response = await api.GetInstanceMonitorData({socketFileId})
+    }
 
     return <>
         <div className="page-header d-print-none">
@@ -114,4 +133,7 @@ const InstanceMonitorContainer = () => {
     </>
 }
 
-export default InstanceMonitorContainer
+const mapDispatchToProps = (dispatch:any) => bindActionCreators({}, dispatch)
+const mapStateToProps = ({ HTTPServerManager }:any) => ({ HTTPServerManager })
+
+export default connect(mapStateToProps, mapDispatchToProps)(InstanceMonitorContainer)

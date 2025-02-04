@@ -5,6 +5,19 @@
 			"path": "/instances-overview",
 			"method": "GET",
 			"summary": "GetInstancesOverview"
+		},
+		{
+			"path": "/instance-data/:socketFileId",
+			"method": "GET",
+			"summary": "GetInstanceMonitorData",
+			"parameters": [
+				{
+					"name": "socketFileId",
+					"in": "path",
+					"type": "string",
+					"required": true
+				}
+			]
 		}
 	]
 }
