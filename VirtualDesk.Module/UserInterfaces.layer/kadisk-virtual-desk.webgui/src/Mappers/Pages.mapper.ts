@@ -11,7 +11,7 @@ import UserAdministrationPage from "../Pages/UserAdministration.page"
 import EventHistoryPage from "../Pages/EcosystemMonitoring/EventHistory.page"
 import InstanceMonitoringPage from "../Pages/EcosystemMonitoring/InstanceMonitoring.page"
 import InstanceMonitorPage from "../Pages/EcosystemMonitoring/InstanceMonitor.page"
-import ServerStatusPage  from "../Pages/EcosystemMonitoring/ServerStatus.page"
+import HTTPServerManagerInformationPage  from "../Pages/EcosystemMonitoring/HTTPServerManagerInformation.page"
 
 import DefaultParametersPage    from "../Pages/EcosystemSettings/DefaultParameters.page"
 import RepositorySettingsPage from "../Pages/EcosystemSettings/RepositorySettings.page"
@@ -28,7 +28,7 @@ export default {
     EventHistoryPage,
     InstanceMonitoringPage,
     InstanceMonitorPage,
-    ServerStatusPage,
+    HTTPServerManagerInformationPage,
     DefaultParametersPage,
     RepositorySettingsPage,
     RepositorySourcesPage

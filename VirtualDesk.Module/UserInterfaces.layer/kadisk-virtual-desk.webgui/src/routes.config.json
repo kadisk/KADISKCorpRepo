@@ -40,8 +40,8 @@
         "page":"InstanceMonitoringPage"
     },
     {
-        "path":"/server-status",
-        "page":"ServerStatusPage"
+        "path":"/http-server-manager-information",
+        "page":"HTTPServerManagerInformationPage"
     },
     {
         "path":"/default-parameters",
