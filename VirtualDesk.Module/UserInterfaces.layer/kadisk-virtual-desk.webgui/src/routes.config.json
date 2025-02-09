@@ -32,6 +32,10 @@
         "page":"UserAdministrationPage"
     },
     {
+        "path":"/proxy-manager",
+        "page":"ProxyManagerPage"
+    },
+    {
         "path":"/event-history",
         "page":"EventHistoryPage"
     },
@@ -58,6 +62,14 @@
     {
         "path":"/repository-sources",
         "page":"RepositorySourcesPage"
+    },
+    {
+        "path":"/host-os-setting",
+        "page":"HostOSSettingsPage"
+    },
+    {
+        "path":"/container-manager",
+        "page":"ContainerManagerPage"
     }
     
 ]
