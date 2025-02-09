@@ -26,6 +26,8 @@
     "style-loader": "^4.0.0",
     "styled-components": "^6.1.13",
     "ts-loader": "^9.5.1",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "xterm": "^5.3.0",
+    "xterm-addon-fit": "^0.8.0"
   }
 }

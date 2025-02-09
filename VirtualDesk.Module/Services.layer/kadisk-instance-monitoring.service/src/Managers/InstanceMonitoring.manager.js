@@ -8,22 +8,7 @@ const InstanceConnectionStatus = Object.freeze({
 })
 
 const CreateMonitoringDatabaseHandler = require("../Helpers/CreateMonitoringDatabaseHandler")
-
-const CreateConnectionClientHandler = () => {
-
-    let clients = {}
-
-    const AddNewClient = (socketFileId, communicationClient) => {
-        clients[parseInt(socketFileId)] = communicationClient
-    }
-
-    const GetClient = (socketFileId) => clients[parseInt(socketFileId)]
-
-    return {
-        AddNewClient,
-        GetClient
-    }
-}
+const CreateConnectionClientHandler = require("../Helpers/CreateConnectionClientHandler")
 
 const InstanceMonitoringManager = (params) => {
 
@@ -49,10 +34,9 @@ const InstanceMonitoringManager = (params) => {
     const ecosystemDefaultFilePath = resolve(ecosystemdataHandlerService.GetEcosystemDataPath(), ecosystemDefaultsFileRelativePath)
     let supervisorSocketsDirPath = undefined
 
-    const _GetSocketFilePath = (socketFileName) => resolve(supervisorSocketsDirPath, socketFileName)
+    const _MountSocketFilePath = (socketFileName) => resolve(supervisorSocketsDirPath, socketFileName)
 
-    const _ConvertSocketFileNamesToFilePaths = (socketFileNames) => socketFileNames.map(_GetSocketFilePath)
-
+    const _ConvertSocketFileNamesToFilePaths = (socketFileNames) => socketFileNames.map(_MountSocketFilePath)
 
     const ConnectToInstance = async (socketFileId, socketFilePath) => {
         await MonitoringDatabaseHandler.RegisterConnectionStatusChange(socketFileId, InstanceConnectionStatus.CONNECTING)
@@ -76,11 +60,9 @@ const InstanceMonitoringManager = (params) => {
     const _Start = async () => {
 
         await MonitoringDatabaseHandler.Initialize()
-
         const socketsDirPath = await _GetSocketsDirPath()
         const socketFileNames = await ListSocketFilesName(socketsDirPath)
         const socketFilePaths = _ConvertSocketFileNamesToFilePaths(socketFileNames)
-
         await MonitoringDatabaseHandler.RegisterAllSocketFiles(socketFilePaths)
 
         _TryConnectInAllInstances()
@@ -103,16 +85,14 @@ const InstanceMonitoringManager = (params) => {
 
     const _CallRPC = async (socketFileId, fname, fArgs) => {
         const communicationClient = ConnectionClientHandler.GetClient(socketFileId)
-        const responseData = await communicationClient[fname](fArgs)
-        return responseData
+        return await communicationClient[fname](fArgs)
     }
     
-
     //const GetTaskInformation    = async (socketFileId) => await _CallRPC(socketFileId, "GetTask", taskId)
     const ListInstanceTasks     = async (socketFileId) => await _CallRPC(socketFileId, "ListTasks")
     const GetStartupArguments   = async (socketFileId) => await _CallRPC(socketFileId, "GetStartupArguments")
     const GetProcessInformation = async (socketFileId) => await _CallRPC(socketFileId, "GetProcessInformation")
-
+    const GetLogStreaming       = async (socketFileId) => await _CallRPC(socketFileId, "GetLogStreaming")
 
     const GetInstancesOverview = async () => {
         try {
@@ -147,21 +127,17 @@ const InstanceMonitoringManager = (params) => {
 
     const GetInstanceMonitorData = async (socketFileId) => {
         return {
-            startupArguments: await GetStartupArguments(socketFileId),
-            processInformation: await GetProcessInformation(socketFileId),
-            instanceTasks: await ListInstanceTasks(socketFileId)
+            startupArguments   : await GetStartupArguments(socketFileId),
+            processInformation : await GetProcessInformation(socketFileId),
+            instanceTasks      : await ListInstanceTasks(socketFileId)
         }
     }
 
     const monitoringObject = {
-        //OverviewChangeListener,
-        //GetMonitoringKeysReady,
         GetInstancesOverview,
-        GetInstanceMonitorData
-       // ListInstanceTasks,
+        GetInstanceMonitorData,
+        GetLogStreaming
       //  GetTaskInformation,
-       // GetStartupArguments,
-       // GetProcessInformation
     }
         
     _Start()

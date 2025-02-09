@@ -8,6 +8,10 @@
         "page":"MyAppsPage"
     },
     {
+        "path":"/my-workspace",
+        "page":"MyWorkspacePage"
+    },
+    {
         "path":"/my-storages",
         "page":"MyStoragesPage"
     },

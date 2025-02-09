@@ -19,7 +19,7 @@ const MENU_CONFIG = [
         dropdownItems: [
             {
                 title:"My Workspaces",
-                href: "#my-storages"
+                href: "#my-workspace"
             },
             {
                 title:"My Storages",

@@ -18,6 +18,19 @@
 					"required": true
 				}
 			]
+		},
+		{
+			"summary": "LogStreaming",
+			"method": "WS",
+			"path": "/instance-log-streaming/:socketFileId",
+			"parameters": [
+				{
+					"name": "socketFileId",
+					"in": "path",
+					"type": "number",
+					"required": true
+				}
+			]
 		}
 	]
 }

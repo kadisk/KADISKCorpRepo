@@ -1,23 +1,23 @@
 import * as React from "react"
 
-import DefaultPage from "../Components/DefaultPage"
+import FluidPage from "../Components/FluidPage"
 import PageTitle from "./PageTitle"
 
-type DefaultPageWithTitleProps = {
+type FluidPageWithTitleProps = {
 	title : string
 	preTitle ?: string
 	children : any
 }
 
-const DefaultPageWithTitle = ({
+const FluidPageWithTitle = ({
     title,
     preTitle,
     children
-}:DefaultPageWithTitleProps) => {
-	return <DefaultPage>
+}:FluidPageWithTitleProps) => {
+	return <FluidPage>
 				<PageTitle title={title} preTitle={preTitle}/>
                 <div className="page-body">{children}</div>
-			</DefaultPage>
+			</FluidPage>
 }
 
-export default DefaultPageWithTitle
+export default FluidPageWithTitle

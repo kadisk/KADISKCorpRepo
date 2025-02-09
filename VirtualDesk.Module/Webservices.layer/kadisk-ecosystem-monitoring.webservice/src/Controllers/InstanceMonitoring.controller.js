@@ -4,13 +4,32 @@ const InstanceMonitoringController = (params) => {
 
     const {
         GetInstancesOverview,
-        GetInstanceMonitorData
+        GetInstanceMonitorData,
+        GetLogStreaming
     } = instanceMonitoringManagerService
+
+
+    const LogStreaming = async (websocket, socketFileId) => {
+
+        const logStreaming = await GetLogStreaming(socketFileId)
+
+        logStreaming.on('data', (logData) => {
+            websocket.send(JSON.stringify(logData))
+        })
+        logStreaming.on('error', (error) => {
+
+            websocket.send(JSON.stringify(error))
+
+        })
+
+    }
+
 
     const controllerServiceObject = {
         controllerName : "InstanceMonitoringController",
         GetInstancesOverview,
-        GetInstanceMonitorData
+        GetInstanceMonitorData,
+        LogStreaming
     }
     return Object.freeze(controllerServiceObject)
 }

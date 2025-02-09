@@ -37,12 +37,15 @@ const InstanceMonitoringContainer = ({ HTTPServerManager }) => {
         setSocketFileIdLogStreaming(undefined)
     }
 
+
     return <div className="container-xl">
                 
 
                 {
                     socketFileIdLogStreaming
-                    && <LogStreamingModal onClose={() => handleCloseModalLogStreaming}/>
+                    && <LogStreamingModal 
+                    socketFileId={socketFileIdLogStreaming}
+                    onClose={() => handleCloseModalLogStreaming}/>
                 }
                 <div className="col-12">
                     <div className="card">

@@ -1,6 +1,7 @@
 import MainPage from "../Pages/Main.page"
 import MyAppsPage from "../Pages/MyApps.page"
 
+import MyWorkspacePage       from "../Pages/Workbench/MyWorkspaces.page"
 import MyStoragesPage        from "../Pages/Workbench/MyStorages.page"
 import MyDatabasesPage       from "../Pages/Workbench/MyDatabases.page"
 import MyDatasourcesPage     from "../Pages/Workbench/MyDatasources.page"
@@ -28,6 +29,7 @@ export default {
     EventHistoryPage,
     InstanceMonitoringPage,
     InstanceMonitorPage,
+    MyWorkspacePage,
     HTTPServerManagerInformationPage,
     DefaultParametersPage,
     RepositorySettingsPage,
