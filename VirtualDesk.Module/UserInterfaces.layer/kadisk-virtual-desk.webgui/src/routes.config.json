@@ -33,7 +33,7 @@
     },
     {
         "path":"/proxy-manager",
-        "page":"ProxyManagerPage"
+        "page":"RoutingSwitchPage"
     },
     {
         "path":"/event-history",

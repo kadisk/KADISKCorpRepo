@@ -5,7 +5,7 @@ import DefaultParametersContainer from "../../Containers/DefaultParameters.conta
 import DefaultPageWithTitle from "../../Components/DefaultPageWithTitle"
 
 const DefaultParametersPage = () => {
-	return <DefaultPageWithTitle title="Default Parameters" preTitle="Ecosystem Settings">
+	return <DefaultPageWithTitle title="Default Parameters" preTitle="Ecosystem Administrator">
 				<DefaultParametersContainer />
 			</DefaultPageWithTitle>
 }

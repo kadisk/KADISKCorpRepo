@@ -5,7 +5,7 @@ import RepositorySettingsContainer from "../../Containers/RepositorySettings.con
 
 const RepositorySettingsPage = () => {
 
-	return <DefaultPageWithTitle title="Repository Settings" preTitle="Ecosystem Settings">
+	return <DefaultPageWithTitle title="Repository Settings" preTitle="Ecosystem Administrator">
 		<RepositorySettingsContainer/>
 	</DefaultPageWithTitle>
 }

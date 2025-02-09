@@ -1,12 +1,12 @@
 import * as React from "react"
 
-import DefaultPage from "../../Components/DefaultPage"
+import DefaultPageWithTitle from "../../Components/DefaultPageWithTitle"
 
 import UserAdministrationContainer from "../../Containers/UserAdministration.container"
 
 const UserAdministrationPage = () => 
-	<DefaultPage>
+	<DefaultPageWithTitle title="User Administration" preTitle="Ecosystem Manager">
 		<UserAdministrationContainer />
-	</DefaultPage>
+	</DefaultPageWithTitle>
 
 export default UserAdministrationPage

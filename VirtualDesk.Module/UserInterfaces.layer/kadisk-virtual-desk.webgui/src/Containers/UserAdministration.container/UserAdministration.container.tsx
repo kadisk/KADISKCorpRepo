@@ -48,11 +48,6 @@ const UserAdministrationContainer = ({HTTPServerManager}) => {
             <div className="page-header d-print-none">
                 <div className="container-xl">
                     <div className="row g-2 align-items-center">
-                        <div className="col">
-                            <h2 className="page-title">
-                                User administration
-                            </h2>
-                        </div>
                         <div className="col-auto ms-auto d-print-none">
                             <div className="d-flex">
                                 <button className="btn btn-primary btn-3" onClick={handleOpenModalNewUser}>

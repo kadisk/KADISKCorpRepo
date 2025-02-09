@@ -4,7 +4,7 @@ import DefaultPageWithTitle from "../../Components/DefaultPageWithTitle"
 
 const HostOSSettingsPage = () => {
 
-	return <DefaultPageWithTitle title="Host OS settings" preTitle="Ecosystem Settings">
+	return <DefaultPageWithTitle title="Host OS settings" preTitle="Ecosystem Administrator">
         {"TESTE"}
 	</DefaultPageWithTitle>
 }

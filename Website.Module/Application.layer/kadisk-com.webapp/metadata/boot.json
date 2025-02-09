@@ -95,7 +95,7 @@
             }
         },
         {
-            "dependency": "@/kadisk-ecosystem-settings.webservice/endpoint-group",
+            "dependency": "@/kadisk-ecosystem-administrator.webservice/endpoint-group",
             "bound-params":{
                 "serverService": "@@/server-service",
                 "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",

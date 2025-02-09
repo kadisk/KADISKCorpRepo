@@ -2,11 +2,11 @@ import * as React from "react"
 
 import DefaultPageWithTitle from "../../Components/DefaultPageWithTitle"
 
-const ProxyManagerPage = () => {
+const RoutingSwitchPage = () => {
 
-	return <DefaultPageWithTitle title="Proxy Manager" preTitle="Ecosystem Manager">
+	return <DefaultPageWithTitle title="Routing Switch" preTitle="Ecosystem Manager">
         {"TESTE"}
 	</DefaultPageWithTitle>
 }
 
-export default ProxyManagerPage
+export default RoutingSwitchPage

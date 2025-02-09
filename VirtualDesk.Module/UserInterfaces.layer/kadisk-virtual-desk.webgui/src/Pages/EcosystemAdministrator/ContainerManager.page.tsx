@@ -4,7 +4,7 @@ import DefaultPageWithTitle from "../../Components/DefaultPageWithTitle"
 
 const ContainerManagerPage = () => {
 
-	return <DefaultPageWithTitle title="Container Manager" preTitle="Ecosystem Settings">
+	return <DefaultPageWithTitle title="Container Manager" preTitle="Ecosystem Administrator">
         {"TESTE"}
 	</DefaultPageWithTitle>
 }

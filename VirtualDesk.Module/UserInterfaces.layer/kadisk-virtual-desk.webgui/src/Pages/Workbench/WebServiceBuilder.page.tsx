@@ -1,11 +1,11 @@
 import * as React from "react"
 
-import DefaultPageWithTitle from "../../Components/DefaultPageWithTitle"
+import FluidPageWithTitle from "../../Components/FluidPageWithTitle"
 
 const InstanceMonitoringPage = () => {
-	return <DefaultPageWithTitle title="Web Service Builder" preTitle="Workbench">
+	return <FluidPageWithTitle title="Web Service Builder" preTitle="Workbench">
 				{"TESTE"}
-			</DefaultPageWithTitle>
+			</FluidPageWithTitle>
 }
 
 export default InstanceMonitoringPage
