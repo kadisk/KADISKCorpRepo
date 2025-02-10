@@ -7,6 +7,7 @@ import GetAPI from "../Utils/GetAPI"
 
 import Table from "../Components/Table"
 
+import CardContainer from "../Components/CardContainer"
 
 const EventTable = ({ events }) => {
 
@@ -45,9 +46,7 @@ const EventHistoryContainer = ({ HTTPServerManager }) => {
         setEvents(response.data)
     }
 
-    return <div className="container-xl">
-        <div className="col-12">
-            <div className="card">
+    return <CardContainer>
                 <div className="card-body border-bottom py-3">
                     <div className="d-flex">
                         <div className="text-secondary">
@@ -89,10 +88,8 @@ const EventHistoryContainer = ({ HTTPServerManager }) => {
                         </a>
                       </li>
                     </ul>
-                  </div>
-            </div>
-        </div>
-    </div>
+                </div>
+            </CardContainer>
 }
 
 const mapDispatchToProps = (dispatch: any) => bindActionCreators({}, dispatch)

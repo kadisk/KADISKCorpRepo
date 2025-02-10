@@ -7,6 +7,7 @@ import GetAPI from "../../Utils/GetAPI"
 
 import RepositorySettingsDetails from "./RepositorySettingsDetails"
 import RepositoriesTable from "./RepositoriesTable"
+import CardContainer from "../../Components/CardContainer"
 
 const RepositorySettingsContainer = ({ HTTPServerManager }) => {
 
@@ -38,25 +39,19 @@ const RepositorySettingsContainer = ({ HTTPServerManager }) => {
         setRepositoryDataSettings(undefined)
     }
 
-	return <div className="container-xl">
-                <div className="row row-cards">
-                    <div className="col-12">
-                        <div className="card">
-                            { 
-                                repositoryList
-                                && !repositoryDataSettings
-                                && <RepositoriesTable list={repositoryList} onSettings={handleChangeSettingsMode}/> 
-                            }
-                            { 
-                                repositoryDataSettings
-                                && <RepositorySettingsDetails
-                                        repositoryData={repositoryDataSettings}
-                                        onGoBack={handleGoBackSettings}/> 
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
+	return <CardContainer>
+                { 
+                    repositoryList
+                    && !repositoryDataSettings
+                    && <RepositoriesTable list={repositoryList} onSettings={handleChangeSettingsMode}/> 
+                }
+                { 
+                    repositoryDataSettings
+                    && <RepositorySettingsDetails
+                            repositoryData={repositoryDataSettings}
+                            onGoBack={handleGoBackSettings}/> 
+                }
+            </CardContainer>
 }
 
 const mapDispatchToProps = (dispatch:any) => bindActionCreators({}, dispatch)
