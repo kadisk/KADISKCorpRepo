@@ -117,6 +117,13 @@
             "params":{
                 "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}"
             }
+        },
+        {
+            "dependency": "@/kadisk-my-workbench.webservice/endpoint-group",
+            "bound-params":{
+                "serverService": "@@/server-service"
+            }
         }
+        
     ]
 }

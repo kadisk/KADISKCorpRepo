@@ -1,0 +1,28 @@
+{
+	"name": "MyWorkspace",
+	"endpoints": [
+		{
+			"path": "/repositories",
+			"method": "GET",
+			"summary": "ListRepositories"
+		},
+		{
+			"path": "/repository/create",
+			"method": "POST",
+			"summary": "CreateNewRepository",
+			"parameters": [
+				{
+					"name": "repositoryNamespace",
+					"in": "body",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/repository/import",
+			"method": "POST",
+			"summary": "ImportRepository"
+		}
+	]
+}

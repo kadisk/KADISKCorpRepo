@@ -26,8 +26,12 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
         setModalCurrent(DEFAULT_MODE)
     }
 
+    const handleCreatedRepository = () => {
+        setModalCurrent(DEFAULT_MODE)
+    }
+
 	return <>
-                {modalCurrent === CREATE_MODE && <CreateNewRepositoryModal onClose={handleCloseModal} />}
+                {modalCurrent === CREATE_MODE && <CreateNewRepositoryModal onCreated={handleCreatedRepository} onClose={handleCloseModal} />}
                 {modalCurrent === IMPORT_MODE && <ImportRepositoryModal onClose={handleCloseModal} />}
                 <WelcomeWorkspace
                     onSelectCreateRepository={() => handleSelectMode(CREATE_MODE)}

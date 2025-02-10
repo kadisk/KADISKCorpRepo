@@ -8,7 +8,7 @@ import GetAPI from "../../Utils/GetAPI"
 
 const CreateNewRepositoryModal = ({
     onClose,
-    //onSave,
+    onCreated,
     HTTPServerManager
 }) => {
 
@@ -23,11 +23,11 @@ const CreateNewRepositoryModal = ({
     } = useForm()
 
 
-    /*const _GetUserManagementAPI = () => 
+    const _GetMyWorkspaceAPI = () => 
         GetAPI({ 
-            apiName:"UserManagement",  
+            apiName:"MyWorkspace",  
             serverManagerInformation: HTTPServerManager
-        })*/
+        })
 
 
     const formValuesIsValid = () => {
@@ -49,9 +49,9 @@ const CreateNewRepositoryModal = ({
 
     const createNewRepo = async() => {
         setRecordingMode(true)
-        /*const api = _GetUserManagementAPI()
-        await api.CreateNewUser(formValues)
-        onSave()*/
+        const api = _GetMyWorkspaceAPI()
+        await api.CreateNewRepository(formValues)
+        onCreated()
     }
 
     const handleChangeForm = () => setFormValues(getValues())

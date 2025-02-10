@@ -1,0 +1,18 @@
+{
+    "bound-params":[
+        "serverService"
+    ],
+    "endpoints": [
+        {
+            "url": "/my-workspace",
+            "type": "controller",
+            "params": {
+                "api-template": "APIs/MyWorkspace.api.json",
+                "controller": "Controllers/MyWorkspace.controller"
+            },
+            "bound-params": {
+                "serverService":"serverService"
+            }
+        }
+    ]
+}
