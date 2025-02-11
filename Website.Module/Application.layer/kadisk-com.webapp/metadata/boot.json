@@ -8,6 +8,7 @@
         "userManagementServiceStorageFilePath",
         "eventManagerServiceStorageFilePath",
         "instanceMonitoringManagerServiceStorageFilePath",
+        "myWorkspaceServiceStorageFilePath",
         "installDataDirPath",
         "ecosystemDefaultsFileRelativePath"
     ],
@@ -52,6 +53,13 @@
                 "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",
                 "jsonFileUtilitiesLib": "@/json-file-utilities.lib",
                 "supervisorLib": "@/supervisor.lib"
+            }
+        },
+        {
+            "namespace": "@@/my-workspace-manager-service",
+            "dependency": "@/kadisk-my-workbench.service/services/MyWorkspaceManager",
+            "params":{
+                "storageFilePath": "{{myWorkspaceServiceStorageFilePath}}"
             }
         }
     ],
@@ -121,7 +129,8 @@
         {
             "dependency": "@/kadisk-my-workbench.webservice/endpoint-group",
             "bound-params":{
-                "serverService": "@@/server-service"
+                "serverService": "@@/server-service",
+                "myWorkspaceManagerService":"@@/my-workspace-manager-service"
             }
         }
         

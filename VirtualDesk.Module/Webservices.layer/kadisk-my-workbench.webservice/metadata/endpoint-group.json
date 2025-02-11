@@ -1,6 +1,7 @@
 {
     "bound-params":[
-        "serverService"
+        "serverService",
+        "myWorkspaceManagerService"
     ],
     "endpoints": [
         {
@@ -11,7 +12,10 @@
                 "controller": "Controllers/MyWorkspace.controller"
             },
             "bound-params": {
-                "serverService":"serverService"
+                "serverService":"serverService",
+                "controller-params":{
+                    "myWorkspaceManagerService": "myWorkspaceManagerService"
+                }
             }
         }
     ]

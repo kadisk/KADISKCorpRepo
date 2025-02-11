@@ -1,11 +1,15 @@
-const MyWorkspaceController = (params) =>{
+const MyWorkspaceController = (params) => {
+
+    const {
+        myWorkspaceManagerService
+    } = params
     
-    const CreateNewRepository = (repositoryNamespace) => {
-        console.log(repositoryNamespace)
+    const CreateNewRepository = async (repositoryNamespace) => {
+        return await myWorkspaceManagerService.CreateNewRepository({repositoryNamespace})
     }
 
-    const ListRepositories = () => {
-
+    const ListRepositories = async () => {
+        return await myWorkspaceManagerService.ListRepositories()
     }
 
     const controllerServiceObject = {

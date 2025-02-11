@@ -1,0 +1,7 @@
+[
+    {
+        "namespace": "MyWorkspaceManager",
+        "path": "Managers/MyWorkspace.manager",
+        "params": ["storageFilePath"]
+    }
+]
