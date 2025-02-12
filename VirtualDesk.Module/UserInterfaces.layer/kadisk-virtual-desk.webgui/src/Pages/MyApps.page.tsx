@@ -7,13 +7,13 @@ const MyAppsPage = () =>
 		<div className="page-body d-flex flex-column justify-content-center align-items-center text-center py-5">
 			<div className="container-xl">
 				<div className="empty">
-					<h1 className="empty-title">Nenhum aplicativo ativado</h1>
+					<h1 className="empty-title">No applications activated</h1>
 					<p className="empty-subtitle text-secondary">
-						Para utilizar os aplicativos, ative e configure-os conforme necessário. Alguns aplicativos mais complexos podem exigir configurações adicionais.
+						To use the applications, activate and configure them as needed. Some more complex applications may require additional settings.
 					</p>
 					<div className="empty-action d-flex gap-3">
 						<button className="btn btn-primary">
-							Ativar meu primeiro aplicativo
+							Activate my first application
 						</button>
 					</div>
 				</div>

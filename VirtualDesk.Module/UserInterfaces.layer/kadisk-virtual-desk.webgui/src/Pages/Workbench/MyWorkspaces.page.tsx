@@ -1,13 +1,13 @@
 import * as React from "react"
 
-import DefaultPageWithTitle from "../../Components/DefaultPageWithTitle"
+import DefaultPage from "../../Components/DefaultPage"
 
 import MyWorkspaceContainer from "../../Containers/MyWorkspace.container"
 
 const MyWorkspaces = () => {
-	return <DefaultPageWithTitle title="My Workspaces" preTitle="Workbench">
+	return <DefaultPage>
 		<MyWorkspaceContainer />
-	</DefaultPageWithTitle>
+	</DefaultPage>
 }
 
 export default MyWorkspaces
