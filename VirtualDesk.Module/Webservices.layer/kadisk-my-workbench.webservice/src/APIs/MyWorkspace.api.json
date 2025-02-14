@@ -22,7 +22,21 @@
 		{
 			"path": "/repository/import",
 			"method": "POST",
-			"summary": "ImportRepository"
+			"summary": "ImportRepository",
+			"parameters": [
+				{
+					"name": "repositoryNamespace",
+					"in": "body",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "sourceCodeURL",
+					"in": "body",
+					"type": "string",
+					"required": true
+				}
+			]
 		}
 	]
 }

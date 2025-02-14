@@ -8,7 +8,7 @@ import GetAPI from "../../Utils/GetAPI"
 
 const ImportNewRepositoryModal = ({
     onClose,
-   // onImport,
+    onImport,
     HTTPServerManager
 }) => {
 
@@ -49,9 +49,7 @@ const ImportNewRepositoryModal = ({
 
     const createNewRepo = async() => {
         setRecordingMode(true)
-        /*const api = _GetUserManagementAPI()
-        await api.CreateNewUser(formValues)
-        onImport()*/
+        onImport(formValues)
     }
 
     const handleChangeForm = () => setFormValues(getValues())
@@ -59,7 +57,7 @@ const ImportNewRepositoryModal = ({
     const handleCreateNewRepo = () => createNewRepo()
 
     return <div className="modal modal-blur show" role="dialog" aria-hidden="false" style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.8)" }}>
-        <div className="modal-dialog modal-lg" role="document">
+        <div className="modal-dialog modal-xl" role="document">
             <div className="modal-content">
                 <div className="modal-header">
                     <h5 className="modal-title">Import New Repository</h5>
@@ -74,6 +72,16 @@ const ImportNewRepositoryModal = ({
                                                 name={"repositoryNamespace"}
                                                 control={control}
                                                 render={({ field }) => <input disabled={recordingMode} type="text" className="form-control" placeholder="Repository Namespace" {...field}/>} /> 
+                                
+                            </div>
+                        </div>
+                        <div className="col-12">
+                            <div className="mb-3">
+                                <label className="form-label">Source code URL (compressed with *.zip or *.tar.gz)</label>
+                                <Controller
+                                                name={"sourceCodeURL"}
+                                                control={control}
+                                                render={({ field }) => <input disabled={recordingMode} type="text" className="form-control" placeholder="https://github.com/Meta-Platform/meta-platform-essential-repository/archive/refs/tags/meta-platform-essential-repository-v0.0.15.zip" {...field}/>} /> 
                                 
                             </div>
                         </div>

@@ -11,13 +11,13 @@ const RepositoryExplorerModal = ({ onClose, HTTPServerManager }) => {
 
     return (
         <div className="modal modal-blur show" role="dialog" aria-hidden="false" style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.8)" }}>
-            <div className="modal-dialog modal-lg" role="document">
+            <div className="modal-dialog" role="document">
                 <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title">Repository Explorer</h5>
                         <button type="button" className="btn-close" onClick={onClose} />
                     </div>
-                    <div className="modal-body">
+                    <div className="modal-body p-2">
                         <div className="repository-explorer">
                             <ul className="repository-list">
                                 <li>

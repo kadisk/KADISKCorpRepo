@@ -4,15 +4,19 @@ import { connect }            from "react-redux"
 import { bindActionCreators } from "redux"
 
 import WelcomeWorkspace from "./WelcomeWorkspace"
+
 import CreateNewRepositoryModal from "./CreateNewRepository.modal"
 import ImportRepositoryModal from "./ImportRepository.modal"
 import RepositoryExplorerModal from "./RepositoryExplorer.modal"
+import ImportingModal from "./Importing.modal"
+
 import PageHeader from "../../Components/PageHeader"
 
 import GetAPI from "../../Utils/GetAPI"
 
 const CREATE_MODE              = Symbol()
-const IMPORT_MODE              = Symbol()
+const IMPORT_SELECT_MODE       = Symbol()
+const IMPORTING_MODE           = Symbol()
 const REPOSITORY_EXPLORER_MODE = Symbol()
 const DEFAULT_MODE             = Symbol()
 
@@ -21,6 +25,7 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
 
     const [ interfaceModeType,  setInterfaceModeType] = useState(DEFAULT_MODE)
     const [ repositoriesCurrent, setRepositoriesCurrent ] = useState<any[]>()
+    const [ importDataCurrent, setImportDataCurrent ] = useState<{repositoryNamespace:string, sourceCodeURL:string}>()
 
     useEffect(() => {
         if(interfaceModeType === DEFAULT_MODE){
@@ -41,11 +46,16 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
         setRepositoriesCurrent(response.data)
     }
 
-    const handleSelectMode = (mode) => setInterfaceModeType(mode)
+    const changeMode = (mode) => setInterfaceModeType(mode)
 
     const handleCloseModal = () => setInterfaceModeType(DEFAULT_MODE)
 
     const handleCreatedRepository = () => setInterfaceModeType(DEFAULT_MODE)
+
+    const handleImportingMode = (importData) => {
+        setImportDataCurrent(importData)
+        changeMode(IMPORTING_MODE)
+    }
 
     return <>
                 <PageHeader>
@@ -60,12 +70,12 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
                         && <div className="col-auto ms-auto d-print-none">
                                 <div className="btn-list">
                                     <span className="d-none d-sm-inline">
-                                        <button className="btn btn-primary" onClick={() =>  handleSelectMode(CREATE_MODE)}>
+                                        <button className="btn btn-primary" onClick={() =>  changeMode(CREATE_MODE)}>
                                             <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-folder-plus"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 19h-7a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2h4l3 3h7a2 2 0 0 1 2 2v3.5" /><path d="M16 19h6" /><path d="M19 16v6" /></svg>
                                             Create new repository
                                         </button>
                                     </span>
-                                    <button className="btn btn-outline-primary" onClick={() => handleSelectMode(IMPORT_MODE)}>
+                                    <button className="btn btn-outline-primary" onClick={() => changeMode(IMPORT_SELECT_MODE)}>
                                     <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-folder-up"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 19h-7a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2h4l3 3h7a2 2 0 0 1 2 2v3.5" /><path d="M19 22v-6" /><path d="M22 19l-3 -3l-3 3" /></svg>
                                         Import existing repository
                                     </button>
@@ -75,8 +85,12 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
                 </PageHeader>
                 <div className="page-body">
                     {interfaceModeType === CREATE_MODE && <CreateNewRepositoryModal onCreated={handleCreatedRepository} onClose={handleCloseModal} />}
-                    {interfaceModeType === IMPORT_MODE && <ImportRepositoryModal onClose={handleCloseModal} />}
+                    {interfaceModeType === IMPORT_SELECT_MODE && <ImportRepositoryModal onImport={handleImportingMode} onClose={handleCloseModal} />}
                     {interfaceModeType === REPOSITORY_EXPLORER_MODE && <RepositoryExplorerModal onClose={handleCloseModal} />}
+                    {interfaceModeType === IMPORTING_MODE && <ImportingModal 
+                                                                    repositoryNamespace={importDataCurrent.repositoryNamespace} 
+                                                                    sourceCodeURL={importDataCurrent.sourceCodeURL}
+                                                                    onClose={handleCloseModal}/> }
                     <div className="container py-4">
                         {
                             repositoriesCurrent 
@@ -84,7 +98,7 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
                                     {
                                         repositoriesCurrent.map((repo, index) => (
                                             <div key={index} className="col-md-4">
-                                                <a className="card card-link cursor-pointer" onClick={() => handleSelectMode(REPOSITORY_EXPLORER_MODE)}>
+                                                <a className="card card-link cursor-pointer" onClick={() => changeMode(REPOSITORY_EXPLORER_MODE)}>
                                                     <div className="card-header">
                                                         <h4 className="mb-0">{repo.namespace}</h4>
                                                         <div className="card-actions">
@@ -108,8 +122,8 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
                             repositoriesCurrent 
                             && repositoriesCurrent.length === 0
                             && <WelcomeWorkspace
-                                    onSelectCreateRepository={() => handleSelectMode(CREATE_MODE)}
-                                    onSelectImportRepository={() => handleSelectMode(IMPORT_MODE)}/>
+                                    onSelectCreateRepository={() => changeMode(CREATE_MODE)}
+                                    onSelectImportRepository={() => changeMode(IMPORT_SELECT_MODE)}/>
                         }
                     </div>
                 </div>
