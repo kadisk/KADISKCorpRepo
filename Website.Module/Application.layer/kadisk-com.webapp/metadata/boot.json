@@ -8,7 +8,8 @@
         "userManagementServiceStorageFilePath",
         "eventManagerServiceStorageFilePath",
         "instanceMonitoringManagerServiceStorageFilePath",
-        "myWorkspaceServiceStorageFilePath",
+        "myWorkspaceManagerServiceStorageFilePath",
+        "repositoryEditorDirPath",
         "installDataDirPath",
         "ecosystemDefaultsFileRelativePath"
     ],
@@ -59,7 +60,11 @@
             "namespace": "@@/my-workspace-manager-service",
             "dependency": "@/kadisk-my-workbench.service/services/MyWorkspaceManager",
             "params":{
-                "storageFilePath": "{{myWorkspaceServiceStorageFilePath}}"
+                "storageFilePath": "{{myWorkspaceManagerServiceStorageFilePath}}",
+                "repositoryEditorDirPath": "{{repositoryEditorDirPath}}"
+            },
+            "bound-params":{
+                "extractTarGzLib":"@/extract-tar-gz.lib"
             }
         }
     ],

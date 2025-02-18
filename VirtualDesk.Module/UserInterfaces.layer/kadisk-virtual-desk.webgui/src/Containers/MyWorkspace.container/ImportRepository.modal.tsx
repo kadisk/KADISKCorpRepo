@@ -1,15 +1,10 @@
 import * as React from "react"
 import { useForm, Controller } from "react-hook-form"
 import { useState, useEffect } from "react"
-import { connect }            from "react-redux"
-import { bindActionCreators } from "redux"
 
-import GetAPI from "../../Utils/GetAPI"
-
-const ImportNewRepositoryModal = ({
+const ImportRepositoryModal = ({
     onClose,
-    onImport,
-    HTTPServerManager
+    onImport
 }) => {
 
     const [ readyForCreate, setReadyForCreate ] = useState(false)
@@ -21,13 +16,6 @@ const ImportNewRepositoryModal = ({
         reset, 
         control 
     } = useForm()
-
-
-    /*const _GetUserManagementAPI = () => 
-        GetAPI({ 
-            apiName:"UserManagement",  
-            serverManagerInformation: HTTPServerManager
-        })*/
 
 
     const formValuesIsValid = () => {
@@ -81,7 +69,7 @@ const ImportNewRepositoryModal = ({
                                 <Controller
                                                 name={"sourceCodeURL"}
                                                 control={control}
-                                                render={({ field }) => <input disabled={recordingMode} type="text" className="form-control" placeholder="https://github.com/Meta-Platform/meta-platform-essential-repository/archive/refs/tags/meta-platform-essential-repository-v0.0.15.zip" {...field}/>} /> 
+                                                render={({ field }) => <input disabled={recordingMode} type="text" className="form-control" placeholder="https://github.com/Meta-Platform/meta-platform-essential-repository/archive/refs/tags/meta-platform-essential-repository-v0.0.15.tar.gz" {...field}/>} /> 
                                 
                             </div>
                         </div>
@@ -105,7 +93,4 @@ const ImportNewRepositoryModal = ({
     </div>
 }
 
-const mapDispatchToProps = (dispatch:any) => bindActionCreators({}, dispatch)
-const mapStateToProps = ({ HTTPServerManager }:any) => ({ HTTPServerManager })
-
-export default connect(mapStateToProps, mapDispatchToProps)(ImportNewRepositoryModal)
+export default ImportRepositoryModal

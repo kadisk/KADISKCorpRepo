@@ -1,5 +1,4 @@
 import * as React from "react"
-import { useForm, Controller } from "react-hook-form"
 import { useState, useEffect } from "react"
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
@@ -7,9 +6,9 @@ import { bindActionCreators } from "redux"
 import GetAPI from "../../Utils/GetAPI"
 
 const ImportingModal = ({
-    onClose,
     repositoryNamespace,
     sourceCodeURL,
+    onFinishedImport,
     HTTPServerManager
 }) => {
 
@@ -31,6 +30,7 @@ const ImportingModal = ({
             sourceCodeURL
         })
         console.log(response.data)
+        onFinishedImport()
     }
 
     return <div className="modal modal-blur show" role="dialog" aria-hidden="false" style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.8)" }}>
@@ -43,7 +43,6 @@ const ImportingModal = ({
                             <div className="progress-bar progress-bar-indeterminate"></div>
                         </div>
                         <p className="empty-subtitle text-secondary mt-2">{sourceCodeURL}</p>
-                        <p className="empty-subtitle mt-2">Downloading...</p>
                     </div>
                 </div>
 

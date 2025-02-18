@@ -4,18 +4,14 @@ const MyWorkspaceController = (params) => {
         myWorkspaceManagerService
     } = params
     
-    const CreateNewRepository = async (repositoryNamespace) => {
-        return await myWorkspaceManagerService.CreateNewRepository({repositoryNamespace})
-    }
-
-    const ListRepositories = async () => {
-        return await myWorkspaceManagerService.ListRepositories()
-    }
+    const CreateNewRepository = async (repositoryNamespace) => 
+        await myWorkspaceManagerService.CreateNewRepository(repositoryNamespace)
 
     const controllerServiceObject = {
         controllerName : "MyWorkspaceController",
         CreateNewRepository,
-        ListRepositories
+        ListRepositories: myWorkspaceManagerService.ListRepositories,
+        ImportRepository: myWorkspaceManagerService.ImportRepository,
     }
     return Object.freeze(controllerServiceObject)
 }

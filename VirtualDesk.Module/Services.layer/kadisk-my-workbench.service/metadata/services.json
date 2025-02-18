@@ -2,6 +2,7 @@
     {
         "namespace": "MyWorkspaceManager",
         "path": "Managers/MyWorkspace.manager",
-        "params": ["storageFilePath"]
+        "params": ["storageFilePath", "repositoryEditorDirPath"],
+        "bound-params":  ["extractTarGzLib"]
     }
 ]

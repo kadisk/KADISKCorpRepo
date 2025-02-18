@@ -52,6 +52,8 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
 
     const handleCreatedRepository = () => setInterfaceModeType(DEFAULT_MODE)
 
+    const handleFinishedImportModal = () => setInterfaceModeType(DEFAULT_MODE)
+
     const handleImportingMode = (importData) => {
         setImportDataCurrent(importData)
         changeMode(IMPORTING_MODE)
@@ -90,7 +92,7 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
                     {interfaceModeType === IMPORTING_MODE && <ImportingModal 
                                                                     repositoryNamespace={importDataCurrent.repositoryNamespace} 
                                                                     sourceCodeURL={importDataCurrent.sourceCodeURL}
-                                                                    onClose={handleCloseModal}/> }
+                                                                    onFinishedImport={handleFinishedImportModal}/> }
                     <div className="container py-4">
                         {
                             repositoriesCurrent 

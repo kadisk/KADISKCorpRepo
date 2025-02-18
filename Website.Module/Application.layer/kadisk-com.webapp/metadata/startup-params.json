@@ -1,13 +1,14 @@
 {
-    "port"                                            : "8880",
-    "serverName"                                      : "KadiskComWebAppInstance",
-    "serverManagerUrl"                                : "http://localhost:8880/server-manager/status",
-    "RT_ENV_GENERATED_DIR_NAME"                       : ".generated_data",
-    "isWatch"                                         : true,
-    "userManagementServiceStorageFilePath"            : "/home/kadisk/Workspaces/Organizations/Kadisk/KADISKCorpRepo/databases/user-management-service.sqlite",
-    "eventManagerServiceStorageFilePath"              : "/home/kadisk/Workspaces/Organizations/Kadisk/KADISKCorpRepo/databases/event-manager-service.sqlite",
-    "instanceMonitoringManagerServiceStorageFilePath" : "/home/kadisk/Workspaces/Organizations/Kadisk/KADISKCorpRepo/databases/instance-monitoring-manager-service.sqlite",
-    "myWorkspaceServiceStorageFilePath"               : "/home/kadisk/Workspaces/Organizations/Kadisk/KADISKCorpRepo/databases/my-workspace-service.sqlite",
-    "installDataDirPath"                              : "~/EcosystemData",
-    "ecosystemDefaultsFileRelativePath"               : "./config-files/ecosystem-defaults.json"
+    "port"                                                 : "8880",
+    "serverName"                                           : "KadiskComWebAppInstance",
+    "serverManagerUrl"                                     : "http://localhost:8880/server-manager/status",
+    "RT_ENV_GENERATED_DIR_NAME"                            : ".generated_data",
+    "isWatch"                                              : true,
+    "userManagementServiceStorageFilePath"                 : "/home/kadisk/Workspaces/Organizations/Kadisk/KADISKCorpRepo/databases/user-management-service.sqlite",
+    "eventManagerServiceStorageFilePath"                   : "/home/kadisk/Workspaces/Organizations/Kadisk/KADISKCorpRepo/databases/event-manager-service.sqlite",
+    "instanceMonitoringManagerServiceStorageFilePath"      : "/home/kadisk/Workspaces/Organizations/Kadisk/KADISKCorpRepo/databases/instance-monitoring-manager-service.sqlite",
+    "myWorkspaceManagerServiceStorageFilePath"             : "/home/kadisk/Workspaces/Organizations/Kadisk/KADISKCorpRepo/databases/my-workspace-manager-service.sqlite",
+    "repositoryEditorDirPath" : "/home/kadisk/Workspaces/Organizations/Kadisk/KADISKCorpRepo/app-data/imported-repositories",
+    "installDataDirPath"                                   : "~/EcosystemData",
+    "ecosystemDefaultsFileRelativePath"                    : "./config-files/ecosystem-defaults.json"
 }
