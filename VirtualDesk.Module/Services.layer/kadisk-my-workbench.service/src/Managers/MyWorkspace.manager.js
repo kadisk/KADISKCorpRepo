@@ -291,10 +291,14 @@ const MyWorkspaceManager = (params) => {
     const _AddRepositoryItem = ({ repositoryId, itemName, itemType, itemPath, parentId }) => 
         RepositoryItemModel.create({ repositoryId, itemName, itemType, itemPath, parentId })
 
-    const ListRepositories = async () => {
-        const repositories = await RepositoryModel.findAll()
-        return repositories
-    }
+    const ListRepositories = () => RepositoryModel.findAll()
+
+    const ListRepositoryItemById = (repositoryId) =>
+        RepositoryItemModel.findAll({
+            where:{
+                repositoryId
+            }
+        })
 
     const ImportRepository = async ({ repositoryNamespace, sourceCodeURL }) => {
 
@@ -326,11 +330,32 @@ const MyWorkspaceManager = (params) => {
         return repository
 
     }
+
+    const GetItemHierarchy = async (repositoryId) => {
+        const items = await RepositoryItemModel.findAll({
+            where: { repositoryId },
+            raw: true
+        })
+
+        const __BuildTree = (parentId = null) => {
+            return items
+                .filter(item => item.parentId === parentId)
+                .map(item => ({
+                    id: item.id,
+                    itemName: item.itemName,
+                    itemType: item.itemType,
+                    children: __BuildTree(item.id)
+                }))
+        }
+
+        return __BuildTree()
+    }
     
     return {
         CreateNewRepository,
         ListRepositories,
-        ImportRepository
+        ImportRepository,
+        GetItemHierarchy
     }
 
 }

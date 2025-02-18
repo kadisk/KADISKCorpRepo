@@ -1,7 +1,9 @@
 import MainPage from "../Pages/Main.page"
 import MyAppsPage from "../Pages/MyApps.page"
 
-import MyWorkspacePage       from "../Pages/Workbench/MyWorkspaces.page"
+import MyWorkspacePage        from "../Pages/Workbench/MyWorkspaces.page"
+import RepositoryExplorerPage from "../Pages/Workbench/MyWorkspaces/RepositoryExplorer.page"
+
 import MyStoragesPage        from "../Pages/Workbench/MyStorages.page"
 import MyDatabasesPage       from "../Pages/Workbench/MyDatabases.page"
 import MyDatasourcesPage     from "../Pages/Workbench/MyDatasources.page"
@@ -39,5 +41,6 @@ export default {
     RepositorySettingsPage,
     RepositorySourcesPage,
     HostOSSettingsPage,
-    ContainerManagerPage
+    ContainerManagerPage,
+    RepositoryExplorerPage
 }

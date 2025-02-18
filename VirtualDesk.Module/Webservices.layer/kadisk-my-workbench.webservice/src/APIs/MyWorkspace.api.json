@@ -37,6 +37,19 @@
 					"required": true
 				}
 			]
+		},
+		{
+			"path": "/repository-explorer/hierarchy/:repositoryId",
+			"method": "GET",
+			"summary": "GetItemHierarchy",
+			"parameters": [
+				{
+					"name": "repositoryId",
+					"in": "path",
+					"type": "string",
+					"required": true
+				}
+			]
 		}
 	]
 }

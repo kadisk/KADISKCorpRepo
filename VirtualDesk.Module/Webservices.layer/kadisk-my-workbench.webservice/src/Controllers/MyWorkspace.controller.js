@@ -12,6 +12,7 @@ const MyWorkspaceController = (params) => {
         CreateNewRepository,
         ListRepositories: myWorkspaceManagerService.ListRepositories,
         ImportRepository: myWorkspaceManagerService.ImportRepository,
+        GetItemHierarchy: myWorkspaceManagerService.GetItemHierarchy
     }
     return Object.freeze(controllerServiceObject)
 }

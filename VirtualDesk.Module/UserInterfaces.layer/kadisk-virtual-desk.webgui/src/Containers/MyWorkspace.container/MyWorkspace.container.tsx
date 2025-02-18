@@ -7,7 +7,6 @@ import WelcomeWorkspace from "./WelcomeWorkspace"
 
 import CreateNewRepositoryModal from "./CreateNewRepository.modal"
 import ImportRepositoryModal from "./ImportRepository.modal"
-import RepositoryExplorerModal from "./RepositoryExplorer.modal"
 import ImportingModal from "./Importing.modal"
 
 import PageHeader from "../../Components/PageHeader"
@@ -17,7 +16,6 @@ import GetAPI from "../../Utils/GetAPI"
 const CREATE_MODE              = Symbol()
 const IMPORT_SELECT_MODE       = Symbol()
 const IMPORTING_MODE           = Symbol()
-const REPOSITORY_EXPLORER_MODE = Symbol()
 const DEFAULT_MODE             = Symbol()
 
 
@@ -26,6 +24,8 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
     const [ interfaceModeType,  setInterfaceModeType] = useState(DEFAULT_MODE)
     const [ repositoriesCurrent, setRepositoriesCurrent ] = useState<any[]>()
     const [ importDataCurrent, setImportDataCurrent ] = useState<{repositoryNamespace:string, sourceCodeURL:string}>()
+
+    const [ repositoryIdSelected, setRepositoryIdSelected ] = useState()
 
     useEffect(() => {
         if(interfaceModeType === DEFAULT_MODE){
@@ -88,7 +88,6 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
                 <div className="page-body">
                     {interfaceModeType === CREATE_MODE && <CreateNewRepositoryModal onCreated={handleCreatedRepository} onClose={handleCloseModal} />}
                     {interfaceModeType === IMPORT_SELECT_MODE && <ImportRepositoryModal onImport={handleImportingMode} onClose={handleCloseModal} />}
-                    {interfaceModeType === REPOSITORY_EXPLORER_MODE && <RepositoryExplorerModal onClose={handleCloseModal} />}
                     {interfaceModeType === IMPORTING_MODE && <ImportingModal 
                                                                     repositoryNamespace={importDataCurrent.repositoryNamespace} 
                                                                     sourceCodeURL={importDataCurrent.sourceCodeURL}
@@ -100,7 +99,7 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
                                     {
                                         repositoriesCurrent.map((repo, index) => (
                                             <div key={index} className="col-md-4">
-                                                <a className="card card-link cursor-pointer" onClick={() => changeMode(REPOSITORY_EXPLORER_MODE)}>
+                                                <a className="card card-link cursor-pointer mb-3" href={`#/my-workspace/repository-explorer?repositoryId=${repo.id}`}>
                                                     <div className="card-header">
                                                         <h4 className="mb-0">{repo.namespace}</h4>
                                                         <div className="card-actions">

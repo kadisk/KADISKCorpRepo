@@ -2,15 +2,16 @@ import * as React             from "react"
 import {useEffect, useState}  from "react"
 import { connect }            from "react-redux"
 import { bindActionCreators } from "redux"
+import qs from "query-string"
+import { 
+	useLocation
+  } from "react-router-dom"
+
 
 import DefaultPage from "../../Components/DefaultPage"
 
 import QueryParamsActionsCreator from "../../Actions/QueryParams.actionsCreator"
 
-import qs from "query-string"
-import { 
-	useLocation
-  } from "react-router-dom"
 
 import InstanceMonitorContainer from "../../Containers/InstanceMonitor.container"
 
