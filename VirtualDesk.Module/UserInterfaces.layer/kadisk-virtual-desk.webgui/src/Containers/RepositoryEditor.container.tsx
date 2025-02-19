@@ -6,7 +6,6 @@ import { bindActionCreators } from "redux"
 import GetAPI from "../Utils/GetAPI"
 import WelcomeFooter from "../PageComponents/WelcomeFooter"
 
-
 //@ts-ignore
 import logoVirtualDesk2 from "../../Assets/logo-virtual-desk2.svg"
 
@@ -51,7 +50,7 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
                                 <i className="ti ti-folder" />
                             </span>
                             <span className={`badge me-2 ${getClassNameColor(item.itemType)}`}>{item.itemType}</span>
-                            <span className="fw-bold">{item.itemName}</span>
+                            <span className="fw-bold fs-3">{item.itemName}</span>
                         </div>
                         {item.children && item.children.length > 0 && (
                             <div className="ms-4 mt-2 border-start ps-3">
@@ -66,7 +65,7 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
 
     return (
         <div className="d-flex" style={{ height: "100vh", overflow: "hidden" }}>
-            <aside className="navbar navbar-vertical navbar-expand-lg flex-shrink-0" style={{ height: "100%", overflowY: "auto", minWidth: "max-content" }}>
+            <aside className="navbar navbar-vertical navbar-expand-lg flex-shrink-0 d-flex" style={{ height: "100%", overflowY: "auto", minWidth: "max-content", display: "flex", flexDirection: "column", position: "relative" }}>
                 <div className="container-fluid">
                     <div className="navbar-brand">
                         <a href=".">
@@ -84,9 +83,9 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
                     )}
                 </div>
             </aside>
-            <div className="page-wrapper flex-grow-1" style={{ overflowY: "auto" }}>
-                <div className="container-fluid">
-                    <div className="row">
+            <div className="page-wrapper flex-grow-1 d-flex flex-column" style={{ overflowY: "auto", flex: 1, display: "flex", minWidth: 0, marginLeft: 0 }}>
+                <div className="container-fluid flex-grow-1 d-flex p-0">
+                    <div className="row flex-grow-1 m-0">
                         <div className="col-md-4">
                             <div className="card">
                                 <div className="card-body p-3">XPTOP</div>
