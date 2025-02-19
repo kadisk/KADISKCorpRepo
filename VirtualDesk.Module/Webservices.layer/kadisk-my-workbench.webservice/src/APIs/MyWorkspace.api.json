@@ -39,7 +39,7 @@
 			]
 		},
 		{
-			"path": "/repository-explorer/hierarchy/:repositoryId",
+			"path": "/repository-editor/hierarchy/:repositoryId",
 			"method": "GET",
 			"summary": "GetItemHierarchy",
 			"parameters": [

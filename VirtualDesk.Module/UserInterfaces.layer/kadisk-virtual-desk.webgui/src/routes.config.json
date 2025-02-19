@@ -12,8 +12,8 @@
         "page":"MyWorkspacePage"
     },
     {
-        "path":"/my-workspace/repository-explorer",
-        "page":"RepositoryExplorerPage"
+        "path":"/my-workspace/repository-editor",
+        "page":"RepositoryEditorPage"
     },
     {
         "path":"/my-storages",

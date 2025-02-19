@@ -10,11 +10,11 @@ import {
 
 import QueryParamsActionsCreator from "../../../Actions/QueryParams.actionsCreator"
 
-import DefaultPageWithTitle from "../../../Components/DefaultPageWithTitle"
-import RepositoryExplorerContainer from "../../../Containers/RepositoryExplorer.container"
+import BlankPage from "../../../Components/BlankPage"
+import RepositoryEditorContainer from "../../../Containers/RepositoryEditor.container"
 
 
-const RepositoryExplorerPage = ({
+const RepositoryEditorPage = ({
     AddQueryParam,
     SetQueryParams,
     RemoveQueryParam
@@ -32,12 +32,12 @@ const RepositoryExplorerPage = ({
         
     }, [])
 
-    return <DefaultPageWithTitle title="Repository Explorer" preTitle="Workbench / My Workspace">
+    return <BlankPage>
                 {
                     repositoryId
-                    && <RepositoryExplorerContainer repositoryId={repositoryId}/>
+                    && <RepositoryEditorContainer repositoryId={repositoryId}/>
                 }
-            </DefaultPageWithTitle>
+            </BlankPage>
 }
 
 
@@ -52,4 +52,4 @@ const mapStateToProps = ({HTTPServerManager, QueryParams}:any) => ({
 	QueryParams
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(RepositoryExplorerPage)
+export default connect(mapStateToProps, mapDispatchToProps)(RepositoryEditorPage)
