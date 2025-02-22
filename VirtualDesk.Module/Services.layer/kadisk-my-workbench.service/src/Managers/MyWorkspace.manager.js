@@ -5,8 +5,6 @@ const {
     readdir
 } = require('node:fs/promises')
 
-
-
 const ListDir = async (path) => {
     const listItems = await readdir(path, { withFileTypes: true })
     const listDir =  listItems.filter((file) => file.isDirectory() )
@@ -28,12 +26,20 @@ const MyWorkspaceManager = (params) => {
     const {
         onReady,
         storageFilePath,
+        ecosystemDefaultsFileRelativePath,
         repositoryEditorDirPath,
-        extractTarGzLib
+        extractTarGzLib,
+        jsonFileUtilitiesLib,
+        ecosystemdataHandlerService,
+        loadMetatadaDirLib
     } = params
 
 
     const ExtractTarGz = extractTarGzLib.require("ExtractTarGz")
+    const ReadJsonFile = jsonFileUtilitiesLib.require("ReadJsonFile")
+    const LoadMetadataDir = loadMetatadaDirLib.require("LoadMetadataDir")
+
+    const ecosystemDefaultFilePath = resolve(ecosystemdataHandlerService.GetEcosystemDataPath(), ecosystemDefaultsFileRelativePath)
 
     const sequelize = new Sequelize({
         dialect: 'sqlite',
@@ -293,13 +299,6 @@ const MyWorkspaceManager = (params) => {
 
     const ListRepositories = () => RepositoryModel.findAll()
 
-    const ListRepositoryItemById = (repositoryId) =>
-        RepositoryItemModel.findAll({
-            where:{
-                repositoryId
-            }
-        })
-
     const ImportRepository = async ({ repositoryNamespace, sourceCodeURL }) => {
 
         const repositoryCreatedData = await CreateNewRepository(repositoryNamespace)
@@ -350,12 +349,39 @@ const MyWorkspaceManager = (params) => {
 
         return __BuildTree()
     }
+
+
+    const GetRepositoryData = (repositoryId) => RepositoryModel.findOne({ where: { id:repositoryId } })
+
+    const GetGeneralInformation = async (repositoryId) => {
+        const repositoryData = await GetRepositoryData(repositoryId)
+
+        return {
+            repositoryNamespace: repositoryData.namespace
+        }
+    }
+
+    const GetApplicationsMetatadata = async(repositoryId) => {
+
+        const repositoryData = await GetRepositoryData(repositoryId)
+        const ecosystemDefaults = await ReadJsonFile(ecosystemDefaultFilePath)
+
+        const metadataContent = await LoadMetadataDir({
+            metadataDirName: ecosystemDefaults.REPOS_CONF_DIRNAME_METADATA,
+            path: repositoryData.repositoryCodePath
+        })
+
+        return metadataContent.applications
+    }
     
+
     return {
         CreateNewRepository,
         ListRepositories,
         ImportRepository,
-        GetItemHierarchy
+        GetItemHierarchy,
+        GetGeneralInformation,
+        GetApplicationsMetatadata
     }
 
 }

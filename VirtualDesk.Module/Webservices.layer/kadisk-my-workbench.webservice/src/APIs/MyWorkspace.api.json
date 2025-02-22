@@ -50,6 +50,34 @@
 					"required": true
 				}
 			]
+		},
+		{
+			"path": "/repository-editor/information/:repositoryId",
+			"method": "GET",
+			"summary": "GetGeneralInformation",
+			"parameters": [
+				{
+					"name": "repositoryId",
+					"in": "path",
+					"type": "string",
+					"required": true
+				}
+			]
+			
+		},
+		{
+			"path": "/repository-editor/applications-metadata/:repositoryId",
+			"method": "GET",
+			"summary": "GetApplicationsMetatadata",
+			"parameters": [
+				{
+					"name": "repositoryId",
+					"in": "path",
+					"type": "string",
+					"required": true
+				}
+			]
+			
 		}
 	]
 }
