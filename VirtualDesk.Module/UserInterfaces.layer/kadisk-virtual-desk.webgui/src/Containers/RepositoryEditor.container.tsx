@@ -48,6 +48,9 @@ const iconCaretDown = (
 const iconPackage = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-package"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" /><path d="M12 12l8 -4.5" /><path d="M12 12l0 9" /><path d="M12 12l-8 -4.5" /><path d="M16 5.25l-8 4.5" /></svg>
 const iconStack2 = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-stack-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 4l-8 4l8 4l8 -4l-8 -4" /><path d="M4 12l8 4l8 -4" /><path d="M4 16l8 4l8 -4" /></svg>
 const iconPackages = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-packages"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 16.5l-5 -3l5 -3l5 3v5.5l-5 3z" /><path d="M2 13.5v5.5l5 3" /><path d="M7 16.545l5 -3.03" /><path d="M17 16.5l-5 -3l5 -3l5 3v5.5l-5 3z" /><path d="M12 19l5 3" /><path d="M17 16.5l5 -3" /><path d="M12 13.5v-5.5l-5 -3l5 -3l5 3v5.5" /><path d="M7 5.03v5.455" /><path d="M12 8l5 -3" /></svg>
+const iconApps = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-apps"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /><path d="M4 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /><path d="M14 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /><path d="M14 7l6 0" /><path d="M17 4l0 6" /></svg>
+const iconAppWindow = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-app-window"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 5m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /><path d="M6 8h.01" /><path d="M9 8h.01" /></svg>
+const iconTerminal2 = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-terminal-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 9l3 3l-3 3" /><path d="M13 15l3 0" /><path d="M3 4m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /></svg>
 
 const IsPackage = (typeItem) => {
     return ["app","cli","webapp","webgui","webservice","service","lib"].indexOf(typeItem) > -1
@@ -116,27 +119,80 @@ const RepositoryItemSidebarSection = ({
         )
     }
 
-    return <div
-    className="p-2 col-12">
-    {repositoryHierarchy.length > 0 ? (
-        renderHierarchy(repositoryHierarchy)
-    ) : (
-        <div className="text-center py-4">
-            <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
+    return <div className="p-2 col-12">
+                {
+                    repositoryHierarchy.length > 0 
+                    ? renderHierarchy(repositoryHierarchy)
+                    : <div className="text-center py-4">
+                            <div className="spinner-border text-primary" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                }
             </div>
-        </div>
-    )}
-</div>
 }
+
+
+const RepositoryMetadataSidebarSection = ({
+    applicationsMetadata,
+}) => {
+
+    const [ expanded, setExpanded ] = useState(false)
+
+    const toggleExpand = () => setExpanded(!expanded)
+
+
+    return <div className="p-2 col-12">
+                {
+                    applicationsMetadata?.length > 0 
+                    ? <ul className="list-group">
+                            <li className="list-group-item border-0 p-0 cursor-pointer">
+                                <div className="d-flex align-items-center">
+                                    <button className="btn btn-sm btn-link" onClick={() => toggleExpand()}>
+                                        {expanded ? iconCaretDown : iconCaretRight}
+                                    </button>
+                                    <span>
+                                        {iconApps}Applications                    
+                                    </span>
+                                </div>
+                                {
+                                    expanded
+                                    && <div className="ms-2 mt-1 border-start ps-3">
+                                            <ul className="list-group">
+                                                {
+                                                    applicationsMetadata
+                                                    .map(({executable, appType}) => <li className="list-group-item border-0 p-0 cursor-pointer">
+                                                                    <div className="d-flex align-items-center">
+                                                                        <span>
+                                                                            {appType === "APP" ? iconAppWindow : ""}
+                                                                            {appType === "CLI" ? iconTerminal2 : ""}
+                                                                            {executable} <span className="text-secondary">{appType}</span>
+                                                                        </span>
+
+                                                                    </div>
+                                                                </li>)
+                                                }
+                                            </ul>
+                                        </div>
+                                }
+                            </li>
+                        </ul>
+                    : <div className="text-center py-4">
+                            <div className="spinner-border text-primary" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                }
+            </div>
+}
+
 
 const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
 
     const [repositoryInformation, setRepositoryInformation] = useState<any>()
     const [repositoryHierarchy, setRepositoryHierarchy] = useState([])
     const [repoItemSelectedId, setRepoItemSelectedId] = useState()
-    const [ applicationsMetadata, setApplicationsMetadata ] = useState()
-
+    const [applicationsMetadata, setApplicationsMetadata] = useState()
 
     useEffect(() => {
         fetchRepositoryHierarchy()
@@ -189,20 +245,13 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
                 </div>
             </nav>
 
-            <div className="d-flex" style={{height: "94vh", overflow: "hidden", marginTop: "56px"}}>
-                <aside className="navbar navbar-vertical navbar-expand-lg flex-shrink-0 d-flex flex-column" style={{ height: "100%", minWidth: "max-content", paddingTop:"3.5rem" }}>
-                    <RepositoryItemSidebarSection
-                        repoItemSelectedId={repoItemSelectedId}
-                        onSelectItem={(id) => setRepoItemSelectedId(id)}
-                        repositoryHierarchy={repositoryHierarchy}/>
-                    <RepositoryItemSidebarSection
-                        repoItemSelectedId={repoItemSelectedId}
-                        onSelectItem={(id) => setRepoItemSelectedId(id)}
-                        repositoryHierarchy={repositoryHierarchy}/>
+            <div className="d-flex" style={{ height: "94vh", overflow: "hidden", marginTop: "56px" }}>
+                <aside className="navbar navbar-vertical navbar-expand-lg d-flex flex-column" style={{width: "auto", position: "relative", overflowY: "auto"}}>
+                    <RepositoryMetadataSidebarSection applicationsMetadata={applicationsMetadata} />
+                    <RepositoryItemSidebarSection repoItemSelectedId={repoItemSelectedId} onSelectItem={(id) => setRepoItemSelectedId(id)} repositoryHierarchy={repositoryHierarchy} />
                 </aside>
 
-                <div className="page-wrapper flex-grow-1 d-flex flex-column"
-                    style={{ overflowY: "auto", minWidth: 0, paddingTop:".5rem", marginLeft:"25rem"}}>
+                <div className="page-wrapper flex-grow-1 d-flex flex-column" style={{ overflowY: "auto", minWidth: 0, paddingTop: ".5rem", margin: 0 }}>
                     <div className="container-fluid flex-grow-1 d-flex p-0">
                         <div className="row flex-grow-1 m-0">
                             <div className="col-12">
@@ -214,10 +263,16 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
                     </div>
                     <WelcomeFooter />
                 </div>
+
+                <aside className="navbar navbar-vertical navbar-expand-lg d-flex flex-column border-start" style={{width: "auto", position: "relative", margin: 0, overflowY: "auto"}}>
+                    <RepositoryMetadataSidebarSection applicationsMetadata={applicationsMetadata} />
+                    <RepositoryItemSidebarSection repoItemSelectedId={repoItemSelectedId} onSelectItem={(id) => setRepoItemSelectedId(id)} repositoryHierarchy={repositoryHierarchy} />
+                </aside>
             </div>
         </>
     )
 }
+
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({}, dispatch)
 const mapStateToProps = ({ HTTPServerManager }) => ({ HTTPServerManager })
