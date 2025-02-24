@@ -52,12 +52,40 @@
 			]
 		},
 		{
-			"path": "/repository-editor/information/:repositoryId",
+			"path": "/repository-editor/information/repository/:repositoryId",
 			"method": "GET",
-			"summary": "GetGeneralInformation",
+			"summary": "GetRepositoryGeneralInformation",
 			"parameters": [
 				{
 					"name": "repositoryId",
+					"in": "path",
+					"type": "string",
+					"required": true
+				}
+			]
+			
+		},
+		{
+			"path": "/repository-editor/information/item/:itemId",
+			"method": "GET",
+			"summary": "GetItemInformation",
+			"parameters": [
+				{
+					"name": "itemId",
+					"in": "path",
+					"type": "string",
+					"required": true
+				}
+			]
+			
+		},
+		{
+			"path": "/repository-editor/package/source-tree/:itemId",
+			"method": "GET",
+			"summary": "GetPackageSourceTree",
+			"parameters": [
+				{
+					"name": "itemId",
 					"in": "path",
 					"type": "string",
 					"required": true

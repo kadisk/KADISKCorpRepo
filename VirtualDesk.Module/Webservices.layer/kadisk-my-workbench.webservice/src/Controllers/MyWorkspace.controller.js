@@ -4,18 +4,18 @@ const MyWorkspaceController = (params) => {
         myWorkspaceManagerService
     } = params
     
-    const CreateNewRepository = async (repositoryNamespace) => 
-        await myWorkspaceManagerService.CreateNewRepository(repositoryNamespace)
-
     const controllerServiceObject = {
         controllerName : "MyWorkspaceController",
-        CreateNewRepository,
-        ListRepositories: myWorkspaceManagerService.ListRepositories,
-        ImportRepository: myWorkspaceManagerService.ImportRepository,
-        GetItemHierarchy: myWorkspaceManagerService.GetItemHierarchy,
-        GetGeneralInformation: myWorkspaceManagerService.GetGeneralInformation,
-        GetApplicationsMetatadata: myWorkspaceManagerService.GetApplicationsMetatadata
+        CreateNewRepository             : myWorkspaceManagerService.CreateNewRepository,
+        ListRepositories                : myWorkspaceManagerService.ListRepositories,
+        ImportRepository                : myWorkspaceManagerService.ImportRepository,
+        GetItemHierarchy                : myWorkspaceManagerService.GetItemHierarchy,
+        GetRepositoryGeneralInformation : myWorkspaceManagerService.GetRepositoryGeneralInformation,
+        GetItemInformation              : myWorkspaceManagerService.GetItemInformation,
+        GetApplicationsMetatadata       : myWorkspaceManagerService.GetApplicationsMetatadata,
+        GetPackageSourceTree            : myWorkspaceManagerService.GetPackageSourceTree
     }
+
     return Object.freeze(controllerServiceObject)
 }
 

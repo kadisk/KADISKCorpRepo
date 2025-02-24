@@ -352,8 +352,9 @@ const MyWorkspaceManager = (params) => {
 
 
     const GetRepositoryData = (repositoryId) => RepositoryModel.findOne({ where: { id:repositoryId } })
+    const GetItemData = (itemId) => RepositoryItemModel.findOne({ where: { id:itemId } })
 
-    const GetGeneralInformation = async (repositoryId) => {
+    const GetRepositoryGeneralInformation = async (repositoryId) => {
         const repositoryData = await GetRepositoryData(repositoryId)
 
         return {
@@ -373,15 +374,62 @@ const MyWorkspaceManager = (params) => {
 
         return metadataContent.applications
     }
-    
+
+    const GetItemInformation = async (itemId) => {
+
+        const itemData = await GetItemData(itemId)
+        const { id, itemName, itemType } = itemData
+        return { id, itemName, itemType }
+
+    }
+
+    const _ListFilesRecursive = async (dirPath, basePath) => {
+        const entries = await readdir(dirPath, { withFileTypes: true })
+        const tree = []
+
+        for (const entry of entries) {
+            const fullPath = resolve(dirPath, entry.name)
+            if (entry.isDirectory()) {
+                tree.push({
+                    name: entry.name,
+                    path:entry.path.replace(basePath, ""),
+                    type: 'directory',
+                    children: await _ListFilesRecursive(fullPath, basePath)
+                })
+            } else {
+                tree.push({
+                    name: entry.name,
+                    path:entry.path.replace(basePath, ""),
+                    type: 'file'
+                })
+            }
+        }
+
+        return tree
+    }
+
+    const GetPackageSourceTree = async (itemId) => {
+        const itemData = await GetItemData(itemId)
+        const { itemPath } = itemData
+        const srcPath = resolve(itemPath, "src")
+        
+        try {
+            return await _ListFilesRecursive(srcPath, srcPath)
+        } catch (error) {
+            throw new Error(`Error reading source tree: ${error.message}`)
+        }
+    }
+
 
     return {
         CreateNewRepository,
         ListRepositories,
         ImportRepository,
         GetItemHierarchy,
-        GetGeneralInformation,
-        GetApplicationsMetatadata
+        GetRepositoryGeneralInformation,
+        GetApplicationsMetatadata,
+        GetItemInformation,
+        GetPackageSourceTree
     }
 
 }
