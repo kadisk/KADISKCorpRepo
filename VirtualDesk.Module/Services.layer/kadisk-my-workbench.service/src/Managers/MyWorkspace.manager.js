@@ -1,6 +1,6 @@
 const fs = require("fs")
 const { Sequelize, DataTypes } = require('sequelize')
-const { resolve } = require("path")
+const { resolve, join } = require("path")
 const { 
     readdir
 } = require('node:fs/promises')
@@ -362,17 +362,19 @@ const MyWorkspaceManager = (params) => {
         }
     }
 
-    const GetApplicationsMetatadata = async(repositoryId) => {
-
+    const GetRepositoryMetadata = async (repositoryId) => {
         const repositoryData = await GetRepositoryData(repositoryId)
         const ecosystemDefaults = await ReadJsonFile(ecosystemDefaultFilePath)
 
-        const metadataContent = await LoadMetadataDir({
+        return await LoadMetadataDir({
             metadataDirName: ecosystemDefaults.REPOS_CONF_DIRNAME_METADATA,
             path: repositoryData.repositoryCodePath
         })
+    }
 
-        return metadataContent.applications
+    const GetApplicationsRepositoryMetatadata = async(repositoryId) => {
+        const packageMetadata = await GetRepositoryMetadata(repositoryId)
+        return packageMetadata.applications
     }
 
     const GetItemInformation = async (itemId) => {
@@ -420,6 +422,35 @@ const MyWorkspaceManager = (params) => {
         }
     }
 
+    const GetPackageSourceFileContent = async ({itemId, sourceFilePath}) => {
+        const itemData = await GetItemData(itemId)
+        const { itemPath, itemName, itemType } = itemData
+
+        const absolutePath = join(itemPath, "src", sourceFilePath)
+
+        try {
+            const content = await fs.promises.readFile(absolutePath, "utf8")
+            return {
+                sourceFilePath,
+                packageParent:`${itemName}.${itemType}`,
+                parentItemId: itemId,
+                content
+            }
+        } catch (error) {
+            throw new Error(`Error reading file: ${error.message}`)
+        }
+    }
+
+    const GetPackageMetadata = async (itemId) => {
+        const itemData = await GetItemData(itemId)
+        const { itemPath} = itemData
+        const ecosystemDefaults = await ReadJsonFile(ecosystemDefaultFilePath)
+
+        return await LoadMetadataDir({
+            metadataDirName: ecosystemDefaults.PKG_CONF_DIRNAME_METADATA,
+            path: itemPath
+        })
+    }
 
     return {
         CreateNewRepository,
@@ -427,9 +458,11 @@ const MyWorkspaceManager = (params) => {
         ImportRepository,
         GetItemHierarchy,
         GetRepositoryGeneralInformation,
-        GetApplicationsMetatadata,
+        GetApplicationsRepositoryMetatadata,
         GetItemInformation,
-        GetPackageSourceTree
+        GetPackageSourceTree,
+        GetPackageSourceFileContent,
+        GetPackageMetadata
     }
 
 }

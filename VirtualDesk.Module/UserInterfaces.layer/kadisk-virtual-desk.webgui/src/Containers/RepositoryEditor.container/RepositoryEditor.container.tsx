@@ -2,12 +2,12 @@ import * as React from "react"
 import { useEffect, useState } from "react"
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
+import Editor from "@monaco-editor/react"
 
-import GetAPI from "../Utils/GetAPI"
-import WelcomeFooter from "../PageComponents/WelcomeFooter"
+import GetAPI from "../../Utils/GetAPI"
 
 //@ts-ignore
-import logoVirtualDesk2 from "../../Assets/logo-virtual-desk2.svg"
+import logoVirtualDesk2 from "../../../Assets/logo-virtual-desk2.svg"
 
 const iconCaretRight = (
     <svg
@@ -146,9 +146,9 @@ const RepositoryItemSidebarSection = ({
 }
 
 
-
-const SourceTreeSidebarSection = ({
-    sourceTree
+const PackageSourceTreeSidebarSection = ({
+    sourceTree,
+    onSelectSourceFile
 }) => {
 
     const [expandedItems, setExpandedItems] = useState({})
@@ -156,6 +156,8 @@ const SourceTreeSidebarSection = ({
     const toggleExpand = (code) => {
         setExpandedItems((prev) => ({ ...prev, [code]: !prev[code] }))
     }
+
+    const getHandleSelectPackageFile = (itemData) => () => onSelectSourceFile(`${itemData.path}/${itemData.name}`)
 
     const renderHierarchy = (items) => {
 
@@ -175,7 +177,7 @@ const SourceTreeSidebarSection = ({
                                         {expandedItems[code] ? iconCaretDown : iconCaretRight}
                                     </button>
                                 }
-                                <span className={hasLevel?"":"ms-4"}>
+                                <span className={hasLevel?"":"ms-4"} onClick={item.type === "file" && getHandleSelectPackageFile(item)}>
                                     {
                                             IsPackage(item.type)
                                                 ? iconPackage
@@ -205,7 +207,85 @@ const SourceTreeSidebarSection = ({
 
     return <div className="col-12 mb-3 bg-azure-lt">
         <div className="justify-content-start align-items-center p-1 bg-azure text-azure-fg">
-            <strong>package source tree</strong>
+            <strong>package source code</strong>
+        </div>
+        <div className="p-2">
+            {
+                sourceTree?.length > 0
+                    ? renderHierarchy(sourceTree)
+                    : <div className="text-center py-4">
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+            }
+        </div>
+        
+    </div>
+}
+
+const PackageMetadataSidebarSection = ({
+    sourceTree,
+    onSelectSourceFile
+}) => {
+
+    const [expandedItems, setExpandedItems] = useState({})
+
+    const toggleExpand = (code) => {
+        setExpandedItems((prev) => ({ ...prev, [code]: !prev[code] }))
+    }
+
+    const getHandleSelectPackageFile = (itemData) => () => onSelectSourceFile(`${itemData.path}/${itemData.name}`)
+
+    const renderHierarchy = (items) => {
+
+        return (
+            <ul className="list-group">
+                {
+                    items.map((item) => {
+
+                        const code = item.path+item.name+item.type
+                        const hasLevel = item.children && item.children.length > 0
+
+                        return <li key={code} className="list-group-item border-0 p-0 cursor-pointer">
+                            <div className="d-flex align-items-center">
+                                {
+                                    hasLevel
+                                    && <button className="btn btn-sm btn-link" onClick={() => toggleExpand(code)}>
+                                        {expandedItems[code] ? iconCaretDown : iconCaretRight}
+                                    </button>
+                                }
+                                <span className={hasLevel?"":"ms-4"} onClick={item.type === "file" && getHandleSelectPackageFile(item)}>
+                                    {
+                                            IsPackage(item.type)
+                                                ? iconPackage
+                                                : item.type === "directory"
+                                                    ? iconFolder
+                                                    : item.type === "file"
+                                                        ? iconFile
+                                                        : ""
+                                        } {item.name}
+                                </span>
+
+                            </div>
+                            {
+                                item.children
+                                && item.children.length > 0
+                                && expandedItems[code]
+                                && <div className="ms-2 mt-1 border-start ps-3">
+                                    {renderHierarchy(item.children)}
+                                </div>
+                            }
+                        </li>
+                    })
+                }
+            </ul>
+        )
+    }
+
+    return <div className="col-12 bg-indigo-lt">
+        <div className="justify-content-start align-items-center p-1 bg-indigo text-indigo-fg">
+            <strong>package metadata</strong>
         </div>
         <div className="p-2">
             {
@@ -289,7 +369,9 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
     const [ itemDataSelected, setItemDataSelected] = useState<any>()
 
     const [ isPackageSelected, setIsPackageSelected ] = useState(false)
-    const [ sourceTreeCurrent, setSourceTreeCurrent] = useState()
+    const [ packageSourceCodeTreeCurrent, setPackageSourceCodeTreeCurrent] = useState()
+    const [ packageMetadataCurrent, setPackageMetadataTreeCurrent] = useState()
+    const [ sourceFileContentData, setSourceFileContentData ] = useState<any>()
 
     useEffect(() => {
         fetchRepositoryHierarchy()
@@ -309,6 +391,7 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
 
         if (itemDataSelected && PACKAGE_ITEM_TYPE_LIST.indexOf(itemDataSelected.itemType) > -1) {
             fetchPackageSourceTree()
+            fetchPackageMetadata()
             setIsPackageSelected(true)
         }else {
             setIsPackageSelected(false)
@@ -342,14 +425,34 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
 
     const fetchRepositoryApplications = async () => {
         setApplicationsMetadata(undefined)
-        const response = await GetMyWorkspaceAPI().GetApplicationsMetatadata({ repositoryId })
+        const response = await GetMyWorkspaceAPI().GetApplicationsRepositoryMetatadata({ repositoryId })
         setApplicationsMetadata(response.data)
     }
 
     const fetchPackageSourceTree = async () => {
-        setSourceTreeCurrent(undefined)
-        const response = await GetMyWorkspaceAPI().GetPackageSourceTree({ itemId:repoItemSelectedId  })
-        setSourceTreeCurrent(response.data)
+        setPackageSourceCodeTreeCurrent(undefined)
+        const response = await GetMyWorkspaceAPI().GetPackageSourceTree({ itemId:repoItemSelectedId })
+        setPackageSourceCodeTreeCurrent(response.data)
+    }
+
+    const fetchPackageMetadata = async () => {
+        setPackageMetadataTreeCurrent(undefined)
+        const response = await GetMyWorkspaceAPI().GetPackageMetadata({ itemId:repoItemSelectedId })
+        setPackageMetadataTreeCurrent(response.data)
+    }
+
+    const getPackageSourceFileContent = async (sourceFilePath) => {
+        const response = await GetMyWorkspaceAPI().GetPackageSourceFileContent({ 
+            itemId:repoItemSelectedId,
+            sourceFilePath
+        })
+        return response.data
+    }
+
+    const selectSourceFile = async (sourceFilePath) => {
+        setSourceFileContentData(undefined)
+        const sourceFileContentData = await getPackageSourceFileContent(sourceFilePath)
+        setSourceFileContentData(sourceFileContentData)
     }
 
     return (
@@ -383,55 +486,42 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
                                 <div className="card-tabs">
 
                                     <ul className="nav nav-tabs" role="tablist">
-                                        <li className="nav-item" role="presentation"><a href="#tab-top-1" className="nav-link active" data-bs-toggle="tab" aria-selected="true" role="tab">Tab 1</a></li>
-                                        <li className="nav-item" role="presentation"><a href="#tab-top-2" className="nav-link" data-bs-toggle="tab" aria-selected="false" role="tab" >Tab 2</a></li>
-                                        <li className="nav-item" role="presentation"><a href="#tab-top-3" className="nav-link" data-bs-toggle="tab" aria-selected="false" role="tab" >Tab 3</a></li>
-                                        <li className="nav-item" role="presentation"><a href="#tab-top-4" className="nav-link" data-bs-toggle="tab" aria-selected="false" role="tab">Tab 4</a></li>
+                                        {sourceFileContentData && <li className="nav-item"><a className="nav-link active">{sourceFileContentData.sourceFilePath} <span className="text-secondary ms-1">{sourceFileContentData.packageParent}</span></a></li>}
                                     </ul>
-                                    <div className="tab-content">
-                                        <div id="tab-top-1" className="card tab-pane active show" role="tabpanel">
-                                            <div className="card-body">
-                                                <div className="card-title">Content of tab #1</div>
-                                                <p className="text-secondary">
-                                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci, alias aliquid distinctio dolorem expedita, fugiat hic magni molestiae molestias odit.
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div id="tab-top-2" className="card tab-pane" role="tabpanel">
-                                            <div className="card-body">
-                                                <div className="card-title">Content of tab #2</div>
-                                                <p className="text-secondary">
-                                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci, alias aliquid distinctio dolorem expedita, fugiat hic magni molestiae molestias odit.
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div id="tab-top-3" className="card tab-pane" role="tabpanel">
-                                            <div className="card-body">
-                                                <div className="card-title">Content of tab #3</div>
-                                                <p className="text-secondary">
-                                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci, alias aliquid distinctio dolorem expedita, fugiat hic magni molestiae molestias odit.
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div id="tab-top-4" className="card tab-pane" role="tabpanel">
-                                            <div className="card-body">
-                                                <div className="card-title">Content of tab #4</div>
-                                                <p className="text-secondary">
-                                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci, alias aliquid distinctio dolorem expedita, fugiat hic magni molestiae molestias odit.
-                                                </p>
-                                            </div>
+                                    <div className="tab-content flex-grow-1 d-flex">
+                                        <div id="tab-top-1" className="card tab-pane active show flex-grow-1 d-flex flex-column">
+                                            {sourceFileContentData && (
+                                                <div className="card-body d-flex flex-column flex-grow-1 p-0">
+                                                    <Editor
+                                                        height="calc(105vh - 163px)" // Garante que o editor ocupa todo o espaço disponível
+                                                        defaultLanguage="javascript"
+                                                        value={sourceFileContentData?.content || ""} // Evita erro se content for undefined
+                                                        options={{
+                                                            readOnly: true,
+                                                            minimap: { enabled: false },
+                                                            fontSize: 14,
+                                                            wordWrap: "on",
+                                                        }}
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <WelcomeFooter />
                 </div>
                 {
                     isPackageSelected
                     && <aside className="navbar navbar-vertical navbar-expand-lg d-flex flex-column border-start" style={{ width: "auto", position: "relative", margin: 0, overflowY: "auto" }}>
-                            <SourceTreeSidebarSection sourceTree={sourceTreeCurrent}/>
+                            <PackageMetadataSidebarSection 
+                                onSelectSourceFile={(sourceFilePath) => selectSourceFile(sourceFilePath)}
+                                sourceTree={packageSourceCodeTreeCurrent}/>
+
+                            <PackageSourceTreeSidebarSection 
+                                onSelectSourceFile={(sourceFilePath) => selectSourceFile(sourceFilePath)}
+                                sourceTree={packageSourceCodeTreeCurrent}/>
                         </aside>
                 }
             </div>

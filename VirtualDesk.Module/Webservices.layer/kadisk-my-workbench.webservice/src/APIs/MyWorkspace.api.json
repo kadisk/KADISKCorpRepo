@@ -80,7 +80,7 @@
 			
 		},
 		{
-			"path": "/repository-editor/package/source-tree/:itemId",
+			"path": "/repository-editor/package/source-code-tree/:itemId",
 			"method": "GET",
 			"summary": "GetPackageSourceTree",
 			"parameters": [
@@ -94,9 +94,42 @@
 			
 		},
 		{
+			"path": "/repository-editor/package/metadata/:itemId",
+			"method": "GET",
+			"summary": "GetPackageMetadata",
+			"parameters": [
+				{
+					"name": "itemId",
+					"in": "path",
+					"type": "string",
+					"required": true
+				}
+			]
+			
+		},
+		{
+			"path": "/repository-editor/package/source-file-content/:itemId",
+			"method": "GET",
+			"summary": "GetPackageSourceFileContent",
+			"parameters": [
+				{
+					"name": "itemId",
+					"in": "path",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "sourceFilePath",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
 			"path": "/repository-editor/applications-metadata/:repositoryId",
 			"method": "GET",
-			"summary": "GetApplicationsMetatadata",
+			"summary": "GetApplicationsRepositoryMetatadata",
 			"parameters": [
 				{
 					"name": "repositoryId",
