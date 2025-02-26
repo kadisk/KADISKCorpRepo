@@ -9,26 +9,25 @@ import GetAPI from "../../Utils/GetAPI"
 //@ts-ignore
 import logoVirtualDesk2 from "../../../Assets/logo-virtual-desk2.svg"
 
-import RepositoryItemSidebarSection from "./SidebarSections/RepositoryItem.sidebarSection"
-import PackageSourceTreeSidebarSection from "./SidebarSections/PackageSourceTree.sidebarSection"
-import PackageMetadataSidebarSection from "./SidebarSections/PackageMetadata.sidebarSection"
+import RepositoryItemSidebarSection     from "./SidebarSections/RepositoryItem.sidebarSection"
+import PackageSourceTreeSidebarSection  from "./SidebarSections/PackageSourceTree.sidebarSection"
+import PackageMetadataSidebarSection    from "./SidebarSections/PackageMetadata.sidebarSection"
 import RepositoryMetadataSidebarSection from "./SidebarSections/RepositoryMetadata.sidebarSection"
 
 const PACKAGE_ITEM_TYPE_LIST = ["lib", "service", "webservice", "webgui", "webpapp", "app", "cli"]
 
 const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
 
-    const [repositoryInformation, setRepositoryInformation] = useState<any>()
-    const [repositoryHierarchy, setRepositoryHierarchy] = useState([])
-    const [repoItemSelectedId, setRepoItemSelectedId] = useState()
-    const [applicationsMetadata, setApplicationsMetadata] = useState()
-
-    const [ itemDataSelected, setItemDataSelected] = useState<any>()
-
-    const [ isPackageSelected, setIsPackageSelected ] = useState(false)
-    const [ packageSourceCodeTreeCurrent, setPackageSourceCodeTreeCurrent] = useState()
-    const [ packageMetadataCurrent, setPackageMetadataTreeCurrent] = useState()
-    const [ sourceFileContentData, setSourceFileContentData ] = useState<any>()
+    const [ repositoryInformation, setRepositoryInformation ]               = useState<any>()
+    const [ repositoryHierarchy, setRepositoryHierarchy ]                   = useState([])
+    const [ repoItemSelectedId, setRepoItemSelectedId ]                     = useState()
+    const [ applicationsMetadata, setApplicationsMetadata ]                 = useState()
+    const [ itemDataSelected, setItemDataSelected ]                         = useState<any>()
+    const [ isPackageSelected, setIsPackageSelected ]                       = useState(false)
+    const [ packageSourceCodeTreeCurrent, setPackageSourceCodeTreeCurrent ] = useState()
+    const [ packageMetadataCurrent, setPackageMetadataTreeCurrent ]         = useState()
+    const [ indexTabFocus, setIndexTabFocus ]                               = useState<number>(0)
+    const [ tabsSelectedData, setTabsSelectedData ]                         = useState([])
 
     useEffect(() => {
         fetchRepositoryHierarchy()
@@ -38,9 +37,8 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
 
     useEffect(() =>{
 
-        if(repoItemSelectedId){
+        if(repoItemSelectedId)
             fetchItemInformation()
-        }
 
     }, [repoItemSelectedId])
 
@@ -106,11 +104,19 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
         return response.data
     }
 
-    const selectSourceFile = async (sourceFilePath) => {
-        setSourceFileContentData(undefined)
-        const sourceFileContentData = await getPackageSourceFileContent(sourceFilePath)
-        setSourceFileContentData(sourceFileContentData)
+    const openTab = ({ label, data }) => {
+        setTabsSelectedData([...tabsSelectedData, { label, data }])
     }
+
+    const selectSourceFile = async (sourceFilePath) => {
+        const sourceFileContentData = await getPackageSourceFileContent(sourceFilePath)
+        openTab({
+            label: <strong>{sourceFileContentData.sourceFilePath}</strong>,
+            data:sourceFileContentData
+        })
+    }
+
+    const changeFocusTab = (indexTab) => setIndexTabFocus(indexTab)
 
     return (
         <>
@@ -143,16 +149,19 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
                                 <div className="card-tabs">
 
                                     <ul className="nav nav-tabs" role="tablist">
-                                        {sourceFileContentData && <li className="nav-item"><a className="nav-link active">{sourceFileContentData.sourceFilePath} <span className="text-secondary ms-1">{sourceFileContentData.packageParent}</span></a></li>}
+                                        {
+                                            tabsSelectedData
+                                            .map(({label}, index) => <li className="nav-item cursor-pointer" onClick={() => changeFocusTab(index)}><a className={`nav-link ${index === indexTabFocus ?"active":""}`}>{label}</a></li>)
+                                        }
                                     </ul>
                                     <div className="tab-content flex-grow-1 d-flex">
-                                        <div id="tab-top-1" className="card tab-pane active show flex-grow-1 d-flex flex-column">
-                                            {sourceFileContentData && (
+                                        <div className="card tab-pane active show flex-grow-1 d-flex flex-column">
+                                            {tabsSelectedData[indexTabFocus] && (
                                                 <div className="card-body d-flex flex-column flex-grow-1 p-0">
                                                     <Editor
                                                         height="calc(105vh - 163px)"
                                                         defaultLanguage="javascript"
-                                                        value={sourceFileContentData?.content || ""}
+                                                        value={tabsSelectedData[indexTabFocus]?.data.content || ""}
                                                         onMount={(editor, monaco) => {
                                                             
                                                             monaco.editor.defineTheme("myLightGrayTheme", {
