@@ -7,14 +7,8 @@
     },
     {
         "appType":"APP",
-        "executable":"kadisk-gui",
-        "packageNamespace":"Website.Module/Application.layer/kadisk-com.webgui",
-        "supervisorSocketFileName":"kadisk-gui.sock"
-    },
-    {
-        "appType":"APP",
-        "executable":"desk-gui",
-        "packageNamespace":"VirtualDesk.Module/UserInterfaces.layer/kadisk-virtual-desk.webgui",
-        "supervisorSocketFileName":"desk-gui.sock"
+        "executable":"virtual-desk",
+        "packageNamespace":"VirtualDesk.Module/Applications.layer/kadisk-virtual-desk.webapp",
+        "supervisorSocketFileName":"vistaul-desk.sock"
     }
 ]
