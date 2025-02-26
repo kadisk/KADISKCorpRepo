@@ -150,16 +150,28 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
                                             {sourceFileContentData && (
                                                 <div className="card-body d-flex flex-column flex-grow-1 p-0">
                                                     <Editor
-                                                        height="calc(105vh - 163px)" // Garante que o editor ocupa todo o espaço disponível
+                                                        height="calc(105vh - 163px)"
                                                         defaultLanguage="javascript"
-                                                        value={sourceFileContentData?.content || ""} // Evita erro se content for undefined
+                                                        value={sourceFileContentData?.content || ""}
+                                                        onMount={(editor, monaco) => {
+                                                            
+                                                            monaco.editor.defineTheme("myLightGrayTheme", {
+                                                            base: "vs",
+                                                            inherit: true,
+                                                            rules: [],
+                                                            colors: {
+                                                                "editor.background": "#e0f1ff"
+                                                            }
+                                                            })
+                                                            
+                                                            monaco.editor.setTheme("myLightGrayTheme")
+                                                        }}
                                                         options={{
                                                             readOnly: true,
                                                             minimap: { enabled: false },
                                                             fontSize: 14,
                                                             wordWrap: "on",
-                                                        }}
-                                                    />
+                                                        }}/>
                                                 </div>
                                             )}
                                         </div>
@@ -173,8 +185,7 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
                     isPackageSelected
                     && <aside className="navbar navbar-vertical navbar-expand-lg d-flex flex-column border-start" style={{ width: "auto", position: "relative", margin: 0, overflowY: "auto" }}>
                             <PackageMetadataSidebarSection 
-                                onSelectSourceFile={(sourceFilePath) => selectSourceFile(sourceFilePath)}
-                                sourceTree={packageSourceCodeTreeCurrent}/>
+                                packageMetadata={packageMetadataCurrent}/>
 
                             <PackageSourceTreeSidebarSection 
                                 onSelectSourceFile={(sourceFilePath) => selectSourceFile(sourceFilePath)}
