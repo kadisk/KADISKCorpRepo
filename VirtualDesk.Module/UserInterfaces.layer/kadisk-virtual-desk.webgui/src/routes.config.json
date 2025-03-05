@@ -28,16 +28,16 @@
         "page":"MyDatasourcesPage"
     },
     {
-        "path":"/web-service-builder",
-        "page":"WebServiceBuilderPage"
+        "path":"/my-ecosystem-console",
+        "page":"MyEcosystemConsolePage"
     },
     {
         "path":"/user-admin",
         "page":"UserAdministrationPage"
     },
     {
-        "path":"/proxy-manager",
-        "page":"RoutingSwitchPage"
+        "path":"/http-proxy-manager",
+        "page":"HTTPProxyManagerPage"
     },
     {
         "path":"/event-history",

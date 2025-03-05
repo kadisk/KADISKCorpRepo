@@ -2,7 +2,7 @@ import * as React from "react"
 
 import DefaultPageWithTitle from "../../Components/DefaultPageWithTitle"
 
-const RoutingSwitchPage = () => {
+const HTTPProxyManagerPage = () => {
 	const routes = [
 		{ id: 1, name: "API Gateway", domain: "kadisk.com", path: "", target: "localhost:9000", status: "Active" },
 		{ id: 2, name: "API Service", domain: "api.kadisk.com", path: "", target: "localhost:8888", status: "Active" },
@@ -29,7 +29,7 @@ const RoutingSwitchPage = () => {
 	]
 
 	return (
-		<DefaultPageWithTitle title="Routing Switch" preTitle="Ecosystem Manager">
+		<DefaultPageWithTitle title="HTTP Proxy Manager" preTitle="Ecosystem Manager">
 			<div className="container-xl">
 				<div className="card">
 					<div className="table-responsive">
@@ -66,4 +66,4 @@ const RoutingSwitchPage = () => {
 	)
 }
 
-export default RoutingSwitchPage
+export default HTTPProxyManagerPage

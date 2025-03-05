@@ -7,10 +7,10 @@ import RepositoryEditorPage from "../Pages/Workbench/MyWorkspaces/RepositoryEdit
 import MyStoragesPage        from "../Pages/Workbench/MyStorages.page"
 import MyDatabasesPage       from "../Pages/Workbench/MyDatabases.page"
 import MyDatasourcesPage     from "../Pages/Workbench/MyDatasources.page"
-import WebServiceBuilderPage from "../Pages/Workbench/WebServiceBuilder.page"
+import MyEcosystemConsolePage from "../Pages/Workbench/MyEcosystemConsole.page"
 
 import UserAdministrationPage from "../Pages/EcosytemManager/UserAdministration.page"
-import RoutingSwitchPage from "../Pages/EcosytemManager/RoutingSwitch.page"
+import HTTPProxyManagerPage from "../Pages/EcosytemManager/HTTPProxyManager.page"
 
 import EventHistoryPage from "../Pages/EcosystemMonitoring/EventHistory.page"
 import InstanceMonitoringPage from "../Pages/EcosystemMonitoring/InstanceMonitoring.page"
@@ -28,9 +28,9 @@ export default {
     MyStoragesPage,
     MyDatabasesPage,
     MyDatasourcesPage,
-    WebServiceBuilderPage,
+    MyEcosystemConsolePage,
     UserAdministrationPage,
-    RoutingSwitchPage,
+    HTTPProxyManagerPage,
     MyAppsPage,
     EventHistoryPage,
     InstanceMonitoringPage,
