@@ -70,6 +70,10 @@
                 "loadMetatadaDirLib": "@/load-metatada-dir.lib",
                 "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service"
             }
+        },
+        {
+            "namespace": "@@/container-manager-service",
+            "dependency": "@/kadisk-container-manager.service/services/ContainerManager"
         }
     ],
     "endpoints": [
@@ -106,7 +110,8 @@
                 "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",
                 "jsonFileUtilitiesLib": "@/json-file-utilities.lib",
                 "ecosystemInstallUtilitiesLib": "@/ecosystem-install-utilities.lib",
-                "eventHubService": "@@/event-hub-service"
+                "eventHubService": "@@/event-hub-service",
+                "containerManagerService":"@@/container-manager-service"
             },
             "params":{
                 "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}"

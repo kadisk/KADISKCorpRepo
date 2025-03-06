@@ -1,0 +1,10 @@
+{
+	"name": "ContainerManager",
+	"endpoints": [
+		{
+			"path": "/containers",
+			"method": "GET",
+			"summary": "ListContainers"
+		}
+	]
+}

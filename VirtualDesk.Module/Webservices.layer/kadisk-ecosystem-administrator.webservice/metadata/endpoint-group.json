@@ -5,7 +5,8 @@
         "ecosystemdataHandlerService",
         "jsonFileUtilitiesLib",
         "ecosystemInstallUtilitiesLib",
-        "eventHubService"
+        "eventHubService",
+        "containerManagerService"
     ],
     "endpoints": [
         {
@@ -43,6 +44,20 @@
                     "ecosystemdataHandlerService": "ecosystemdataHandlerService",
                     "ecosystemInstallUtilitiesLib": "ecosystemInstallUtilitiesLib",
                     "eventHubService": "eventHubService"
+                }
+            }
+        },
+        {
+            "url": "/container-manager",
+            "type": "controller",
+            "params": {
+                "api-template": "APIs/ContainerManager.api.json",
+                "controller": "Controllers/ContainerManager.controller"
+            },
+            "bound-params": {
+                "serverService":"serverService",
+                "controller-params":{
+                    "containerManagerService":"containerManagerService"
                 }
             }
         }
