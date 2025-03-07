@@ -17,6 +17,17 @@
                     "myWorkspaceManagerService": "myWorkspaceManagerService"
                 }
             }
+        },
+        {
+            "url": "/my-ecosystem-console",
+            "type": "controller",
+            "params": {
+                "api-template": "APIs/MyEcosystemConsole.api.json",
+                "controller": "Controllers/MyEcosystemConsole.controller"
+            },
+            "bound-params": {
+                "serverService":"serverService"
+            }
         }
     ]
 }

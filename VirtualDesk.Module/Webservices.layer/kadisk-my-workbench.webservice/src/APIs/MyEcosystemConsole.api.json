@@ -1,0 +1,10 @@
+{
+	"name": "MyEcosystemConsole",
+	"endpoints": [
+		{
+			"path": "/ecosystem-instance/activate",
+			"method": "GET",
+			"summary": "ActivateMyEcosystemInstance"
+		}
+	]
+}
