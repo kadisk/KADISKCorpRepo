@@ -132,7 +132,8 @@
             "dependency": "@/kadisk-my-workbench.webservice/endpoint-group",
             "bound-params":{
                 "serverService": "@@/server-service",
-                "myWorkspaceManagerService":"@@/my-workspace-manager-service"
+                "myWorkspaceManagerService":"@@/my-workspace-manager-service",
+                "containerManagerService":"@@/container-manager-service"
             }
         }
         

@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "author": "Kaio Cezar <kadisk.shark@gmail.com>",
   "dependencies": {
-    "dockerode": "^4.0.4"
+    "dockerode": "^4.0.4",
+    "tar-stream": "^3.1.7"
   }
 }

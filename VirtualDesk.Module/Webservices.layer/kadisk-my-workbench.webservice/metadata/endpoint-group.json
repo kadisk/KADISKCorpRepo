@@ -1,7 +1,8 @@
 {
     "bound-params":[
         "serverService",
-        "myWorkspaceManagerService"
+        "myWorkspaceManagerService",
+        "containerManagerService"
     ],
     "endpoints": [
         {
@@ -26,7 +27,10 @@
                 "controller": "Controllers/MyEcosystemConsole.controller"
             },
             "bound-params": {
-                "serverService":"serverService"
+                "serverService":"serverService",
+                "controller-params":{
+                    "containerManagerService": "containerManagerService"
+                }
             }
         }
     ]

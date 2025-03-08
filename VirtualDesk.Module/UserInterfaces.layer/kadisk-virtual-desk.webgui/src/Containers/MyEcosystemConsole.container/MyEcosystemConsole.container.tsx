@@ -7,6 +7,7 @@ import GetAPI from "../../Utils/GetAPI"
 
 const ECOSYSTEM_ACTIVATING_MODE = Symbol()
 const FIRST_USE_MODE = Symbol()
+const DEFAULT_MODE = Symbol()
 
 const MyEcosystemConsoleContainer = ({HTTPServerManager}) => {
 
@@ -21,6 +22,7 @@ const MyEcosystemConsoleContainer = ({HTTPServerManager}) => {
     const ActivateMyEcosystemInstance = async () => {
         setEcosystemConsoleModeType(ECOSYSTEM_ACTIVATING_MODE)
         const response = await GetMyEcosystemConsoleAPI().ActivateMyEcosystemInstance()
+        setEcosystemConsoleModeType(DEFAULT_MODE)
     }
 
 
