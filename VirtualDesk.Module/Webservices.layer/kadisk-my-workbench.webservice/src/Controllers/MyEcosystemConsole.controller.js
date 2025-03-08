@@ -36,7 +36,10 @@ const MyEcosystemConsoleController = (params) => {
         containerManagerService
     } = params
 
-    const { BuildImageFromDockerfileString } = containerManagerService
+    const { 
+        BuildImageFromDockerfileString,
+        CreateNewContainer
+    } = containerManagerService
 
     const ActivateMyEcosystemInstance = async () => {
 
@@ -45,7 +48,12 @@ const MyEcosystemConsoleController = (params) => {
             imageTag: "myecosystem:latest"
         })
 
-        // Subir uma noma instancia
+        const container = await CreateNewContainer({
+            imageName: "myecosystem:latest",
+            containerName: "myecosystem-01-container"    
+        })
+
+        console.log(container)
 
 
     }

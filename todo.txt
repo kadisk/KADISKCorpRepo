@@ -30,3 +30,7 @@ https://kjphotos.com/
 
 - O portal KADISK precisar ter alguma galerias
     - Exemplo usado REACT+ algumas CSS framework
+
+
+
+docker run -it --volumes-from myecosystem-01-container --entrypoint /bin/bash myecosystem:latest
