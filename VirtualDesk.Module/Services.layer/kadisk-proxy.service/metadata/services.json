@@ -1,0 +1,11 @@
+[
+    {
+        "namespace": "PassThroughProxyService",
+        "path": "Services/PassThroughProxy.service",
+        "params": ["listenPort", "target" ]
+    },
+    {
+        "namespace": "ReverseProxyService",
+        "path": "Services/ReverseProxy.service"
+    }
+]
