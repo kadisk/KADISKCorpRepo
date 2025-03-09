@@ -1,0 +1,8 @@
+{
+    "services":[
+        {
+            "namespace": "@@/proxy-service",
+            "dependency": "@//services/ProxyService"
+        }
+    ]
+}

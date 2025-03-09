@@ -9,6 +9,12 @@
         "appType":"APP",
         "executable":"virtual-desk",
         "packageNamespace":"VirtualDesk.Module/Applications.layer/kadisk-virtual-desk.webapp",
-        "supervisorSocketFileName":"vistaul-desk.sock"
+        "supervisorSocketFileName":"virtual-desk.sock"
+    },
+    {
+        "appType":"APP",
+        "executable":"kadisk-proxy",
+        "packageNamespace":"VirtualDesk.Module/Applications.layer/kadisk-proxy.app",
+        "supervisorSocketFileName":"kadisk-proxy.sock"
     }
 ]
