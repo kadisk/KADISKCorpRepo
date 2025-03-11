@@ -1,0 +1,17 @@
+{
+
+    "params" : [
+        "listenPort",
+        "target"
+    ],
+    "services":[
+        {
+            "namespace": "@@/proxy-service",
+            "dependency": "@/kadisk-relay-proxy.service/services/RelayProxyService",
+            "params":{
+                "listenPort":"{{listenPort}}",
+                "target": "{{target}}"
+            }
+        }
+    ]
+}

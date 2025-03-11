@@ -13,8 +13,8 @@
     },
     {
         "appType":"APP",
-        "executable":"kadisk-proxy",
-        "packageNamespace":"VirtualDesk.Module/Applications.layer/kadisk-proxy.app",
-        "supervisorSocketFileName":"kadisk-proxy.sock"
+        "executable":"kadisk-relay-proxy",
+        "packageNamespace":"VirtualDesk.Module/Applications.layer/kadisk-relay-proxy.app",
+        "supervisorSocketFileName":"kadisk-relay-proxy.sock"
     }
 ]
