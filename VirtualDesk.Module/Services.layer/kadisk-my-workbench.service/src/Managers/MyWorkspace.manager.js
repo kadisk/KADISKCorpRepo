@@ -5,6 +5,11 @@ const {
     readdir
 } = require('node:fs/promises')
 
+const os = require('os')
+
+const ConvertPathToAbsolutPath = (_path) => join(_path)
+    .replace('~', os.homedir())
+
 const ListDir = async (path) => {
     const listItems = await readdir(path, { withFileTypes: true })
     const listDir =  listItems.filter((file) => file.isDirectory() )
@@ -34,6 +39,8 @@ const MyWorkspaceManager = (params) => {
         loadMetatadaDirLib
     } = params
 
+    const absolutStorageFilePath = ConvertPathToAbsolutPath(storageFilePath)
+    const absolutRepositoryEditorDirPath = ConvertPathToAbsolutPath(repositoryEditorDirPath)
 
     const ExtractTarGz = extractTarGzLib.require("ExtractTarGz")
     const ReadJsonFile = jsonFileUtilitiesLib.require("ReadJsonFile")
@@ -43,7 +50,7 @@ const MyWorkspaceManager = (params) => {
 
     const sequelize = new Sequelize({
         dialect: 'sqlite',
-        storage: storageFilePath
+        storage: absolutStorageFilePath
     })
 
     const RepositoryModel = sequelize.define('Repository', { 
@@ -288,7 +295,7 @@ const MyWorkspaceManager = (params) => {
         if (existingNamespace) 
             throw new Error('Repository Namespace already exists')
 
-        const repositoryCodePath = resolve(repositoryEditorDirPath, repositoryNamespace)
+        const repositoryCodePath = resolve(absolutRepositoryEditorDirPath, repositoryNamespace)
         PrepareDirPath(repositoryCodePath)
         const newRepository = await RepositoryModel.create({ namespace: repositoryNamespace, repositoryCodePath})
         return newRepository

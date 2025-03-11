@@ -1,14 +1,14 @@
 {
-    "port"                                                 : "7777",
+    "port"                                                 : "8080",
     "serverName"                                           : "KadiskVirtualDeskWebAppInstance",
-    "serverManagerUrl"                                     : "http://localhost:7777/server-manager/status",
+    "serverManagerUrl"                                     : "http://localhost:8001/server-manager/status",
     "RT_ENV_GENERATED_DIR_NAME"                            : ".generated_data",
     "isWatch"                                              : true,
-    "userManagementServiceStorageFilePath"                 : "/home/kadisk/Workspaces/Organizations/Kadisk/KADISKCorpRepo/databases/databases/user-management-service.sqlite",
-    "eventManagerServiceStorageFilePath"                   : "/home/kadisk/Workspaces/Organizations/Kadisk/KADISKCorpRepo/databases/databases/event-manager-service.sqlite",
-    "instanceMonitoringManagerServiceStorageFilePath"      : "/home/kadisk/Workspaces/Organizations/Kadisk/KADISKCorpRepo/databases/databases/instance-monitoring-manager-service.sqlite",
-    "myWorkspaceManagerServiceStorageFilePath"             : "/home/kadisk/Workspaces/Organizations/Kadisk/KADISKCorpRepo/databases/databases/my-workspace-manager-service.sqlite",
-    "repositoryEditorDirPath"                              : "/home/kadisk/Workspaces/Organizations/Kadisk/KADISKCorpRepo/app-data/imported-repositories",
+    "userManagementServiceStorageFilePath"                 : "~/EcosystemState/databases/user-management-service.sqlite",
+    "eventManagerServiceStorageFilePath"                   : "~/EcosystemState/databases/event-manager-service.sqlite",
+    "instanceMonitoringManagerServiceStorageFilePath"      : "~/EcosystemState/databases/instance-monitoring-manager-service.sqlite",
+    "myWorkspaceManagerServiceStorageFilePath"             : "~/EcosystemState/databases/my-workspace-manager-service.sqlite",
+    "repositoryEditorDirPath"                              : "~/EcosystemState/app-data/imported-repositories",
     "installDataDirPath"                                   : "~/EcosystemData",
     "ecosystemDefaultsFileRelativePath"                    : "./config-files/ecosystem-defaults.json"
 }

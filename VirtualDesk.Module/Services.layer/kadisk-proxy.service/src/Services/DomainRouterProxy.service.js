@@ -10,7 +10,7 @@ const ROUTE_MAPPING_TABLE = [
         target: 'http://localhost:6001'
     },
     {
-        host: 'virtual-desk.kadisk.com.local',
+        host: 'virtual-desk.com.local',
         target: 'http://localhost:6002'
     },
     {
@@ -38,7 +38,7 @@ const CreateGetTargetByHost = (routeTableMapping) => {
 
 }
 
-const ReverseProxyService = (params) => {
+const DomainRouterProxyService = (params) => {
 
     const {
         onReady 
@@ -76,4 +76,4 @@ const ReverseProxyService = (params) => {
     return {}
 }
 
-module.exports = ReverseProxyService
+module.exports = DomainRouterProxyService

@@ -1,6 +1,13 @@
 const { Sequelize, DataTypes } = require('sequelize')
 const EventEmitter = require('node:events')
 
+const path = require("path")
+const os = require('os')
+
+const ConvertPathToAbsolutPath = (_path) => path
+    .join(_path)
+    .replace('~', os.homedir())
+
 const MAX_EVENT_LIST_LIMIT = 10
 
 const GetLocalISODateTime = () => {
@@ -19,9 +26,11 @@ const EventHubService = (params) => {
         onReady 
     } = params
 
+    const absolutStorageFilePath = ConvertPathToAbsolutPath(storageFilePath)
+
     const sequelize = new Sequelize({
             dialect: 'sqlite',
-            storage: storageFilePath
+            storage: absolutStorageFilePath
     })
 
     const EventModel = sequelize.define('EventLog', { 

@@ -1,6 +1,13 @@
 const { randomUUID } = require("crypto")
 const { resolve } = require("path")
 
+const path = require("path")
+const os = require('os')
+
+const ConvertPathToAbsolutPath = (_path) => path
+    .join(_path)
+    .replace('~', os.homedir())
+
 const InstanceConnectionStatus = Object.freeze({
     CONNECTING: "CONNECTING",
     CONNECTED : "CONNECTED",
@@ -21,9 +28,11 @@ const InstanceMonitoringManager = (params) => {
         onReady 
     } = params
 
+    const absolutStorageFilePath = ConvertPathToAbsolutPath(storageFilePath)
+
     const monitoringUUID = randomUUID()
 
-    const MonitoringDatabaseHandler = CreateMonitoringDatabaseHandler({ monitoringUUID, storageFilePath })
+    const MonitoringDatabaseHandler = CreateMonitoringDatabaseHandler({ monitoringUUID, absolutStorageFilePath })
     const ConnectionClientHandler = CreateConnectionClientHandler()
 
     //const WatchSocketDirectory       = supervisorLib.require("WatchSocketDirectory")

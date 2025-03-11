@@ -1,16 +1,14 @@
 const { Sequelize, DataTypes } = require('sequelize')
 
-
 const CreateMonitoringDatabaseHandler = ({
-    storageFilePath,
+    absolutStorageFilePath,
     monitoringUUID
 }) => {
 
     const sequelize = new Sequelize({
         dialect: 'sqlite',
-        storage: storageFilePath
+        storage: absolutStorageFilePath
     })
-
 
     const SocketFileModel = sequelize.define('SocketFile', {
         id: {

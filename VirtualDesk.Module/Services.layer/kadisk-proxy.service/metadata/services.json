@@ -1,11 +1,11 @@
 [
     {
-        "namespace": "PassThroughProxyService",
-        "path": "Services/PassThroughProxy.service",
-        "params": ["listenPort", "target" ]
+        "namespace": "TransitProxyService",
+        "path": "Services/TransitProxy.service",
+        "params": ["listenPort", "destination" ]
     },
     {
-        "namespace": "ReverseProxyService",
-        "path": "Services/ReverseProxy.service"
+        "namespace": "DomainRouterProxyService",
+        "path": "Services/DomainRouterProxy.service"
     }
 ]

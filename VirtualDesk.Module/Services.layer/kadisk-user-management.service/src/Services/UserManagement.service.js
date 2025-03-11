@@ -1,5 +1,12 @@
 const { Sequelize, DataTypes } = require('sequelize')
 
+const path = require("path")
+const os = require('os')
+
+const ConvertPathToAbsolutPath = (_path) => path
+    .join(_path)
+    .replace('~', os.homedir())
+
 const UserManagementService = (params) => {
 
     const {
@@ -7,9 +14,11 @@ const UserManagementService = (params) => {
         storageFilePath
     } = params
 
+    const absolutStorageFilePath = ConvertPathToAbsolutPath(storageFilePath)
+
     const sequelize = new Sequelize({
         dialect: 'sqlite',
-        storage: storageFilePath
+        storage: absolutStorageFilePath
     })
 
     const UserModel = sequelize.define('User', { 
