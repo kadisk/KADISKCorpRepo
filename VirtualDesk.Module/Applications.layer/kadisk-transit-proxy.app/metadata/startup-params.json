@@ -1,0 +1,4 @@
+{
+    "entryPort":"8080",
+    "targetHost": "http://localhost:8000" 
+}

@@ -4,24 +4,24 @@ const httpProxy = require('http-proxy')
 const TransitProxyService = (params) => {
 
     const {
-        listenPort,
-        destination,
+        entryPort,
+        targetHost,
         onReady 
     } = params
 
     const _Start = async () => {
 
-       console.log("`TransitProxyService [0.0.0.0:${listenPort}] -> [${destination}] ...`")
+       console.log("`TransitProxyService [0.0.0.0:${entryPort}] -> [${targetHost}] ...`")
         const proxy = httpProxy.createProxyServer({})
 
         const server = http.createServer((request, response) => {
-            proxy.web(request, response, { target: destination }, (err) => {
+            proxy.web(request, response, { target: targetHost }, (err) => {
                 response.writeHead(500, { 'Content-Type': 'text/plain' })
                 response.end(err)
             })
         })
 
-        server.listen(listenPort, () => onReady())        
+        server.listen(entryPort, () => onReady())        
     }
 
     _Start()
