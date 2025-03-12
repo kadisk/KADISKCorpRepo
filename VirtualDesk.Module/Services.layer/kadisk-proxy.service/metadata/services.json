@@ -2,10 +2,11 @@
     {
         "namespace": "TransitProxyService",
         "path": "Services/TransitProxy.service",
-        "params": ["entryPort", "targetHost" ]
+        "params": ["entryPort", "targetHost"]
     },
     {
         "namespace": "DomainRouterProxyService",
-        "path": "Services/DomainRouterProxy.service"
+        "path": "Services/DomainRouterProxy.service",
+        "params": ["entryPort"]
     }
 ]

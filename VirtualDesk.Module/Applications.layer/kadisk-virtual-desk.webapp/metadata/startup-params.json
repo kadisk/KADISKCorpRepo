@@ -1,7 +1,7 @@
 {
     "port"                                                 : "8080",
     "serverName"                                           : "KadiskVirtualDeskWebAppInstance",
-    "serverManagerUrl"                                     : "http://localhost:8001/server-manager/status",
+    "serverManagerUrl"                                     : "http://virtual-desk.local/server-manager/status",
     "RT_ENV_GENERATED_DIR_NAME"                            : ".generated_data",
     "isWatch"                                              : true,
     "userManagementServiceStorageFilePath"                 : "~/EcosystemState/databases/user-management-service.sqlite",

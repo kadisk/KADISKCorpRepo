@@ -1,8 +1,12 @@
 {
+    "params" : [ "entryPort" ],
     "services":[
         {
             "namespace": "@@/domain-router-proxy-service",
-            "dependency": "@/kadisk-proxy.service/services/DomainRouterProxyService"
+            "dependency": "@/kadisk-proxy.service/services/DomainRouterProxyService",
+            "params":{
+                "entryPort":"{{entryPort}}"
+            }
         }
     ]
 }
