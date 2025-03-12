@@ -11,7 +11,7 @@ const TransitProxyService = (params) => {
 
     const _Start = async () => {
 
-       console.log("`TransitProxyService [0.0.0.0:${entryPort}] -> [${targetHost}] ...`")
+       console.log(`TransitProxyService [0.0.0.0:${entryPort}] -> [${targetHost}] ...`)
         const proxy = httpProxy.createProxyServer({})
 
         const server = http.createServer((request, response) => {
