@@ -4,18 +4,19 @@ const httpProxy = require('http-proxy')
 
 const PORT = 80
 
+
 const ROUTE_MAPPING_TABLE = [
     {
         host: 'kadisk.com.local',
-        target: 'http://localhost:6001'
+        target: 'http://localhost:8002'
     },
     {
-        host: 'virtual-desk.com.local',
-        target: 'http://localhost:6002'
+        host: 'virtual-desk.local',
+        target: 'http://localhost:8001'
     },
     {
         host: 'worms.solutions.local',
-        target: 'http://localhost:6003'
+        target: 'http://localhost:8003'
     }
 ]
 

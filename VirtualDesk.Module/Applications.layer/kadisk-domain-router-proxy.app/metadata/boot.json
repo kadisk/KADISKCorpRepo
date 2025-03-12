@@ -1,0 +1,8 @@
+{
+    "services":[
+        {
+            "namespace": "@@/domain-router-proxy-service",
+            "dependency": "@/kadisk-proxy.service/services/DomainRouterProxyService"
+        }
+    ]
+}

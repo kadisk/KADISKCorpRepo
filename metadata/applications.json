@@ -16,5 +16,11 @@
         "executable":"kadisk-transit-proxy",
         "packageNamespace":"VirtualDesk.Module/Applications.layer/kadisk-transit-proxy.app",
         "supervisorSocketFileName":"kadisk-transit-proxy.sock"
+    },
+    {
+        "appType":"APP",
+        "executable":"kadisk-domain-router-proxy",
+        "packageNamespace":"VirtualDesk.Module/Applications.layer/kadisk-domain-router-proxy.app",
+        "supervisorSocketFileName":"kadisk-domain-router-proxy.sock"
     }
 ]
