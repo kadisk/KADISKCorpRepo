@@ -1,7 +1,7 @@
 {
     "port"                                                 : "8080",
     "serverName"                                           : "KadiskComWebAppInstance",
-    "serverManagerUrl"                                     : "http://localhost:6001/server-manager/status",
+    "serverManagerUrl"                                     : "http://kadisk.com.local/server-manager/status",
     "RT_ENV_GENERATED_DIR_NAME"                            : ".generated_data",
     "isWatch"                                              : true
 }

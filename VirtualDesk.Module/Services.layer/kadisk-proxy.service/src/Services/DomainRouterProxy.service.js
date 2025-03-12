@@ -5,18 +5,17 @@ const httpProxy = require('http-proxy')
 const ROUTE_MAPPING_TABLE = [
     {
         host: 'kadisk.com.local',
-        target: 'http://localhost:8002'
+        target: 'http://kadisk-com:8080'
     },
     {
         host: 'virtual-desk.local',
-        target: 'http://localhost:8001'
+        target: 'http://virtual-desk:8080'
     },
     {
         host: 'worms.solutions.local',
-        target: 'http://localhost:8003'
+        target: 'http://worms-solution:8080'
     }
 ]
-
 
 const CreateGetTargetByHost = (routeTableMapping) => {
 
@@ -54,7 +53,7 @@ const DomainRouterProxyService = (params) => {
 
             if(target === undefined) {
                 response.writeHead(404, { 'Content-Type': 'text/plain' })
-                response.end('Host não encontrado')
+                response.end('Host not found!')
                 return
             }
     

@@ -40,7 +40,7 @@ const getParametersWithData = (parameters:Array<any>, data:any) => {
 const getRequest = (port:number, method:string, path:string, parameters:Array<object>) => {
     //TODO Corrigir esse localhost
     const Request:any = axios.create({
-        baseURL: `http://localhost:${port===80?"":port}`
+        //baseURL: `http://localhost:${port===80?"":port}`
     })
     
     return (data:object) => {
