@@ -2,9 +2,6 @@ const http = require('http')
 const httpProxy = require('http-proxy')
 
 
-const PORT = 80
-
-
 const ROUTE_MAPPING_TABLE = [
     {
         host: 'kadisk.com.local',
@@ -41,9 +38,7 @@ const CreateGetTargetByHost = (routeTableMapping) => {
 
 const DomainRouterProxyService = (params) => {
 
-    const {
-        onReady 
-    } = params
+    const { entryPort, onReady } = params
 
     const _Start = async () => {
 
@@ -65,11 +60,11 @@ const DomainRouterProxyService = (params) => {
     
             proxy.web(request, response, { target }, (err) => {
                 response.writeHead(500, { 'Content-Type': 'text/plain' })
-                response.end(err)
+                response.end(err.message)
             })
         })
 
-        server.listen(PORT, () => onReady())        
+        server.listen(entryPort, () => onReady())        
     }
 
     _Start()
