@@ -1,3 +1,17 @@
 {
-    "entryPort": "8080"
+    "entryPort": "8080",
+    "routeMappingTable": [
+        {
+            "host": "kadisk.com.local",
+            "target": "http://kadisk-com:8080"
+        },
+        {
+            "host": "virtual-desk.local",
+            "target": "http://virtual-desk:8080"
+        },
+        {
+            "host": "worms.solutions.local",
+            "target": "http://worms-solutions:8080"
+        }
+    ]
 }

@@ -7,6 +7,6 @@
     {
         "namespace": "DomainRouterProxyService",
         "path": "Services/DomainRouterProxy.service",
-        "params": ["entryPort"]
+        "params": ["entryPort", "routeMappingTable"]
     }
 ]

@@ -1,25 +1,9 @@
 const http = require('http')
 const httpProxy = require('http-proxy')
 
+const CreateGetTargetByHost = (routeMappingTable) => {
 
-const ROUTE_MAPPING_TABLE = [
-    {
-        host: 'kadisk.com.local',
-        target: 'http://kadisk-com:8080'
-    },
-    {
-        host: 'virtual-desk.local',
-        target: 'http://virtual-desk:8080'
-    },
-    {
-        host: 'worms.solutions.local',
-        target: 'http://worms-solution:8080'
-    }
-]
-
-const CreateGetTargetByHost = (routeTableMapping) => {
-
-    const routeMapping = routeTableMapping
+    const routeMapping = routeMappingTable
     .reduce((acc, route) => {
         const { host, target } = route
         return {
@@ -37,11 +21,11 @@ const CreateGetTargetByHost = (routeTableMapping) => {
 
 const DomainRouterProxyService = (params) => {
 
-    const { entryPort, onReady } = params
+    const { entryPort, routeMappingTable, onReady } = params
 
     const _Start = async () => {
 
-        const GetTargetByHost = CreateGetTargetByHost(ROUTE_MAPPING_TABLE)
+        const GetTargetByHost = CreateGetTargetByHost(routeMappingTable)
 
         const proxy = httpProxy.createProxyServer({})
 
