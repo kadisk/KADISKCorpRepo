@@ -15,6 +15,7 @@ const LoginContainer = ({ HTTPServerManager }) => {
     
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
+    const [errorMessage, setErrorMessage] = useState("")
 
     const getAuthenticatorAPI = () =>
         GetAPI({
@@ -24,10 +25,17 @@ const LoginContainer = ({ HTTPServerManager }) => {
 
     const Authenticate = async () => {
         const api = getAuthenticatorAPI()
-        const response = await api.Authenticate({ username, password })
+        try {
+            const response = await api.Authenticate({ username, password })
+        } catch (error) {
+            setErrorMessage("Authentication failed. Please check your credentials and try again.")
+        }
     }
 
-    const handleLogin = () => Authenticate()
+    const handleLogin = () => {
+        setErrorMessage("")
+        Authenticate()
+    }
 
     const isFormValid = username !== "" && password !== ""
 
@@ -41,6 +49,11 @@ const LoginContainer = ({ HTTPServerManager }) => {
                                 <img src={logoVirtualDesk} width={200} />
                             </a>
                         </div>
+                        {errorMessage && (
+                            <div className="alert alert-danger" role="alert">
+                                {errorMessage}
+                            </div>
+                        )}
                         <form action="./" method="get">
                             <div className="mb-3">
                                 <label className="form-label">Username</label>
