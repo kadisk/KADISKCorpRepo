@@ -47,6 +47,31 @@ const DomainRouterProxyService = (params) => {
             })
         })
 
+        // Adicionando suporte a WebSocket
+        server.on('upgrade', (request, socket, head) => {
+            const host = request.headers.host.split(':')[0]
+            const target = GetTargetByHost(host)
+
+            if(target === undefined) {
+                socket.write('HTTP/1.1 404 Not Found\r\n' +
+                             'Content-Type: text/plain\r\n' +
+                             'Connection: close\r\n' +
+                             '\r\n' +
+                             'Host not found!')
+                socket.end()
+                return
+            }
+
+            proxy.ws(request, socket, head, { target }, (err) => {
+                socket.write('HTTP/1.1 500 Internal Server Error\r\n' +
+                             'Content-Type: text/plain\r\n' +
+                             'Connection: close\r\n' +
+                             '\r\n' +
+                             err.message)
+                socket.end()
+            })
+        })
+
         server.listen(entryPort, () => onReady())        
     }
 

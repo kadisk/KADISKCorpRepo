@@ -36,6 +36,16 @@ const TransitProxyService = (params) => {
             }
         })
 
+        // Handle WebSocket connections
+        server.on('upgrade', (req, socket, head) => {
+            proxy.ws(req, socket, head, { target: targetHost }, (err) => {
+                if (err) {
+                    console.error('Proxy WebSocket error:', err)
+                    socket.end('HTTP/1.1 500 Internal Server Error\r\n')
+                }
+            })
+        })
+
         server.on('error', (err) => {
             console.error('Server error:', err)
         })
