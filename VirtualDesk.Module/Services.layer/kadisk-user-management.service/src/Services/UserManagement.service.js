@@ -2,6 +2,7 @@ const { Sequelize, DataTypes } = require('sequelize')
 
 const path = require("path")
 const os = require('os')
+const crypto = require('crypto')
 
 const ConvertPathToAbsolutPath = (_path) => path
     .join(_path)
@@ -49,6 +50,10 @@ const UserManagementService = (params) => {
         return existingUser
     }
 
+    const hashPassword = (password) => {
+        return crypto.createHash('sha256').update(password).digest('hex')
+    }
+
     const CreateNewUser = async ({ name, username, email, password }) => {
         try {
             const existingUser = await _CheckUserExist({ email , username })
@@ -56,7 +61,8 @@ const UserManagementService = (params) => {
             if (existingUser) 
                 throw new Error('User with the same email or username already exists')
 
-            const newUser = await UserModel.create({ name, username, email, password })
+            const hashedPassword = hashPassword(password)
+            const newUser = await UserModel.create({ name, username, email, password: hashedPassword })
             return newUser
         } catch (error) {
             console.error('Error creating user:', error)
