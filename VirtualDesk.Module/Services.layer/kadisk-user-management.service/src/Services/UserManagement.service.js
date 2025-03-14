@@ -1,5 +1,5 @@
 const { Sequelize, DataTypes } = require('sequelize')
-
+const jwt = require('jsonwebtoken')
 const path = require("path")
 const os = require('os')
 const crypto = require('crypto')
@@ -7,6 +7,8 @@ const crypto = require('crypto')
 const ConvertPathToAbsolutPath = (_path) => path
     .join(_path)
     .replace('~', os.homedir())
+
+const SECRET_KEY = "kajsdhfg&(#Ndg"
 
 const UserManagementService = (params) => {
 
@@ -81,10 +83,38 @@ const UserManagementService = (params) => {
             throw error
         }
     }
+
+    const VerifyPasswordAndGetUser = async ({ username, password }) => {
+        try {
+            const hashedPassword = hashPassword(password)
+            const user = await UserModel.findOne({ 
+                attributes: { exclude: ['password'] },
+                where: { username, password: hashedPassword }
+            })
+            return user
+        } catch (error) {
+            console.error('Error verifying password:', error)
+            throw error
+        }
+    }
+
+    const SignToken = async ({ username, password }) => {
+        
+        const user = await VerifyPasswordAndGetUser({ username, password })
+
+        if (user){
+            const { id, username } = user
+            const token = jwt.sign({ userId: id, username }, SECRET_KEY, { expiresIn: '1h' })
+            return token
+        }else {
+            return undefined
+        }
+    }
     
     return {
         CreateNewUser,
-        ListUsers
+        ListUsers,
+        SignToken
     }
 
 }

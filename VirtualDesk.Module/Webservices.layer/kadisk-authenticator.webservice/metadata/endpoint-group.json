@@ -1,5 +1,5 @@
 {
-    "bound-params":["serverService"],
+    "bound-params":["serverService", "userManagementService"],
     "endpoints": [
         {
             "url": "/authenticator",
@@ -9,7 +9,10 @@
                 "controller": "Controllers/Authenticator.controller"
             },
             "bound-params": {
-                "serverService":"serverService"
+                "serverService":"serverService",
+                "controller-params":{
+                    "userManagementService":"userManagementService"
+                }
             }
         }
     ]
