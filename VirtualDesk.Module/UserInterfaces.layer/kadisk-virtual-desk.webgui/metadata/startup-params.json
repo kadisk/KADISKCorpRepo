@@ -1,7 +1,7 @@
 {
     "port":"8881",
-    "serverName":"KadiskComWebguiInstance",
-    "serverManagerUrl": "http://localhost:8881/server-manager/status",
+    "serverName":"KadiskVirtualDeskWebAppInstance",
+    "serverManagerUrl": "http://virtual-desk.local/server-manager/status",
     "RT_ENV_GENERATED_DIR_NAME":".generated_data",
     "isWatch": true
 }

@@ -13,6 +13,12 @@
     },
     {
         "appType":"APP",
+        "executable":"virtual-desk-gui",
+        "packageNamespace":"VirtualDesk.Module/UserInterfaces.layer/kadisk-virtual-desk.webgui",
+        "supervisorSocketFileName":"virtual-desk-gui.sock"
+    },
+    {
+        "appType":"APP",
         "executable":"kadisk-transit-proxy",
         "packageNamespace":"VirtualDesk.Module/Applications.layer/kadisk-transit-proxy.app",
         "supervisorSocketFileName":"kadisk-transit-proxy.sock"
