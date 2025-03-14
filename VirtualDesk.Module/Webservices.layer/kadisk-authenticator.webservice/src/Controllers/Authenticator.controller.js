@@ -1,4 +1,4 @@
-const UserAuthenticatorController = (params) =>{
+const AuthenticatorController = (params) =>{
 
     const Login = ({ username, password }) => {
 
@@ -9,11 +9,11 @@ const UserAuthenticatorController = (params) =>{
     }
 
     const controllerServiceObject = {
-        controllerName : "UserAuthenticatorController",
+        controllerName : "AuthenticatorController",
         Login, Logout
     }
 
     return Object.freeze(controllerServiceObject)
 }
 
-module.exports =  UserAuthenticatorController
+module.exports =  AuthenticatorController

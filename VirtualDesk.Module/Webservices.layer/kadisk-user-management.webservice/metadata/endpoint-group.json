@@ -2,17 +2,6 @@
     "bound-params":["serverService", "userManagementService"],
     "endpoints": [
         {
-            "url": "/auth",
-            "type": "controller",
-            "params": {
-                "api-template": "APIs/UserAuthenticator.api.json",
-                "controller": "Controllers/UserAuthenticator.controller"
-            },
-            "bound-params": {
-                "serverService":"serverService"
-            }
-        },
-        {
             "url": "/management",
             "type": "controller",
             "params": {

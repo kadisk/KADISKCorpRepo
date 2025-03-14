@@ -1,5 +1,5 @@
 {
-	"name": "UserAuthenticator",
+	"name": "Authenticator",
 	"endpoints": [
 		{
 			"path": "/login",
