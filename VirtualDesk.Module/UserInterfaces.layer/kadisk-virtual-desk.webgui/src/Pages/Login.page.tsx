@@ -2,9 +2,9 @@ import * as React from "react"
 
 import LoginContainer from "../Containers/Login.container"
 
-const MainPage = () => {
+const LoginPage = () => {
 
 	return <LoginContainer/>
 }
 
-export default MainPage
+export default LoginPage

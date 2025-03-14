@@ -1,4 +1,4 @@
-import MainPage from "../Pages/Main.page"
+import LoginPage from "../Pages/Login.page"
 import MyAppsPage from "../Pages/MyApps.page"
 
 import MyWorkspacePage        from "../Pages/Workbench/MyWorkspaces.page"
@@ -24,7 +24,7 @@ import HostOSSettingsPage from "../Pages/EcosystemAdministrator/HostOSSettings.p
 import ContainerManagerPage from "../Pages/EcosystemAdministrator/ContainerManager.page"
 
 export default {
-    MainPage,
+    LoginPage,
     MyStoragesPage,
     MyDatabasesPage,
     MyDatasourcesPage,

@@ -1,7 +1,7 @@
 [
     {
         "path":"/",
-        "page":"MainPage"
+        "page":"LoginPage"
     },
     {
         "path":"/apps",
