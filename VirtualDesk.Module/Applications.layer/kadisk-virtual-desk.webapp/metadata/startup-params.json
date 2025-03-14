@@ -4,11 +4,11 @@
     "serverManagerUrl"                                     : "http://virtual-desk.local/server-manager/status",
     "RT_ENV_GENERATED_DIR_NAME"                            : ".generated_data",
     "isWatch"                                              : true,
-    "userManagementServiceStorageFilePath"                 : "~/EcosystemState/databases/user-management-service.sqlite",
-    "eventManagerServiceStorageFilePath"                   : "~/EcosystemState/databases/event-manager-service.sqlite",
-    "instanceMonitoringManagerServiceStorageFilePath"      : "~/EcosystemState/databases/instance-monitoring-manager-service.sqlite",
-    "myWorkspaceManagerServiceStorageFilePath"             : "~/EcosystemState/databases/my-workspace-manager-service.sqlite",
-    "repositoryEditorDirPath"                              : "~/EcosystemState/app-data/imported-repositories",
+    "userManagementServiceStorageFilePath"                 : "/local-databases/user-management-service.sqlite",
+    "eventManagerServiceStorageFilePath"                   : "/local-databases/event-manager-service.sqlite",
+    "instanceMonitoringManagerServiceStorageFilePath"      : "/local-databases/instance-monitoring-manager-service.sqlite",
+    "myWorkspaceManagerServiceStorageFilePath"             : "/local-databases/my-workspace-manager-service.sqlite",
+    "repositoryEditorDirPath"                              : "/local-app-data/imported-repositories",
     "installDataDirPath"                                   : "~/EcosystemData",
     "ecosystemDefaultsFileRelativePath"                    : "./config-files/ecosystem-defaults.json"
 }
