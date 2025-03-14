@@ -1,7 +1,7 @@
 const AuthenticatorController = (params) =>{
 
-    const Login = ({ username, password }) => {
-
+    const Authenticate = ({ username, password }) => {
+        console.log({ username, password })
     }
 
     const Logout = () => {
@@ -10,7 +10,8 @@ const AuthenticatorController = (params) =>{
 
     const controllerServiceObject = {
         controllerName : "AuthenticatorController",
-        Login, Logout
+        Authenticate,
+        Logout
     }
 
     return Object.freeze(controllerServiceObject)

@@ -104,6 +104,12 @@
             }
         },
         {
+            "dependency": "@/kadisk-authenticator.webservice/endpoint-group",
+            "bound-params":{
+                "serverService": "@@/server-service"
+            }
+        },
+        {
             "dependency": "@/kadisk-ecosystem-administrator.webservice/endpoint-group",
             "bound-params":{
                 "serverService": "@@/server-service",

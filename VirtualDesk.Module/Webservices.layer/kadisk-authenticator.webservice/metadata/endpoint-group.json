@@ -1,5 +1,5 @@
 {
-    "bound-params":["serverService", "userManagementService"],
+    "bound-params":["serverService"],
     "endpoints": [
         {
             "url": "/authenticator",

@@ -2,9 +2,9 @@
 	"name": "Authenticator",
 	"endpoints": [
 		{
-			"path": "/login",
+			"path": "/authenticate",
 			"method": "POST",
-			"summary": "Login",
+			"summary": "Authenticate",
 			"parameters": [
 				{
 					"name": "username",
