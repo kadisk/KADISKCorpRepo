@@ -8,7 +8,7 @@ const AuthenticatorController = (params) => {
     const Authenticate = async ({ username, password }) => {
         const token = await userManagementService.SignToken({ username, password })
         if (token){
-            return token
+            return { token }
         }else {
             throw new Error('Invalid credentials')
         }
@@ -18,10 +18,15 @@ const AuthenticatorController = (params) => {
     
     }
 
+    const GetUserData = async () => {
+        console.log('GetUserData')
+    }
+
     const controllerServiceObject = {
         controllerName : "AuthenticatorController",
         Authenticate,
-        Logout
+        Logout,
+        GetUserData
     }
 
     return Object.freeze(controllerServiceObject)

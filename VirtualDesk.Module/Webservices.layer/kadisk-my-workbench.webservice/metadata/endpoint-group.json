@@ -4,11 +4,13 @@
         "myWorkspaceManagerService",
         "containerManagerService"
     ],
+    "params": [ "needsAuth" ],
     "endpoints": [
         {
             "url": "/my-workspace",
             "type": "controller",
             "params": {
+                "needsAuth": "needsAuth",
                 "api-template": "APIs/MyWorkspace.api.json",
                 "controller": "Controllers/MyWorkspace.controller"
             },
@@ -23,6 +25,7 @@
             "url": "/my-ecosystem-console",
             "type": "controller",
             "params": {
+                "needsAuth": "needsAuth",
                 "api-template": "APIs/MyEcosystemConsole.api.json",
                 "controller": "Controllers/MyEcosystemConsole.controller"
             },

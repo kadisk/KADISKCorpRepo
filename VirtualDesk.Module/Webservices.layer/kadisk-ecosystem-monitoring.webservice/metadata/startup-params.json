@@ -1,8 +1,0 @@
-{
-    "port":"8745",
-    "serverName":"KadiskEcosystemMonitoringWebService",
-    "ecosystemDefaultsFileRelativePath":"./config-files/ecosystem-defaults.json",
-    "instanceMonitoringManagerServiceStorageFilePath": "/local-databases/instance-monitoring-manager-service.sqlite",
-    "installDataDirPath":"~/EcosystemData"
-}
-

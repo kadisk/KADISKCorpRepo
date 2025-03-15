@@ -1,6 +1,5 @@
 import * as React             from "react"
 import {useEffect}            from "react"
-import { Dimmer, Loader}      from "semantic-ui-react"
 //@ts-ignore
 import { Routes, BrowserRouter, HashRouter, Route }  from "react-router-dom"
 import { connect }            from "react-redux"
@@ -9,11 +8,15 @@ import axios                  from "axios"
 
 import HTTPServerManagerActionsCreator from "../Actions/HTTPServerManager.actionsCreator"
 
-const fetchHTTPServersRunning = async () => {
+import GetAPI from "../Utils/GetAPI"
+
+const FetchHTTPServersRunning = async () => {
     // @ts-ignore
     const {data} = await axios.get(process.env.HTTP_SERVER_MANAGER_ENDPOINT)
     return data
 }
+
+const GetToken = () => localStorage.getItem("token")
 
 type AppContainerProps  = {
 	routesConfig: any
@@ -33,17 +36,7 @@ const GetRouteObject = (routesConfig:any[], mapper:any) =>
 		return {path, element:<Component/>}
 	})
 
-interface AppRoutesProps {
-	routesConfig:any[]
-	mapper:any
-}
 
-const AppRoutes = ({routesConfig, mapper}:AppRoutesProps) => {
-	const routesObject = GetRouteObject(routesConfig, mapper)
-	//const routes = useRoutes(routesObject)
-	console.log(routesObject)
-	return 
-}
 
 const AppContainer = ({
 	routesConfig,
@@ -53,11 +46,39 @@ const AppContainer = ({
 }:AppContainerProps) => {
 
 	useEffect(()=>{
-        fetchHTTPServersRunning()
+        FetchHTTPServersRunning()
         .then(webServersRunning => SetHTTPServersRunning(webServersRunning))
     }, [])
+
+
+	useEffect(()=>{
+        if(hasServersRunning()){
+			const token = GetToken()
+			if(token){
+				//axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+				fetchUserData()
+			}
+		}
+    }, [HTTPServerManager])
+
+	const getAuthenticatorAPI = () => 
+        GetAPI({ 
+            apiName:"Authenticator",  
+            serverManagerInformation: HTTPServerManager
+        })
+
+
+	const fetchUserData = async () => {
+		const api = getAuthenticatorAPI()
+        const response = await getAuthenticatorAPI().GetUserData()
+
+		const userData = response.data
+		console.log(userData)
+	}
 	
-	return HTTPServerManager.list_web_servers_running.length > 0 
+	const hasServersRunning = () => HTTPServerManager.list_web_servers_running.length > 0
+
+	return hasServersRunning()
 		? <HashRouter>
 				<Routes>
 				{

@@ -1,10 +1,12 @@
 {
+    "params": ["needsAuth"],
     "bound-params":["serverService", "userManagementService"],
     "endpoints": [
         {
             "url": "/management",
             "type": "controller",
             "params": {
+                "needsAuth": "needsAuth",
                 "api-template": "APIs/UserManagement.api.json",
                 "controller": "Controllers/UserManagement.controller"
             },

@@ -4,12 +4,13 @@
         "eventHubService",
         "instanceMonitoringManagerService"
     ],
-    "params": [ "ecosystemDefaultsFileRelativePath" ],
+    "params": [ "ecosystemDefaultsFileRelativePath", "needsAuth" ],
     "endpoints": [
         {
             "url": "/notifications",
             "type": "controller",
             "params": {
+                "needsAuth": "needsAuth",
                 "api-template": "APIs/EventHistory.api.json",
                 "controller": "Controllers/EventHistory.controller"
             },
@@ -23,6 +24,7 @@
             "url":"/instance-monitoring",
             "type":"controller",
             "params":{
+                "needsAuth": "needsAuth",
                 "api-template": "APIs/InstanceMonitoring.api.json",
                 "controller": "Controllers/InstanceMonitoring.controller",
                 "controller-params":{

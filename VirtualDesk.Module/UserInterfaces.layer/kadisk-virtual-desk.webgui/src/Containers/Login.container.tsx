@@ -27,6 +27,10 @@ const LoginContainer = ({ HTTPServerManager }) => {
         const api = getAuthenticatorAPI()
         try {
             const response = await api.Authenticate({ username, password })
+            const { token } = response.data
+            localStorage.setItem("token", token)
+            document.cookie = `token=${token}; path=/;`
+            window.location.href = "#apps"
         } catch (error) {
             setErrorMessage("Authentication failed. Please check your credentials and try again.")
         }

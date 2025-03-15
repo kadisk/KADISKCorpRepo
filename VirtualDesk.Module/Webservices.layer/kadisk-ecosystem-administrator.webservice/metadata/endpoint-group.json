@@ -1,5 +1,5 @@
 {
-    "params": ["ecosystemDefaultsFileRelativePath"],
+    "params": ["ecosystemDefaultsFileRelativePath", "needsAuth"],
     "bound-params":[
         "serverService", 
         "ecosystemdataHandlerService",
@@ -13,6 +13,7 @@
             "url": "/default-params",
             "type": "controller",
             "params": {
+                "needsAuth": "needsAuth",
                 "api-template": "APIs/DefaultParameters.api.json",
                 "controller": "Controllers/DefaultParameters.controller",
                 "controller-params":{
@@ -31,6 +32,7 @@
             "url": "/repository-settings",
             "type": "controller",
             "params": {
+                "needsAuth": "needsAuth",
                 "api-template": "APIs/RepositorySettings.api.json",
                 "controller": "Controllers/RepositorySettings.controller",
                 "controller-params":{
@@ -51,6 +53,7 @@
             "url": "/container-manager",
             "type": "controller",
             "params": {
+                "needsAuth": "needsAuth",
                 "api-template": "APIs/ContainerManager.api.json",
                 "controller": "Controllers/ContainerManager.controller"
             },
