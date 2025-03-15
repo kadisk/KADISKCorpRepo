@@ -98,6 +98,9 @@
         },
         {
             "dependency": "@/kadisk-user-management.webservice/endpoint-group",
+            "params":{
+                "needsAuth": true
+            },
             "bound-params":{
                 "serverService": "@@/server-service",
                 "userManagementService": "@@/user-management-service"
@@ -121,7 +124,8 @@
                 "containerManagerService":"@@/container-manager-service"
             },
             "params":{
-                "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}"
+                "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}",
+                "needsAuth": true
             }
         },
         {
@@ -132,7 +136,8 @@
                 "instanceMonitoringManagerService": "@@/instance-monitoring-manager-service"
             },
             "params":{
-                "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}"
+                "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}",
+                "needsAuth": true
             }
         },
         {
@@ -141,6 +146,9 @@
                 "serverService": "@@/server-service",
                 "myWorkspaceManagerService":"@@/my-workspace-manager-service",
                 "containerManagerService":"@@/container-manager-service"
+            },
+            "params":{
+                "needsAuth": true
             }
         }
         
