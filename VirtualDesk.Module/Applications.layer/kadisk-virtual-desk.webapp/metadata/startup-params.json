@@ -10,5 +10,6 @@
     "myWorkspaceManagerServiceStorageFilePath"             : "/local-databases/my-workspace-manager-service.sqlite",
     "repositoryEditorDirPath"                              : "/local-app-data/imported-repositories",
     "installDataDirPath"                                   : "~/EcosystemData",
-    "ecosystemDefaultsFileRelativePath"                    : "./config-files/ecosystem-defaults.json"
+    "ecosystemDefaultsFileRelativePath"                    : "./config-files/ecosystem-defaults.json",
+    "secretKey"                                            : "kajsdhfg&(#Ndg"
 }

@@ -11,7 +11,7 @@
 ## Reinstalar KadiskCorpRepo localmente
  ```bash
 rm -rf ~/EcosystemData/
-mywizard install --profile release-standard
+mywizard install --profile localfs-release-standard
 repo register source KADISKCorpRepo LOCAL_FS --localPath /home/kadisk/Workspaces/Organizations/Kadisk/KADISKCorpRepo
 repo install KADISKCorpRepo LOCAL_FS --executables "kadisk-com" "virtual-desk" "virtual-desk-gui" "kadisk-transit-proxy" "kadisk-domain-router-proxy"
  ```
