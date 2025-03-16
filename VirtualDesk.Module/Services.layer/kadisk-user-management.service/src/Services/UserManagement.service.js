@@ -8,11 +8,11 @@ const ConvertPathToAbsolutPath = (_path) => path
     .join(_path)
     .replace('~', os.homedir())
 
-const SECRET_KEY = "kajsdhfg&(#Ndg"
 
 const UserManagementService = (params) => {
 
     const {
+        secretKey,
         onReady,
         storageFilePath
     } = params
@@ -104,7 +104,7 @@ const UserManagementService = (params) => {
 
         if (user){
             const { id, username } = user
-            const token = jwt.sign({ userId: id, username }, SECRET_KEY, { expiresIn: '1h' })
+            const token = jwt.sign({ userId: id, username }, secretKey, { expiresIn: '1h' })
             return token
         }else {
             return undefined

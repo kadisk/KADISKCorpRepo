@@ -11,7 +11,8 @@
         "myWorkspaceManagerServiceStorageFilePath",
         "repositoryEditorDirPath",
         "installDataDirPath",
-        "ecosystemDefaultsFileRelativePath"
+        "ecosystemDefaultsFileRelativePath",
+        "secretKey"
     ],
     "services": [
         {
@@ -27,13 +28,24 @@
             "params":{
                 "name":"{{serverName}}",
                 "port": "{{port}}"
+            },
+            "bound-params":{
+                "authenticationService": "@@/jwt-authentication-service"
+            }
+        },
+        {
+            "namespace": "@@/jwt-authentication-service",
+            "dependency": "@/server-manager.service/services/JWTAuthenticationService",
+            "params":{
+                "secretKey":"{{secretKey}}"
             }
         },
         {
             "namespace": "@@/user-management-service",
             "dependency": "@/kadisk-user-management.service/services/UserManagementService",
             "params":{
-                "storageFilePath":"{{userManagementServiceStorageFilePath}}"
+                "storageFilePath":"{{userManagementServiceStorageFilePath}}",
+                "secretKey":"{{secretKey}}"
             }
         },
         {
