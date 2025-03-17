@@ -5,7 +5,7 @@ const AuthenticatorController = (params) => {
         userManagementService
     } = params
 
-    const Authenticate = async ({ username, password }) => {
+    const GetToken = async ({ username, password }) => {
         const token = await userManagementService.SignToken({ username, password })
         if (token){
             return { token }
@@ -14,19 +14,10 @@ const AuthenticatorController = (params) => {
         }
     }
 
-    const Logout = () => {
-    
-    }
-
-    const GetUserData = async () => {
-        console.log('GetUserData')
-    }
 
     const controllerServiceObject = {
         controllerName : "AuthenticatorController",
-        Authenticate,
-        Logout,
-        GetUserData
+        GetToken
     }
 
     return Object.freeze(controllerServiceObject)

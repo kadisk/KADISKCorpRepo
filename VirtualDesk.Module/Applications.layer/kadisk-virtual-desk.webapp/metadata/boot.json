@@ -120,6 +120,9 @@
         },
         {
             "dependency": "@/kadisk-authenticator.webservice/endpoint-group",
+            "params":{
+                "needsAuth": true
+            },
             "bound-params":{
                 "serverService": "@@/server-service",
                 "userManagementService": "@@/user-management-service"

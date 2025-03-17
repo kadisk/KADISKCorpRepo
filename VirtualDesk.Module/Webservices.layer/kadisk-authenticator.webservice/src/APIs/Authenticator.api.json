@@ -2,9 +2,9 @@
 	"name": "Authenticator",
 	"endpoints": [
 		{
-			"path": "/authenticate",
+			"path": "/token",
 			"method": "POST",
-			"summary": "Authenticate",
+			"summary": "GetToken",
 			"parameters": [
 				{
 					"name": "username",
@@ -19,16 +19,6 @@
 					"required": true
 				}
 			]
-		},
-		{
-			"path": "/user",
-			"method": "GET",
-			"summary": "GetUserData"
-		},
-		{
-			"path": "/logout",
-			"method": "POST",
-			"summary": "Logout"
 		}
 	]
 }

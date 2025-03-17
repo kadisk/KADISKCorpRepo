@@ -26,7 +26,7 @@ const LoginContainer = ({ HTTPServerManager }) => {
     const Authenticate = async () => {
         const api = getAuthenticatorAPI()
         try {
-            const response = await api.Authenticate({ username, password })
+            const response = await api.GetToken({ username, password })
             const { token } = response.data
             localStorage.setItem("token", token)
             document.cookie = `token=${token}; path=/;`

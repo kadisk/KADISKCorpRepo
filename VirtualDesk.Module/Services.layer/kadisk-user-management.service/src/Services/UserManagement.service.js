@@ -43,6 +43,7 @@ const UserManagementService = (params) => {
 
     _Start()
 
+
     const _CheckUserExist = async ({ email , username }) => {
         const existingUser = await UserModel.findOne({
             where: {
@@ -110,11 +111,25 @@ const UserManagementService = (params) => {
             return undefined
         }
     }
+
+    const GetUser = async (id) => {
+        try {
+            const user = await UserModel.findOne({
+                attributes: { exclude: ['password'] },
+                where: { id }
+            })
+            return user
+        } catch (error) {
+            console.error('Error getting user:', error)
+            throw error
+        }
+    }
     
     return {
         CreateNewUser,
         ListUsers,
-        SignToken
+        SignToken,
+        GetUser
     }
 
 }

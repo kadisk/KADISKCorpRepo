@@ -1,5 +1,5 @@
 import * as React             from "react"
-import {useEffect}            from "react"
+import {useEffect, useState}  from "react"
 //@ts-ignore
 import { Routes, BrowserRouter, HashRouter, Route }  from "react-router-dom"
 import { connect }            from "react-redux"
@@ -45,6 +45,8 @@ const AppContainer = ({
 	SetHTTPServersRunning
 }:AppContainerProps) => {
 
+	const [userData, setUserData] = useState()
+
 	useEffect(()=>{
         FetchHTTPServersRunning()
         .then(webServersRunning => SetHTTPServersRunning(webServersRunning))
@@ -55,25 +57,33 @@ const AppContainer = ({
         if(hasServersRunning()){
 			const token = GetToken()
 			if(token){
-				//axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
 				fetchUserData()
 			}
 		}
     }, [HTTPServerManager])
 
-	const getAuthenticatorAPI = () => 
+	const getUserInformationAPI = () => 
         GetAPI({ 
-            apiName:"Authenticator",  
+            apiName:"UserInformation",  
             serverManagerInformation: HTTPServerManager
         })
 
 
 	const fetchUserData = async () => {
-		const api = getAuthenticatorAPI()
-        const response = await getAuthenticatorAPI().GetUserData()
+		try {
+			const response = await getUserInformationAPI().GetUserData()
+			const userData = response.data
+			setUserData(userData)
 
-		const userData = response.data
-		console.log(userData)
+			if (window.location.hash === "" || window.location.hash === "#") {
+				window.location.href = "#apps"
+			}
+
+		} catch (error) {
+			if (window.location.hash !== "" && window.location.hash !== "#" ) {
+				window.location.href = "#"
+			}
+		}
 	}
 	
 	const hasServersRunning = () => HTTPServerManager.list_web_servers_running.length > 0

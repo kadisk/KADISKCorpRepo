@@ -1,0 +1,15 @@
+{
+	"name": "UserInformation",
+	"endpoints": [
+		{
+			"path": "/user",
+			"method": "GET",
+			"summary": "GetUserData"
+		},
+		{
+			"path": "/logout",
+			"method": "POST",
+			"summary": "Logout"
+		}
+	]
+}
