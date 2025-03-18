@@ -8,6 +8,9 @@ const ConvertPathToAbsolutPath = (_path) => path
     .join(_path)
     .replace('~', os.homedir())
 
+// Constantes para o usuário padrão
+const DEFAULT_USER = 'su'
+const DEFAULT_PASSWORD = 'su'
 
 const UserManagementService = (params) => {
 
@@ -35,6 +38,13 @@ const UserManagementService = (params) => {
         try {
             await sequelize.authenticate()
             await sequelize.sync()
+
+            const userCount = await UserModel.count()
+            if (userCount === 0) {
+                const hashedPassword = hashPassword(DEFAULT_PASSWORD)
+                await UserModel.create({ name: DEFAULT_USER, username: DEFAULT_USER, email: '', password: hashedPassword })
+            }
+
             onReady()
         } catch (error) {
             console.error('Unable to connect to the database:', error)
@@ -42,7 +52,6 @@ const UserManagementService = (params) => {
     }
 
     _Start()
-
 
     const _CheckUserExist = async ({ email , username }) => {
         const existingUser = await UserModel.findOne({

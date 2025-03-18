@@ -10,9 +10,9 @@
             "url": "/my-workspace",
             "type": "controller",
             "params": {
-                "needsAuth": "needsAuth",
                 "api-template": "APIs/MyWorkspace.api.json",
-                "controller": "Controllers/MyWorkspace.controller"
+                "controller": "Controllers/MyWorkspace.controller",
+                "needsAuth": "needsAuth"
             },
             "bound-params": {
                 "serverService":"serverService",
@@ -25,9 +25,9 @@
             "url": "/my-ecosystem-console",
             "type": "controller",
             "params": {
-                "needsAuth": "needsAuth",
                 "api-template": "APIs/MyEcosystemConsole.api.json",
-                "controller": "Controllers/MyEcosystemConsole.controller"
+                "controller": "Controllers/MyEcosystemConsole.controller",
+                "needsAuth": "needsAuth"
             },
             "bound-params": {
                 "serverService":"serverService",
