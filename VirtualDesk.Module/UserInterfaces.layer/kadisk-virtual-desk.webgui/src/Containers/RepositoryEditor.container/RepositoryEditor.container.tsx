@@ -122,7 +122,7 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
         <>
             <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top" style={{ zIndex: 9999 }}>
                 <div className="container-fluid">
-                    <a className="navbar-brand d-flex align-items-center p-0" href="#/apps">
+                    <a className="navbar-brand d-flex align-items-center p-0" href="#/my-services">
                         <img src={logoVirtualDesk2} width={150} className="me-2" />
                         <div className="ps-3 d-flex align-items-start">
                             <div>

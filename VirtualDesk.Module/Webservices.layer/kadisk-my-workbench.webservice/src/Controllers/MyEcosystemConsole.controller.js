@@ -41,8 +41,8 @@ const MyEcosystemConsoleController = (params) => {
         CreateNewContainer
     } = containerManagerService
 
-    const ActivateMyEcosystemInstance = async () => {
-
+    const ActivateMyEcosystemInstance = async ({ authenticationData }) => {
+        const { userId, username } = authenticationData
         await BuildImageFromDockerfileString({
             dockerfileString: STANDARD_ECOSYSTEM_META_PLATFORM_DOCKERFILE_CONTENT, 
             imageTag: "myecosystem:latest"
@@ -50,7 +50,7 @@ const MyEcosystemConsoleController = (params) => {
 
         const container = await CreateNewContainer({
             imageName: "myecosystem:latest",
-            containerName: "myecosystem-01-container"    
+            containerName: `${username}-ecosystem-container`    
         })
 
         console.log(container)

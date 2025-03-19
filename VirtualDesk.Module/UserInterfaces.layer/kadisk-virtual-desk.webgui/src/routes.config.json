@@ -4,8 +4,8 @@
         "page":"LoginPage"
     },
     {
-        "path":"/apps",
-        "page":"MyAppsPage"
+        "path":"/my-services",
+        "page":"MyServicesPage"
     },
     {
         "path":"/my-workspace",

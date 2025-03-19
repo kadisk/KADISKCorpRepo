@@ -63,7 +63,7 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
                 <PageHeader>
                     <div className="col">
                         <div className="page-pretitle">Workbench</div>
-                        <h2 className="page-title">My Workspace</h2>
+                        <h2 className="page-title">My Workspaces</h2>
                     </div>
                     
                     {

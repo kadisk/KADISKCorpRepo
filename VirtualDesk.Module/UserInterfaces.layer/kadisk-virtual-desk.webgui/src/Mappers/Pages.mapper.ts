@@ -1,5 +1,5 @@
 import LoginPage from "../Pages/Login.page"
-import MyAppsPage from "../Pages/MyApps.page"
+import MyServicesPage from "../Pages/MyServices.page"
 
 import MyWorkspacePage        from "../Pages/Workbench/MyWorkspaces.page"
 import RepositoryEditorPage from "../Pages/Workbench/MyWorkspaces/RepositoryEditor.page"
@@ -31,7 +31,7 @@ export default {
     MyEcosystemConsolePage,
     UserAdministrationPage,
     HTTPProxyManagerPage,
-    MyAppsPage,
+    MyServicesPage,
     EventHistoryPage,
     InstanceMonitoringPage,
     InstanceMonitorPage,
