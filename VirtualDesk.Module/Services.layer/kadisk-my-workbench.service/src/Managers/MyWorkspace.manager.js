@@ -293,13 +293,13 @@ const MyWorkspaceManager = (params) => {
 
     const _CheckRepositoryNamespaceExist = (namespace) => RepositoryModel.findOne({ where: { namespace } })
 
-    const CreateNewRepository = async ({userId, repositoryNamespace}) => {
+    const CreateNewRepository = async ({userId, username, repositoryNamespace}) => {
         const existingNamespace = await _CheckRepositoryNamespaceExist(repositoryNamespace)
 
         if (existingNamespace) 
             throw new Error('Repository Namespace already exists')
 
-        const repositoryCodePath = resolve(absolutRepositoryEditorDirPath, repositoryNamespace)
+        const repositoryCodePath = resolve(absolutRepositoryEditorDirPath, username, repositoryNamespace)
         PrepareDirPath(repositoryCodePath)
         const newRepository = await RepositoryModel.create({ namespace: repositoryNamespace, userId, repositoryCodePath})
         return newRepository
@@ -312,9 +312,9 @@ const MyWorkspaceManager = (params) => {
         where: { userId }
     })
 
-    const ImportRepository = async ({ repositoryNamespace, sourceCodeURL, userId }) => {
+    const ImportRepository = async ({ repositoryNamespace, sourceCodeURL, userId, username }) => {
 
-        const repositoryCreatedData = await CreateNewRepository({userId, repositoryNamespace})
+        const repositoryCreatedData = await CreateNewRepository({ userId, username, repositoryNamespace})
         const { repositoryCodePath } = repositoryCreatedData
         const filePath = await DownloadFile({ 
             url: sourceCodeURL, 

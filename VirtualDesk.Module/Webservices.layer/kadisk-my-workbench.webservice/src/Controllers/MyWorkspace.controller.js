@@ -5,8 +5,8 @@ const MyWorkspaceController = (params) => {
     } = params
 
     const CreateNewRepository = (repositoryNamespace, { authenticationData }) => {
-        const { userId } = authenticationData
-        return myWorkspaceManagerService.CreateNewRepository({ userId, repositoryNamespace })
+        const { userId, username } = authenticationData
+        return myWorkspaceManagerService.CreateNewRepository({ userId, username, repositoryNamespace })
     }
 
     const ListRepositories = ({ authenticationData }) => {
@@ -15,8 +15,8 @@ const MyWorkspaceController = (params) => {
     }
 
     const ImportRepository = ({ repositoryNamespace, sourceCodeURL }, { authenticationData }) => {
-        const { userId } = authenticationData
-        return myWorkspaceManagerService.ImportRepository({ repositoryNamespace, sourceCodeURL, userId })
+        const { userId, username } = authenticationData
+        return myWorkspaceManagerService.ImportRepository({ userId, username, repositoryNamespace, sourceCodeURL })
     }
     
     const controllerServiceObject = {
