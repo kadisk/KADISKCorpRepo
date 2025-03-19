@@ -28,10 +28,25 @@ const UserManagementService = (params) => {
     })
 
     const UserModel = sequelize.define('User', { 
-            name: DataTypes.STRING,
-            username: DataTypes.STRING,
-            email: DataTypes.STRING,
-            password: DataTypes.STRING
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true
+        },
+        username: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true,
+            validate: {
+                is: /^[a-zA-Z][a-zA-Z0-9_]*$/
+            }
+        },
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true
+        },
+        password: DataTypes.STRING
     })
 
     const _Start = async () => {
@@ -42,7 +57,7 @@ const UserManagementService = (params) => {
             const userCount = await UserModel.count()
             if (userCount === 0) {
                 const hashedPassword = hashPassword(DEFAULT_PASSWORD)
-                await UserModel.create({ name: DEFAULT_USER, username: DEFAULT_USER, email: '', password: hashedPassword })
+                await UserModel.create({ name: DEFAULT_USER, username: DEFAULT_USER, email: 'su@su', password: hashedPassword })
             }
 
             onReady()
