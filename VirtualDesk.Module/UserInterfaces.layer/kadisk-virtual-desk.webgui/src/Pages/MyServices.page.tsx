@@ -5,7 +5,7 @@ import MyServicesContainer from "../Containers/MyServices.container"
 
 const MyServicesPage = () =>
     <DefaultPage>
-        <div className="page-body d-flex flex-column justify-content-center align-items-center text-center py-5">
+        <div className="page-body">
             <MyServicesContainer/>
         </div>
     </DefaultPage>
