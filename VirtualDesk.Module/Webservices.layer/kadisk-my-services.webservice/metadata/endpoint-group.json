@@ -1,0 +1,20 @@
+{
+    "bound-params":[
+        "serverService"
+    ],
+    "params": [ "needsAuth" ],
+    "endpoints": [
+        {
+            "url": "/repository-manager",
+            "type": "controller",
+            "params": {
+                "api-template": "APIs/RepositoryManager.api.json",
+                "controller": "Controllers/RepositoryManager.controller",
+                "needsAuth": "needsAuth"
+            },
+            "bound-params": {
+                "serverService":"serverService"
+            }
+        }
+    ]
+}

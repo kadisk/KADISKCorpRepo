@@ -1,0 +1,10 @@
+{
+	"name": "RepositoryManager",
+	"endpoints": [
+		{
+			"path": "/upload-repository",
+			"method": "POST",
+			"summary": "UploadRepository"
+		}
+	]
+}
