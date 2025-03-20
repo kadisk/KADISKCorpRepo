@@ -7,9 +7,9 @@ import { bindActionCreators } from "redux"
 import WelcomeMyServices from "./WelcomeMyServices"
 import ImportRepositoryModal from "./ImportRepository.modal"
 
-const DEFAULT_MODE             = Symbol()
-const IMPORT_SELECT_MODE       = Symbol()
-const IMPORTING_MODE           = Symbol()
+const DEFAULT_MODE       = Symbol()
+const IMPORT_SELECT_MODE = Symbol()
+const IMPORTING_MODE     = Symbol()
 
 
 const MyServicesContainer = () => {
