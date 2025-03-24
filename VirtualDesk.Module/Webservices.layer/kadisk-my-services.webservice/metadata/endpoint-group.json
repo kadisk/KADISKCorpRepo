@@ -2,15 +2,18 @@
     "bound-params":[
         "serverService"
     ],
-    "params": [ "needsAuth" ],
+    "params": [ "needsAuth", "uploadDirPath" ],
     "endpoints": [
         {
-            "url": "/repository-manager",
+            "url": "/repository-import-manager",
             "type": "controller",
             "params": {
-                "api-template": "APIs/RepositoryManager.api.json",
-                "controller": "Controllers/RepositoryManager.controller",
-                "needsAuth": "needsAuth"
+                "api-template": "APIs/RepositoryImportManager.api.json",
+                "controller": "Controllers/RepositoryImportManager.controller",
+                "needsAuth": "needsAuth",
+                "controller-params":{
+                    "uploadDirPath": "{{uploadDirPath}}"
+                }
             },
             "bound-params": {
                 "serverService":"serverService"

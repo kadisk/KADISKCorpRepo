@@ -1,6 +1,9 @@
-import * as React from "react"
-import { useForm, Controller } from "react-hook-form"
-import { useState, useEffect } from "react"
+import * as React             from "react"
+import {useEffect, useState}  from "react"
+import { connect }            from "react-redux"
+import { bindActionCreators } from "redux"
+
+import GetAPI from "../../Utils/GetAPI"
 
 const UPLOAD_LOCAL_IMPORT_TYPE   = Symbol()
 const GITHUB_RELEASE_IMPORT_TYPE = Symbol()
@@ -8,20 +11,27 @@ const GIT_CLONE_IMPORT_TYPE      = Symbol()
 
 const ImportRepositoryModal = ({
     onClose,
-    onImport
+    onImport,
+    HTTPServerManager
 }) => {
-
-    const [ readyForCreate, setReadyForCreate ] = useState(false)
-    const [ formValues, setFormValues ] = useState({})
+    
+    const [ readyForImport, setReadyForCreate ] = useState(false)
+    const [ formValues, setFormValues ] = useState<any>({})
     const [ recordingMode, setRecordingMode ] = useState(false)
 
     const [ importType,  setImportType] = useState(UPLOAD_LOCAL_IMPORT_TYPE)
 
-    const { 
-        getValues, 
-        reset, 
-        control 
-    } = useForm()
+    const [ repositoryFileForUpload, setRepositoryFileForUpload ] = useState()
+
+    useEffect(() => {
+
+        if(formValuesIsValid()){
+            if(importType === UPLOAD_LOCAL_IMPORT_TYPE && repositoryFileForUpload ){
+                setReadyForCreate(true)
+            }
+        }
+
+    }, [formValues])
 
     const formValuesIsValid = () => {
         const nTotal = Object.keys(formValues).length
@@ -32,30 +42,38 @@ const ImportRepositoryModal = ({
         return false
     }
 
-    useEffect(() => {
+    const getRepositoryImportManagerAPI = () => 
+        GetAPI({ 
+            apiName:"RepositoryImportManager",  
+            serverManagerInformation: HTTPServerManager
+        })
 
-        if(formValuesIsValid()){
-            setReadyForCreate(true)
-        }
+    const handleChangeForm = (event) => {
+        const { name, value } = event.target
+        setFormValues(prevValues => ({ ...prevValues, [name]: value }))
+    }
 
-    }, [formValues])
-
-    const createNewRepo = async() => {
+    const handleImportRepository = () => {
         setRecordingMode(true)
-        onImport(formValues)
+        const api = getRepositoryImportManagerAPI()
+
+        const { repositoryNamespace } = formValues
+
+        switch(importType){
+            case UPLOAD_LOCAL_IMPORT_TYPE:
+                api.UploadRepository({
+                    repositoryNamespace,
+                    repositoryFile: repositoryFileForUpload
+                })
+                break
+            default:
+                throw "erro generico"
+        }
     }
 
-    const handleChangeForm = () => setFormValues(getValues())
-
-    const handleCreateNewRepo = () => createNewRepo()
-
-    const isSelected = (_importType) => importType === _importType
-
-    const createHandleType = (_importType) => () => setImportType(_importType)
-
-    const handleFileChange = (event) => {
-        //setSelectedFile(event.target.files[0])
-    }
+    const createHandleType    = (_importType) => () => setImportType(_importType)
+    const isSelected          = (_importType) => importType === _importType
+    const handleFileChange    = (event)       => setRepositoryFileForUpload(event.target.files[0])
 
     return <div className="modal modal-blur show" role="dialog" aria-hidden="false" style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.8)" }}>
         <div className="modal-dialog modal-xl" role="document">
@@ -65,15 +83,11 @@ const ImportRepositoryModal = ({
                     <button type="button" className="btn-close" onClick={onClose}/>
                 </div>
                 <div className="modal-body">
-                    <form className="row row-cards" onChange={() => handleChangeForm()}>
+                    <form className="row row-cards" onChange={handleChangeForm}>
                         <div className="col-sm-6 col-md-6">
                             <div className="mb-3">
                                 <label className="form-label">Repository Namespace</label>
-                                <Controller
-                                    name={"repositoryNamespace"}
-                                    control={control}
-                                    render={({ field }) => <input disabled={recordingMode} type="text" className="form-control" placeholder="Repository Namespace" {...field}/>} /> 
-                                
+                                <input disabled={recordingMode} type="text" className="form-control" placeholder="Repository Namespace" name="repositoryNamespace" /> 
                             </div>
                         </div>
                         <div className="col-12">
@@ -122,11 +136,7 @@ const ImportRepositoryModal = ({
                                     <div className="card bg-cyan-lt">
                                         <div className="card-body p-2">
                                             <label className="form-label">import release to github (compressed with *.zip or *.tar.gz)</label>
-                                            <Controller
-                                                name={"sourceCodeURL"}
-                                                control={control}
-                                                render={({ field }) => <input type="text" className="form-control" placeholder="https://github.com/Meta-Platform/meta-platform-essential-repository/archive/refs/tags/meta-platform-essential-repository-v0.0.15.tar.gz" {...field}/>} /> 
-                                            
+                                            <input type="text" className="form-control" placeholder="https://github.com/Meta-Platform/meta-platform-essential-repository/archive/refs/tags/meta-platform-essential-repository-v0.0.15.tar.gz" name="sourceCodeURL" /> 
                                         </div>
                                     </div>
                                 </div>
@@ -139,8 +149,8 @@ const ImportRepositoryModal = ({
                         Cancel
                     </button>
                     <button 
-                        onClick={handleCreateNewRepo}
-                        disabled={!readyForCreate || recordingMode} 
+                        onClick={handleImportRepository}
+                        disabled={!readyForImport} 
                         className="btn btn-primary ms-auto" data-bs-dismiss="modal">
                         <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-folder-up"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 19h-7a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2h4l3 3h7a2 2 0 0 1 2 2v3.5" /><path d="M19 22v-6" /><path d="M22 19l-3 -3l-3 3" /></svg>
                         Import Repository
@@ -151,4 +161,9 @@ const ImportRepositoryModal = ({
     </div>
 }
 
-export default ImportRepositoryModal
+
+const mapDispatchToProps = (dispatch:any) => bindActionCreators({}, dispatch)
+
+const mapStateToProps = ({ HTTPServerManager }:any) => ({ HTTPServerManager })
+
+export default connect(mapStateToProps, mapDispatchToProps)(ImportRepositoryModal)

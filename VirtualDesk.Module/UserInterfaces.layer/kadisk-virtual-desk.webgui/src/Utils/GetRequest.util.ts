@@ -37,7 +37,7 @@ const getParametersWithData = (parameters:Array<any>, data:any) => {
     })
 }
 
-const getRequest = (port:number, method:string, path:string, parameters:Array<object>) => {
+const getRequest = (port:number, method:string, path:string, parameters:Array<object>, isMultipartFormData=false) => {
     //TODO Corrigir esse localhost
     const Request:any = axios.create({
         //baseURL: `http://localhost:${port===80?"":port}`
@@ -53,7 +53,23 @@ const getRequest = (port:number, method:string, path:string, parameters:Array<ob
             return bodyValues
         }, {})
 
-        if(method.toLowerCase() === "delete")
+
+        if (isMultipartFormData) {
+
+            const formData = new FormData()
+            for (const key in bodyValues) {
+                formData.append(key, bodyValues[key])
+            }
+
+            return Request[method.toLowerCase()](getURL(path, parametersWithData), formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+                onUploadProgress: (progressEvent) => {
+                    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+                    console.log(`Upload progress: ${percentCompleted}%`)
+                },
+            })
+
+        }else if(method.toLowerCase() === "delete")
             return Request[method.toLowerCase()](getURL(path, parametersWithData), {data:bodyValues})
         else
             return Request[method.toLowerCase()](getURL(path, parametersWithData), bodyValues)

@@ -29,12 +29,12 @@ const GetRequestByServer = ({list_web_servers_running}:any) => (serverName:strin
 	const {path:servicePath, apiTemplate} = listServices
 	.find(({serviceName}:any) => serviceName === name + "Controller") || {}
 
-	return apiTemplate?.endpoints.reduce((acc:any, {method, path, parameters, summary}:any) =>
+	return apiTemplate?.endpoints.reduce((acc:any, {method, path, parameters, summary, isMultipartFormData}:any) =>
 	 ({
 		 ...acc, 
 		 [summary] : 
 			 method.toUpperCase() !== "WS"
-			 ? GetRequest(port, method, servicePath+path, parameters)
+			 ? GetRequest(port, method, servicePath+path, parameters, isMultipartFormData)
 			 : getSocket(port, servicePath+path, parameters)
 	  }), {})
 }

@@ -32,7 +32,7 @@ const MyWorkspaceManager = (params) => {
         onReady,
         storageFilePath,
         ecosystemDefaultsFileRelativePath,
-        repositoryEditorDirPath,
+        repositoriesSourceCodeDirPath,
         extractTarGzLib,
         jsonFileUtilitiesLib,
         ecosystemdataHandlerService,
@@ -40,7 +40,7 @@ const MyWorkspaceManager = (params) => {
     } = params
 
     const absolutStorageFilePath = ConvertPathToAbsolutPath(storageFilePath)
-    const absolutRepositoryEditorDirPath = ConvertPathToAbsolutPath(repositoryEditorDirPath)
+    const absolutRepositoryEditorDirPath = ConvertPathToAbsolutPath(repositoriesSourceCodeDirPath)
 
     const ExtractTarGz = extractTarGzLib.require("ExtractTarGz")
     const ReadJsonFile = jsonFileUtilitiesLib.require("ReadJsonFile")

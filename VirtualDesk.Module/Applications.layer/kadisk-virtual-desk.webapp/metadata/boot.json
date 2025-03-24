@@ -9,7 +9,8 @@
         "eventManagerServiceStorageFilePath",
         "instanceMonitoringManagerServiceStorageFilePath",
         "myWorkspaceManagerServiceStorageFilePath",
-        "repositoryEditorDirPath",
+        "myWorkspaceRepositoriesSourceCodeDirPath",
+        "myServicesRepositoriesUploadDirPath",
         "installDataDirPath",
         "ecosystemDefaultsFileRelativePath",
         "secretKey"
@@ -73,7 +74,7 @@
             "dependency": "@/kadisk-my-workbench.service/services/MyWorkspaceManager",
             "params":{
                 "storageFilePath": "{{myWorkspaceManagerServiceStorageFilePath}}",
-                "repositoryEditorDirPath": "{{repositoryEditorDirPath}}",
+                "repositoriesSourceCodeDirPath": "{{myWorkspaceRepositoriesSourceCodeDirPath}}",
                 "ecosystemDefaultsFileRelativePath":"{{ecosystemDefaultsFileRelativePath}}"
             },
             "bound-params":{
@@ -163,6 +164,16 @@
                 "containerManagerService":"@@/container-manager-service"
             },
             "params":{
+                "needsAuth": true
+            }
+        },
+        {
+            "dependency": "@/kadisk-my-services.webservice/endpoint-group",
+            "bound-params":{
+                "serverService": "@@/server-service"
+            },
+            "params":{
+                "uploadDirPath":"{{myServicesRepositoriesUploadDirPath}}",
                 "needsAuth": true
             }
         }

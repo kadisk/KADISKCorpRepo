@@ -1,0 +1,15 @@
+{
+    "port"                                                 : "8080",
+    "serverName"                                           : "KadiskVirtualDeskWebAppInstance",
+    "serverManagerUrl"                                     : "http://virtual-desk.local/server-manager/status",
+    "RT_ENV_GENERATED_DIR_NAME"                            : ".generated_data",
+    "isWatch"                                              : true,
+    "userManagementServiceStorageFilePath"                 : "/local-databases/user-management-service.sqlite",
+    "eventManagerServiceStorageFilePath"                   : "/local-databases/event-manager-service.sqlite",
+    "instanceMonitoringManagerServiceStorageFilePath"      : "/local-databases/instance-monitoring-manager-service.sqlite",
+    "myWorkspaceManagerServiceStorageFilePath"             : "/local-databases/my-workspace-manager-service.sqlite",
+    "myWorkspaceRepositoriesSourceCodeDirPath"             : "/local-app-data/my-workspaces-imported-repositories",
+    "installDataDirPath"                                   : "~/EcosystemData",
+    "ecosystemDefaultsFileRelativePath"                    : "./config-files/ecosystem-defaults.json",
+    "secretKey"                                            : "kajsdhfg&(#Ndg"
+}
