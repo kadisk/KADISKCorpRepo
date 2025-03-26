@@ -28,7 +28,7 @@ const MyServicesManager = (params) => {
                 autoIncrement: true,
                 primaryKey: true
             },
-            namespace: {
+            repositoryNamespace: {
                 type: DataTypes.STRING,
                 allowNull: false
             },
@@ -36,7 +36,7 @@ const MyServicesManager = (params) => {
                 type: DataTypes.INTEGER,
                 allowNull: false
             },
-            filePath: {
+            repositoryFilePath: {
                 type: DataTypes.STRING,
                 allowNull: false
             }
@@ -51,20 +51,21 @@ const MyServicesManager = (params) => {
 
     _Start()
 
-    const _CheckRepositoryNamespaceExist = (namespace) => RepositoryUploadModel.findOne({ where: { namespace } })
+    const _CheckRepositoryNamespaceExist = (repositoryNamespace) => RepositoryUploadModel.findOne({ where: { repositoryNamespace } })
 
-    const RegisterRepositoryUpload = async ({userId, repositoryNamespace, repositoryFile}) => {
+    const RegisterRepositoryUpload = async ({userId, repositoryNamespace, repositoryFilePath}) => {
         const existingNamespace = await _CheckRepositoryNamespaceExist(repositoryNamespace)
 
         if (existingNamespace) 
             throw new Error('Repository Namespace already exists')
 
-        const newRepository = await RepositoryUploadModel.create({ 
-            namespace: repositoryNamespace,
-            userId,
-            repositoryCodePath, 
-            filePath: repositoryFile
-        })
+        const newRepository = await RepositoryUploadModel
+            .create({ 
+                repositoryNamespace,
+                userId,
+                repositoryFilePath
+            })
+            
         return newRepository
     }
 

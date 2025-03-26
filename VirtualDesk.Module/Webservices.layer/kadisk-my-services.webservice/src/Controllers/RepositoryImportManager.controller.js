@@ -5,18 +5,31 @@ const os = require('os')
 
 const ConvertPathToAbsolutPath = (_path) => join(_path).replace('~', os.homedir())
 
+const GetRequestParams = ({body, params:path, query}) => ({...path, ...body, ...query})
+
 const RepositoryImportManagerController = (params) => {
-    const { uploadDirPath } = params
+
+    const { uploadDirPath, myServicesService } = params
+
+    const { RegisterRepositoryUpload } = myServicesService
+    
     const uploadAbsolutDirPath = ConvertPathToAbsolutPath(uploadDirPath)
 
-    if (!fs.existsSync(uploadAbsolutDirPath)) {
-        fs.mkdirSync(uploadAbsolutDirPath, { recursive: true })
-    }
-
-    const upload = multer({ dest: uploadAbsolutDirPath })
-
     const UploadRepository = (request, response, next) => {
-        upload.single('repositoryFile')(request, response, async (err) => {
+
+        const { authenticationData } = request
+        const { userId, username } = authenticationData
+
+        const repositoriesDirPath = join(uploadAbsolutDirPath, username)
+
+        if (!fs.existsSync(repositoriesDirPath)) {
+            fs.mkdirSync(repositoriesDirPath, { recursive: true })
+        }
+    
+        const uploadMiddleware = multer({ dest: repositoriesDirPath })
+
+        uploadMiddleware.single('repositoryFile')(request, response, async (err) => {
+
             if (err) {
                 return next(err)
             }
@@ -37,15 +50,32 @@ const RepositoryImportManagerController = (params) => {
                 return next(error)
             }
 
+            const repositoryFilePath = join(repositoriesDirPath, request.file.originalname)
+		    fs.renameSync(request.file.path, repositoryFilePath)
 
-            const newFilePath = join(uploadAbsolutDirPath, request.file.originalname)
-		    fs.renameSync(request.file.path, newFilePath)
-    
+
+            const params = GetRequestParams(request)
+
+            console.log({
+                userId, 
+                repositoryNamespace: params.repositoryNamespace, 
+                repositoryFilePath
+            })
+
+            await RegisterRepositoryUpload({
+                userId, 
+                repositoryNamespace: params.repositoryNamespace, 
+                repositoryFilePath
+            })
+
             return response.json({
                 filename: request.file.originalname,
-                filePath: newFilePath
+                repositoryFilePath
             })
+
+
         })
+
     }
     
 

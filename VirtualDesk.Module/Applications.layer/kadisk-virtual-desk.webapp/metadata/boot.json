@@ -11,6 +11,7 @@
         "myWorkspaceManagerServiceStorageFilePath",
         "myWorkspaceRepositoriesSourceCodeDirPath",
         "myServicesRepositoriesUploadDirPath",
+        "myServicesManagerServiceStorageFilePath",
         "installDataDirPath",
         "ecosystemDefaultsFileRelativePath",
         "secretKey"
@@ -87,6 +88,13 @@
         {
             "namespace": "@@/container-manager-service",
             "dependency": "@/kadisk-container-manager.service/services/ContainerManager"
+        },
+        {
+            "namespace": "@@/my-services-service",
+            "dependency": "@/kadisk-my-services.service/services/MyServicesManager",
+            "params":{
+                "storageFilePath": "{{myServicesManagerServiceStorageFilePath}}"
+            }
         }
     ],
     "endpoints": [
@@ -170,7 +178,8 @@
         {
             "dependency": "@/kadisk-my-services.webservice/endpoint-group",
             "bound-params":{
-                "serverService": "@@/server-service"
+                "serverService": "@@/server-service",
+                "myServicesService": "@@/my-services-service"
             },
             "params":{
                 "uploadDirPath":"{{myServicesRepositoriesUploadDirPath}}",
