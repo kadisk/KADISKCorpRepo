@@ -90,7 +90,7 @@
             "dependency": "@/kadisk-container-manager.service/services/ContainerManager"
         },
         {
-            "namespace": "@@/my-services-service",
+            "namespace": "@@/my-services-manager-service",
             "dependency": "@/kadisk-my-services.service/services/MyServicesManager",
             "params":{
                 "storageFilePath": "{{myServicesManagerServiceStorageFilePath}}"
@@ -179,7 +179,7 @@
             "dependency": "@/kadisk-my-services.webservice/endpoint-group",
             "bound-params":{
                 "serverService": "@@/server-service",
-                "myServicesService": "@@/my-services-service"
+                "myServicesManagerService": "@@/my-services-manager-service"
             },
             "params":{
                 "uploadDirPath":"{{myServicesRepositoriesUploadDirPath}}",

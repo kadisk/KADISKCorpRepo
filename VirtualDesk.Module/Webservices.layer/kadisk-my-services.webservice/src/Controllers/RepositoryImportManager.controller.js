@@ -9,9 +9,9 @@ const GetRequestParams = ({body, params:path, query}) => ({...path, ...body, ...
 
 const RepositoryImportManagerController = (params) => {
 
-    const { uploadDirPath, myServicesService } = params
+    const { uploadDirPath, myServicesManagerService } = params
 
-    const { RegisterRepositoryUpload } = myServicesService
+    const { RegisterRepositoryUpload } = myServicesManagerService
     
     const uploadAbsolutDirPath = ConvertPathToAbsolutPath(uploadDirPath)
 
@@ -77,7 +77,6 @@ const RepositoryImportManagerController = (params) => {
         })
 
     }
-    
 
     const controllerServiceObject = {
         controllerName: "RepositoryImportManagerController",

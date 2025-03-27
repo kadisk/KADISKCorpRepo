@@ -55,13 +55,13 @@ const ImportRepositoryModal = ({
 
     const handleImportRepository = () => {
         setRecordingMode(true)
-        const api = getRepositoryImportManagerAPI()
-
+        
         const { repositoryNamespace } = formValues
 
         switch(importType){
             case UPLOAD_LOCAL_IMPORT_TYPE:
-                api.UploadRepository({
+                getRepositoryImportManagerAPI()
+                .UploadRepository({
                     repositoryNamespace,
                     repositoryFile: repositoryFileForUpload
                 })
@@ -161,9 +161,6 @@ const ImportRepositoryModal = ({
     </div>
 }
 
-
 const mapDispatchToProps = (dispatch:any) => bindActionCreators({}, dispatch)
-
 const mapStateToProps = ({ HTTPServerManager }:any) => ({ HTTPServerManager })
-
 export default connect(mapStateToProps, mapDispatchToProps)(ImportRepositoryModal)

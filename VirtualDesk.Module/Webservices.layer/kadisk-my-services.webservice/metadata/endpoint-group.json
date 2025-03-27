@@ -1,7 +1,7 @@
 {
     "bound-params":[
         "serverService",
-        "myServicesService"
+        "myServicesManagerService"
     ],
     "params": [ "needsAuth", "uploadDirPath" ],
     "endpoints": [
@@ -19,7 +19,22 @@
             "bound-params": {
                 "serverService":"serverService",
                 "controller-params":{
-                    "myServicesService":"myServicesService"
+                    "myServicesManagerService":"myServicesManagerService"
+                }
+            }
+        },
+        {
+            "url": "/my-service",
+            "type": "controller",
+            "params": {
+                "api-template": "APIs/MyServicesManager.api.json",
+                "controller": "Controllers/MyServicesManager.controller",
+                "needsAuth": "needsAuth"
+            },
+            "bound-params": {
+                "serverService":"serverService",
+                "controller-params":{
+                    "myServicesManagerService":"myServicesManagerService"
                 }
             }
         }

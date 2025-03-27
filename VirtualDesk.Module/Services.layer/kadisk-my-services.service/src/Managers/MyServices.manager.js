@@ -69,8 +69,19 @@ const MyServicesManager = (params) => {
         return newRepository
     }
 
+    const GetStatus = async (userId) => {
+        const uploadCount = await RepositoryUploadModel.count({ where: { userId } });
+    
+        if (uploadCount > 0) {
+            return "READY"
+        } else {
+            return "NO REPOSITORIES"
+        }
+    }
+
     return {
-        RegisterRepositoryUpload
+        RegisterRepositoryUpload,
+        GetStatus
     }
 
 }

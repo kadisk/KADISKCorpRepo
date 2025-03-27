@@ -1,0 +1,10 @@
+{
+	"name": "MyServicesManager",
+	"endpoints": [
+		{
+			"path": "/status",
+			"method": "GET",
+			"summary": "GetMyServicesStatus"
+		}
+	]
+}
