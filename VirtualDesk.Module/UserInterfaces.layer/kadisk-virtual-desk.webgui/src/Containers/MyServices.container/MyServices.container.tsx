@@ -8,6 +8,7 @@ import GetAPI from "../../Utils/GetAPI"
 import WelcomeMyServices from "./WelcomeMyServices"
 import ImportRepositoryModal from "./ImportRepository.modal"
 import ServiceProvisioningModal from "./ServiceProvisioning.modal"
+import RepositoriesManagerModal from "./RepositoriesManager.modal"
 import PageHeader from "../../Components/PageHeader"
 
 const DEFAULT_MODE              = Symbol()
@@ -38,6 +39,8 @@ const MyServicesContainer = ({
         const response = await getMyServicesManagerAPI().GetMyServicesStatus()
         if(response.data === "READY"){
             changeMode(DEFAULT_MODE)
+        } else if (response.data === "NO_REPOSITORIES"){
+            changeMode(NO_REPOSITORIES_MODE)
         }
     }
 
@@ -78,6 +81,10 @@ const MyServicesContainer = ({
                 {
                     interfaceModeType === SERVICE_PROVISIONING_MODE
                     && <ServiceProvisioningModal onClose={() => changeMode(DEFAULT_MODE)} />
+                }
+                {
+                    interfaceModeType === REPOSITORIES_MANAGER_MODE
+                    && <RepositoriesManagerModal onClose={() => changeMode(DEFAULT_MODE)} />
                 }
 
                 {

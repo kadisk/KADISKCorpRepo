@@ -75,7 +75,7 @@ const MyServicesManager = (params) => {
         if (uploadCount > 0) {
             return "READY"
         } else {
-            return "NO REPOSITORIES"
+            return "NO_REPOSITORIES"
         }
     }
 

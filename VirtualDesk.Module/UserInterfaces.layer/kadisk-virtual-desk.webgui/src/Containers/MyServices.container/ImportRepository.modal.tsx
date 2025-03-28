@@ -92,7 +92,6 @@ const ImportRepositoryModal = ({
                         </div>
                         <div className="col-12">
                             <div className="mb-3">
-                                <label className="form-label">import type</label>
                                 <div className="form-selectgroup">
                                     <label className="form-selectgroup-item bg-cyan-lt">
                                         <input type="radio" name="icons" value="home" className="form-selectgroup-input" checked={isSelected(UPLOAD_LOCAL_IMPORT_TYPE)} onChange={createHandleType(UPLOAD_LOCAL_IMPORT_TYPE)}/>
