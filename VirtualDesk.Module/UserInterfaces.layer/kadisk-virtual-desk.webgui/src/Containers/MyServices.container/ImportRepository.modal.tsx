@@ -73,7 +73,7 @@ const ImportRepositoryModal = ({
 
     const createHandleType    = (_importType) => () => setImportType(_importType)
     const isSelected          = (_importType) => importType === _importType
-    const handleFileChange    = (event)       => setRepositoryFileForUpload(event.target.files[0])
+    const handleFileChangeForUploadForUpload = (event) => setRepositoryFileForUpload(event.target.files[0])
 
     return <div className="modal modal-blur show" role="dialog" aria-hidden="false" style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.8)" }}>
         <div className="modal-dialog modal-xl" role="document">
@@ -123,7 +123,7 @@ const ImportRepositoryModal = ({
                                     <div className="card bg-cyan-lt">
                                         <div className="card-body p-2">
                                             <label className="form-label">upload local repository</label>
-                                            <input type="file" className="form-control" onChange={handleFileChange} />
+                                            <input type="file" className="form-control" onChange={handleFileChangeForUploadForUpload} />
                                             <small className="form-text">compressed with *.zip or *.tar.gz</small>
                                         </div>
                                     </div>
