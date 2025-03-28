@@ -4,7 +4,7 @@
         "myWorkspaceManagerService",
         "containerManagerService"
     ],
-    "params": [ "needsAuth" ],
+    "params": [ "needsAuth", "uploadDirPath" ],
     "endpoints": [
         {
             "url": "/my-workspace",
@@ -12,7 +12,10 @@
             "params": {
                 "api-template": "APIs/MyWorkspace.api.json",
                 "controller": "Controllers/MyWorkspace.controller",
-                "needsAuth": "needsAuth"
+                "needsAuth": "needsAuth",
+                "controller-params":{
+                    "uploadDirPath": "{{uploadDirPath}}"
+                }
             },
             "bound-params": {
                 "serverService":"serverService",

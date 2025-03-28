@@ -57,33 +57,33 @@ const MyWorkspaceManager = (params) => {
     const _GetAllItemByRepositoryId = (repositoryId) => RepositoryItemModel.findAll({ where: { repositoryId }, raw: true})
     const _GetItemById              = (id)           => RepositoryItemModel.findOne({ where: { id } })
 
-    const CreateNewRepository = async ({userId, username, repositoryNamespace}) => {
+    const _GetPrepareAndRepositoriesCodePath = ({username, repositoryNamespace}) => {
+        const repositoriesCodePath = resolve(absolutRepositoryEditorDirPath, username, repositoryNamespace)
+        PrepareDirPath(repositoriesCodePath)
+        return repositoriesCodePath
+    }
+
+    const CreateNewRepository = async ({userId, repositoryCodePath, repositoryNamespace}) => {
         const existingNamespace = await _GetRepositoryByNamaspace(repositoryNamespace)
 
         if (existingNamespace) 
             throw new Error('Repository Namespace already exists')
 
-        const repositoryCodePath = resolve(absolutRepositoryEditorDirPath, username, repositoryNamespace)
-        PrepareDirPath(repositoryCodePath)
         const newRepository = await _CreateRepository({ repositoryNamespace , userId, repositoryCodePath })
         return newRepository
     }
 
-
     const ImportRepository = async ({ repositoryNamespace, sourceCodeURL, userId, username }) => {
 
-        const repositoryCreatedData = await CreateNewRepository({ userId, username, repositoryNamespace})
-        const { repositoryCodePath } = repositoryCreatedData
+        const repositoriesCodePath = _GetPrepareAndRepositoriesCodePath({username, repositoryNamespace})
+        
         const filePath = await DownloadFile({ 
             url: sourceCodeURL, 
-            destinationPath: repositoryCodePath
+            destinationPath: repositoriesCodePath
         })
-        const newRepositoryCodePath = await ExtractTarGz(filePath, repositoryCodePath)
-        const repoData = await _UpdateRepositoryCodePath({
-            namespace:repositoryNamespace,
-            newRepositoryCodePath,
-            userId
-        })
+        const newRepositoryCodePath = await ExtractTarGz(filePath, repositoriesCodePath)
+        
+        const repoData = await CreateNewRepository({ userId, repositoryNamespace, repositoryCodePath: newRepositoryCodePath})
 
         ItemIndexer.IndexRepository({
             repositoryId: repoData.id,
@@ -94,7 +94,21 @@ const MyWorkspaceManager = (params) => {
 
     }
 
-    const _UpdateRepositoryCodePath = async ({
+    const SaveUploadedRepository = async ({ repositoryNamespace, userId, username , repositoryFilePath }) => {
+        const repositoriesCodePath = _GetPrepareAndRepositoriesCodePath({username, repositoryNamespace})
+
+        const newRepositoryCodePath = await ExtractTarGz(repositoryFilePath, repositoriesCodePath)
+        const repoData = await CreateNewRepository({ userId, repositoryNamespace, repositoryCodePath: newRepositoryCodePath})
+
+        ItemIndexer.IndexRepository({
+            repositoryId: repoData.id,
+            repositoryCodePath: newRepositoryCodePath
+        })
+
+        return repoData
+    }
+
+    /*const _UpdateRepositoryCodePath = async ({
         namespace,
         newRepositoryCodePath,
         userId
@@ -104,10 +118,10 @@ const MyWorkspaceManager = (params) => {
         if (!repository) 
             throw new Error('Repository Namespace not found')
         
-        await repository.update({ repositoryCodePath: newRepositoryCodePath, userId })
+        await repository.update({ repositoriesCodePath: newRepositoryCodePath, userId })
         return repository
 
-    }
+    }*/
 
 
     const GetItemHierarchy = async (repositoryId) => {
@@ -214,7 +228,8 @@ const MyWorkspaceManager = (params) => {
         GetItemInformation,
         GetPackageSourceTree,
         GetPackageSourceFileContent,
-        GetPackageMetadata
+        GetPackageMetadata,
+        SaveUploadedRepository
     }
 
 }

@@ -22,6 +22,12 @@ const ImportingModal = ({
                     repositoryNamespace,
                     sourceCodeURL
                 })
+            } else if(importType === "UPLOAD_LOCAL"){
+                const { repositoryFile } = importData
+                UploadRepository({
+                    repositoryNamespace,
+                    repositoryFile
+                }) 
             }
         }
 
@@ -35,16 +41,26 @@ const ImportingModal = ({
         })
 
 
+    const UploadRepository = async ({
+        repositoryNamespace,
+        repositoryFile
+    }) => {
+        const response = await _GetMyWorkspaceAPI()
+        .UploadRepository({
+            repositoryNamespace,
+            repositoryFile
+        })
+        onFinishedImport()
+    }
+
     const ImportRepository = async ({
         repositoryNamespace,
         sourceCodeURL
     }) => {
-        const api = _GetMyWorkspaceAPI()
-        const response = await api.ImportRepository({
+        const response = await _GetMyWorkspaceAPI().ImportRepository({
             repositoryNamespace, 
             sourceCodeURL
         })
-        console.log(response.data)
         onFinishedImport()
     }
 

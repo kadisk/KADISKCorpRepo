@@ -11,6 +11,7 @@
     "myServicesManagerServiceStorageFilePath"              : "~/virtual-desk-state/local-databases/my-services-manager-service.sqlite",
     "myWorkspaceRepositoriesSourceCodeDirPath"             : "/local-app-data/my-workspaces-imported-repositories",
     "myServicesRepositoriesUploadDirPath"                  : "/local-app-data/my-services-uploded-repositories",
+    "myWorkbenchRepositoriesUploadDirPath"                 : "/local-app-data/my-workbench-uploded-repositories",
     "installDataDirPath"                                   : "~/EcosystemData",
     "ecosystemDefaultsFileRelativePath"                    : "./config-files/ecosystem-defaults.json",
     "secretKey"                                            : "kajsdhfg&(#Ndg"

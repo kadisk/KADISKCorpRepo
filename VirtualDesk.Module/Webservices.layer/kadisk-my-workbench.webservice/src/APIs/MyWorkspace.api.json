@@ -39,6 +39,27 @@
 			]
 		},
 		{
+			"path": "/repository/upload",
+			"method": "POST",
+			"summary": "UploadRepository",
+			"isMultipartFormData": true,
+			"forwardRawRequest": true,
+			"parameters": [
+				{
+					"in": "body",
+					"name": "repositoryNamespace",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "repositoryFile",
+					"type": "file",
+					"required": true
+				}
+			]
+		},
+		{
 			"path": "/repository-editor/hierarchy/:repositoryId",
 			"method": "GET",
 			"summary": "GetItemHierarchy",

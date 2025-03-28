@@ -9,9 +9,10 @@
         "eventManagerServiceStorageFilePath",
         "instanceMonitoringManagerServiceStorageFilePath",
         "myWorkspaceManagerServiceStorageFilePath",
+        "myServicesManagerServiceStorageFilePath",
         "myWorkspaceRepositoriesSourceCodeDirPath",
         "myServicesRepositoriesUploadDirPath",
-        "myServicesManagerServiceStorageFilePath",
+        "myWorkbenchRepositoriesUploadDirPath",
         "installDataDirPath",
         "ecosystemDefaultsFileRelativePath",
         "secretKey"
@@ -172,6 +173,7 @@
                 "containerManagerService":"@@/container-manager-service"
             },
             "params":{
+                "uploadDirPath": "{{myWorkbenchRepositoriesUploadDirPath}}",
                 "needsAuth": true
             }
         },

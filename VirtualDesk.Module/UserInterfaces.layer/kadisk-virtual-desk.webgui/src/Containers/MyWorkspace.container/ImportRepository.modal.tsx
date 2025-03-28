@@ -17,7 +17,7 @@ const ImportRepositoryModal = ({
     const [ repositoryFileForUpload, setRepositoryFileForUpload ] = useState()
     const [ repositorySourceCodeURLForImport, setRepositorySourceCodeURLForImport ] = useState()
 
-    const [ importType,  setImportType] = useState(GITHUB_RELEASE_IMPORT_TYPE)
+    const [ importType,  setImportType] = useState(UPLOAD_LOCAL_IMPORT_TYPE)
 
     const formValuesIsValid = () => {
         const nTotal = Object.keys(formValues).length
@@ -51,11 +51,24 @@ const ImportRepositoryModal = ({
             repositoryNamespace
         } = formValues
 
-        onImport({
+        const importDataChunk ={
             importType: importType.description,
-            repositoryNamespace,
-            sourceCodeURL: repositorySourceCodeURLForImport
-        })
+            repositoryNamespace
+        }
+
+        if(importType === GITHUB_RELEASE_IMPORT_TYPE){
+            onImport({
+                ...importDataChunk,
+                sourceCodeURL: repositorySourceCodeURLForImport
+            })
+        } else if(importType === UPLOAD_LOCAL_IMPORT_TYPE){
+            onImport({
+                ...importDataChunk,
+                repositoryFile: repositoryFileForUpload
+            })
+        }
+
+        
     }
 
     const handleChangeForm = (event) => {
