@@ -9,7 +9,6 @@ import WelcomeMyServices from "./WelcomeMyServices"
 import ImportRepositoryModal from "./ImportRepository.modal"
 import ServiceProvisioningModal from "./ServiceProvisioning.modal"
 import RepositoriesManagerModal from "./RepositoriesManager.modal"
-import PageHeader from "../../Components/PageHeader"
 
 const DEFAULT_MODE              = Symbol()
 const IMPORT_SELECT_MODE        = Symbol()
