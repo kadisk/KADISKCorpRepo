@@ -89,8 +89,7 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
                     {interfaceModeType === CREATE_MODE && <CreateNewRepositoryModal onCreated={handleCreatedRepository} onClose={handleCloseModal} />}
                     {interfaceModeType === IMPORT_SELECT_MODE && <ImportRepositoryModal onImport={handleImportingMode} onClose={handleCloseModal} />}
                     {interfaceModeType === IMPORTING_MODE && <ImportingModal 
-                                                                    repositoryNamespace={importDataCurrent.repositoryNamespace} 
-                                                                    sourceCodeURL={importDataCurrent.sourceCodeURL}
+                                                                    importData={importDataCurrent} 
                                                                     onFinishedImport={handleFinishedImportModal}/> }
                     <div className="container py-4">
                         {

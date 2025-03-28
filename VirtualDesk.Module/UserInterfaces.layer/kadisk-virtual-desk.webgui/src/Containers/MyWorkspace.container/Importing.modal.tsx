@@ -6,15 +6,27 @@ import { bindActionCreators } from "redux"
 import GetAPI from "../../Utils/GetAPI"
 
 const ImportingModal = ({
-    repositoryNamespace,
-    sourceCodeURL,
+    importData,
     onFinishedImport,
     HTTPServerManager
 }) => {
 
     useEffect(() => {
-        ImportRepository()
-    }, [])
+
+        if(importData){
+            const { repositoryNamespace, importType } = importData
+    
+            if(importType === "GITHUB_RELEASE"){
+                const { sourceCodeURL } = importData
+                ImportRepository({
+                    repositoryNamespace,
+                    sourceCodeURL
+                })
+            }
+        }
+
+
+    }, [importData])
 
     const _GetMyWorkspaceAPI = () => 
         GetAPI({ 
@@ -23,7 +35,10 @@ const ImportingModal = ({
         })
 
 
-    const ImportRepository = async () => {
+    const ImportRepository = async ({
+        repositoryNamespace,
+        sourceCodeURL
+    }) => {
         const api = _GetMyWorkspaceAPI()
         const response = await api.ImportRepository({
             repositoryNamespace, 
@@ -38,11 +53,11 @@ const ImportingModal = ({
             <div className="modal-content">
                 <div className="modal-body">
                     <div className="empty">
-                        <p style={{fontSize:"1.8em"}}>Importing <strong>{repositoryNamespace}</strong>...</p>
+                        <p style={{fontSize:"1.8em"}}>Importing <strong>{importData.repositoryNamespace}</strong>...</p>
                         <div className="progress progress-sm">
                             <div className="progress-bar progress-bar-indeterminate"></div>
                         </div>
-                        <p className="empty-subtitle text-secondary mt-2">{sourceCodeURL}</p>
+                        <p className="empty-subtitle text-secondary mt-2">{importData.sourceCodeURL}</p>
                     </div>
                 </div>
 

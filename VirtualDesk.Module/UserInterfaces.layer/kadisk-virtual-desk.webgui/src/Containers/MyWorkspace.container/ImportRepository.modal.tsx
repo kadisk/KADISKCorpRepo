@@ -1,11 +1,9 @@
 import * as React from "react"
-import { useForm, Controller } from "react-hook-form"
 import { useState, useEffect } from "react"
 
-
-const UPLOAD_LOCAL_IMPORT_TYPE   = Symbol()
-const GITHUB_RELEASE_IMPORT_TYPE = Symbol()
-const GIT_CLONE_IMPORT_TYPE      = Symbol()
+const UPLOAD_LOCAL_IMPORT_TYPE   = Symbol("UPLOAD_LOCAL")
+const GITHUB_RELEASE_IMPORT_TYPE = Symbol("GITHUB_RELEASE")
+const GIT_CLONE_IMPORT_TYPE      = Symbol("GIT_CLONE")
 
 const ImportRepositoryModal = ({
     onClose,
@@ -54,6 +52,7 @@ const ImportRepositoryModal = ({
         } = formValues
 
         onImport({
+            importType: importType.description,
             repositoryNamespace,
             sourceCodeURL: repositorySourceCodeURLForImport
         })
