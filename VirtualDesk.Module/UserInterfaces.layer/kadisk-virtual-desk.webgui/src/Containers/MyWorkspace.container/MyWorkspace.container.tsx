@@ -18,10 +18,9 @@ const IMPORT_SELECT_MODE       = Symbol()
 const IMPORTING_MODE           = Symbol()
 const DEFAULT_MODE             = Symbol()
 
-
 const MyWorkspaceContainer = ({ HTTPServerManager }) => {
 
-    const [ interfaceModeType,  setInterfaceModeType] = useState(DEFAULT_MODE)
+    const [ interfaceModeType,  changeMode] = useState<any>(DEFAULT_MODE)
     const [ repositoriesCurrent, setRepositoriesCurrent ] = useState<any[]>()
     const [ importDataCurrent, setImportDataCurrent ] = useState<{repositoryNamespace:string, sourceCodeURL:string}>()
 
@@ -46,13 +45,11 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
         setRepositoriesCurrent(response.data)
     }
 
-    const changeMode = (mode) => setInterfaceModeType(mode)
+    const handleCloseModal = () => changeMode(DEFAULT_MODE)
 
-    const handleCloseModal = () => setInterfaceModeType(DEFAULT_MODE)
+    const handleCreatedRepository = () => changeMode(DEFAULT_MODE)
 
-    const handleCreatedRepository = () => setInterfaceModeType(DEFAULT_MODE)
-
-    const handleFinishedImportModal = () => setInterfaceModeType(DEFAULT_MODE)
+    const handleFinishedImportModal = () => changeMode(DEFAULT_MODE)
 
     const handleImportingMode = (importData) => {
         setImportDataCurrent(importData)

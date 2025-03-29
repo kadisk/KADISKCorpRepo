@@ -56,12 +56,6 @@ const RepositoryImportManagerController = (params) => {
 
             const params = GetRequestParams(request)
 
-            console.log({
-                userId, 
-                repositoryNamespace: params.repositoryNamespace, 
-                repositoryFilePath
-            })
-
             await RegisterRepositoryUpload({
                 userId, 
                 repositoryNamespace: params.repositoryNamespace, 

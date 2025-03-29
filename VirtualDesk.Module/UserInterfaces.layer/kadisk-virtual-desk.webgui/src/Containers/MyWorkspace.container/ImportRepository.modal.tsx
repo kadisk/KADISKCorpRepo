@@ -25,8 +25,7 @@ const ImportRepositoryModal = ({
             const nValidItem =  Object.values(formValues).filter((values) => values && values != "").length
             const isNValidItem = nValidItem === Object.keys(formValues).length
 
-
-           const isFormContentValid =
+            const isFormContentValid =
                 (importType === UPLOAD_LOCAL_IMPORT_TYPE && repositoryFileForUpload)
                 || (importType === GITHUB_RELEASE_IMPORT_TYPE && repositorySourceCodeURLForImport)
 

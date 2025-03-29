@@ -1,18 +1,13 @@
 import * as React             from "react"
 import {useEffect, useState}  from "react"
-import { connect }            from "react-redux"
-import { bindActionCreators } from "redux"
 
-import GetAPI from "../../Utils/GetAPI"
-
-const UPLOAD_LOCAL_IMPORT_TYPE   = Symbol()
-const GITHUB_RELEASE_IMPORT_TYPE = Symbol()
-const GIT_CLONE_IMPORT_TYPE      = Symbol()
+const UPLOAD_LOCAL_IMPORT_TYPE   = Symbol("UPLOAD_LOCAL")
+const GITHUB_RELEASE_IMPORT_TYPE = Symbol("GITHUB_RELEASE")
+const GIT_CLONE_IMPORT_TYPE      = Symbol("GIT_CLONE")
 
 const ImportRepositoryModal = ({
     onClose,
-    onImport,
-    HTTPServerManager
+    onImport
 }) => {
     
     const [ readyForImport, setReadyForCreate ] = useState(false)
@@ -22,13 +17,12 @@ const ImportRepositoryModal = ({
     const [ importType,  setImportType] = useState(UPLOAD_LOCAL_IMPORT_TYPE)
 
     const [ repositoryFileForUpload, setRepositoryFileForUpload ] = useState()
+    const [ repositorySourceCodeURLForImport, setRepositorySourceCodeURLForImport ] = useState()
 
     useEffect(() => {
 
         if(formValuesIsValid()){
-            if(importType === UPLOAD_LOCAL_IMPORT_TYPE && repositoryFileForUpload ){
-                setReadyForCreate(true)
-            }
+            setReadyForCreate(true)
         }
 
     }, [formValues])
@@ -37,16 +31,17 @@ const ImportRepositoryModal = ({
         const nTotal = Object.keys(formValues).length
         if(nTotal > 0){
             const nValidItem =  Object.values(formValues).filter((values) => values && values != "").length
-            return nValidItem === Object.keys(formValues).length
+            const isNValidItem = nValidItem === Object.keys(formValues).length
+
+            const isFormContentValid =
+                (importType === UPLOAD_LOCAL_IMPORT_TYPE && repositoryFileForUpload)
+                || (importType === GITHUB_RELEASE_IMPORT_TYPE && repositorySourceCodeURLForImport)
+
+
+            return isNValidItem && isFormContentValid
         }
         return false
     }
-
-    const getRepositoryImportManagerAPI = () => 
-        GetAPI({ 
-            apiName:"RepositoryImportManager",  
-            serverManagerInformation: HTTPServerManager
-        })
 
     const handleChangeForm = (event) => {
         const { name, value } = event.target
@@ -56,24 +51,32 @@ const ImportRepositoryModal = ({
     const handleImportRepository = () => {
         setRecordingMode(true)
         
-        const { repositoryNamespace } = formValues
+        const {
+            repositoryNamespace
+        } = formValues
 
-        switch(importType){
-            case UPLOAD_LOCAL_IMPORT_TYPE:
-                getRepositoryImportManagerAPI()
-                .UploadRepository({
-                    repositoryNamespace,
-                    repositoryFile: repositoryFileForUpload
-                })
-                break
-            default:
-                throw "erro generico"
+        const importDataChunk ={
+            importType: importType.description,
+            repositoryNamespace
+        }
+
+        if(importType === GITHUB_RELEASE_IMPORT_TYPE){
+            onImport({
+                ...importDataChunk,
+                sourceCodeURL: repositorySourceCodeURLForImport
+            })
+        } else if(importType === UPLOAD_LOCAL_IMPORT_TYPE){
+            onImport({
+                ...importDataChunk,
+                repositoryFile: repositoryFileForUpload
+            })
         }
     }
 
     const createHandleType    = (_importType) => () => setImportType(_importType)
     const isSelected          = (_importType) => importType === _importType
     const handleFileChangeForUploadForUpload = (event) => setRepositoryFileForUpload(event.target.files[0])
+    const handleURLChangeForImport = (event) => setRepositorySourceCodeURLForImport(event.target.value)
 
     return <div className="modal modal-blur show" role="dialog" aria-hidden="false" style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.8)" }}>
         <div className="modal-dialog modal-xl" role="document">
@@ -160,6 +163,4 @@ const ImportRepositoryModal = ({
     </div>
 }
 
-const mapDispatchToProps = (dispatch:any) => bindActionCreators({}, dispatch)
-const mapStateToProps = ({ HTTPServerManager }:any) => ({ HTTPServerManager })
-export default connect(mapStateToProps, mapDispatchToProps)(ImportRepositoryModal)
+export default ImportRepositoryModal

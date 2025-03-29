@@ -17,11 +17,11 @@ const ImportingModal = ({
             const { repositoryNamespace, importType } = importData
     
             if(importType === "GITHUB_RELEASE"){
-                const { sourceCodeURL } = importData
+                /*const { sourceCodeURL } = importData
                 ImportRepository({
                     repositoryNamespace,
                     sourceCodeURL
-                })
+                })*/
             } else if(importType === "UPLOAD_LOCAL"){
                 const { repositoryFile } = importData
                 UploadRepository({
@@ -34,9 +34,10 @@ const ImportingModal = ({
 
     }, [importData])
 
-    const _GetMyWorkspaceAPI = () => 
+
+    const _GetRepositoryImportManagerAPI = () => 
         GetAPI({ 
-            apiName:"MyWorkspace",  
+            apiName:"RepositoryImportManager",  
             serverManagerInformation: HTTPServerManager
         })
 
@@ -45,7 +46,7 @@ const ImportingModal = ({
         repositoryNamespace,
         repositoryFile
     }) => {
-        const response = await _GetMyWorkspaceAPI()
+        const response = await _GetRepositoryImportManagerAPI()
         .UploadRepository({
             repositoryNamespace,
             repositoryFile
@@ -53,7 +54,7 @@ const ImportingModal = ({
         onFinishedImport()
     }
 
-    const ImportRepository = async ({
+    /*const ImportRepository = async ({
         repositoryNamespace,
         sourceCodeURL
     }) => {
@@ -62,7 +63,7 @@ const ImportingModal = ({
             sourceCodeURL
         })
         onFinishedImport()
-    }
+    }*/
 
     return <div className="modal modal-blur show" role="dialog" aria-hidden="false" style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.8)" }}>
         <div className="modal-dialog modal-xl" role="document">

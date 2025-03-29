@@ -9,6 +9,7 @@ import WelcomeMyServices from "./WelcomeMyServices"
 import ImportRepositoryModal from "./ImportRepository.modal"
 import ServiceProvisioningModal from "./ServiceProvisioning.modal"
 import RepositoriesManagerModal from "./RepositoriesManager.modal"
+import ImportingModal from "./Importing.modal"
 
 const DEFAULT_MODE              = Symbol()
 const IMPORT_SELECT_MODE        = Symbol()
@@ -22,11 +23,14 @@ const MyServicesContainer = ({
     HTTPServerManager
 }) => {
 
+    const [ importDataCurrent, setImportDataCurrent ] = useState<{repositoryNamespace:string, sourceCodeURL:string}>()
     const [ interfaceModeType,  changeMode] = useState<any>(LOADING_MODE)
 
     useEffect(() => {
-        fetchMyServicesStatus()
-    }, [])
+        if(interfaceModeType === LOADING_MODE){
+            fetchMyServicesStatus()
+        }
+    }, [interfaceModeType])
     
     const getMyServicesManagerAPI = () => 
         GetAPI({ 
@@ -46,6 +50,13 @@ const MyServicesContainer = ({
     const handleUseFromMyWorkspace = () => {
         console.log("== handleUseFromMyWorkspace")
     }
+
+    const handleImportingMode = (importData) => {
+        setImportDataCurrent(importData)
+        changeMode(IMPORTING_MODE)
+    }
+
+    const handleFinishedImportModal = () => changeMode(LOADING_MODE)
 
     return <>
 
@@ -77,7 +88,7 @@ const MyServicesContainer = ({
 
                 {
                     interfaceModeType === IMPORT_SELECT_MODE
-                    && <ImportRepositoryModal onImport={() => changeMode(IMPORTING_MODE)} onClose={() => changeMode(DEFAULT_MODE)} />
+                    && <ImportRepositoryModal onImport={handleImportingMode} onClose={() => changeMode(DEFAULT_MODE)} />
                 }
 
                 {
@@ -92,6 +103,11 @@ const MyServicesContainer = ({
                 {
                    interfaceModeType === NO_REPOSITORIES_MODE
                    && <WelcomeMyServices onImportNew={() => changeMode(IMPORT_SELECT_MODE)} onUseFromMyWorkspace={handleUseFromMyWorkspace}/>
+                }
+
+                {
+                    interfaceModeType === IMPORTING_MODE 
+                    && <ImportingModal importData={importDataCurrent} onFinishedImport={handleFinishedImportModal}/>
                 }
 
                 {
