@@ -10,6 +10,7 @@
     "myWorkspaceManagerServiceStorageFilePath"             : "~/virtual-desk-state/local-databases/my-workspace-manager-service.sqlite",
     "myServicesManagerServiceStorageFilePath"              : "~/virtual-desk-state/local-databases/my-services-manager-service.sqlite",
     "myWorkspaceRepositoriesSourceCodeDirPath"             : "~/virtual-desk-state/local-app-data/my-workspaces-imported-repositories",
+    "myServicesManagerSourceCodeDirPath"                   : "~/virtual-desk-state/local-app-data/my-services-imported-repositories",
     "myServicesRepositoriesUploadDirPath"                  : "~/virtual-desk-state/local-app-data/my-services-uploded-repositories",
     "myWorkbenchRepositoriesUploadDirPath"                 : "~/virtual-desk-state/local-app-data/my-workbench-uploded-repositories",
     "installDataDirPath"                                   : "~/EcosystemData",

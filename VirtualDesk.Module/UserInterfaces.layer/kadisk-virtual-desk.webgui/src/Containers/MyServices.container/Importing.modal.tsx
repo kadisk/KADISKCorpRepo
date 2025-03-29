@@ -35,9 +35,9 @@ const ImportingModal = ({
     }, [importData])
 
 
-    const _GetRepositoryImportManagerAPI = () => 
+    const _GetMyServicesManagerAPI = () => 
         GetAPI({ 
-            apiName:"RepositoryImportManager",  
+            apiName:"MyServicesManager",  
             serverManagerInformation: HTTPServerManager
         })
 
@@ -46,7 +46,7 @@ const ImportingModal = ({
         repositoryNamespace,
         repositoryFile
     }) => {
-        const response = await _GetRepositoryImportManagerAPI()
+        const response = await _GetMyServicesManagerAPI()
         .UploadRepository({
             repositoryNamespace,
             repositoryFile

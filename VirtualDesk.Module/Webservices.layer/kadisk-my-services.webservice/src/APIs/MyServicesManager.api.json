@@ -5,6 +5,27 @@
 			"path": "/status",
 			"method": "GET",
 			"summary": "GetMyServicesStatus"
+		},
+		{
+			"path": "/upload-repository",
+			"method": "POST",
+			"summary": "UploadRepository",
+			"isMultipartFormData": true,
+			"forwardRawRequest": true,
+			"parameters": [
+				{
+					"in": "body",
+					"name": "repositoryNamespace",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "repositoryFile",
+					"type": "file",
+					"required": true
+				}
+			]
 		}
 	]
 }

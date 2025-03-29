@@ -2,6 +2,8 @@
     {
         "namespace": "MyServicesManager",
         "path": "Managers/MyServices.manager",
-        "params": ["storageFilePath"]
+        "params": ["storageFilePath", "repositoriesSourceCodeDirPath"],
+        "bound-params":  [ "extractTarGzLib" ]
+        
     }
 ]

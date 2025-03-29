@@ -1,0 +1,10 @@
+{
+	"name": "ServiceProvisioning",
+	"endpoints": [
+		{
+			"path": "/bootable-packages",
+			"method": "GET",
+			"summary": "ListBootablePackages"
+		}
+	]
+}

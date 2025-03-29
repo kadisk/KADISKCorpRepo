@@ -6,11 +6,11 @@
     "params": [ "needsAuth", "uploadDirPath" ],
     "endpoints": [
         {
-            "url": "/repository-import-manager",
+            "url": "/my-service-manager",
             "type": "controller",
             "params": {
-                "api-template": "APIs/RepositoryImportManager.api.json",
-                "controller": "Controllers/RepositoryImportManager.controller",
+                "api-template": "APIs/MyServicesManager.api.json",
+                "controller": "Controllers/MyServicesManager.controller",
                 "needsAuth": "needsAuth",
                 "controller-params":{
                     "uploadDirPath": "{{uploadDirPath}}"
@@ -24,11 +24,11 @@
             }
         },
         {
-            "url": "/my-service",
+            "url": "/service-provisioning",
             "type": "controller",
             "params": {
-                "api-template": "APIs/MyServicesManager.api.json",
-                "controller": "Controllers/MyServicesManager.controller",
+                "api-template": "APIs/ServiceProvisioning.api.json",
+                "controller": "Controllers/ServiceProvisioning.controller",
                 "needsAuth": "needsAuth"
             },
             "bound-params": {
@@ -37,6 +37,6 @@
                     "myServicesManagerService":"myServicesManagerService"
                 }
             }
-        }
+        }        
     ]
 }

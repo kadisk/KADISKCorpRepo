@@ -11,6 +11,7 @@
         "myWorkspaceManagerServiceStorageFilePath",
         "myServicesManagerServiceStorageFilePath",
         "myWorkspaceRepositoriesSourceCodeDirPath",
+        "myServicesManagerSourceCodeDirPath",
         "myServicesRepositoriesUploadDirPath",
         "myWorkbenchRepositoriesUploadDirPath",
         "installDataDirPath",
@@ -93,7 +94,11 @@
         {
             "namespace": "@@/my-services-manager-service",
             "dependency": "@/kadisk-my-services.service/services/MyServicesManager",
+            "bound-params":{
+                "extractTarGzLib":"@/extract-tar-gz.lib"
+            },
             "params":{
+                "repositoriesSourceCodeDirPath": "{{myServicesManagerSourceCodeDirPath}}",
                 "storageFilePath": "{{myServicesManagerServiceStorageFilePath}}"
             }
         }

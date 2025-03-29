@@ -108,22 +108,6 @@ const MyWorkspaceManager = (params) => {
         return repoData
     }
 
-    /*const _UpdateRepositoryCodePath = async ({
-        namespace,
-        newRepositoryCodePath,
-        userId
-    }) => {
-
-        const repository = await _GetRepositoryByNamaspace(namespace)
-        if (!repository) 
-            throw new Error('Repository Namespace not found')
-        
-        await repository.update({ repositoriesCodePath: newRepositoryCodePath, userId })
-        return repository
-
-    }*/
-
-
     const GetItemHierarchy = async (repositoryId) => {
 
         const items = await _GetAllItemByRepositoryId(repositoryId)
