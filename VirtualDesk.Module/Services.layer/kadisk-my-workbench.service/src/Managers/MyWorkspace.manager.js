@@ -11,6 +11,7 @@ const DownloadFile                     = require("../Helpers/DownloadFile")
 const PrepareDirPath                   = require("../Helpers/PrepareDirPath")
 const CreateItemIndexer                = require("../Helpers/CreateItemIndexer")
 const ListFilesRecursive               = require("../Helpers/ListFilesRecursive")
+const CreateMyWorkspaceDomainService   = require("../Helpers/CreateMyWorkspaceDomainService")
 
 const MyWorkspaceManager = (params) => {
 
@@ -25,7 +26,7 @@ const MyWorkspaceManager = (params) => {
         loadMetatadaDirLib
     } = params
 
-    const absolutStorageFilePath = ConvertPathToAbsolutPath(storageFilePath)
+    const absolutStorageFilePath         = ConvertPathToAbsolutPath(storageFilePath)
     const absolutRepositoryEditorDirPath = ConvertPathToAbsolutPath(repositoriesSourceCodeDirPath)
 
     const ExtractTarGz = extractTarGzLib.require("ExtractTarGz")
@@ -40,7 +41,8 @@ const MyWorkspaceManager = (params) => {
         RepositoryItem : RepositoryItemModel
     } = PersistentStoreManager.models
 
-    const ItemIndexer = CreateItemIndexer({RepositoryItemModel})
+    const ItemIndexer              = CreateItemIndexer({RepositoryItemModel})
+    const MyWorkspaceDomainService = CreateMyWorkspaceDomainService({ RepositoryModel, RepositoryItemModel })
 
     const _Start = async () => {
         await PersistentStoreManager.ConnectAndSync()
@@ -48,14 +50,6 @@ const MyWorkspaceManager = (params) => {
     }
 
     _Start()
-    
-    const _GetRepositoryByUserId    = (userId)    => RepositoryModel.findAll({where: { userId }})
-    const _GetRepositoryByNamaspace = (namespace) => RepositoryModel.findOne({ where: { namespace } })
-    const _GetRepositoryById        = (id)        => RepositoryModel.findOne({ where: { id } })
-    const _CreateRepository         = ({ repositoryNamespace , userId, repositoryCodePath }) => RepositoryModel.create({ namespace: repositoryNamespace, userId, repositoryCodePath})
-
-    const _GetAllItemByRepositoryId = (repositoryId) => RepositoryItemModel.findAll({ where: { repositoryId }, raw: true})
-    const _GetItemById              = (id)           => RepositoryItemModel.findOne({ where: { id } })
 
     const _GetPrepareAndRepositoriesCodePath = ({username, repositoryNamespace}) => {
         const repositoriesCodePath = resolve(absolutRepositoryEditorDirPath, username, repositoryNamespace)
@@ -64,12 +58,12 @@ const MyWorkspaceManager = (params) => {
     }
 
     const CreateNewRepository = async ({userId, repositoryCodePath, repositoryNamespace}) => {
-        const existingNamespace = await _GetRepositoryByNamaspace(repositoryNamespace)
+        const existingNamespace = await MyWorkspaceDomainService.GetRepository.ByNamespace(repositoryNamespace)
 
         if (existingNamespace) 
             throw new Error('Repository Namespace already exists')
 
-        const newRepository = await _CreateRepository({ repositoryNamespace , userId, repositoryCodePath })
+        const newRepository = await MyWorkspaceDomainService.CreateRepository({ repositoryNamespace , userId, repositoryCodePath })
         return newRepository
     }
 
@@ -110,7 +104,7 @@ const MyWorkspaceManager = (params) => {
 
     const GetItemHierarchy = async (repositoryId) => {
 
-        const items = await _GetAllItemByRepositoryId(repositoryId)
+        const items = await MyWorkspaceDomainService.ListItemByRepositoryId(repositoryId)
 
         const __BuildTree = (parentId = null) => {
             return items
@@ -126,11 +120,8 @@ const MyWorkspaceManager = (params) => {
         return __BuildTree()
     }
 
-
-    
-
     const GetRepositoryGeneralInformation = async (repositoryId) => {
-        const repositoryData = await _GetRepositoryById(repositoryId)
+        const repositoryData = await MyWorkspaceDomainService.GetRepository.ById(repositoryId)
 
         return {
             repositoryNamespace: repositoryData.namespace
@@ -138,7 +129,7 @@ const MyWorkspaceManager = (params) => {
     }
 
     const GetRepositoryMetadata = async (repositoryId) => {
-        const repositoryData = await _GetRepositoryById(repositoryId)
+        const repositoryData = await MyWorkspaceDomainService.GetRepository.ById(repositoryId)
         const ecosystemDefaults = await ReadJsonFile(ecosystemDefaultFilePath)
 
         return await LoadMetadataDir({
@@ -154,14 +145,14 @@ const MyWorkspaceManager = (params) => {
 
     const GetItemInformation = async (itemId) => {
 
-        const itemData = await _GetItemById(itemId)
+        const itemData = await MyWorkspaceDomainService.GetItemById(itemId)
         const { id, itemName, itemType } = itemData
         return { id, itemName, itemType }
 
     }
 
     const GetPackageSourceTree = async (itemId) => {
-        const itemData = await _GetItemById(itemId)
+        const itemData = await MyWorkspaceDomainService.GetItemById(itemId)
         const { itemPath } = itemData
         const srcPath = resolve(itemPath, "src")
         
@@ -173,7 +164,7 @@ const MyWorkspaceManager = (params) => {
     }
 
     const GetPackageSourceFileContent = async ({itemId, sourceFilePath}) => {
-        const itemData = await _GetItemById(itemId)
+        const itemData = await MyWorkspaceDomainService.GetItemById(itemId)
         const { itemPath, itemName, itemType } = itemData
 
         const absolutePath = join(itemPath, "src", sourceFilePath)
@@ -192,7 +183,7 @@ const MyWorkspaceManager = (params) => {
     }
 
     const GetPackageMetadata = async (itemId) => {
-        const itemData = await _GetItemById(itemId)
+        const itemData = await MyWorkspaceDomainService.GetItemById(itemId)
         const { itemPath} = itemData
         const ecosystemDefaults = await ReadJsonFile(ecosystemDefaultFilePath)
 
@@ -204,7 +195,7 @@ const MyWorkspaceManager = (params) => {
 
     return {
         CreateNewRepository,
-        ListRepositories: _GetRepositoryByUserId,
+        ListRepositories: MyWorkspaceDomainService.ListRepositories,
         ImportRepository,
         GetItemHierarchy,
         GetRepositoryGeneralInformation,
