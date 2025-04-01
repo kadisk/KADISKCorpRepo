@@ -4,10 +4,10 @@ const ServiceProvisioningController = (params) => {
     const { myServicesManagerService } = params
 
 
-    
-
     const ListBootablePackages = ({ authenticationData }) => {
-        return []
+        const { userId, username } = authenticationData
+        return myServicesManagerService
+            .ListBootablePackages({ userId, username })
     }
 
     const controllerServiceObject = {

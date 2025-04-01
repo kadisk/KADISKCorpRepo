@@ -95,11 +95,15 @@
             "namespace": "@@/my-services-manager-service",
             "dependency": "@/kadisk-my-services.service/services/MyServicesManager",
             "bound-params":{
-                "extractTarGzLib":"@/extract-tar-gz.lib"
+                "extractTarGzLib":"@/extract-tar-gz.lib",
+                "loadMetatadaDirLib": "@/load-metatada-dir.lib",
+                "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",
+                "jsonFileUtilitiesLib": "@/json-file-utilities.lib"
             },
             "params":{
                 "repositoriesSourceCodeDirPath": "{{myServicesManagerSourceCodeDirPath}}",
-                "storageFilePath": "{{myServicesManagerServiceStorageFilePath}}"
+                "storageFilePath": "{{myServicesManagerServiceStorageFilePath}}",
+                "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}"
             }
         }
     ],

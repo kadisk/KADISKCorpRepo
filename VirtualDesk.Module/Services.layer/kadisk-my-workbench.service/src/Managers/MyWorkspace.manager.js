@@ -29,8 +29,8 @@ const MyWorkspaceManager = (params) => {
     const absolutStorageFilePath         = ConvertPathToAbsolutPath(storageFilePath)
     const absolutRepositoryEditorDirPath = ConvertPathToAbsolutPath(repositoriesSourceCodeDirPath)
 
-    const ExtractTarGz = extractTarGzLib.require("ExtractTarGz")
-    const ReadJsonFile = jsonFileUtilitiesLib.require("ReadJsonFile")
+    const ExtractTarGz    = extractTarGzLib.require("ExtractTarGz")
+    const ReadJsonFile    = jsonFileUtilitiesLib.require("ReadJsonFile")
     const LoadMetadataDir = loadMetatadaDirLib.require("LoadMetadataDir")
 
     const ecosystemDefaultFilePath = resolve(ecosystemdataHandlerService.GetEcosystemDataPath(), ecosystemDefaultsFileRelativePath)

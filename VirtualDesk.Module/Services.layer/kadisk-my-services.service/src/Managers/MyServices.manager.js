@@ -9,17 +9,26 @@ const ConvertPathToAbsolutPath = (_path) => join(_path)
 const InitializePersistentStoreManager = require("../Helpers/InitializePersistentStoreManager")
 const PrepareDirPath                   = require("../Helpers/PrepareDirPath")
 const CreateItemIndexer                = require("../Helpers/CreateItemIndexer")
-    
+const CreateMyWorkspaceDomainService   = require("../Helpers/CreateMyWorkspaceDomainService")
+
 const MyServicesManager = (params) => {
 
     const {
         onReady,
         storageFilePath,
         repositoriesSourceCodeDirPath,
-        extractTarGzLib
+        ecosystemDefaultsFileRelativePath,
+        ecosystemdataHandlerService,
+        extractTarGzLib,
+        loadMetatadaDirLib,
+        jsonFileUtilitiesLib
     } = params
 
     const ExtractTarGz = extractTarGzLib.require("ExtractTarGz")
+    const LoadMetadataDir = loadMetatadaDirLib.require("LoadMetadataDir")
+    const ReadJsonFile    = jsonFileUtilitiesLib.require("ReadJsonFile")
+
+    const ecosystemDefaultFilePath = resolve(ecosystemdataHandlerService.GetEcosystemDataPath(), ecosystemDefaultsFileRelativePath)
 
     const absolutStorageFilePath = ConvertPathToAbsolutPath(storageFilePath)
     const absolutRepositoryEditorDirPath = ConvertPathToAbsolutPath(repositoriesSourceCodeDirPath)
@@ -32,9 +41,8 @@ const MyServicesManager = (params) => {
 
     const ItemIndexer = CreateItemIndexer({RepositoryItemModel})
 
-    const _GetRepositoryByNamaspace = (namespace) => RepositoryModel.findOne({ where: { namespace } })
-    const _CreateRepository         = ({ repositoryNamespace , userId, repositoryCodePath }) => RepositoryModel.create({ namespace: repositoryNamespace, userId, repositoryCodePath})
-    
+    const MyWorkspaceDomainService = CreateMyWorkspaceDomainService({ RepositoryModel, RepositoryItemModel })
+
     const _GetPrepareAndRepositoriesCodePath = ({username, repositoryNamespace}) => {
         const repositoriesCodePath = resolve(absolutRepositoryEditorDirPath, username, repositoryNamespace)
         PrepareDirPath(repositoriesCodePath)
@@ -64,12 +72,12 @@ const MyServicesManager = (params) => {
     }
 
     const RecordNewRepository = async ({userId, repositoryCodePath, repositoryNamespace}) => {
-        const existingNamespace = await _GetRepositoryByNamaspace(repositoryNamespace)
+        const existingNamespace = await MyWorkspaceDomainService.GetRepository.ByNamespace(repositoryNamespace)
 
         if (existingNamespace) 
             throw new Error('Repository Namespace already exists')
 
-        const newRepository = await _CreateRepository({ repositoryNamespace , userId, repositoryCodePath })
+        const newRepository = await MyWorkspaceDomainService.CreateRepository({ repositoryNamespace , userId, repositoryCodePath })
         return newRepository
     }
 
@@ -83,9 +91,39 @@ const MyServicesManager = (params) => {
         }
     }
 
+    const ListBootablePackages = async ({ userId, username }) => {
+
+        const packageItems  = await MyWorkspaceDomainService.ListPackageItemByUserId(userId)
+
+        const ecosystemDefaults = await ReadJsonFile(ecosystemDefaultFilePath)
+
+        const packageItemsWithMetadataPromises = packageItems
+            .map(async (packageItem) => {
+
+                const metadata = await LoadMetadataDir({
+                    metadataDirName: ecosystemDefaults.REPOS_CONF_DIRNAME_METADATA,
+                    path: packageItem.itemPath
+                })
+
+                return {
+                    ...packageItem,
+                    metadata
+                }
+            })
+
+
+        const allPackageItems = await Promise.all(packageItemsWithMetadataPromises)
+
+        const bootablePacakgeItems = allPackageItems.filter(({metadata}) => metadata && metadata.boot)
+        
+        return bootablePacakgeItems
+        
+    }
+
     return {
         SaveUploadedRepository,
-        GetStatus
+        GetStatus,
+        ListBootablePackages
     }
 
 }
