@@ -1,3 +1,5 @@
+const { literal } = require('sequelize')
+
 const CreateMyWorkspaceDomainService = ({
     RepositoryModel,
     RepositoryItemModel
@@ -12,17 +14,6 @@ const CreateMyWorkspaceDomainService = ({
 
     const ListItemByRepositoryId = (repositoryId) => RepositoryItemModel.findAll({ where: { repositoryId }, raw: true})
     const GetItemById = (id) => RepositoryItemModel.findOne({ where: { id } })
-
-    /*const ListItemByUserId = async (userId) => {
-        return RepositoryItemModel.findAll({
-            include: [{
-                model: RepositoryModel,
-                where: { userId },
-                attributes: ['id', 'namespace']
-            }],
-            raw: true
-        })
-    }*/
 
     const ListPackageItemByUserId = async (userId) => {
         const items = await RepositoryItemModel.findAll({
@@ -40,6 +31,30 @@ const CreateMyWorkspaceDomainService = ({
         return items
     }
 
+    const GetPackageItemById = async ({ id, userId }) => {
+        const item = await RepositoryItemModel.findOne({
+            attributes: {
+                include: [
+                    [literal('"Repository"."repositoryCodePath"'), 'repositoryCodePath'],
+                    [literal('"Repository"."namespace"'), 'repositoryNamespace'],
+                ]
+            },
+            include: [{
+                model: RepositoryModel,
+                where: { userId },
+                attributes: []
+            }],
+            where: {
+                id,
+                itemType: ['app', 'cli', 'webapp', 'webgui', 'webservice', 'service', 'lib']
+            },
+            raw: true
+        })
+    
+        return item
+    }
+    
+
     return {
         CreateRepository,
         ListRepositories,
@@ -49,7 +64,8 @@ const CreateMyWorkspaceDomainService = ({
         },
         ListItemByRepositoryId,
         GetItemById,
-        ListPackageItemByUserId
+        ListPackageItemByUserId,
+        GetPackageItemById
     }
 }
 

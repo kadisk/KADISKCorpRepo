@@ -2,15 +2,11 @@ import * as React from "react"
 import { useEffect, useState } from "react"
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
-import {
-    Segment
-} from "semantic-ui-react"
+
 import GetAPI from "../../Utils/GetAPI"
 
-import StartupParamsForm from "../../Components/StartupParamsForm"
 
 const PACKAGE_SELECTION_MODE = Symbol()
-const PARAMETER_SETTINGS_MODE = Symbol()
 const CONFIRMATION_MODE = Symbol()
 
 const ServiceProvisioningModal = ({
@@ -19,7 +15,7 @@ const ServiceProvisioningModal = ({
 }) => {
 
     const [ typeMode, changeTypeMode ] = useState<any>(PACKAGE_SELECTION_MODE)
-    const [readyForProvision, setReadyForProvision] = useState(false)
+    const [readyForProvision, setReadyForProvision] = useState(true)
     const [packageList, setPackageList] = useState([])
     const [selectedPackageData, setSelectedPackageData] = useState(undefined)
 
@@ -43,6 +39,12 @@ const ServiceProvisioningModal = ({
 
     const handlePackageSelection = (packageData) => setSelectedPackageData(packageData)
 
+    const handleProvisionService = () => {
+        setReadyForProvision(false)
+        _GetServiceProvisioningManagerAPI()
+        .ProvisionService()
+    }
+
     return <div className="modal modal-blur show" role="dialog" aria-hidden="false" style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.8)" }}>
         <div className="modal-dialog modal-xl" role="document">
             <div className="modal-content">
@@ -56,50 +58,41 @@ const ServiceProvisioningModal = ({
                             <div className="card-body">
                                 <ul className="steps steps-cyan my-4">
                                     <li className={`step-item ${typeMode === PACKAGE_SELECTION_MODE ? "active": ""}`}>Package Selection</li>
-                                    <li className={`step-item ${typeMode === PARAMETER_SETTINGS_MODE ? "active": ""}`}>Parameter Setting</li>
-                                    <li className={`step-item`}>Confirmation</li>
+                                    <li className={`step-item ${typeMode === CONFIRMATION_MODE ? "active": ""}`}>Confirmation</li>
                                 </ul>
                             </div>
                             {
                                 (typeMode === PACKAGE_SELECTION_MODE)
                                 && <div className="card-body">
-                                    <Segment secondary>
-                                        <div className="list-group list-group-flush list-group-hoverable">
-                                            {
-                                                packageList.map((pkg) => 
-                                                    <div className={`list-group-item ${selectedPackageData?.id === pkg.id ? "active": ""}`}>
-                                                        <div className="row align-items-center">
-                                                            <div className="col-auto">
-                                                                <input 
-                                                                    className="form-check-input" 
-                                                                    type="radio" 
-                                                                    name="radios-package" 
-                                                                    value={pkg.id}
-                                                                    checked={selectedPackageData?.id === pkg.id}
-                                                                    onChange={() => handlePackageSelection(pkg)}
-                                                                />
+                                        <div>
+                                            <div className="list-group list-group-flush list-group-hoverable">
+                                                {
+                                                    packageList.map((pkg) => 
+                                                        <div className={`list-group-item ${selectedPackageData?.id === pkg.id ? "active": ""}`}>
+                                                            <div className="row align-items-center">
+                                                                <div className="col-auto">
+                                                                    <input 
+                                                                        className="form-check-input" 
+                                                                        type="radio" 
+                                                                        name="radios-package" 
+                                                                        value={pkg.id}
+                                                                        checked={selectedPackageData?.id === pkg.id}
+                                                                        onChange={() => handlePackageSelection(pkg)}
+                                                                    />
+                                                                </div>
+                                                                <div className="col text-truncate">
+                                                                    <a href="#" className="text-reset d-block"><strong>{pkg.itemName}</strong>.{pkg.itemType}</a>
+                                                                    <div className="d-block text-secondary text-truncate mt-n1"><strong>{pkg["Repository.namespace"]}</strong></div>
+                                                                </div>
                                                             </div>
-                                                            <div className="col text-truncate">
-                                                                <a href="#" className="text-reset d-block"><strong>{pkg.itemName}</strong>.{pkg.itemType}</a>
-                                                                <div className="d-block text-secondary text-truncate mt-n1"><strong>{pkg["Repository.namespace"]}</strong></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>)
-                                            }
+                                                        </div>)
+                                                }
+                                            </div>
                                         </div>
-                                        </Segment>
                                     </div>
                             }
 
-                            {
-                                (typeMode === PARAMETER_SETTINGS_MODE)
-                                && <div className="card-body">
-                                    <StartupParamsForm 
-                                        schema={selectedPackageData?.metadata["startup-params-schema"]}
-                                        params={selectedPackageData?.metadata["startup-params"] }
-                                        onChangeParams={(params) => console.log(params)}/>
-                                    </div>
-                            }
+                            
                             
                         </div>
                     </div>
@@ -114,15 +107,6 @@ const ServiceProvisioningModal = ({
                         (typeMode === PACKAGE_SELECTION_MODE)
                         && <button
                                 disabled={selectedPackageData === undefined}
-                                className="btn btn-cyan ms-auto" onClick={() => changeTypeMode(PARAMETER_SETTINGS_MODE)}>
-                                Next
-                                <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-right ms-1"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M15 16l4 -4" /><path d="M15 8l4 4" /></svg>
-                            </button>
-                    }
-
-                    {
-                        (typeMode === PARAMETER_SETTINGS_MODE)
-                        && <button
                                 className="btn btn-cyan ms-auto" onClick={() => changeTypeMode(CONFIRMATION_MODE)}>
                                 Next
                                 <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-right ms-1"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M15 16l4 -4" /><path d="M15 8l4 4" /></svg>
@@ -133,7 +117,7 @@ const ServiceProvisioningModal = ({
                         typeMode === CONFIRMATION_MODE
                         && <button
                             disabled={!readyForProvision}
-                            className="btn btn-cyan ms-auto" data-bs-dismiss="modal">
+                            className="btn btn-cyan ms-auto" onClick={handleProvisionService}>
                             <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-world-upload"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M21 12a9 9 0 1 0 -9 9" /><path d="M3.6 9h16.8" /><path d="M3.6 15h8.4" /><path d="M11.578 3a17 17 0 0 0 0 18" /><path d="M12.5 3c1.719 2.755 2.5 5.876 2.5 9" /><path d="M18 21v-7m3 3l-3 -3l-3 3" /></svg>
                             Provision service
                         </button>

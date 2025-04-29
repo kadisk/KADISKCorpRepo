@@ -123,7 +123,8 @@ const MyServicesManager = (params) => {
     return {
         SaveUploadedRepository,
         GetStatus,
-        ListBootablePackages
+        ListBootablePackages,
+        GetPackage: MyWorkspaceDomainService.GetPackageItemById
     }
 
 }

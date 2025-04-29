@@ -1,7 +1,4 @@
 const Docker = require('dockerode')
-const tarStream = require('tar-stream')
-
-
 
 const ContainerManager = (params) => {
 
@@ -36,16 +33,13 @@ const ContainerManager = (params) => {
 
 
     const BuildImageFromDockerfileString = async ({
-        dockerfileString, imageTag
+        contextTarStream, imageTagName, onData
     }) => {
         return new Promise((resolve, reject) => {
-            const pack = tarStream.pack()
-            pack.entry({ name: 'Dockerfile' }, dockerfileString)
-            pack.finalize()
-
-            docker.buildImage(pack, { t: imageTag }, (err, stream) => {
+            
+            docker.buildImage(contextTarStream, { t: imageTagName }, (err, stream) => {
                 if (err) return reject(err)
-                stream.on('data', chunk => process.stdout.write(chunk))
+                stream.on('data', onData)
                 stream.on('end', resolve)
                 stream.on('error', reject)
             })

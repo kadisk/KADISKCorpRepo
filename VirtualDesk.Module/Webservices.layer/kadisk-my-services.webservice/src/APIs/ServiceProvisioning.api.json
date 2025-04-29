@@ -5,6 +5,19 @@
 			"path": "/bootable-packages",
 			"method": "GET",
 			"summary": "ListBootablePackages"
+		},
+		{
+			"path": "/provision-service",
+			"method": "POST",
+			"summary":"ProvisionService",
+			"parameters": [
+				{
+					"in": "body",
+					"name": "packageId",
+					"type": "number",
+					"required": true
+				}
+			]
 		}
 	]
 }

@@ -190,7 +190,8 @@
             "dependency": "@/kadisk-my-services.webservice/endpoint-group",
             "bound-params":{
                 "serverService": "@@/server-service",
-                "myServicesManagerService": "@@/my-services-manager-service"
+                "myServicesManagerService": "@@/my-services-manager-service",
+                "containerManagerService":"@@/container-manager-service"
             },
             "params":{
                 "uploadDirPath":"{{myServicesRepositoriesUploadDirPath}}",
