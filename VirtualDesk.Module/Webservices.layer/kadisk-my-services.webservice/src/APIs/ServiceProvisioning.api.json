@@ -7,6 +7,11 @@
 			"summary": "ListBootablePackages"
 		},
 		{
+			"path": "/applications",
+			"method": "GET",
+			"summary": "ListApplications"
+		},
+		{
 			"path": "/provision-service",
 			"method": "POST",
 			"summary":"ProvisionService",

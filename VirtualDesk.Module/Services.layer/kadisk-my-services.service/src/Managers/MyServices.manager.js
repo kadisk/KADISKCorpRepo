@@ -10,6 +10,7 @@ const InitializePersistentStoreManager = require("../Helpers/InitializePersisten
 const PrepareDirPath                   = require("../Helpers/PrepareDirPath")
 const CreateItemIndexer                = require("../Helpers/CreateItemIndexer")
 const CreateMyWorkspaceDomainService   = require("../Helpers/CreateMyWorkspaceDomainService")
+const path = require("path")
 
 const MyServicesManager = (params) => {
 
@@ -120,10 +121,54 @@ const MyServicesManager = (params) => {
         
     }
 
+    const ListApplications = async (userId) => {
+
+        const repositories  = await MyWorkspaceDomainService.ListRepositories(userId)
+
+        const ecosystemDefaults = await ReadJsonFile(ecosystemDefaultFilePath)
+
+        const repositoriesDataPromises = repositories
+            .map(async (repository) => {
+                const metadata = await LoadMetadataDir({
+                    metadataDirName: ecosystemDefaults.REPOS_CONF_DIRNAME_METADATA,
+                    path: repository.repositoryCodePath
+                })
+                return {
+                    repository,
+                    metadata
+                }
+            })
+
+        const repositoriesData = await Promise.all(repositoriesDataPromises)
+
+        const applications = repositoriesData
+            .reduce((acc, { repository, metadata }) => {
+
+                const { applications } = metadata
+                if (applications) {
+                    console.log(repository)
+                    const applicationData = applications.map((application) => ({
+                        type: application.appType,
+                        executableName: application.executable,
+                        repositoryNamespace: repository.namespace,
+                        package: application.packageNamespace,
+                        repositoryId: repository.id,
+                    }))
+                    return [...acc, ...applicationData]
+                }
+                return acc
+
+            }, [])
+
+        return applications
+
+    }
+
     return {
         SaveUploadedRepository,
         GetStatus,
         ListBootablePackages,
+        ListApplications,
         GetPackage: MyWorkspaceDomainService.GetPackageItemById
     }
 

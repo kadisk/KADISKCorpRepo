@@ -16,7 +16,7 @@ const ContainerManager = (params) => {
 
     const ListAllContainers = () => docker.listContainers({ all: true })
 
-    const _EnsureImageExists = async (imageName) => {
+    /*const _EnsureImageExists = async (imageName) => {
         try {
             await docker.getImage(imageName).inspect()
         } catch (err) {
@@ -29,15 +29,16 @@ const ContainerManager = (params) => {
                 })
             })
         }
-    }
+    }*/
 
 
     const BuildImageFromDockerfileString = async ({
+        buildargs,
         contextTarStream, imageTagName, onData
     }) => {
         return new Promise((resolve, reject) => {
             
-            docker.buildImage(contextTarStream, { t: imageTagName }, (err, stream) => {
+            docker.buildImage(contextTarStream, { t: imageTagName, buildargs }, (err, stream) => {
                 if (err) return reject(err)
                 stream.on('data', onData)
                 stream.on('end', resolve)

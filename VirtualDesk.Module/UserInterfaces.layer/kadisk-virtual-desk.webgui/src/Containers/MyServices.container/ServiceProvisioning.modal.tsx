@@ -5,7 +5,8 @@ import { bindActionCreators } from "redux"
 
 import GetAPI from "../../Utils/GetAPI"
 
-
+const PROVISIONING_TYPE_SELECTION_MODE = Symbol()
+const APPLICATION_SELECTION_MODE = Symbol()
 const PACKAGE_SELECTION_MODE = Symbol()
 const CONFIRMATION_MODE = Symbol()
 
@@ -14,14 +15,24 @@ const ServiceProvisioningModal = ({
     HTTPServerManager
 }) => {
 
-    const [ typeMode, changeTypeMode ] = useState<any>(PACKAGE_SELECTION_MODE)
+    const [ typeMode, changeTypeMode ] = useState<any>(PROVISIONING_TYPE_SELECTION_MODE)
     const [readyForProvision, setReadyForProvision] = useState(true)
-    const [packageList, setPackageList] = useState([])
+
     const [selectedPackageData, setSelectedPackageData] = useState(undefined)
+    const [provisioningType, setProvisioningType] = useState<any>(undefined)
+    
+    const [packageList, setPackageList] = useState([])
+    const [applicationList, setApplicationList] = useState([])
 
     useEffect(() => {
-        FetchBootablePackages()
-    }, [])
+        
+        if( typeMode === PACKAGE_SELECTION_MODE ){
+            FetchBootablePackages()
+        } else if( typeMode === APPLICATION_SELECTION_MODE ){
+            FetchApplications()
+        }
+
+    }, [typeMode])
 
 
     const _GetServiceProvisioningManagerAPI = () =>
@@ -33,18 +44,26 @@ const ServiceProvisioningModal = ({
     const FetchBootablePackages = async () => {
         const response = await _GetServiceProvisioningManagerAPI()
             .ListBootablePackages()
-
         setPackageList(response.data)
+    }
+
+    const FetchApplications = async () => {
+        const response = await _GetServiceProvisioningManagerAPI()
+        .ListApplications()
+        setApplicationList(response.data)
     }
 
     const handlePackageSelection = (packageData) => setSelectedPackageData(packageData)
 
     const handleProvisionService = () => {
-        setReadyForProvision(false)
+        //setReadyForProvision(false)
         _GetServiceProvisioningManagerAPI()
-        .ProvisionService()
+        .ProvisionService({
+            packageId: selectedPackageData.id
+        })
     }
-
+    
+    
     return <div className="modal modal-blur show" role="dialog" aria-hidden="false" style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.8)" }}>
         <div className="modal-dialog modal-xl" role="document">
             <div className="modal-content">
@@ -57,10 +76,48 @@ const ServiceProvisioningModal = ({
                         <div className="card">
                             <div className="card-body">
                                 <ul className="steps steps-cyan my-4">
-                                    <li className={`step-item ${typeMode === PACKAGE_SELECTION_MODE ? "active": ""}`}>Package Selection</li>
+                                    <li className={`step-item ${typeMode === PROVISIONING_TYPE_SELECTION_MODE ? "active": ""}`}>Provisioning Type</li>
+                                    <li className={`step-item ${typeMode === PACKAGE_SELECTION_MODE || typeMode === APPLICATION_SELECTION_MODE ? "active": ""}`}>Selection</li>
                                     <li className={`step-item ${typeMode === CONFIRMATION_MODE ? "active": ""}`}>Confirmation</li>
                                 </ul>
                             </div>
+                            {
+                                (typeMode === PROVISIONING_TYPE_SELECTION_MODE)
+                                && <div className="card-body">
+                                        <div>
+                                            <div className="list-group list-group-flush list-group-hoverable">
+                                                <div className={`list-group-item`}>
+                                                    <div className="row align-items-center">
+                                                        <div className="col-auto">
+                                                            <input 
+                                                                className="form-check-input" 
+                                                                type="radio" 
+                                                                name="radios-package"
+                                                                onChange={() => setProvisioningType(APPLICATION_SELECTION_MODE)}/>
+                                                        </div>
+                                                        <div className="col text-truncate">
+                                                            <a className="text-reset d-block">Application</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className={`list-group-item`}>
+                                                    <div className="row align-items-center">
+                                                        <div className="col-auto">
+                                                            <input 
+                                                                className="form-check-input" 
+                                                                type="radio" 
+                                                                name="radios-package"
+                                                                onChange={() => setProvisioningType(PACKAGE_SELECTION_MODE)}/>
+                                                        </div>
+                                                        <div className="col text-truncate">
+                                                            <a className="text-reset d-block">Package</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            }
                             {
                                 (typeMode === PACKAGE_SELECTION_MODE)
                                 && <div className="card-body">
@@ -81,7 +138,7 @@ const ServiceProvisioningModal = ({
                                                                     />
                                                                 </div>
                                                                 <div className="col text-truncate">
-                                                                    <a href="#" className="text-reset d-block"><strong>{pkg.itemName}</strong>.{pkg.itemType}</a>
+                                                                    <a className="text-reset d-block"><strong>{pkg.itemName}</strong>.{pkg.itemType}</a>
                                                                     <div className="d-block text-secondary text-truncate mt-n1"><strong>{pkg["Repository.namespace"]}</strong></div>
                                                                 </div>
                                                             </div>
@@ -91,9 +148,6 @@ const ServiceProvisioningModal = ({
                                         </div>
                                     </div>
                             }
-
-                            
-                            
                         </div>
                     </div>
                 </div>
@@ -102,6 +156,17 @@ const ServiceProvisioningModal = ({
                     <button className="btn btn-link link-secondary" onClick={onClose}>
                         Cancel
                     </button>
+
+                    {
+                        (typeMode === PROVISIONING_TYPE_SELECTION_MODE)
+                        && <button
+                                disabled={provisioningType === undefined}
+                                onClick={() => changeTypeMode(provisioningType)}
+                                className="btn btn-cyan ms-auto">
+                                Next
+                                <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-right ms-1"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M15 16l4 -4" /><path d="M15 8l4 4" /></svg>
+                            </button>
+                    }
 
                     {
                         (typeMode === PACKAGE_SELECTION_MODE)
