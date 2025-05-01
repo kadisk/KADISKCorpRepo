@@ -1,11 +1,11 @@
-
+const { join } = require('path')
 const tarStream = require('tar-stream')
+const fs = require('fs')
 
 const GetDockerfileContent = () => {
     return `
     FROM node:22
     
-    ARG REPOSITORY_PATH
     ARG REPOSITORY_NAMESPACE
     ARG EXECUTABLE_NAME
     ARG FIXED_PATH=/tmp/repository
@@ -30,7 +30,7 @@ const GetDockerfileContent = () => {
     
     ENV PATH="/home/myecosystem/EcosystemData/executables:\"\${PATH}\""
     
-    COPY \${REPOSITORY_PATH} \${FIXED_PATH}
+    COPY repository_copied \${FIXED_PATH}
     
     RUN repo register source \${REPOSITORY_NAMESPACE} LOCAL_FS --localPath \${FIXED_PATH}
     RUN repo install \${REPOSITORY_NAMESPACE} LOCAL_FS --executables "\${EXECUTABLE_NAME}"
@@ -54,55 +54,100 @@ const ServiceProvisioningController = (params) => {
             .ListBootablePackages({ userId, username })
     }
 
-    const GetContextTarStream = () => {
+    const ListApplications = ({ authenticationData }) => {
+        const { userId, username } = authenticationData
+        return myServicesManagerService
+            .ListApplications(userId)
+    }
+
+    const GetContextTarStream = (repositoryPath) => {
+
         const contextTarStream = tarStream.pack()
         contextTarStream.entry({ name: 'Dockerfile' }, GetDockerfileContent())
+
+        const _addFiles = (dirPath, basePath = '') => {
+            const items = fs.readdirSync(dirPath)
+            for (const item of items) {
+                if (item === 'node_modules' || item === '.git') continue
+    
+                const fullPath = join(dirPath, item)
+                const entryPath = join('repository_copied', basePath, item)
+                const stats = fs.statSync(fullPath)
+    
+                if (stats.isDirectory()) {
+                    _addFiles(fullPath, join(basePath, item))
+                } else if (stats.isFile()) {
+                    const content = fs.readFileSync(fullPath)
+                    contextTarStream.entry({ name: entryPath }, content)
+                }
+            }
+        }
+
+        _addFiles(repositoryPath)
         contextTarStream.finalize()
 
         return contextTarStream
     }
 
-    const ProvisionService = async (packageId, { authenticationData }) => {
-        
+    const ProvisionServiceFromApplication = async ({ executableName, repositoryId, packagePath }, { authenticationData }) => {  
         const { userId, username } = authenticationData
-    
-        const packageData = await myServicesManagerService.GetPackage({ id: packageId, userId })
         
-        const { repositoryNamespace, itemName, itemType } = packageData
-        
-        const imageTagName = `ecosystem:${username}_${repositoryNamespace}__${itemName}-${itemType}`
-        
-        console.log(imageTagName)
-        
-        console.log(packageData)
-        
-        const contextTarStream = GetContextTarStream()
-       
-        const _handleData = chunk => process.stdout.write(chunk)
-        
+        const repositoryData = await myServicesManagerService.GetRepository.ById(repositoryId)
+        const itemPath = join(repositoryData.repositoryCodePath, packagePath)
+        const packageData = await myServicesManagerService.GetPackageByPath({ path: itemPath, userId })
+        const imageTagName = `ecosystem:${username}_${repositoryData.namespace}__${packageData.itemName}-${packageData.itemType}--${executableName}`
+
         const buildargs = {
-            REPOSITORY_PATH: packageData.repositoryCodePath,
-            REPOSITORY_NAMESPACE: packageData.repositoryNamespace,
-            EXECUTABLE_NAME: ""
+            REPOSITORY_NAMESPACE: repositoryData.namespace,
+            EXECUTABLE_NAME: executableName
 
         }
 
-        /*await BuildImageFromDockerfileString({
+        const contextTarStream = GetContextTarStream(repositoryData.repositoryCodePath)
+        
+        const _handleData = chunk => {
+            try {
+                const lines = chunk.toString().split('\n').filter(Boolean)
+        
+                for (const line of lines) {
+                    const parsed = JSON.parse(line)
+        
+                    if (parsed.stream) {
+                        process.stdout.write(parsed.stream)
+                    } else if (parsed.status) {
+                        console.log(`[STATUS] ${parsed.status}`)
+                    } else if (parsed.error) {
+                        process.stderr.write(parsed.error)
+                    } else {
+                        console.log(`[OTHER] ${line}`)
+                    }
+                }
+        
+            } catch (err) {
+                console.error('Failed to parse Docker output chunk:', chunk.toString())
+            }
+        }
+
+        
+        await BuildImageFromDockerfileString({
             buildargs,
             contextTarStream,
             imageTagName,
             onData: _handleData
-        })*/
+        })
 
-        /*
+    }
 
-        console.log("ProvisionService")*/
+    const ProvisionServiceFromPackage = async (packageId, { authenticationData }) => {
+        
     }
 
     const controllerServiceObject = {
         controllerName: "ServiceProvisioningController",
         ListBootablePackages,
-        ProvisionService
+        ProvisionServiceFromPackage,
+        ProvisionServiceFromApplication,
+        ListApplications
     }
 
     return Object.freeze(controllerServiceObject)

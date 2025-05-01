@@ -8,7 +8,8 @@ import GetAPI from "../../Utils/GetAPI"
 const PROVISIONING_TYPE_SELECTION_MODE = Symbol()
 const APPLICATION_SELECTION_MODE = Symbol()
 const PACKAGE_SELECTION_MODE = Symbol()
-const CONFIRMATION_MODE = Symbol()
+const PACKAGE_CONFIRMATION_MODE = Symbol()
+const APPLICATION_CONFIRMATION_MODE = Symbol()
 
 const ServiceProvisioningModal = ({
     onClose,
@@ -19,6 +20,7 @@ const ServiceProvisioningModal = ({
     const [readyForProvision, setReadyForProvision] = useState(true)
 
     const [selectedPackageData, setSelectedPackageData] = useState(undefined)
+    const [selectedApplicationData, setSelectedApplicationData] = useState(undefined)
     const [provisioningType, setProvisioningType] = useState<any>(undefined)
     
     const [packageList, setPackageList] = useState([])
@@ -54,15 +56,25 @@ const ServiceProvisioningModal = ({
     }
 
     const handlePackageSelection = (packageData) => setSelectedPackageData(packageData)
+    const handleApplicationSelection = (applicationData) => setSelectedApplicationData(applicationData)
 
-    const handleProvisionService = () => {
+    const handleProvisionServiceFromPackage = () => {
         //setReadyForProvision(false)
         _GetServiceProvisioningManagerAPI()
-        .ProvisionService({
+        .ProvisionServiceFromPackage({
             packageId: selectedPackageData.id
         })
     }
-    
+
+    const handleProvisionServiceFromApplication = () => {
+        //setReadyForProvision(false)
+        _GetServiceProvisioningManagerAPI()
+        .ProvisionServiceFromApplication({
+            packagePath: selectedApplicationData.package,
+            repositoryId: selectedApplicationData.repositoryId,
+            executableName: selectedApplicationData.executableName
+        })
+    }
     
     return <div className="modal modal-blur show" role="dialog" aria-hidden="false" style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.8)" }}>
         <div className="modal-dialog modal-xl" role="document">
@@ -78,7 +90,7 @@ const ServiceProvisioningModal = ({
                                 <ul className="steps steps-cyan my-4">
                                     <li className={`step-item ${typeMode === PROVISIONING_TYPE_SELECTION_MODE ? "active": ""}`}>Provisioning Type</li>
                                     <li className={`step-item ${typeMode === PACKAGE_SELECTION_MODE || typeMode === APPLICATION_SELECTION_MODE ? "active": ""}`}>Selection</li>
-                                    <li className={`step-item ${typeMode === CONFIRMATION_MODE ? "active": ""}`}>Confirmation</li>
+                                    <li className={`step-item ${typeMode === PACKAGE_CONFIRMATION_MODE ||  typeMode === APPLICATION_SELECTION_MODE  ? "active": ""}`}>Confirmation</li>
                                 </ul>
                             </div>
                             {
@@ -119,6 +131,36 @@ const ServiceProvisioningModal = ({
                                     </div>
                             }
                             {
+                                (typeMode === APPLICATION_SELECTION_MODE)
+                                && <div className="card-body">
+                                        <div>
+                                            <div className="list-group list-group-flush list-group-hoverable">
+                                                {
+                                                    applicationList.map((app) => 
+                                                        <div className={`list-group-item ${selectedApplicationData?.executableName === app.executableName ? "active": ""}`}>
+                                                            <div className="row align-items-center">
+                                                                <div className="col-auto">
+                                                                    <input 
+                                                                        className="form-check-input" 
+                                                                        type="radio" 
+                                                                        name="radios-package" 
+                                                                        value={app.executableName}
+                                                                        checked={selectedApplicationData?.executableName === app.executableName}
+                                                                        onChange={() => handleApplicationSelection(app)}
+                                                                    />
+                                                                </div>
+                                                                <div className="col text-truncate">
+                                                                    <a className="text-reset d-block"><strong>{app.executableName}</strong> {app.type}</a>
+                                                                    <div className="d-block text-secondary text-truncate mt-n1"><strong>{app.repositoryNamespace}</strong>/{app.package}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>)
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                            }
+                            {
                                 (typeMode === PACKAGE_SELECTION_MODE)
                                 && <div className="card-body">
                                         <div>
@@ -148,6 +190,22 @@ const ServiceProvisioningModal = ({
                                         </div>
                                     </div>
                             }
+                            {
+                                typeMode === APPLICATION_CONFIRMATION_MODE  
+                                && <div className="card-body">
+                                        <dl className="row">
+                                            <dt className="col-5">Executable Name</dt>
+                                            <dd className="col-7">{selectedApplicationData?.executableName}</dd>
+                                            <dt className="col-5">Package</dt>
+                                            <dd className="col-7">{selectedApplicationData?.package}</dd>
+                                            <dt className="col-5">Repository Namespace</dt>
+                                            <dd className="col-7">{selectedApplicationData?.repositoryNamespace}</dd>
+                                            <dt className="col-5">Type</dt>
+                                            <dd className="col-7">{selectedApplicationData?.type}</dd>
+                                        </dl>
+                                    </div>
+                            }
+                            
                         </div>
                     </div>
                 </div>
@@ -169,23 +227,40 @@ const ServiceProvisioningModal = ({
                     }
 
                     {
-                        (typeMode === PACKAGE_SELECTION_MODE)
+                        (typeMode === APPLICATION_SELECTION_MODE)
                         && <button
-                                disabled={selectedPackageData === undefined}
-                                className="btn btn-cyan ms-auto" onClick={() => changeTypeMode(CONFIRMATION_MODE)}>
+                                disabled={selectedApplicationData === undefined}
+                                className="btn btn-cyan ms-auto" onClick={() => changeTypeMode(APPLICATION_CONFIRMATION_MODE)}>
                                 Next
                                 <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-right ms-1"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M15 16l4 -4" /><path d="M15 8l4 4" /></svg>
                             </button>
                     }
-
                     {
-                        typeMode === CONFIRMATION_MODE
+                        (typeMode === PACKAGE_SELECTION_MODE)
                         && <button
-                            disabled={!readyForProvision}
-                            className="btn btn-cyan ms-auto" onClick={handleProvisionService}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-world-upload"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M21 12a9 9 0 1 0 -9 9" /><path d="M3.6 9h16.8" /><path d="M3.6 15h8.4" /><path d="M11.578 3a17 17 0 0 0 0 18" /><path d="M12.5 3c1.719 2.755 2.5 5.876 2.5 9" /><path d="M18 21v-7m3 3l-3 -3l-3 3" /></svg>
-                            Provision service
-                        </button>
+                                disabled={selectedPackageData === undefined}
+                                className="btn btn-cyan ms-auto" onClick={() => changeTypeMode(PACKAGE_CONFIRMATION_MODE)}>
+                                Next
+                                <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-right ms-1"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M15 16l4 -4" /><path d="M15 8l4 4" /></svg>
+                            </button>
+                    }
+                    {
+                        typeMode === APPLICATION_CONFIRMATION_MODE
+                        && <button
+                                disabled={!readyForProvision}
+                                className="btn btn-cyan ms-auto" onClick={handleProvisionServiceFromApplication}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-world-upload"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M21 12a9 9 0 1 0 -9 9" /><path d="M3.6 9h16.8" /><path d="M3.6 15h8.4" /><path d="M11.578 3a17 17 0 0 0 0 18" /><path d="M12.5 3c1.719 2.755 2.5 5.876 2.5 9" /><path d="M18 21v-7m3 3l-3 -3l-3 3" /></svg>
+                                Provision from Application
+                            </button>
+                    }
+                    {
+                        typeMode === PACKAGE_CONFIRMATION_MODE
+                        && <button
+                                disabled={!readyForProvision}
+                                className="btn btn-cyan ms-auto" onClick={handleProvisionServiceFromPackage}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-world-upload"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M21 12a9 9 0 1 0 -9 9" /><path d="M3.6 9h16.8" /><path d="M3.6 15h8.4" /><path d="M11.578 3a17 17 0 0 0 0 18" /><path d="M12.5 3c1.719 2.755 2.5 5.876 2.5 9" /><path d="M18 21v-7m3 3l-3 -3l-3 3" /></svg>
+                                Provision from Package
+                            </button>
                     }
                 </div>
             </div>

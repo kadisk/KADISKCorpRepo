@@ -146,7 +146,6 @@ const MyServicesManager = (params) => {
 
                 const { applications } = metadata
                 if (applications) {
-                    console.log(repository)
                     const applicationData = applications.map((application) => ({
                         type: application.appType,
                         executableName: application.executable,
@@ -169,7 +168,9 @@ const MyServicesManager = (params) => {
         GetStatus,
         ListBootablePackages,
         ListApplications,
-        GetPackage: MyWorkspaceDomainService.GetPackageItemById
+        GetRepository: MyWorkspaceDomainService.GetRepository,
+        GetPackageById: MyWorkspaceDomainService.GetPackageItemById,
+        GetPackageByPath: MyWorkspaceDomainService.GetPackageItemByPath,
     }
 
 }

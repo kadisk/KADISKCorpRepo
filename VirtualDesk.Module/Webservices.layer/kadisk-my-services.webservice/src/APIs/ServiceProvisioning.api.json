@@ -12,9 +12,9 @@
 			"summary": "ListApplications"
 		},
 		{
-			"path": "/provision-service",
+			"path": "/provision-service/package",
 			"method": "POST",
-			"summary":"ProvisionService",
+			"summary":"ProvisionServiceFromPackage",
 			"parameters": [
 				{
 					"in": "body",
@@ -22,6 +22,31 @@
 					"type": "number",
 					"required": true
 				}
+			]
+		},
+		{
+			"path": "/provision-service/application",
+			"method": "POST",
+			"summary":"ProvisionServiceFromApplication",
+			"parameters": [
+				{
+					"in": "body",
+					"name": "repositoryId",
+					"type": "number",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "executableName",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "packagePath",
+					"type": "string",
+					"required": true
+				}				
 			]
 		}
 	]

@@ -31,6 +31,29 @@ const CreateMyWorkspaceDomainService = ({
         return items
     }
 
+    const GetPackageItemByPath = async ({ path, userId }) => {
+        const item = await RepositoryItemModel.findOne({
+            attributes: {
+                include: [
+                    [literal('"Repository"."repositoryCodePath"'), 'repositoryCodePath'],
+                    [literal('"Repository"."namespace"'), 'repositoryNamespace'],
+                ]
+            },
+            include: [{
+                model: RepositoryModel,
+                where: { userId },
+                attributes: []
+            }],
+            where: {
+                itemPath: path,
+                itemType: ['app', 'cli', 'webapp', 'webgui', 'webservice', 'service', 'lib']
+            },
+            raw: true
+        })
+    
+        return item
+    }
+
     const GetPackageItemById = async ({ id, userId }) => {
         const item = await RepositoryItemModel.findOne({
             attributes: {
@@ -65,7 +88,8 @@ const CreateMyWorkspaceDomainService = ({
         ListItemByRepositoryId,
         GetItemById,
         ListPackageItemByUserId,
-        GetPackageItemById
+        GetPackageItemById,
+        GetPackageItemByPath
     }
 }
 
