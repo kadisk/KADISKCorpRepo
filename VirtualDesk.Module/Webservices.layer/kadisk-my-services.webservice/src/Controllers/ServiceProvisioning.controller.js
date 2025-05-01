@@ -10,6 +10,8 @@ const GetDockerfileContent = () => {
     ARG EXECUTABLE_NAME
     ARG FIXED_PATH=/tmp/repository
 
+    ENV EXECUTABLE_NAME=\${EXECUTABLE_NAME}
+
     RUN apt-get update && apt-get install -y sudo wget \
         && rm -rf /var/lib/apt/lists/*
     
@@ -35,7 +37,7 @@ const GetDockerfileContent = () => {
     RUN repo register source \${REPOSITORY_NAMESPACE} LOCAL_FS --localPath \${FIXED_PATH}
     RUN repo install \${REPOSITORY_NAMESPACE} LOCAL_FS --executables "\${EXECUTABLE_NAME}"
     
-    CMD ["\${EXECUTABLE_NAME}"]
+    CMD ["sh", "-c", "$EXECUTABLE_NAME"]
 `
 }
 
@@ -135,6 +137,16 @@ const ServiceProvisioningController = (params) => {
             imageTagName,
             onData: _handleData
         })
+
+        const containerName = `container_${username}_${repositoryData.namespace}__${packageData.itemName}-${packageData.itemType}--${executableName}`
+
+        const container = await CreateNewContainer({
+            imageName: imageTagName,
+            containerName
+        })
+
+        await container.start()
+        console.log(`[INFO] Container '${containerName}' iniciado com a imagem '${imageTagName}'`)
 
     }
 

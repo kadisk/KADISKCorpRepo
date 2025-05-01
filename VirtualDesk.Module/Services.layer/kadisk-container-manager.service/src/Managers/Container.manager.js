@@ -47,16 +47,14 @@ const ContainerManager = (params) => {
         })
     }
 
-    const CreateNewContainer = async ({
+    const CreateNewContainer = ({
         imageName,
         containerName
     }) => {
-        const container = await docker.createContainer({
+        return docker.createContainer({
             Image: imageName,
             name: containerName
         })
-
-        return container
     }
 
     return {
