@@ -18,7 +18,7 @@ const getParametersWithData = (parameters:Array<any>, data:any) => {
 }
 
 const getSocket = (port:number, path:string, parameters:Array<Object>) => 
-	(data:object) => new WebSocket(`ws://${window.location.hostname}${getURLPath(path, getParametersWithData(parameters, data))}`)
+	(data:object) => new WebSocket(`ws://${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}${getURLPath(path, getParametersWithData(parameters, data))}`)
 
 const GetRequestByServer = ({list_web_servers_running}:any) => (serverName:string, name:string) => {
 	const {listServices=[], port} = 
