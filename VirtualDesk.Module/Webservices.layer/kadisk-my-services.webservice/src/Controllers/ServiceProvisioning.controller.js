@@ -115,11 +115,11 @@ const ServiceProvisioningController = (params) => {
                     const parsed = JSON.parse(line)
         
                     if (parsed.stream) {
-                        process.stdout.write(parsed.stream)
+                        console.log(parsed.stream)
                     } else if (parsed.status) {
                         console.log(`[STATUS] ${parsed.status}`)
                     } else if (parsed.error) {
-                        process.stderr.write(parsed.error)
+                        console.log(parsed.error)
                     } else {
                         console.log(`[OTHER] ${line}`)
                     }
