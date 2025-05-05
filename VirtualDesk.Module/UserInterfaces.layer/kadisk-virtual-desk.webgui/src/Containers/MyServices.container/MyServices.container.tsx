@@ -97,7 +97,7 @@ const MyServicesContainer = ({
                 }
                 {
                     interfaceModeType === REPOSITORIES_MANAGER_MODE
-                    && <RepositoriesManagerModal onClose={() => changeMode(DEFAULT_MODE)} />
+                    && <RepositoriesManagerModal onImportNew={() => changeMode(IMPORT_SELECT_MODE)} onClose={() => changeMode(DEFAULT_MODE)} />
                 }
 
                 {

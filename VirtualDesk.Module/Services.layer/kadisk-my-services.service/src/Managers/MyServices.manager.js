@@ -163,11 +163,24 @@ const MyServicesManager = (params) => {
 
     }
 
+    const ListRepositories = async (userId) => {
+        const repositoriesData  = await MyWorkspaceDomainService.ListRepositories(userId)
+        
+        const repositories = repositoriesData
+            .map((repositoryData) => {
+                const { id, namespace } = repositoryData
+                return { id, namespace } 
+            })
+
+        return repositories
+    }
+
     return {
         SaveUploadedRepository,
         GetStatus,
         ListBootablePackages,
         ListApplications,
+        ListRepositories,
         GetRepository: MyWorkspaceDomainService.GetRepository,
         GetPackageById: MyWorkspaceDomainService.GetPackageItemById,
         GetPackageByPath: MyWorkspaceDomainService.GetPackageItemByPath,

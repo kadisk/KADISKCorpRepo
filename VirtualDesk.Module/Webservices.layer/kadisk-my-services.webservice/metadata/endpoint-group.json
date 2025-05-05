@@ -39,6 +39,21 @@
                     "containerManagerService":"containerManagerService"
                 }
             }
-        }        
+        },
+        {
+            "url": "/repository-service-manager",
+            "type": "controller",
+            "params": {
+                "api-template": "APIs/RepositoryServiceManager.api.json",
+                "controller": "Controllers/RepositoryServiceManager.controller",
+                "needsAuth": "needsAuth"
+            },
+            "bound-params": {
+                "serverService":"serverService",
+                "controller-params":{
+                    "myServicesManagerService":"myServicesManagerService"
+                }
+            }
+        }  
     ]
 }

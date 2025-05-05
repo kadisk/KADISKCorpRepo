@@ -10,7 +10,11 @@ const APPLICATION_SELECTION_MODE = Symbol()
 const PACKAGE_SELECTION_MODE = Symbol()
 const PACKAGE_CONFIRMATION_MODE = Symbol()
 const APPLICATION_CONFIRMATION_MODE = Symbol()
+const PROVISIONING_SERVICE_MODE = Symbol()
+const PROVISIONING_ERROR_MODE = Symbol()
+const PROVISIONING_COMPLETION_MODE = Symbol()
 
+//provisioning service
 const ServiceProvisioningModal = ({
     onClose,
     HTTPServerManager
@@ -66,14 +70,24 @@ const ServiceProvisioningModal = ({
         })
     }
 
-    const handleProvisionServiceFromApplication = () => {
-        //setReadyForProvision(false)
-        _GetServiceProvisioningManagerAPI()
-        .ProvisionServiceFromApplication({
-            packagePath: selectedApplicationData.package,
-            repositoryId: selectedApplicationData.repositoryId,
-            executableName: selectedApplicationData.executableName
-        })
+    const handleProvisionServiceFromApplication = async () => {
+        changeTypeMode(PROVISIONING_SERVICE_MODE)
+
+        const { ProvisionServiceFromApplication } = _GetServiceProvisioningManagerAPI()
+
+        try{
+            await ProvisionServiceFromApplication({
+                packagePath: selectedApplicationData.package,
+                repositoryId: selectedApplicationData.repositoryId,
+                executableName: selectedApplicationData.executableName
+            })
+
+            changeTypeMode(PROVISIONING_COMPLETION_MODE)
+        } catch(error){
+            console.log(error)
+            changeTypeMode(PROVISIONING_ERROR_MODE)
+        }
+        
     }
     
     return <div className="modal modal-blur show" role="dialog" aria-hidden="false" style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.8)" }}>
@@ -90,9 +104,24 @@ const ServiceProvisioningModal = ({
                                 <ul className="steps steps-cyan my-4">
                                     <li className={`step-item ${typeMode === PROVISIONING_TYPE_SELECTION_MODE ? "active": ""}`}>Provisioning Type</li>
                                     <li className={`step-item ${typeMode === PACKAGE_SELECTION_MODE || typeMode === APPLICATION_SELECTION_MODE ? "active": ""}`}>Selection</li>
-                                    <li className={`step-item ${typeMode === PACKAGE_CONFIRMATION_MODE ||  typeMode === APPLICATION_SELECTION_MODE  ? "active": ""}`}>Confirmation</li>
+                                    <li className={`step-item ${typeMode === PACKAGE_CONFIRMATION_MODE ||  typeMode === APPLICATION_CONFIRMATION_MODE  ? "active": ""}`}>Confirmation</li>
+                                    <li className={`step-item ${typeMode === PROVISIONING_SERVICE_MODE  ? "active": ""}`}>Provisioning</li>
+                                    <li className={`step-item ${typeMode === PROVISIONING_COMPLETION_MODE  ? "active": ""}`}>Completion</li>
                                 </ul>
                             </div>
+                            
+                            {
+                                (typeMode === PROVISIONING_SERVICE_MODE)
+                                && <div className="card-body">
+                                        <div className="text-center">
+                                            <div className="text-secondary mb-3">working on provisioning...</div>
+                                            <div className="progress progress-sm">
+                                                <div className="progress-bar progress-bar-indeterminate"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                            }
                             {
                                 (typeMode === PROVISIONING_TYPE_SELECTION_MODE)
                                 && <div className="card-body">
