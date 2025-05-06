@@ -26,6 +26,11 @@
 					"required": true
 				}
 			]
+		},
+		{
+			"path": "/provisioned-services",
+			"method": "GET",
+			"summary": "ListProvisionedServices"
 		}
 	]
 }

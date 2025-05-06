@@ -79,7 +79,8 @@ const ServiceProvisioningModal = ({
             await ProvisionServiceFromApplication({
                 packagePath: selectedApplicationData.package,
                 repositoryId: selectedApplicationData.repositoryId,
-                executableName: selectedApplicationData.executableName
+                executableName: selectedApplicationData.executableName,
+                appType: selectedApplicationData.type
             })
 
             changeTypeMode(PROVISIONING_COMPLETION_MODE)

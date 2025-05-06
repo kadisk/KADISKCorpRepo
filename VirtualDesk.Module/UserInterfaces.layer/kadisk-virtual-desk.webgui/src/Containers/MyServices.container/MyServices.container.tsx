@@ -25,11 +25,16 @@ const MyServicesContainer = ({
 
     const [ importDataCurrent, setImportDataCurrent ] = useState<{repositoryNamespace:string, sourceCodeURL:string}>()
     const [ interfaceModeType,  changeMode] = useState<any>(LOADING_MODE)
+    const [ provisionedServicesList, setProvisionedServicesList ] = useState([])
 
     useEffect(() => {
+
         if(interfaceModeType === LOADING_MODE){
             fetchMyServicesStatus()
+        } else if(interfaceModeType === DEFAULT_MODE){
+            fetchProvisionedServices()
         }
+
     }, [interfaceModeType])
     
     const getMyServicesManagerAPI = () => 
@@ -39,12 +44,19 @@ const MyServicesContainer = ({
         })
 
     const fetchMyServicesStatus = async () => {
-        const response = await getMyServicesManagerAPI().GetMyServicesStatus()
+        const api = getMyServicesManagerAPI()
+        const response = await api.GetMyServicesStatus()
         if(response.data === "READY"){
             changeMode(DEFAULT_MODE)
         } else if (response.data === "NO_REPOSITORIES"){
             changeMode(NO_REPOSITORIES_MODE)
         }
+    }
+
+    const fetchProvisionedServices = async () => {
+        const api = getMyServicesManagerAPI()
+        const response = await api.ListProvisionedServices()
+        setProvisionedServicesList(response.data)
     }
 
     const handleUseFromMyWorkspace = () => {
@@ -81,6 +93,26 @@ const MyServicesContainer = ({
                                     </button>
                                 </div>
                             </div>
+                        }
+                    </div>
+                    <div className="py-4">
+                        {
+                            provisionedServicesList 
+                            && <div className="row">
+                                    {
+                                        provisionedServicesList.map((provisionedService, index) => (
+                                            <div key={index} className="col-md-4">
+                                                <div className="card card-link mb-3">
+                                                    <div className="card-header">
+                                                        <h4 className="mb-0">{provisionedService.executableName}</h4>
+                                                    </div>
+                                                    <div className="card-body">
+                                                        <div className="mb-2">Created at: <strong>{provisionedService.createdAt}</strong></div>
+                                                    </div>
+                                                </div>
+                                            </div>))
+                                    }
+                                </div>
                         }
                     </div>
                 </div>

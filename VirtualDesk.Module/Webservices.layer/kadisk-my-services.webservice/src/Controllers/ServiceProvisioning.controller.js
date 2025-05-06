@@ -91,13 +91,24 @@ const ServiceProvisioningController = (params) => {
         return contextTarStream
     }
 
-    const ProvisionServiceFromApplication = async ({ executableName, repositoryId, packagePath }, { authenticationData }) => {  
+    const ProvisionServiceFromApplication = async ({ appType, executableName, repositoryId, packagePath }, { authenticationData }) => {  
         const { userId, username } = authenticationData
         
         const repositoryData = await myServicesManagerService.GetRepository.ById(repositoryId)
         const itemPath = join(repositoryData.repositoryCodePath, packagePath)
         const packageData = await myServicesManagerService.GetPackageByPath({ path: itemPath, userId })
-        const imageTagName = `ecosystem:${username}_${repositoryData.namespace}__${packageData.itemName}-${packageData.itemType}--${executableName}`
+
+        const serviceData = await myServicesManagerService
+            .RegisterServiceProvisioning({
+                userId,
+                executableName,
+                appType,
+                repositoryId,
+                packageId: packageData.id,
+            })
+
+
+        const imageTagName = `ecosystem:${username}_${repositoryData.namespace}__${packageData.itemName}-${packageData.itemType}--${executableName}--${serviceData.id}`
 
         const buildargs = {
             REPOSITORY_NAMESPACE: repositoryData.namespace,

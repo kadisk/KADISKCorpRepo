@@ -1,4 +1,3 @@
-const fs = require("fs")
 const { join, resolve} = require("path")
 
 const os = require('os')
@@ -10,7 +9,6 @@ const InitializePersistentStoreManager = require("../Helpers/InitializePersisten
 const PrepareDirPath                   = require("../Helpers/PrepareDirPath")
 const CreateItemIndexer                = require("../Helpers/CreateItemIndexer")
 const CreateMyWorkspaceDomainService   = require("../Helpers/CreateMyWorkspaceDomainService")
-const path = require("path")
 
 const MyServicesManager = (params) => {
 
@@ -36,13 +34,18 @@ const MyServicesManager = (params) => {
 
     const PersistentStoreManager = InitializePersistentStoreManager(absolutStorageFilePath)
     const {
-        Repository     : RepositoryModel,
-        RepositoryItem : RepositoryItemModel
+        Repository         : RepositoryModel,
+        RepositoryItem     : RepositoryItemModel,
+        ProvisionedService : ProvisionedServiceModel
     } = PersistentStoreManager.models
 
     const ItemIndexer = CreateItemIndexer({RepositoryItemModel})
 
-    const MyWorkspaceDomainService = CreateMyWorkspaceDomainService({ RepositoryModel, RepositoryItemModel })
+    const MyWorkspaceDomainService = CreateMyWorkspaceDomainService({
+        RepositoryModel, 
+        RepositoryItemModel, 
+        ProvisionedServiceModel
+    })
 
     const _GetPrepareAndRepositoriesCodePath = ({username, repositoryNamespace}) => {
         const repositoriesCodePath = resolve(absolutRepositoryEditorDirPath, username, repositoryNamespace)
@@ -78,7 +81,8 @@ const MyServicesManager = (params) => {
         if (existingNamespace) 
             throw new Error('Repository Namespace already exists')
 
-        const newRepository = await MyWorkspaceDomainService.CreateRepository({ repositoryNamespace , userId, repositoryCodePath })
+        const newRepository = await MyWorkspaceDomainService
+            .RegisterRepository({ repositoryNamespace , userId, repositoryCodePath })
         return newRepository
     }
 
@@ -181,9 +185,11 @@ const MyServicesManager = (params) => {
         ListBootablePackages,
         ListApplications,
         ListRepositories,
+        ListProvisionedServices: MyWorkspaceDomainService.ListProvisionedServices,
         GetRepository: MyWorkspaceDomainService.GetRepository,
         GetPackageById: MyWorkspaceDomainService.GetPackageItemById,
         GetPackageByPath: MyWorkspaceDomainService.GetPackageItemByPath,
+        RegisterServiceProvisioning: MyWorkspaceDomainService.RegisterServiceProvisioning
     }
 
 }

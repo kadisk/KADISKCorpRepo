@@ -1,8 +1,12 @@
 const { literal } = require('sequelize')
 
+
+const PACKAGE_ITEM_TYPE = ["app", "cli", "webapp", "webgui", "webservice", "service", "lib"]
+
 const CreateMyWorkspaceDomainService = ({
     RepositoryModel,
-    RepositoryItemModel
+    RepositoryItemModel,
+    ProvisionedServiceModel
 }) => {
 
     const ListRepositories = (userId) => RepositoryModel.findAll({where: { userId }})
@@ -10,7 +14,7 @@ const CreateMyWorkspaceDomainService = ({
     const GetRepositoryByNamespace = (namespace) => RepositoryModel.findOne({ where: { namespace } })
     const GetRepositoryById = (id) => RepositoryModel.findOne({ where: { id } })
 
-    const CreateRepository = ({ repositoryNamespace , userId, repositoryCodePath }) => RepositoryModel.create({ namespace: repositoryNamespace, userId, repositoryCodePath})
+    const RegisterRepository = ({ repositoryNamespace , userId, repositoryCodePath }) => RepositoryModel.create({ namespace: repositoryNamespace, userId, repositoryCodePath})
 
     const ListItemByRepositoryId = (repositoryId) => RepositoryItemModel.findAll({ where: { repositoryId }, raw: true})
     const GetItemById = (id) => RepositoryItemModel.findOne({ where: { id } })
@@ -20,10 +24,10 @@ const CreateMyWorkspaceDomainService = ({
             include: [{
                 model: RepositoryModel,
                 where: { userId },
-                attributes: ['id', 'namespace']
+                attributes: ["id", "namespace"]
             }],
             where: {
-                itemType: ['app', 'cli', 'webapp', 'webgui', 'webservice', 'service', 'lib']
+                itemType: PACKAGE_ITEM_TYPE
             },
             raw: true
         })
@@ -35,8 +39,8 @@ const CreateMyWorkspaceDomainService = ({
         const item = await RepositoryItemModel.findOne({
             attributes: {
                 include: [
-                    [literal('"Repository"."repositoryCodePath"'), 'repositoryCodePath'],
-                    [literal('"Repository"."namespace"'), 'repositoryNamespace'],
+                    [literal('"Repository"."repositoryCodePath"'), "repositoryCodePath"],
+                    [literal('"Repository"."namespace"'), "repositoryNamespace"],
                 ]
             },
             include: [{
@@ -46,7 +50,7 @@ const CreateMyWorkspaceDomainService = ({
             }],
             where: {
                 itemPath: path,
-                itemType: ['app', 'cli', 'webapp', 'webgui', 'webservice', 'service', 'lib']
+                itemType: PACKAGE_ITEM_TYPE
             },
             raw: true
         })
@@ -58,8 +62,8 @@ const CreateMyWorkspaceDomainService = ({
         const item = await RepositoryItemModel.findOne({
             attributes: {
                 include: [
-                    [literal('"Repository"."repositoryCodePath"'), 'repositoryCodePath'],
-                    [literal('"Repository"."namespace"'), 'repositoryNamespace'],
+                    [literal('"Repository"."repositoryCodePath"'), "repositoryCodePath"],
+                    [literal('"Repository"."namespace"'), "repositoryNamespace"],
                 ]
             },
             include: [{
@@ -69,7 +73,7 @@ const CreateMyWorkspaceDomainService = ({
             }],
             where: {
                 id,
-                itemType: ['app', 'cli', 'webapp', 'webgui', 'webservice', 'service', 'lib']
+                itemType: PACKAGE_ITEM_TYPE
             },
             raw: true
         })
@@ -77,9 +81,44 @@ const CreateMyWorkspaceDomainService = ({
         return item
     }
     
+    const ListProvisionedServices = async (userId) => {
+        const items = await ProvisionedServiceModel.findAll({
+            include: [
+                {
+                    model: RepositoryModel,
+                    attributes: ["id", "namespace"]
+                },
+                {
+                    model: RepositoryItemModel,
+                    attributes: ["id", "itemName", "itemType", "itemPath"]
+                }
+            ],
+            where: { userId },
+            raw: true
+        })
+
+        return items
+    }
+
+    const RegisterServiceProvisioning = ({ 
+        userId,
+        executableName,
+        appType,
+        repositoryId,
+        packageId
+    }) => 
+        ProvisionedServiceModel
+            .create({ 
+                userId,
+                executableName,
+                appType,
+                repositoryId,
+                packageId
+            })
 
     return {
-        CreateRepository,
+        RegisterRepository,
+        RegisterServiceProvisioning,
         ListRepositories,
         GetRepository:{
             ByNamespace: GetRepositoryByNamespace,
@@ -89,7 +128,8 @@ const CreateMyWorkspaceDomainService = ({
         GetItemById,
         ListPackageItemByUserId,
         GetPackageItemById,
-        GetPackageItemByPath
+        GetPackageItemByPath,
+        ListProvisionedServices
     }
 }
 

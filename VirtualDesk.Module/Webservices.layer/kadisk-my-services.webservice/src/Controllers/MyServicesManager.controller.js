@@ -73,10 +73,16 @@ const MyServicesManagerController = (params) => {
     
         }
 
+    const ListProvisionedServices = ({ authenticationData }) => {
+        const { userId } = authenticationData
+        return myServicesManagerService.ListProvisionedServices(userId)
+    }
+
     const controllerServiceObject = {
         controllerName: "MyServicesManagerController",
         GetMyServicesStatus,
-        UploadRepository
+        UploadRepository,
+        ListProvisionedServices
     }
 
     return Object.freeze(controllerServiceObject)
