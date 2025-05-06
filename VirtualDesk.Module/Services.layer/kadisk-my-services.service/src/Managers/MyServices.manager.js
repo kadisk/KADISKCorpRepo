@@ -36,7 +36,8 @@ const MyServicesManager = (params) => {
     const {
         Repository         : RepositoryModel,
         RepositoryItem     : RepositoryItemModel,
-        ProvisionedService : ProvisionedServiceModel
+        ProvisionedService : ProvisionedServiceModel,
+        ImageBuildHistory  : ImageBuildHistoryModel
     } = PersistentStoreManager.models
 
     const ItemIndexer = CreateItemIndexer({RepositoryItemModel})
@@ -44,7 +45,8 @@ const MyServicesManager = (params) => {
     const MyWorkspaceDomainService = CreateMyWorkspaceDomainService({
         RepositoryModel, 
         RepositoryItemModel, 
-        ProvisionedServiceModel
+        ProvisionedServiceModel,
+        ImageBuildHistoryModel
     })
 
     const _GetPrepareAndRepositoriesCodePath = ({username, repositoryNamespace}) => {
@@ -185,11 +187,12 @@ const MyServicesManager = (params) => {
         ListBootablePackages,
         ListApplications,
         ListRepositories,
-        ListProvisionedServices: MyWorkspaceDomainService.ListProvisionedServices,
-        GetRepository: MyWorkspaceDomainService.GetRepository,
-        GetPackageById: MyWorkspaceDomainService.GetPackageItemById,
-        GetPackageByPath: MyWorkspaceDomainService.GetPackageItemByPath,
-        RegisterServiceProvisioning: MyWorkspaceDomainService.RegisterServiceProvisioning
+        ListProvisionedServices     : MyWorkspaceDomainService.ListProvisionedServices,
+        GetRepository               : MyWorkspaceDomainService.GetRepository,
+        GetPackageById              : MyWorkspaceDomainService.GetPackageItemById,
+        GetPackageByPath            : MyWorkspaceDomainService.GetPackageItemByPath,
+        RegisterServiceProvisioning : MyWorkspaceDomainService.RegisterServiceProvisioning,
+        RegisterBuildedImage        : MyWorkspaceDomainService.RegisterBuildedImage
     }
 
 }

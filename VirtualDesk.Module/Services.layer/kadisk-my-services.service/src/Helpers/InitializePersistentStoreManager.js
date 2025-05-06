@@ -1,65 +1,26 @@
 const { Sequelize, DataTypes } = require("sequelize")
 
 const InitializePersistentStoreManager = (storage) => {
-
     const sequelize = new Sequelize({
         dialect: "sqlite",
         storage
     })
 
     const RepositoryModel = sequelize.define("Repository", { 
-            id: {
-                type: DataTypes.INTEGER,
-                autoIncrement: true,
-                primaryKey: true
-            },
-            namespace: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            userId:{
-                type: DataTypes.INTEGER,
-                allowNull: false
-            },
-            repositoryCodePath: DataTypes.STRING
-    })
-
-    const ProvisionedServiceModel = sequelize.define("ProvisionedService", {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true
         },
-        userId:{
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        executableName: {
+        namespace: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        appType: {
-            type: DataTypes.STRING,
+        userId: {
+            type: DataTypes.INTEGER,
             allowNull: false
         },
-        repositoryId: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            references: {
-                model: RepositoryModel,
-                key: "id"
-            },
-            onDelete: "CASCADE"
-        },
-        packageId: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-            references: {
-                model: "RepositoryItems",
-                key: "id"
-            },
-            onDelete: "CASCADE"
-        }
+        repositoryCodePath: DataTypes.STRING
     })
 
     const RepositoryItemModel = sequelize.define("RepositoryItem", {
@@ -100,6 +61,68 @@ const InitializePersistentStoreManager = (storage) => {
         }
     })
 
+
+    const ProvisionedServiceModel = sequelize.define("ProvisionedService", {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true
+        },
+        executableName: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        appType: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        repositoryId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: RepositoryModel,
+                key: "id"
+            },
+            onDelete: "CASCADE"
+        },
+        packageId: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: RepositoryItemModel,
+                key: "id"
+            },
+            onDelete: "CASCADE"
+        }
+    })
+
+
+    const ImageBuildHistoryModel = sequelize.define("ImageBuildHistory", {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true
+        },
+        tag: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        hashId: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        serviceId: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: ProvisionedServiceModel,
+                key: "id"
+            },
+            onDelete: "CASCADE"
+        }
+    })
+
+
     RepositoryModel.hasMany(RepositoryItemModel, {
         foreignKey: "repositoryId",
         onDelete: "CASCADE"
@@ -107,6 +130,11 @@ const InitializePersistentStoreManager = (storage) => {
 
     RepositoryModel.hasMany(ProvisionedServiceModel, {
         foreignKey: "repositoryId",
+        onDelete: "CASCADE"
+    })
+
+    ProvisionedServiceModel.hasMany(ImageBuildHistoryModel, {
+        foreignKey: "serviceId",
         onDelete: "CASCADE"
     })
 
@@ -122,6 +150,10 @@ const InitializePersistentStoreManager = (storage) => {
         foreignKey: "packageId"
     })
 
+    ImageBuildHistoryModel.belongsTo(ProvisionedServiceModel, {
+        foreignKey: "serviceId"
+    })
+
     RepositoryItemModel.hasMany(RepositoryItemModel, {
         foreignKey: "parentId",
         as: "children",
@@ -134,14 +166,16 @@ const InitializePersistentStoreManager = (storage) => {
     })
 
     return {
-        models:{
+        models: {
             Repository: RepositoryModel,
             RepositoryItem: RepositoryItemModel,
-            ProvisionedService: ProvisionedServiceModel
+            ProvisionedService: ProvisionedServiceModel,
+            ImageBuildHistory: ImageBuildHistoryModel
         },
         ConnectAndSync: async () => {
             await sequelize.authenticate()
             await sequelize.sync()
+            //await sequelize.sync({ force: true }) 
         }
     }
 }

@@ -41,7 +41,15 @@ const ContainerManager = (params) => {
             docker.buildImage(contextTarStream, { t: imageTagName, buildargs }, (err, stream) => {
                 if (err) return reject(err)
                 stream.on('data', onData)
-                stream.on('end', resolve)
+                stream.on('end', async () => {
+                    try {
+                        const image = docker.getImage(imageTagName)
+                        const imageInfo = await image.inspect()
+                        resolve(imageInfo)
+                    } catch (inspectErr) {
+                        reject(inspectErr)
+                    }
+                })
                 stream.on('error', reject)
             })
         })

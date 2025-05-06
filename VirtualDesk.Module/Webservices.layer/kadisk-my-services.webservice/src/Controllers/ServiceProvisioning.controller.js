@@ -100,7 +100,6 @@ const ServiceProvisioningController = (params) => {
 
         const serviceData = await myServicesManagerService
             .RegisterServiceProvisioning({
-                userId,
                 executableName,
                 appType,
                 repositoryId,
@@ -108,7 +107,7 @@ const ServiceProvisioningController = (params) => {
             })
 
 
-        const imageTagName = `ecosystem:${username}_${repositoryData.namespace}__${packageData.itemName}-${packageData.itemType}--${executableName}--${serviceData.id}`
+        const imageTagName = `ecosystem_${username}_${repositoryData.namespace}__${packageData.itemName}-${packageData.itemType}:${executableName}-${serviceData.id}`.toLowerCase()
 
         const buildargs = {
             REPOSITORY_NAMESPACE: repositoryData.namespace,
@@ -142,14 +141,21 @@ const ServiceProvisioningController = (params) => {
         }
 
         
-        await BuildImageFromDockerfileString({
+        const imageInfo = await BuildImageFromDockerfileString({
             buildargs,
             contextTarStream,
             imageTagName,
             onData: _handleData
         })
 
-        const containerName = `container_${username}_${repositoryData.namespace}__${packageData.itemName}-${packageData.itemType}--${executableName}`
+        const buildData = await myServicesManagerService
+            .RegisterBuildedImage({
+                serviceId: serviceData.id,
+                tag: imageTagName,
+                hashId: imageInfo.Id
+            })
+        
+        const containerName = `container_${username}_${repositoryData.namespace}__${packageData.itemName}-${packageData.itemType}--${executableName}--${buildData.id}`
 
         const container = await CreateNewContainer({
             imageName: imageTagName,

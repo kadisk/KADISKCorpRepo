@@ -103,11 +103,22 @@ const MyServicesContainer = ({
                                         provisionedServicesList.map((provisionedService, index) => (
                                             <div key={index} className="col-md-4">
                                                 <div className="card card-link mb-3">
-                                                    <div className="card-header">
+                                                    <div className="card-header py-2">
                                                         <h4 className="mb-0">{provisionedService.executableName}</h4>
                                                     </div>
                                                     <div className="card-body">
-                                                        <div className="mb-2">Created at: <strong>{provisionedService.createdAt}</strong></div>
+                                                        <dl className="row">
+                                                            <dt className="col-5">Repository namespace</dt>
+                                                            <dd className="col-7">{provisionedService["Repository.namespace"]}</dd>
+                                                            <dt className="col-5">Package name</dt>
+                                                            <dd className="col-7">{provisionedService["RepositoryItem.itemName"]}</dd>
+                                                            <dt className="col-5">Package type</dt>
+                                                            <dd className="col-7">{provisionedService["RepositoryItem.itemType"]}</dd>
+                                                            <dt className="col-5">Application type</dt>
+                                                            <dd className="col-7">{provisionedService["appType"]}</dd>
+                                                            <dt className="col-5">Created at</dt>
+                                                            <dd className="col-7">{provisionedService["createdAt"]}</dd>
+                                                        </dl>
                                                     </div>
                                                 </div>
                                             </div>))

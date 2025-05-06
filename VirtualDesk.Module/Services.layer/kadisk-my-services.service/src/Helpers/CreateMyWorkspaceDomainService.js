@@ -6,7 +6,8 @@ const PACKAGE_ITEM_TYPE = ["app", "cli", "webapp", "webgui", "webservice", "serv
 const CreateMyWorkspaceDomainService = ({
     RepositoryModel,
     RepositoryItemModel,
-    ProvisionedServiceModel
+    ProvisionedServiceModel,
+    ImageBuildHistoryModel
 }) => {
 
     const ListRepositories = (userId) => RepositoryModel.findAll({where: { userId }})
@@ -86,6 +87,7 @@ const CreateMyWorkspaceDomainService = ({
             include: [
                 {
                     model: RepositoryModel,
+                    where: { userId },
                     attributes: ["id", "namespace"]
                 },
                 {
@@ -93,7 +95,6 @@ const CreateMyWorkspaceDomainService = ({
                     attributes: ["id", "itemName", "itemType", "itemPath"]
                 }
             ],
-            where: { userId },
             raw: true
         })
 
@@ -101,7 +102,6 @@ const CreateMyWorkspaceDomainService = ({
     }
 
     const RegisterServiceProvisioning = ({ 
-        userId,
         executableName,
         appType,
         repositoryId,
@@ -109,16 +109,26 @@ const CreateMyWorkspaceDomainService = ({
     }) => 
         ProvisionedServiceModel
             .create({ 
-                userId,
                 executableName,
                 appType,
                 repositoryId,
                 packageId
             })
 
+    const RegisterBuildedImage = ({
+        serviceId,
+        tag,
+        hashId
+    }) => ImageBuildHistoryModel
+            .create({ 
+                serviceId,
+                tag,
+                hashId,
+            })
     return {
         RegisterRepository,
         RegisterServiceProvisioning,
+        RegisterBuildedImage,
         ListRepositories,
         GetRepository:{
             ByNamespace: GetRepositoryByNamespace,
