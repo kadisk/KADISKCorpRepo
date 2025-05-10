@@ -21,7 +21,7 @@ const TABS_LIST = [
     { label: "Environment variables", code: "environment-variables" },
 ]
 
-const ApplicationContainerPanel = ({ container, onRemoveContainer }) => {
+const ApplicationContainerPanel = ({ container, onRemoveContainer, onStopContainer, onStartContainer}) => {
 
     console.log(container)
 
@@ -99,7 +99,7 @@ const ApplicationContainerPanel = ({ container, onRemoveContainer }) => {
                     <div className="btn-list justify-content-end">
                         {
                             container.State.Status === "exited"
-                            && <button className="btn btn-primary">
+                            && <button className="btn btn-primary" onClick={() => onStartContainer(container.Id)}>
                                 <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-player-play"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 4v16l13 -8z" /></svg>start
                             </button>
                         }
@@ -123,7 +123,7 @@ const ApplicationContainerPanel = ({ container, onRemoveContainer }) => {
                         }
                         {
                             container.State.Status === "running"
-                            && <button className="btn btn-orange">
+                            && <button className="btn btn-orange" onClick={() => onStopContainer(container.Id)}>
                                 <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-player-stop"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 5m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" /></svg>stop
                             </button>
                         }
@@ -181,6 +181,32 @@ const ContainerManager = ({ HTTPServerManager }) => {
         }
     }
 
+    const handleStopContainer = async (containerId: string) => {
+        setLoading(true)
+        try {
+            const api = getContainerManagerAPI()
+            await api.StopContainer({ containerIdOrName:containerId })
+            fetchContainers()
+        } catch (error) {
+            console.error("Error stopping container:", error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleStartContainer = async (containerId: string) => {
+        setLoading(true)
+        try {
+            const api = getContainerManagerAPI()
+            await api.StartContainer({ containerIdOrName:containerId })
+            fetchContainers()
+        } catch (error) {
+            console.error("Error starting container:", error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return <div className="pt-4">
                 <div className="container-xl">
                     {
@@ -200,7 +226,11 @@ const ContainerManager = ({ HTTPServerManager }) => {
                     }
 
                     <div className="row row-cards">
-                        {containers.map((container) => <ApplicationContainerPanel onRemoveContainer={handleRemoveContainer} container={container}/>)}
+                        {containers.map((container) => <ApplicationContainerPanel 
+                                                            container={container}
+                                                            onStartContainer={handleStartContainer}
+                                                            onStopContainer={handleStopContainer}
+                                                            onRemoveContainer={handleRemoveContainer}/>)}
                     </div>
                 </div>
             </div>

@@ -18,6 +18,32 @@
 					"required": true
 				}
 			]
+		},
+		{
+			"summary": "StartContainer",
+			"method": "POST",
+			"path": "/start-container",
+			"parameters": [
+				{
+					"in": "body",
+					"name": "containerIdOrName",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"summary": "StopContainer",
+			"method": "POST",
+			"path": "/stop-container",
+			"parameters": [
+				{
+					"in": "body",
+					"name": "containerIdOrName",
+					"type": "string",
+					"required": true
+				}
+			]
 		}
 	]
 }

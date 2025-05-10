@@ -99,7 +99,31 @@ const ContainerManager = (params) => {
         }
     }
 
+    const StartContainer = async (containerIdOrName) => {
+        try {
+            const container = docker.getContainer(containerIdOrName)
+            await container.start()
+            return { success: true, message: `Container ${containerIdOrName} started successfully` }
+        } catch (error) {
+            console.error(`Error starting container ${containerIdOrName}:`, error)
+            throw error
+        }
+    }
+    
+    const StopContainer = async (containerIdOrName) => {
+        try {
+            const container = docker.getContainer(containerIdOrName)
+            await container.stop()
+            return { success: true, message: `Container ${containerIdOrName} stopped successfully` }
+        } catch (error) {
+            console.error(`Error stopping container ${containerIdOrName}:`, error)
+            throw error
+        }
+    }
+
     return {
+        StartContainer,
+        StopContainer,
         RemoveContainer,
         ListAllContainers,
         BuildImageFromDockerfileString,
