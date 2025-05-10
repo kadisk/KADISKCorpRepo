@@ -7,7 +7,8 @@ const CreateMyWorkspaceDomainService = ({
     RepositoryModel,
     RepositoryItemModel,
     ProvisionedServiceModel,
-    ImageBuildHistoryModel
+    ImageBuildHistoryModel,
+    ServiceInstanceModel
 }) => {
 
     const ListRepositories = (userId) => RepositoryModel.findAll({where: { userId }})
@@ -125,9 +126,23 @@ const CreateMyWorkspaceDomainService = ({
                 tag,
                 hashId,
             })
+    
+
+    const RegisterServiceInstance = ({
+        containerName,
+        buildId,
+        serviceId
+    }) => ServiceInstanceModel
+            .create({
+                containerName,
+                buildId,
+                serviceId
+            })
+
     return {
         RegisterRepository,
         RegisterServiceProvisioning,
+        RegisterServiceInstance,
         RegisterBuildedImage,
         ListRepositories,
         GetRepository:{

@@ -162,6 +162,12 @@ const ServiceProvisioningController = (params) => {
             containerName
         })
 
+        await myServicesManagerService.RegisterServiceInstance({
+            containerName,
+            buildId: buildData.id,
+            serviceId: serviceData.id
+        })
+
         await container.start()
         console.log(`[INFO] Container '${containerName}' iniciado com a imagem '${imageTagName}'`)
 

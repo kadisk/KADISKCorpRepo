@@ -103,10 +103,20 @@ const MyServicesContainer = ({
                                         provisionedServicesList.map((provisionedService, index) => (
                                             <div key={index} className="col-md-4">
                                                 <div className="card card-link mb-3">
+
                                                     <div className="card-header py-2">
-                                                        <h4 className="mb-0">{provisionedService.executableName}</h4>
+                                                        <div>
+                                                        <h4 className="card-title">{provisionedService.executableName}</h4>
+                                                        <p className="card-subtitle">{provisionedService["Repository.namespace"]}/{provisionedService["RepositoryItem.itemName"]}/{provisionedService["RepositoryItem.itemType"]}</p>
+                                                        </div>
+                                                        {/*<div className="card-actions">
+                                                            <a className="btn btn-ghost-info p-1">Settings
+                                                            <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-settings ms-1"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /></svg>
+                                                            </a>
+                                                        </div>*/}
                                                     </div>
                                                     <div className="card-body">
+                                                        <div className="card-title">Container information</div>
                                                         <dl className="row">
                                                             <dt className="col-5">Repository namespace</dt>
                                                             <dd className="col-7">{provisionedService["Repository.namespace"]}</dd>
@@ -114,10 +124,6 @@ const MyServicesContainer = ({
                                                             <dd className="col-7">{provisionedService["RepositoryItem.itemName"]}</dd>
                                                             <dt className="col-5">Package type</dt>
                                                             <dd className="col-7">{provisionedService["RepositoryItem.itemType"]}</dd>
-                                                            <dt className="col-5">Application type</dt>
-                                                            <dd className="col-7">{provisionedService["appType"]}</dd>
-                                                            <dt className="col-5">Created at</dt>
-                                                            <dd className="col-7">{provisionedService["createdAt"]}</dd>
                                                         </dl>
                                                     </div>
                                                 </div>
