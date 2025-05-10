@@ -85,7 +85,22 @@ const ContainerManager = (params) => {
         })
     }
 
+    const RemoveContainer = async (containerIdOrName) => {
+        try {
+            const container = docker.getContainer(containerIdOrName)
+            await container.remove({ 
+                force: false, 
+                v: false 
+            })
+            return { success: true, message: `Container ${containerIdOrName} removed successfully` }
+        } catch (error) {
+            console.error(`Error removing container ${containerIdOrName}:`, error)
+            throw error
+        }
+    }
+
     return {
+        RemoveContainer,
         ListAllContainers,
         BuildImageFromDockerfileString,
         CreateNewContainer

@@ -183,17 +183,13 @@ const MyServicesManager = (params) => {
         return repositories
     }
 
-    const ListProvisionedServices = (userId) => {
-        return MyWorkspaceDomainService.ListProvisionedServices(userId)
-    }
-
     return {
         SaveUploadedRepository,
         GetStatus,
         ListBootablePackages,
         ListApplications,
         ListRepositories,
-        ListProvisionedServices,
+        ListProvisionedServices     : MyWorkspaceDomainService.ListProvisionedServices,
         GetRepository               : MyWorkspaceDomainService.GetRepository,
         GetPackageById              : MyWorkspaceDomainService.GetPackageItemById,
         GetPackageByPath            : MyWorkspaceDomainService.GetPackageItemByPath,

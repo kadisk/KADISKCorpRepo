@@ -5,6 +5,19 @@
 			"path": "/containers",
 			"method": "GET",
 			"summary": "ListContainers"
+		},
+		{
+			"summary": "RemoveContainer",
+			"method": "POST",
+			"path": "/remove-container",
+			"parameters": [
+				{
+					"in": "body",
+					"name": "containerIdOrName",
+					"type": "string",
+					"required": true
+				}
+			]
 		}
 	]
 }

@@ -1,16 +1,15 @@
 import * as React from "react"
 
-import DefaultPageWithTitle from "../../Components/DefaultPageWithTitle"
+import DefaultPage from "../../Components/DefaultPage"
+import PageTitle from "../../Components/PageTitle"
 
 import ContainerManagerContainer from "../../Containers/ContainerManager.container"
 
-const ContainerManagerPage = () => {
+const ContainerManagerPage = () => 
+	<DefaultPage>
+		<PageTitle title="Container Manager" preTitle="Ecosystem Administrator"/>
+		<div className="page-body mt-1"><ContainerManagerContainer/></div>
+	</DefaultPage>
 
-	return (
-		<DefaultPageWithTitle title="Container Manager" preTitle="Ecosystem Administrator">
-			<ContainerManagerContainer />
-		</DefaultPageWithTitle>
-	)
-}
 
 export default ContainerManagerPage
