@@ -14,9 +14,18 @@ const GetSatatusBadgeClasses = (status: string) => {
     }
 }
 
+
+const TABS_LIST = [
+    { label: "General information", code: "general" },
+    { label: "Networks", code: "networks" },
+    { label: "Environment variables", code: "environment-variables" },
+]
+
 const ApplicationContainerPanel = ({ container, onRemoveContainer }) => {
 
     console.log(container)
+
+    const [ tabCodeSelected, setTabCodeSelected ] = useState("general")
     
     const badgeClasses = GetSatatusBadgeClasses(container.State.Status)
 
@@ -25,41 +34,67 @@ const ApplicationContainerPanel = ({ container, onRemoveContainer }) => {
             <div className="card mb-3" style={{ "boxShadow": "rgb(159, 166, 175) 0px 0px 5px 0px"}}>
                 <div className="card-header">
                     <ul className="nav nav-tabs card-header-tabs flex-row-reverse bg-blue-lt">
-                        <li className="nav-item">
-                            <a href="#tabs-home-2" className="nav-link active">General</a>
-                        </li>
-                        <li className="nav-item">
-                            <a href="#tabs-profile-2" className="nav-link">Networks</a>
-                        </li>
-                        <li className="nav-item">
-                            <a href="#tabs-profile-2" className="nav-link">Volumes</a>
+                        {
+                            TABS_LIST
+                            .map((tab) =>   
+                                <li className="nav-item">
+                                    <a className={`nav-link cursor-pointer ${tabCodeSelected === tab.code ? "active" : ""}`} onClick={() => setTabCodeSelected(tab.code)}>{tab.label}</a>
+                                </li>
+                            )
+                        }
+                        <li className="nav-item me-auto">
+                            <h5><span className={badgeClasses}>{container.State.Status}</span> {container.Name}</h5>
                         </li>
                     </ul>
                 </div>
-                <div className="card-body">
-                    <h5><span className={badgeClasses}>{container.State.Status}</span> {container.Name}</h5>
-                    <hr className="hr mt-1 mb-3" />
-                    <div className="card bg-dark-lt">
-                        <div className="card-header py-2">
-                            <strong>environment variables</strong>
+                {
+                    tabCodeSelected === "general"
+                    && <div className="card-body">
+                            <dl className="row">
+                                <dt className="col-5">Image</dt>
+                                <dd className="col-7">{container.Config.Image}</dd>
+                                <dt className="col-5">Cmd</dt>
+                                <dd className="col-7">{container.Config.Cmd.join(" ")}</dd>
+                                <dt className="col-5">Hostname</dt>
+                                <dd className="col-7">{container.Config.Hostname}</dd>
+                                <dt className="col-5">User</dt>
+                                <dd className="col-7">{container.Config.User}</dd>
+                            </dl>
                         </div>
-                        <div className="card-body p-1">
-                            <div className="align-items-center">
-                                <div className="list-group list-group-flush list-group-hoverable">
-                                    {
-                                        container.Config.Env
-                                        .map((env: string) => 
-                                        <div className="list-group-item py-2">
-                                            <div className="align-items-center">
-                                                <div className="col text-truncate">{env}</div>
-                                            </div>
-                                        </div>)
-                                    }
+                }
+                {
+                    tabCodeSelected === "networks"
+                    && <div className="card-body">
+                            <dl className="row">
+                                <dt className="col-5">IPAddress</dt>
+                                <dd className="col-7">{container.NetworkSettings.IPAddress}</dd>
+                                <dt className="col-5">Gateway</dt>
+                                <dd className="col-7">{container.NetworkSettings.Gateway}</dd>
+                                <dt className="col-5">MacAddress</dt>
+                                <dd className="col-7">{container.NetworkSettings.MacAddress}</dd>
+                            </dl>
+                        </div>
+                }
+                {
+                    tabCodeSelected === "environment-variables"
+                    && <div className="card-body">
+                            <div className="card-body p-1">
+                                <div className="align-items-center">
+                                    <div className="list-group list-group-flush list-group-hoverable">
+                                        {
+                                            container.Config.Env
+                                            .map((env: string) => 
+                                            <div className="list-group-item py-2">
+                                                <div className="align-items-center">
+                                                    <div className="col text-truncate">{env}</div>
+                                                </div>
+                                            </div>)
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                }
                 <div className="card-footer bg-blue-lt">
                     <div className="btn-list justify-content-end">
                         {
