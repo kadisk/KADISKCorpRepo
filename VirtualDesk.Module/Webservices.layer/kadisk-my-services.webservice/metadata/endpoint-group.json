@@ -1,8 +1,7 @@
 {
     "bound-params":[
         "serverService",
-        "myServicesManagerService",
-        "containerManagerService"
+        "myServicesManagerService"
     ],
     "params": [ "needsAuth", "uploadDirPath" ],
     "endpoints": [
@@ -35,8 +34,7 @@
             "bound-params": {
                 "serverService":"serverService",
                 "controller-params":{
-                    "myServicesManagerService":"myServicesManagerService",
-                    "containerManagerService":"containerManagerService"
+                    "myServicesManagerService":"myServicesManagerService"
                 }
             }
         },

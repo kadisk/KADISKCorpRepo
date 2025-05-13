@@ -98,7 +98,8 @@
                 "extractTarGzLib":"@/extract-tar-gz.lib",
                 "loadMetatadaDirLib": "@/load-metatada-dir.lib",
                 "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",
-                "jsonFileUtilitiesLib": "@/json-file-utilities.lib"
+                "jsonFileUtilitiesLib": "@/json-file-utilities.lib",
+                "containerManagerService":"@@/container-manager-service"
             },
             "params":{
                 "repositoriesSourceCodeDirPath": "{{myServicesManagerSourceCodeDirPath}}",
@@ -190,8 +191,7 @@
             "dependency": "@/kadisk-my-services.webservice/endpoint-group",
             "bound-params":{
                 "serverService": "@@/server-service",
-                "myServicesManagerService": "@@/my-services-manager-service",
-                "containerManagerService":"@@/container-manager-service"
+                "myServicesManagerService": "@@/my-services-manager-service"
             },
             "params":{
                 "uploadDirPath":"{{myServicesRepositoriesUploadDirPath}}",

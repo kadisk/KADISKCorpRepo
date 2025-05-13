@@ -59,8 +59,7 @@ const MyServicesManagerController = (params) => {
     
                 const params = GetRequestParams(request)
     
-                const repoData = await myServicesManagerService
-                .SaveUploadedRepository({
+                const repoData = await myServicesManagerService.SaveUploadedRepository({
                     userId, 
                     username,
                     repositoryNamespace: params.repositoryNamespace, 

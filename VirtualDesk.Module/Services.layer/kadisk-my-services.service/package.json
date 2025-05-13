@@ -5,6 +5,7 @@
     "license": "BSD-3-Clause",
     "dependencies": {
       "sequelize": "^6.37.5",
-      "sqlite3": "^5.1.7"
+      "sqlite3": "^5.1.7",
+      "tar-stream": "^3.1.7"
     }
   }

@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "author": "Kaio Cezar <kadisk.shark@gmail.com>",
   "dependencies": {
-    "multer": "^1.4.5-lts.2",
-    "tar-stream": "^3.1.7"
+    "multer": "^1.4.5-lts.2"
   }
 }
