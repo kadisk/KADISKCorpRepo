@@ -19,6 +19,18 @@ const LOADING_MODE              = Symbol()
 const SERVICE_PROVISIONING_MODE = Symbol()
 const REPOSITORIES_MANAGER_MODE = Symbol()
 
+
+const GetSatatusBadgeClasses = (status: string) => {
+    switch (status) {
+        case "running":
+            return "badge bg-green-lt text-green"
+        case "exited":
+            return "badge bg-red-lt text-red"
+        default:
+            return "badge bg-orange-lt text-orange"
+    }
+}
+
 const MyServicesContainer = ({
     HTTPServerManager
 }) => {
@@ -105,9 +117,10 @@ const MyServicesContainer = ({
                                                 <div className="card card-link mb-3">
 
                                                     <div className="card-header py-2">
+                                                        <span className={`${GetSatatusBadgeClasses(provisionedService.containerStatus)} me-2`}>{provisionedService.containerStatus}</span>
                                                         <div>
                                                         <h4 className="card-title">{provisionedService.executableName}</h4>
-                                                        <p className="card-subtitle">{provisionedService["Repository.namespace"]}/{provisionedService["RepositoryItem.itemName"]}/{provisionedService["RepositoryItem.itemType"]}</p>
+                                                        <p className="card-subtitle">{provisionedService.repositoryNamespace}/{provisionedService.packageName}/{provisionedService.packageType}</p>
                                                         </div>
                                                         {/*<div className="card-actions">
                                                             <a className="btn btn-ghost-info p-1">Settings
@@ -116,15 +129,31 @@ const MyServicesContainer = ({
                                                         </div>*/}
                                                     </div>
                                                     <div className="card-body">
-                                                        <div className="card-title">Container information</div>
                                                         <dl className="row">
-                                                            <dt className="col-5">Repository namespace</dt>
-                                                            <dd className="col-7">{provisionedService["Repository.namespace"]}</dd>
-                                                            <dt className="col-5">Package name</dt>
-                                                            <dd className="col-7">{provisionedService["RepositoryItem.itemName"]}</dd>
-                                                            <dt className="col-5">Package type</dt>
-                                                            <dd className="col-7">{provisionedService["RepositoryItem.itemType"]}</dd>
+                                                            <dt className="col-5">IP Address</dt>
+                                                            <dd className="col-7">{provisionedService.containerIPAddress}</dd>
                                                         </dl>
+                                                    </div>
+                                                    <div className="card-footer bg-blue-lt">
+                                                        <div className="btn-list justify-content-end">
+                                                            {
+                                                                provisionedService.containerStatus === "exited"
+                                                                && <button className="btn btn-primary" onClick={() => {}}>
+                                                                        <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-player-play"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 4v16l13 -8z" /></svg>start
+                                                                    </button>
+                                                            }
+                                                            {
+                                                                provisionedService.containerStatus === "running"
+                                                                && <>
+                                                                        <button className="btn btn-orange">
+                                                                            <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-refresh"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /></svg>restart
+                                                                        </button>
+                                                                        <button className="btn btn-danger" onClick={() => {}}>
+                                                                            <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-player-stop"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 5m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" /></svg>stop
+                                                                        </button>
+                                                                    </>
+                                                            }
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>))

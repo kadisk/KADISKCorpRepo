@@ -121,13 +121,25 @@ const ContainerManager = (params) => {
         }
     }
 
+    const InspectContainer = async (containerIdOrName) => {
+        try {
+            const container = docker.getContainer(containerIdOrName)
+            const containerInfo = await container.inspect()
+            return containerInfo
+        } catch (error) {
+            console.error(`Error inspecting container ${containerIdOrName}:`, error)
+            throw error
+        }
+    }
+
     return {
         StartContainer,
         StopContainer,
         RemoveContainer,
         ListAllContainers,
         BuildImageFromDockerfileString,
-        CreateNewContainer
+        CreateNewContainer,
+        InspectContainer
     }
 
 }

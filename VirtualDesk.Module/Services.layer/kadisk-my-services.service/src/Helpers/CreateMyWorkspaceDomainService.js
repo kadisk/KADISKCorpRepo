@@ -94,12 +94,18 @@ const CreateMyWorkspaceDomainService = ({
                 {
                     model: RepositoryItemModel,
                     attributes: ["id", "itemName", "itemType", "itemPath"]
+                },
+                {
+                    model: ImageBuildHistoryModel,
+                    include: [{
+                        model: ServiceInstanceModel
+                    }]
                 }
             ],
-            raw: true
+            raw: false
         })
 
-        return items
+        return items.map(item => item.get({ plain: true }))
     }
 
     const RegisterServiceProvisioning = ({ 

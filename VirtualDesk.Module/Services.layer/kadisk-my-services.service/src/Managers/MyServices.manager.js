@@ -67,7 +67,8 @@ const MyServicesManager = (params) => {
 
     const { 
         BuildImageFromDockerfileString,
-        CreateNewContainer
+        CreateNewContainer,
+        InspectContainer
     } = containerManagerService
 
     const ExtractTarGz = extractTarGzLib.require("ExtractTarGz")
@@ -345,6 +346,63 @@ const MyServicesManager = (params) => {
         console.log(`[INFO] Container '${containerName}' iniciado com a imagem '${imageTagName}'`)
     }
 
+    const ListProvisionedServices = async (userId) => {
+        const provisionedServices = await MyWorkspaceDomainService.ListProvisionedServices(userId)
+    
+        const provisionedServicesWithMetadataPromises = provisionedServices
+            .map(async (provisionedService) => {
+                return {
+                    service:provisionedService,
+                    repository: provisionedService.Repository,
+                    repositoryItem: provisionedService.RepositoryItem,
+                    builds: provisionedService.ImageBuildHistories,
+                    instances: provisionedService.ImageBuildHistories?.flatMap(build => build.ServiceInstances)
+                }
+            })
+    
+        const provisionedServicesRawData = await Promise.all(provisionedServicesWithMetadataPromises)
+
+        const provisionedServicesDataPromises = provisionedServicesRawData
+        .map(async (provisionedService) => {
+            const { 
+                repository,
+                repositoryItem,
+                service,
+                builds,
+                instances
+            } = provisionedService
+
+            const lastBuild = builds.at(-1)
+            const lastInstance = instances.at(-1)
+
+            const inpectContainerData = await InspectContainer(lastInstance.containerName)
+
+            return {
+                serviceId           : service.id,
+                executableName      : service.executableName,
+                appType             : service.appType,
+                packageId           : service.packageId,
+                repositoryId        : repository.id,
+                repositoryNamespace : repository.namespace,
+                packageId           : repositoryItem.id,
+                packageName         : repositoryItem.itemName,
+                packageType         : repositoryItem.itemType,
+                instanceId          : lastInstance.id,
+                containerName       : lastInstance.containerName,
+                buildId             : lastBuild.id,
+                imageTagName        : lastBuild.tag,
+                hashId              : lastBuild.hashId,
+                containerIPAddress  : inpectContainerData.NetworkSettings.IPAddress,
+                containerStatus     : inpectContainerData.State.Status,
+                containerPorts      : inpectContainerData.NetworkSettings.Ports
+            }
+        })
+
+        const provisionedServicesData = await Promise.all(provisionedServicesDataPromises)
+
+        return provisionedServicesData
+    }
+
     return {
         SaveUploadedRepository,
         GetStatus,
@@ -352,7 +410,7 @@ const MyServicesManager = (params) => {
         ListApplications,
         ListRepositories,
         ProvisionServiceFromApplication,
-        ListProvisionedServices     : MyWorkspaceDomainService.ListProvisionedServices,
+        ListProvisionedServices
     }
 
 }
