@@ -1,14 +1,21 @@
-- Ter um pagina
-- Primeiro objetivo é ter a página do projeto no heroku
-- 
+
+- É preciso vigiar o eventos que acontece com o docker para poder alterar o status dos serviços
+- Criar um tela com a listagem dos builds
+- Criar uma tela com lista de instancias
+- É preciso criar o provisionamento de pacotes
+- É preciso ter um websocket que lista o serviços
+
+
+
+
+
+
 
 
 Websites de referencia
 https://wearemotto.com/
 https://departuremono.com/
 https://www.marchanslin.com/?ref=onepagelove
-
-
 
 
 https://www.heartbeatdrummachine.com/?ref=onepagelove
