@@ -53,9 +53,6 @@ const MyEcosystemConsoleController = (params) => {
             containerName: `${username}-ecosystem-container`    
         })
 
-        console.log(container)
-
-
     }
     
     const controllerServiceObject = {

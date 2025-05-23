@@ -1,7 +1,4 @@
-import React, { useEffect, useState } from "react"
-import { connect } from "react-redux"
-import { bindActionCreators } from "redux"
-import GetAPI from "../Utils/GetAPI"
+import React, { useState } from "react"
 
 const GetSatatusBadgeClasses = (status: string) => {
     switch (status) {
@@ -21,9 +18,8 @@ const TABS_LIST = [
     { label: "Environment variables", code: "environment-variables" },
 ]
 
-const ApplicationContainerPanel = ({ container, onRemoveContainer, onStopContainer, onStartContainer}) => {
 
-    console.log(container)
+const ApplicationContainerPanel = ({ container, onRemoveContainer, onStopContainer, onStartContainer}) => {
 
     const [ tabCodeSelected, setTabCodeSelected ] = useState("general")
     
@@ -32,8 +28,11 @@ const ApplicationContainerPanel = ({ container, onRemoveContainer, onStopContain
     return (
         <div className="col-12">
             <div className="card mb-3" style={{ "boxShadow": "rgb(159, 166, 175) 0px 0px 5px 0px"}}>
-                <div className="card-header">
-                    <ul className="nav nav-tabs card-header-tabs flex-row-reverse bg-blue-lt">
+                <div className="card-header bg-blue-lt py-2">
+                    <h5><span className={badgeClasses}>{container.State.Status}</span> {container.Name}</h5>
+                </div>
+                <div className="card-header bg-blue-lt">
+                    <ul className="nav nav-tabs card-header-tabs flex-row-reverse">
                         {
                             TABS_LIST
                             .map((tab) =>   
@@ -43,7 +42,6 @@ const ApplicationContainerPanel = ({ container, onRemoveContainer, onStopContain
                             )
                         }
                         <li className="nav-item me-auto">
-                            <h5><span className={badgeClasses}>{container.State.Status}</span> {container.Name}</h5>
                         </li>
                     </ul>
                 </div>
@@ -140,103 +138,4 @@ const ApplicationContainerPanel = ({ container, onRemoveContainer, onStopContain
     )
 }
 
-const ContainerManager = ({ HTTPServerManager }) => {
-
-    const [containers, setContainers] = useState<any[]>([])
-    const [loading, setLoading] = useState(false)
-
-    useEffect(() => {
-        fetchContainers()
-    }, [])
-
-    const getContainerManagerAPI = () =>
-        GetAPI({
-            apiName: "ContainerManager",
-            serverManagerInformation: HTTPServerManager,
-        })
-
-    const fetchContainers = async () => {
-        setLoading(true)
-        try {
-            const api = getContainerManagerAPI()
-            const response = await api.ListContainers()
-            setContainers(response.data)
-        } catch (error) {
-            console.error("Error fetching containers:", error)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    const handleRemoveContainer = async (containerId: string) => {
-        setLoading(true)
-        try {
-            const api = getContainerManagerAPI()
-            await api.RemoveContainer({ containerIdOrName:containerId })
-            fetchContainers()
-        } catch (error) {
-            console.error("Error removing container:", error)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    const handleStopContainer = async (containerId: string) => {
-        setLoading(true)
-        try {
-            const api = getContainerManagerAPI()
-            await api.StopContainer({ containerIdOrName:containerId })
-            fetchContainers()
-        } catch (error) {
-            console.error("Error stopping container:", error)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    const handleStartContainer = async (containerId: string) => {
-        setLoading(true)
-        try {
-            const api = getContainerManagerAPI()
-            await api.StartContainer({ containerIdOrName:containerId })
-            fetchContainers()
-        } catch (error) {
-            console.error("Error starting container:", error)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    return <div className="pt-4">
-                <div className="container-xl">
-                    {
-                        (!containers || containers.length === 0)
-                        && !loading
-                        && <div className="text-center text-muted">
-                            No containers found.
-                        </div>
-                    }
-
-                    {
-                        loading
-                        && containers.length === 0
-                        && <div className="text-center text-muted">
-                            Loading containers...
-                        </div>
-                    }
-
-                    <div className="row row-cards">
-                        {containers.map((container) => <ApplicationContainerPanel 
-                                                            container={container}
-                                                            onStartContainer={handleStartContainer}
-                                                            onStopContainer={handleStopContainer}
-                                                            onRemoveContainer={handleRemoveContainer}/>)}
-                    </div>
-                </div>
-            </div>
-}
-
-const mapDispatchToProps = (dispatch: any) => bindActionCreators({}, dispatch)
-const mapStateToProps = ({ HTTPServerManager }: any) => ({ HTTPServerManager })
-
-export default connect(mapStateToProps, mapDispatchToProps)(ContainerManager)
+export default ApplicationContainerPanel

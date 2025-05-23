@@ -7,9 +7,11 @@ const ContainerManagerController = (params) => {
     const controllerServiceObject = {
         controllerName : "ContainerManagerController",
         ListContainers: containerManagerService.ListAllContainers,
+        ListImages: containerManagerService.ListAllImages,
+        ListNetworks: containerManagerService.ListAllNetworks,
         RemoveContainer: containerManagerService.RemoveContainer,
         StartContainer: containerManagerService.StartContainer,
-        StopContainer: containerManagerService.StopContainer
+        StopContainer: containerManagerService.StopContainer,
     }
     
     return Object.freeze(controllerServiceObject)

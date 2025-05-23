@@ -7,6 +7,16 @@
 			"summary": "ListContainers"
 		},
 		{
+			"path": "/images",
+			"method": "GET",
+			"summary": "ListImages"
+		},
+		{
+			"path": "/networks",
+			"method": "GET",
+			"summary": "ListNetworks"
+		},
+		{
 			"summary": "RemoveContainer",
 			"method": "POST",
 			"path": "/remove-container",

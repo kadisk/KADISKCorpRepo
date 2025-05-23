@@ -36,21 +36,28 @@ const ContainerManager = (params) => {
 
     }
 
-    /*const _EnsureImageExists = async (imageName) => {
+    const ListAllImages = async () => {
         try {
-            await docker.getImage(imageName).inspect()
-        } catch (err) {
-            await new Promise((resolve, reject) => {
-                docker.pull(imageName, (error, stream) => {
-                    if (error) return reject(error)
-                    stream.on('data', chunk => process.stdout.write(chunk))
-                    stream.on('end', resolve)
-                    stream.on('error', reject)
-                })
-            })
+            const images = await docker.listImages()
+            return images
         }
-    }*/
+        catch (error) {
+            console.error('Error listing images:', error)
+            throw error
+        }
 
+    }
+    const ListAllNetworks = async () => {
+        try {
+            const networks = await docker.listNetworks()
+            return networks
+        }
+        catch (error) {
+            console.error('Error listing networks:', error)
+            throw error
+        }
+
+    }
 
     const BuildImageFromDockerfileString = async ({
         buildargs,
@@ -139,7 +146,9 @@ const ContainerManager = (params) => {
         ListAllContainers,
         BuildImageFromDockerfileString,
         CreateNewContainer,
-        InspectContainer
+        InspectContainer,
+        ListAllImages,
+        ListAllNetworks
     }
 
 }
