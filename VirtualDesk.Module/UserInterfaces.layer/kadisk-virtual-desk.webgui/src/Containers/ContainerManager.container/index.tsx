@@ -19,7 +19,7 @@ const ContainerManager = ({ HTTPServerManager }) => {
     const [networks, setNetworks] = useState<any[]>([])
 
     const [loading, setLoading] = useState(false)
-    const [mode, setMode] = useState<any>(IMAGES_MANAGER_MODE)
+    const [mode, setMode] = useState<any>(NETWORKS_MANAGER_MODE)
 
     useEffect(() => {
         if (mode === CONTAINERS_MANAGER_MODE) {
@@ -246,6 +246,210 @@ const ContainerManager = ({ HTTPServerManager }) => {
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+                    }
+
+                    {
+                        mode === NETWORKS_MANAGER_MODE &&
+                        <div className="row row-cards">
+                            {networks.map((network, idx) => (
+                                <div className="col-12" key={network.Id || idx}>
+                                    <div className="card mb-3" style={{ boxShadow: "rgb(159, 166, 175) 0px 0px 5px 0px" }}>
+                                        <div className="card-header bg-blue-lt py-2">
+                                            <h5 style={{ color: "#1976d2", fontWeight: 600 }}>
+                                                {network.Name}
+                                            </h5>
+                                        </div>
+                                        <div className="card-body">
+                                            <dl className="row mb-0">
+                                                <dt className="col-4">Id</dt>
+                                                <dd className="col-8" style={{ fontFamily: "monospace", color: "#444", fontSize: "0.93em", wordBreak: "break-all" }}>
+                                                    {network.Id}
+                                                </dd>
+
+                                                <dt className="col-4">Driver</dt>
+                                                <dd className="col-8">{network.Driver}</dd>
+
+                                                <dt className="col-4">Scope</dt>
+                                                <dd className="col-8">{network.Scope}</dd>
+
+                                                <dt className="col-4">Created</dt>
+                                                <dd className="col-8">{new Date(network.Created).toLocaleString()}</dd>
+
+                                                <dt className="col-4">IPAM</dt>
+                                                <dd className="col-8">
+                                                    {network.IPAM?.Driver && (
+                                                        <span style={{
+                                                            display: "inline-block",
+                                                            borderRadius: 4,
+                                                            padding: "2px 6px",
+                                                            margin: "2px 4px 2px 0",
+                                                            fontSize: "0.93em",
+                                                            fontWeight: 600
+                                                        }}>
+                                                            Driver: {network.IPAM.Driver}
+                                                        </span>
+                                                    )}
+                                                    {Array.isArray(network.IPAM?.Config) && network.IPAM.Config.length > 0 && network.IPAM.Config.map((cfg, i) => (
+                                                        <React.Fragment key={i}>
+                                                            {cfg.Subnet && (
+                                                                <span style={{
+                                                                    display: "inline-block",
+                                                                    borderRadius: 4,
+                                                                    padding: "2px 6px",
+                                                                    margin: "2px 4px 2px 0",
+                                                                    fontSize: "0.93em",
+                                                                    fontWeight: 600
+                                                                }}>
+                                                                    Subnet: {cfg.Subnet}
+                                                                </span>
+                                                            )}
+                                                            {cfg.Gateway && (
+                                                                <span style={{
+                                                                    display: "inline-block",
+                                                                    borderRadius: 4,
+                                                                    padding: "2px 6px",
+                                                                    margin: "2px 4px 2px 0",
+                                                                    fontSize: "0.93em",
+                                                                    fontWeight: 600
+                                                                }}>
+                                                                    Gateway: {cfg.Gateway}
+                                                                </span>
+                                                            )}
+                                                        </React.Fragment>
+                                                    ))}
+                                                    {(!network.IPAM?.Driver && (!network.IPAM?.Config || network.IPAM.Config.length === 0)) && (
+                                                        <span className="text-muted">-</span>
+                                                    )}
+                                                </dd>
+
+                                                <dt className="col-4">Flags</dt>
+                                                <dd className="col-8">
+                                                    <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                                                        <span style={{
+                                                            display: "inline-block",
+                                                            background: network.EnableIPv4 ? "#e3f2fd" : "#eceff1",
+                                                            color: network.EnableIPv4 ? "#1565c0" : "#78909c",
+                                                            borderRadius: 4,
+                                                            padding: "2px 8px",
+                                                            fontWeight: 600,
+                                                            fontSize: "0.93em"
+                                                        }}>
+                                                            IPv4: {network.EnableIPv4 ? "Yes" : "No"}
+                                                        </span>
+                                                        <span style={{
+                                                            display: "inline-block",
+                                                            background: network.EnableIPv6 ? "#e3f2fd" : "#eceff1",
+                                                            color: network.EnableIPv6 ? "#1565c0" : "#78909c",
+                                                            borderRadius: 4,
+                                                            padding: "2px 8px",
+                                                            fontWeight: 600,
+                                                            fontSize: "0.93em"
+                                                        }}>
+                                                            IPv6: {network.EnableIPv6 ? "Yes" : "No"}
+                                                        </span>
+                                                        {network.Internal && (
+                                                            <span style={{
+                                                                display: "inline-block",
+                                                                background: "#fff3e0",
+                                                                color: "#ef6c00",
+                                                                borderRadius: 4,
+                                                                padding: "2px 8px",
+                                                                fontWeight: 600,
+                                                                fontSize: "0.93em"
+                                                            }}>Internal</span>
+                                                        )}
+                                                        {network.Attachable && (
+                                                            <span style={{
+                                                                display: "inline-block",
+                                                                background: "#e3f2fd",
+                                                                color: "#1565c0",
+                                                                borderRadius: 4,
+                                                                padding: "2px 8px",
+                                                                fontWeight: 600,
+                                                                fontSize: "0.93em"
+                                                            }}>Attachable</span>
+                                                        )}
+                                                        {network.Ingress && (
+                                                            <span style={{
+                                                                display: "inline-block",
+                                                                background: "#ede7f6",
+                                                                color: "#4527a0",
+                                                                borderRadius: 4,
+                                                                padding: "2px 8px",
+                                                                fontWeight: 600,
+                                                                fontSize: "0.93em"
+                                                            }}>Ingress</span>
+                                                        )}
+                                                        {network.ConfigOnly && (
+                                                            <span style={{
+                                                                display: "inline-block",
+                                                                background: "#fce4ec",
+                                                                color: "#ad1457",
+                                                                borderRadius: 4,
+                                                                padding: "2px 8px",
+                                                                fontWeight: 600,
+                                                                fontSize: "0.93em"
+                                                            }}>ConfigOnly</span>
+                                                        )}
+                                                        {network.ConfigFrom?.Network && (
+                                                            <span style={{
+                                                                display: "inline-block",
+                                                                background: "#f3e5f5",
+                                                                color: "#6a1b9a",
+                                                                borderRadius: 4,
+                                                                padding: "2px 8px",
+                                                                fontWeight: 600,
+                                                                fontSize: "0.93em"
+                                                            }}>ConfigFrom: {network.ConfigFrom.Network}</span>
+                                                        )}
+                                                    </div>
+                                                </dd>
+
+                                                <dt className="col-4">Options</dt>
+                                                <dd className="col-8">
+                                                    {network.Options && Object.keys(network.Options).length > 0
+                                                        ? Object.entries(network.Options).map(([k, v]) =>
+                                                            <span key={k} style={{
+                                                                display: "inline-block",
+                                                                background: "#e3f2fd",
+                                                                borderRadius: 4,
+                                                                padding: "2px 6px",
+                                                                margin: "2px 2px 2px 0",
+                                                                color: "#1565c0",
+                                                                fontSize: "0.93em"
+                                                            }}>
+                                                                {k}: {String(v)}
+                                                            </span>
+                                                        )
+                                                        : <span className="text-muted">-</span>
+                                                    }
+                                                </dd>
+
+                                                <dt className="col-4">Labels</dt>
+                                                <dd className="col-8">
+                                                    {network.Labels && Object.keys(network.Labels).length > 0
+                                                        ? Object.entries(network.Labels).map(([k, v]) =>
+                                                            <span key={k} style={{
+                                                                display: "inline-block",
+                                                                background: "#f3e5f5",
+                                                                borderRadius: 4,
+                                                                padding: "2px 6px",
+                                                                margin: "2px 2px 2px 0",
+                                                                color: "#6a1b9a",
+                                                                fontSize: "0.93em"
+                                                            }}>
+                                                                {k}: {String(v)}
+                                                            </span>
+                                                        )
+                                                        : <span className="text-muted">-</span>
+                                                    }
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     }
                    
