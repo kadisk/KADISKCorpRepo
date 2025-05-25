@@ -19,7 +19,7 @@ const ContainerManager = ({ HTTPServerManager }) => {
     const [networks, setNetworks] = useState<any[]>([])
 
     const [loading, setLoading] = useState(false)
-    const [mode, setMode] = useState<any>(NETWORKS_MANAGER_MODE)
+    const [mode, setMode] = useState<any>(CONTAINERS_MANAGER_MODE)
 
     useEffect(() => {
         if (mode === CONTAINERS_MANAGER_MODE) {

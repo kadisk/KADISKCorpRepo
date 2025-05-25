@@ -31,6 +31,19 @@
 			"path": "/provisioned-services",
 			"method": "GET",
 			"summary": "ListProvisionedServices"
+		},
+		{
+			"path": "/service-data",
+			"method": "GET",
+			"summary": "GetServiceData",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
 		}
 	]
 }

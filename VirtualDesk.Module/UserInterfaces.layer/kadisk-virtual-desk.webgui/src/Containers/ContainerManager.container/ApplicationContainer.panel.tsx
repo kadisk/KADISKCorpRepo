@@ -41,8 +41,6 @@ const ApplicationContainerPanel = ({ container, onRemoveContainer, onStopContain
                                 </li>
                             )
                         }
-                        <li className="nav-item me-auto">
-                        </li>
                     </ul>
                 </div>
                 {

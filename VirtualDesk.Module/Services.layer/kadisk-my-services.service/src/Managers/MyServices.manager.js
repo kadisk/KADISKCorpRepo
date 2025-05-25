@@ -403,6 +403,36 @@ const MyServicesManager = (params) => {
         return provisionedServicesData
     }
 
+
+    const GetServiceData = async ({ serviceId, userId }) => {
+            
+        const serviceData = await MyWorkspaceDomainService.GetServiceById({serviceId, userId})
+        
+        const { 
+            Repository, 
+            RepositoryItem,
+        } = serviceData
+
+        //const inpectContainerData = await InspectContainer(lastInstance.containerName)
+
+        return {
+            serviceId           : serviceData.id,
+            executableName      : serviceData.executableName,
+            appType             : serviceData.appType,
+            repositoryId        : Repository.id,
+            repositoryNamespace : Repository.namespace,
+            packageId           : RepositoryItem.id,
+            packageName         : RepositoryItem.itemName,
+            packageType         : RepositoryItem.itemType,
+            /*containerData       : {
+                IPAddress : inpectContainerData.NetworkSettings.IPAddress,
+                Status    : inpectContainerData.State.Status,
+                Ports     : inpectContainerData.NetworkSettings.Ports
+            }*/
+        }
+
+    }
+
     return {
         SaveUploadedRepository,
         GetStatus,
@@ -410,7 +440,8 @@ const MyServicesManager = (params) => {
         ListApplications,
         ListRepositories,
         ProvisionServiceFromApplication,
-        ListProvisionedServices
+        ListProvisionedServices,
+        GetServiceData
     }
 
 }

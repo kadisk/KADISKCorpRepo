@@ -11,7 +11,7 @@ import ServiceProvisioningModal from "./ServiceProvisioning.modal"
 import RepositoriesManagerModal from "./RepositoriesManager.modal"
 import ImportingModal from "./Importing.modal"
 
-import ServiceSettingsPanel from "./ServiceSettings.panel"
+import ServiceSettingsPanelContainer from "./ServiceSettingsPanel.container"
 
 const DEFAULT_MODE              = Symbol()
 const IMPORT_SELECT_MODE        = Symbol()
@@ -47,8 +47,6 @@ const MyServicesContainer = ({
     const [ interfaceModeType,  changeMode] = useState<any>(LOADING_MODE)
     const [ provisionedServicesList, setProvisionedServicesList ] = useState([])
     const [ serviceSettingsData, setServiceSettingsData ] = useState<any>()
-
-    console.log(serviceSettingsData)
 
     useEffect(() => {
 
@@ -131,7 +129,7 @@ const MyServicesContainer = ({
                     <div className="py-4">
                         {
                             interfaceModeType === SERVICE_SETINGS_MODE
-                            && <ServiceSettingsPanel provisionedService={serviceSettingsData}/>
+                            && <ServiceSettingsPanelContainer serviceId={serviceSettingsData.serviceId}/>
                         }
                         {
                             provisionedServicesList 

@@ -108,6 +108,29 @@ const CreateMyWorkspaceDomainService = ({
         return items.map(item => item.get({ plain: true }))
     }
 
+    const GetServiceById = async ({serviceId, userId}) => {
+        const item = await ProvisionedServiceModel.findOne({
+            include: [
+                {
+                    model: RepositoryModel,
+                    where: { userId },
+                    attributes: ["id", "namespace"]
+                },
+                {
+                    model: RepositoryItemModel,
+                    attributes: ["id", "itemName", "itemType", "itemPath"]
+                }
+            ],
+            where: {
+                id: serviceId
+            },
+            raw: false
+        })
+
+        return item.get({ plain: true })
+
+    }
+
     const RegisterServiceProvisioning = ({ 
         executableName,
         appType,
@@ -160,7 +183,8 @@ const CreateMyWorkspaceDomainService = ({
         ListPackageItemByUserId,
         GetPackageItemById,
         GetPackageItemByPath,
-        ListProvisionedServices
+        ListProvisionedServices,
+        GetServiceById,
     }
 }
 
