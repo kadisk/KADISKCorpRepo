@@ -8,6 +8,10 @@
         "page":"MyServicesPage"
     },
     {
+        "path":"/my-services/service-settings/:serviceId",
+        "page":"ServiceSettingsPage"
+    },
+    {
         "path":"/my-workspace",
         "page":"MyWorkspacePage"
     },

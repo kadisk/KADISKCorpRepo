@@ -1,5 +1,6 @@
 import LoginPage from "../Pages/Login.page"
 import MyServicesPage from "../Pages/MyServices.page"
+import ServiceSettingsPage from "../Pages/ServiceSettings.page"
 
 import MyWorkspacePage        from "../Pages/Workbench/MyWorkspaces.page"
 import RepositoryEditorPage from "../Pages/Workbench/MyWorkspaces/RepositoryEditor.page"
@@ -42,5 +43,6 @@ export default {
     RepositorySourcesPage,
     HostOSSettingsPage,
     ContainerManagerPage,
-    RepositoryEditorPage
+    RepositoryEditorPage,
+    ServiceSettingsPage
 }

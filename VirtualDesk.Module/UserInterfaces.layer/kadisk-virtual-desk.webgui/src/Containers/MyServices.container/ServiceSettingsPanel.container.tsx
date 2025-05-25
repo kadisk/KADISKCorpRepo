@@ -1,27 +1,28 @@
-import * as React             from "react"
-import {useEffect, useState}  from "react"
-import { connect }            from "react-redux"
+import * as React from "react"
+import { useEffect, useState } from "react"
+import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 
 import GetAPI from "../../Utils/GetAPI"
 
-const START_ICON = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-player-play"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 4v16l13 -8z" /></svg>
-const RESTART_ICON = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-refresh"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /></svg>
-const STOP_ICON = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-player-stop"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 5m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" /></svg>
+const START_ICON = <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-player-play"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M7 4v16l13 -8z" /></svg>
+const RESTART_ICON = <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-refresh"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /></svg>
+const STOP_ICON = <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-player-stop"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 5m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" /></svg>
 
 
 const TABS_LIST = [
-    { label: "Image Build History", code: "image-build-history" },
-    { label: "Instances", code: "service-instance" }
+	{ label: "Image Build History", code: "image-build-history" },
+	{ label: "Instances", code: "service-instance" }
 ]
 
 const ServiceSettingsPanelContainer = ({
-    HTTPServerManager,
+	HTTPServerManager,
 	serviceId
 }) => {
-	
-	const [ tabCodeSelected, setTabCodeSelected ] = useState("image-build-history")
-	const [ provisionedService, setProvisionedService ] = useState({
+
+	const [tabCodeSelected, setTabCodeSelected] = useState("image-build-history")
+	const [provisionedService, setProvisionedService] = useState({
+		executableName: "",
 		repositoryNamespace: "",
 		packageName: "",
 		packageType: "",
@@ -30,6 +31,7 @@ const ServiceSettingsPanelContainer = ({
 
 
 	const {
+		executableName,
 		repositoryNamespace,
 		packageName,
 		packageType,
@@ -37,31 +39,40 @@ const ServiceSettingsPanelContainer = ({
 	} = provisionedService
 
 
-	const IPAddress:string = ""
-	const Status:string = ""
+	const IPAddress: string = ""
+	const Status: string = ""
 
 	useEffect(() => {
-	
-			fetchServiceData()
-	
-		}, [])
 
-	const getMyServicesManagerAPI = () => 
-		GetAPI({ 
-			apiName:"MyServicesManager",  
+		fetchServiceData()
+
+	}, [])
+
+	const getMyServicesManagerAPI = () =>
+		GetAPI({
+			apiName: "MyServicesManager",
 			serverManagerInformation: HTTPServerManager
 		})
 
 
 	const fetchServiceData = async () => {
-        const api = getMyServicesManagerAPI()
-        const response = await api.GetServiceData({serviceId})
+		const api = getMyServicesManagerAPI()
+		const response = await api.GetServiceData({ serviceId })
 
 		setProvisionedService(response.data)
-    }
+	}
 
 
 	return <>
+		<div className="container-xl">
+			<div className="row g-2 align-items-center">
+				<div className="col">
+					<div className="page-pretitle">Service Settings</div>
+					<h2 className="page-title">{executableName}</h2>
+				</div>
+			</div>
+
+			<div className="py-4">
 				<div className="row g-3 align-items-center">
 					<div className="col-auto">
 						<span className="status-indicator status-green status-indicator-animated">
@@ -83,20 +94,20 @@ const ServiceSettingsPanelContainer = ({
 						<div className="btn-list">
 							{
 								Status === "exited"
-								&& <button className="btn btn-primary" onClick={() => {}}>
-										{START_ICON}start
-									</button>
+								&& <button className="btn btn-primary" onClick={() => { }}>
+									{START_ICON}start
+								</button>
 							}
 							{
 								Status === "running"
 								&& <>
-										<button className="btn btn-orange">
-											{RESTART_ICON}restart
-										</button>
-										<button className="btn btn-danger" onClick={() => {}}>
-											{STOP_ICON}stop
-										</button>
-									</>
+									<button className="btn btn-orange">
+										{RESTART_ICON}restart
+									</button>
+									<button className="btn btn-danger" onClick={() => { }}>
+										{STOP_ICON}stop
+									</button>
+								</>
 							}
 						</div>
 					</div>
@@ -134,11 +145,11 @@ const ServiceSettingsPanelContainer = ({
 								<ul className="nav nav-tabs card-header-tabs">
 									{
 										TABS_LIST
-										.map((tab) =>   
-											<li className="nav-item">
-												<a className={`nav-link cursor-pointer ${tabCodeSelected === tab.code ? "active" : ""}`} onClick={() => setTabCodeSelected(tab.code)}>{tab.label}</a>
-											</li>
-										)
+											.map((tab) =>
+												<li className="nav-item">
+													<a className={`nav-link cursor-pointer ${tabCodeSelected === tab.code ? "active" : ""}`} onClick={() => setTabCodeSelected(tab.code)}>{tab.label}</a>
+												</li>
+											)
 									}
 								</ul>
 							</div>
@@ -203,10 +214,12 @@ const ServiceSettingsPanelContainer = ({
 						</div>
 					</div>
 				</div>
-			</>
+			</div>
+		</div>
+	</>
 }
-	
 
-const mapDispatchToProps = (dispatch:any) => bindActionCreators({}, dispatch)
-const mapStateToProps = ({ HTTPServerManager }:any) => ({ HTTPServerManager })
+
+const mapDispatchToProps = (dispatch: any) => bindActionCreators({}, dispatch)
+const mapStateToProps = ({ HTTPServerManager }: any) => ({ HTTPServerManager })
 export default connect(mapStateToProps, mapDispatchToProps)(ServiceSettingsPanelContainer)

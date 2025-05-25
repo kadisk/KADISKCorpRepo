@@ -11,8 +11,6 @@ import ServiceProvisioningModal from "./ServiceProvisioning.modal"
 import RepositoriesManagerModal from "./RepositoriesManager.modal"
 import ImportingModal from "./Importing.modal"
 
-import ServiceSettingsPanelContainer from "./ServiceSettingsPanel.container"
-
 const DEFAULT_MODE              = Symbol()
 const IMPORT_SELECT_MODE        = Symbol()
 const IMPORTING_MODE            = Symbol()
@@ -20,7 +18,6 @@ const NO_REPOSITORIES_MODE      = Symbol()
 const LOADING_MODE              = Symbol()
 const SERVICE_PROVISIONING_MODE = Symbol()
 const REPOSITORIES_MANAGER_MODE = Symbol()
-const SERVICE_SETINGS_MODE      = Symbol()
 
 
 const START_ICON = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-player-play"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 4v16l13 -8z" /></svg>
@@ -46,7 +43,6 @@ const MyServicesContainer = ({
     const [ importDataCurrent, setImportDataCurrent ] = useState<{repositoryNamespace:string, sourceCodeURL:string}>()
     const [ interfaceModeType,  changeMode] = useState<any>(LOADING_MODE)
     const [ provisionedServicesList, setProvisionedServicesList ] = useState([])
-    const [ serviceSettingsData, setServiceSettingsData ] = useState<any>()
 
     useEffect(() => {
 
@@ -91,22 +87,12 @@ const MyServicesContainer = ({
 
     const handleFinishedImportModal = () => changeMode(LOADING_MODE)
 
-    const handleSettingServiceMode = (provisionedServiceData) => {
-        setServiceSettingsData(provisionedServiceData)
-        changeMode(SERVICE_SETINGS_MODE)
-    }
-
     return <>
 
                 <div className="container-xl">
                     <div className="row g-2 align-items-center">
                         <div className="col">
-                            {
-                                interfaceModeType !== SERVICE_SETINGS_MODE
-                                && <h2 className="page-title">My Services</h2>
-                            }
-                            {interfaceModeType === SERVICE_SETINGS_MODE && <div className="page-pretitle">Service Settings</div>}
-                            {interfaceModeType === SERVICE_SETINGS_MODE && <h2 className="page-title">{serviceSettingsData.executableName}</h2>}
+                            <h2 className="page-title">My Services</h2>
                         </div>
                         {
                             interfaceModeType === DEFAULT_MODE
@@ -128,12 +114,7 @@ const MyServicesContainer = ({
                     </div>
                     <div className="py-4">
                         {
-                            interfaceModeType === SERVICE_SETINGS_MODE
-                            && <ServiceSettingsPanelContainer serviceId={serviceSettingsData.serviceId}/>
-                        }
-                        {
                             provisionedServicesList 
-                            && interfaceModeType !== SERVICE_SETINGS_MODE
                             && <div className="row">
                                     {
                                         provisionedServicesList.map((provisionedService, index) => (
@@ -172,9 +153,9 @@ const MyServicesContainer = ({
                                                                         </button>
                                                                     </>
                                                             }
-                                                            <button className="btn btn-sencondary" onClick={() => handleSettingServiceMode(provisionedService)}>
+                                                            <a className="btn btn-sencondary" href={`#/my-services/service-settings/${provisionedService.serviceId}`}>
                                                                 {SETTINGS_ICON}settings
-                                                            </button>
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </div>
