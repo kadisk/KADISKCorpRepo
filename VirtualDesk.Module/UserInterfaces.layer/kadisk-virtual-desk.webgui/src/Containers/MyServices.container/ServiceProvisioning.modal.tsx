@@ -2,40 +2,108 @@ import * as React from "react"
 import { useEffect, useState } from "react"
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
+import Ajv from "ajv"
 
 import GetAPI from "../../Utils/GetAPI"
 
-const PROVISIONING_TYPE_SELECTION_MODE = Symbol()
-const APPLICATION_SELECTION_MODE = Symbol()
-const PACKAGE_SELECTION_MODE = Symbol()
-const PACKAGE_CONFIRMATION_MODE = Symbol()
-const APPLICATION_CONFIRMATION_MODE = Symbol()
+const SERVICE_SETUP_MODE = Symbol() 
+const SELECT_PACKAGE_MODE = Symbol()
+const PACKAGE_SETUP_MODE = Symbol()
 const PROVISIONING_SERVICE_MODE = Symbol()
-const PROVISIONING_ERROR_MODE = Symbol()
 const PROVISIONING_COMPLETION_MODE = Symbol()
+const PROVISIONING_ERROR_MODE = Symbol()
 
-//provisioning service
 const ServiceProvisioningModal = ({
     onClose,
     HTTPServerManager
 }) => {
 
-    const [ typeMode, changeTypeMode ] = useState<any>(PROVISIONING_TYPE_SELECTION_MODE)
-    const [readyForProvision, setReadyForProvision] = useState(true)
-
+    const [ typeMode, changeTypeMode ] = useState<any>(SERVICE_SETUP_MODE)
     const [selectedPackageData, setSelectedPackageData] = useState(undefined)
-    const [selectedApplicationData, setSelectedApplicationData] = useState(undefined)
-    const [provisioningType, setProvisioningType] = useState<any>(undefined)
-    
     const [packageList, setPackageList] = useState([])
-    const [applicationList, setApplicationList] = useState([])
+
+    const [ serviceName, setServiceName ] = useState<string>("")
+    const [ serviceDescription, setServiceDescription ] = useState<string>("")
+    
+    const [ startupParamsData, setStartupParamsData ] = useState<any>(undefined)
+
+    const [startupParams, setStartupParams] = useState<any>({})
+
+    const ajv = new Ajv()
+    const [isStartupParamsValid, setIsStartupParamsValid] = useState(false)
+
+    useEffect(() => {
+        if (typeMode === PACKAGE_SETUP_MODE && startupParamsData?.schema) {
+            try {
+                const validate = ajv.compile(startupParamsData.schema)
+                const valid = validate(startupParams)
+                setIsStartupParamsValid(Boolean(valid))
+            } catch {
+                setIsStartupParamsValid(false)
+            }
+        }
+    }, [startupParams, startupParamsData, typeMode])
+
+    useEffect(() => {
+        if (startupParamsData?.value) {
+            setStartupParams(startupParamsData.value)
+        }
+    }, [startupParamsData])
+
+    const handleStartupParamChange = (key: string, value: any) => {
+        setStartupParams((prev: any) => ({
+            ...prev,
+            [key]: value
+        }))
+    }
+
+    const renderStartupParamField = (key: string, schema: any, value: any) => {
+        const type = schema.type
+        if (type === "boolean") {
+            return (
+                <div key={key}>
+                    <label className="form-label">{key}</label>
+                    <input
+                        type="checkbox"
+                        className="form-check-input"
+                        checked={!!value}
+                        onChange={e => handleStartupParamChange(key, e.target.checked)}
+                    />
+                </div>
+            )
+        }
+        if (type === "string" && schema.format === "uri") {
+            return (
+                <div key={key}>
+                    <label className="form-label">{key}</label>
+                    <input
+                        type="url"
+                        className="form-control"
+                        value={value || ""}
+                        onChange={e => handleStartupParamChange(key, e.target.value)}
+                    />
+                </div>
+            )
+        }
+        return (
+            <div key={key}>
+                <label className="form-label">{key}</label>
+                <input
+                    type="text"
+                    className="form-control"
+                    value={value || ""}
+                    onChange={e => handleStartupParamChange(key, e.target.value)}
+                />
+            </div>
+        )
+    }
 
     useEffect(() => {
         
-        if( typeMode === PACKAGE_SELECTION_MODE ){
+        if( typeMode === SELECT_PACKAGE_MODE ){
             FetchBootablePackages()
-        } else if( typeMode === APPLICATION_SELECTION_MODE ){
-            FetchApplications()
+        } else if( typeMode === PACKAGE_SETUP_MODE ){
+            FetchStartupParamsData()
         }
 
     }, [typeMode])
@@ -53,38 +121,32 @@ const ServiceProvisioningModal = ({
         setPackageList(response.data)
     }
 
-    const FetchApplications = async () => {
+    const FetchStartupParamsData = async () => {
         const response = await _GetServiceProvisioningManagerAPI()
-        .ListApplications()
-        setApplicationList(response.data)
-    }
+            .GetStartupParamsData({
+                packageId: selectedPackageData?.id
+            })
+        
+        setStartupParamsData(response.data)
+    }   
+
 
     const handlePackageSelection = (packageData) => setSelectedPackageData(packageData)
-    const handleApplicationSelection = (applicationData) => setSelectedApplicationData(applicationData)
+    
 
-    const handleProvisionServiceFromPackage = () => {
-        //setReadyForProvision(false)
-        _GetServiceProvisioningManagerAPI()
-        .ProvisionServiceFromPackage({
-            packageId: selectedPackageData.id
-        })
-    }
-
-    const handleProvisionServiceFromApplication = async () => {
+    const handleProvision = async () => {
         changeTypeMode(PROVISIONING_SERVICE_MODE)
-
-        const { ProvisionServiceFromApplication } = _GetServiceProvisioningManagerAPI()
-
+        const { ProvisionService } = _GetServiceProvisioningManagerAPI()
+        
         try{
-            await ProvisionServiceFromApplication({
-                packagePath: selectedApplicationData.package,
-                repositoryId: selectedApplicationData.repositoryId,
-                executableName: selectedApplicationData.executableName,
-                appType: selectedApplicationData.type
+            await ProvisionService({
+                packageId: selectedPackageData.id,
+                serviceName,
+                serviceDescription,
+                startupParams
             })
-
             changeTypeMode(PROVISIONING_COMPLETION_MODE)
-        } catch(error){
+        } catch(error) {
             console.log(error)
             changeTypeMode(PROVISIONING_ERROR_MODE)
         }
@@ -103,9 +165,9 @@ const ServiceProvisioningModal = ({
                         <div className="card">
                             <div className="card-body">
                                 <ul className="steps steps-cyan my-4">
-                                    <li className={`step-item ${typeMode === PROVISIONING_TYPE_SELECTION_MODE ? "active": ""}`}>Provisioning Type</li>
-                                    <li className={`step-item ${typeMode === PACKAGE_SELECTION_MODE || typeMode === APPLICATION_SELECTION_MODE ? "active": ""}`}>Selection</li>
-                                    <li className={`step-item ${typeMode === PACKAGE_CONFIRMATION_MODE ||  typeMode === APPLICATION_CONFIRMATION_MODE  ? "active": ""}`}>Confirmation</li>
+                                    <li className={`step-item ${typeMode === SERVICE_SETUP_MODE  ? "active": ""}`}>Service setup</li>
+                                    <li className={`step-item ${typeMode === SELECT_PACKAGE_MODE ? "active": ""}`}>Select package</li>
+                                    <li className={`step-item ${typeMode === PACKAGE_SETUP_MODE ? "active": ""}`}>Package setup</li>
                                     <li className={`step-item ${typeMode === PROVISIONING_SERVICE_MODE  ? "active": ""}`}>Provisioning</li>
                                     <li className={`step-item ${typeMode === PROVISIONING_COMPLETION_MODE  ? "active": ""}`}>Completion</li>
                                 </ul>
@@ -124,74 +186,7 @@ const ServiceProvisioningModal = ({
 
                             }
                             {
-                                (typeMode === PROVISIONING_TYPE_SELECTION_MODE)
-                                && <div className="card-body">
-                                        <div>
-                                            <div className="list-group list-group-flush list-group-hoverable">
-                                                <div className={`list-group-item`}>
-                                                    <div className="row align-items-center">
-                                                        <div className="col-auto">
-                                                            <input 
-                                                                className="form-check-input" 
-                                                                type="radio" 
-                                                                name="radios-package"
-                                                                onChange={() => setProvisioningType(APPLICATION_SELECTION_MODE)}/>
-                                                        </div>
-                                                        <div className="col text-truncate">
-                                                            <a className="text-reset d-block">Application</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className={`list-group-item`}>
-                                                    <div className="row align-items-center">
-                                                        <div className="col-auto">
-                                                            <input 
-                                                                className="form-check-input" 
-                                                                type="radio" 
-                                                                name="radios-package"
-                                                                onChange={() => setProvisioningType(PACKAGE_SELECTION_MODE)}/>
-                                                        </div>
-                                                        <div className="col text-truncate">
-                                                            <a className="text-reset d-block">Package</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                            }
-                            {
-                                (typeMode === APPLICATION_SELECTION_MODE)
-                                && <div className="card-body">
-                                        <div>
-                                            <div className="list-group list-group-flush list-group-hoverable">
-                                                {
-                                                    applicationList.map((app) => 
-                                                        <div className={`list-group-item ${selectedApplicationData?.executableName === app.executableName ? "active": ""}`}>
-                                                            <div className="row align-items-center">
-                                                                <div className="col-auto">
-                                                                    <input 
-                                                                        className="form-check-input" 
-                                                                        type="radio" 
-                                                                        name="radios-package" 
-                                                                        value={app.executableName}
-                                                                        checked={selectedApplicationData?.executableName === app.executableName}
-                                                                        onChange={() => handleApplicationSelection(app)}
-                                                                    />
-                                                                </div>
-                                                                <div className="col text-truncate">
-                                                                    <a className="text-reset d-block"><strong>{app.executableName}</strong> {app.type}</a>
-                                                                    <div className="d-block text-secondary text-truncate mt-n1"><strong>{app.repositoryNamespace}</strong>/{app.package}</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>)
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
-                            }
-                            {
-                                (typeMode === PACKAGE_SELECTION_MODE)
+                                (typeMode === SELECT_PACKAGE_MODE)
                                 && <div className="card-body">
                                         <div>
                                             <div className="list-group list-group-flush list-group-hoverable">
@@ -220,22 +215,53 @@ const ServiceProvisioningModal = ({
                                         </div>
                                     </div>
                             }
+
                             {
-                                typeMode === APPLICATION_CONFIRMATION_MODE  
-                                && <div className="card-body">
-                                        <dl className="row">
-                                            <dt className="col-5">Executable Name</dt>
-                                            <dd className="col-7">{selectedApplicationData?.executableName}</dd>
-                                            <dt className="col-5">Package</dt>
-                                            <dd className="col-7">{selectedApplicationData?.package}</dd>
-                                            <dt className="col-5">Repository Namespace</dt>
-                                            <dd className="col-7">{selectedApplicationData?.repositoryNamespace}</dd>
-                                            <dt className="col-5">Type</dt>
-                                            <dd className="col-7">{selectedApplicationData?.type}</dd>
-                                        </dl>
+                                (typeMode === SERVICE_SETUP_MODE)
+                                    && <div className="card-body bg-cyan-lt text-cyan-lt-fg">
+                                            <h3 className="card-title">Service Setup</h3>
+                                            <form>
+                                                <div className="space-y">
+                                                    <div>
+                                                        <label className="form-label"> Service name </label>
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Enter service name"
+                                                            className="form-control"
+                                                            value={serviceName || ""}
+                                                            onChange={e => setServiceName(e.target.value)}
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="form-label">Description </label>
+                                                        <textarea
+                                                            placeholder="What does this service do? Describe it here."
+                                                            className="form-control"
+                                                            value={serviceDescription || ""}
+                                                            onChange={e => setServiceDescription(e.target.value)}
+                                                        ></textarea>
+                                                    </div>
+                                                </div>
+                                            </form>
                                     </div>
                             }
-                            
+
+                            {
+                                (typeMode === PACKAGE_SETUP_MODE && startupParamsData?.schema)
+                                    && <div className="card-body bg-blue-lt text-blue-lt-fg">
+                                            <h3 className="card-title">Package Setup - <strong>startup parameters</strong></h3>
+                                            <form>
+                                                <div className="space-y">
+                                                    {
+                                                        Object.entries(startupParamsData.schema.properties || {})
+                                                        .map(([key, propSchema]: [string, any]) => renderStartupParamField(key, propSchema, startupParams?.[key]))
+                                                    }
+                                                </div>
+                                            </form>
+                                    </div>
+                            }
+
+                        
                         </div>
                     </div>
                 </div>
@@ -246,50 +272,30 @@ const ServiceProvisioningModal = ({
                     </button>
 
                     {
-                        (typeMode === PROVISIONING_TYPE_SELECTION_MODE)
+                        (typeMode === SERVICE_SETUP_MODE)
                         && <button
-                                disabled={provisioningType === undefined}
-                                onClick={() => changeTypeMode(provisioningType)}
-                                className="btn btn-cyan ms-auto">
-                                Next
-                                <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-right ms-1"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M15 16l4 -4" /><path d="M15 8l4 4" /></svg>
-                            </button>
-                    }
-
-                    {
-                        (typeMode === APPLICATION_SELECTION_MODE)
-                        && <button
-                                disabled={selectedApplicationData === undefined}
-                                className="btn btn-cyan ms-auto" onClick={() => changeTypeMode(APPLICATION_CONFIRMATION_MODE)}>
-                                Next
+                                disabled={!serviceName.trim() || !serviceDescription.trim()}
+                                className="btn btn-cyan ms-auto" onClick={() => changeTypeMode(SELECT_PACKAGE_MODE)}>
+                                Select package
                                 <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-right ms-1"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M15 16l4 -4" /><path d="M15 8l4 4" /></svg>
                             </button>
                     }
                     {
-                        (typeMode === PACKAGE_SELECTION_MODE)
+                        (typeMode === SELECT_PACKAGE_MODE)
                         && <button
-                                disabled={selectedPackageData === undefined}
-                                className="btn btn-cyan ms-auto" onClick={() => changeTypeMode(PACKAGE_CONFIRMATION_MODE)}>
-                                Next
+                                disabled={!selectedPackageData}
+                                className="btn btn-cyan ms-auto" onClick={() => changeTypeMode(PACKAGE_SETUP_MODE)}>
+                                Package setup
                                 <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-right ms-1"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M15 16l4 -4" /><path d="M15 8l4 4" /></svg>
                             </button>
                     }
                     {
-                        typeMode === APPLICATION_CONFIRMATION_MODE
+                        typeMode === PACKAGE_SETUP_MODE
                         && <button
-                                disabled={!readyForProvision}
-                                className="btn btn-cyan ms-auto" onClick={handleProvisionServiceFromApplication}>
+                                disabled={!isStartupParamsValid}
+                                className="btn btn-cyan ms-auto" onClick={handleProvision}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-world-upload"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M21 12a9 9 0 1 0 -9 9" /><path d="M3.6 9h16.8" /><path d="M3.6 15h8.4" /><path d="M11.578 3a17 17 0 0 0 0 18" /><path d="M12.5 3c1.719 2.755 2.5 5.876 2.5 9" /><path d="M18 21v-7m3 3l-3 -3l-3 3" /></svg>
-                                Provision from Application
-                            </button>
-                    }
-                    {
-                        typeMode === PACKAGE_CONFIRMATION_MODE
-                        && <button
-                                disabled={!readyForProvision}
-                                className="btn btn-cyan ms-auto" onClick={handleProvisionServiceFromPackage}>
-                                <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-world-upload"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M21 12a9 9 0 1 0 -9 9" /><path d="M3.6 9h16.8" /><path d="M3.6 15h8.4" /><path d="M11.578 3a17 17 0 0 0 0 18" /><path d="M12.5 3c1.719 2.755 2.5 5.876 2.5 9" /><path d="M18 21v-7m3 3l-3 -3l-3 3" /></svg>
-                                Provision from Package
+                                Provision
                             </button>
                     }
                 </div>

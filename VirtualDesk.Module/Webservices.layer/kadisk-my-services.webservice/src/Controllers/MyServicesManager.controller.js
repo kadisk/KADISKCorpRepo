@@ -82,12 +82,24 @@ const MyServicesManagerController = (params) => {
         return myServicesManagerService.GetServiceData({serviceId, userId})
     }
 
+    const ListImageBuildHistory = (serviceId, { authenticationData }) => {
+        //const { userId } = authenticationData
+        return myServicesManagerService.ListImageBuildHistory(serviceId)
+    }
+
+    const GetInstances = (serviceId, { authenticationData }) => {
+        //const { userId } = authenticationData
+        return myServicesManagerService.GetInstancesByServiceId(serviceId)
+    }
+
     const controllerServiceObject = {
         controllerName: "MyServicesManagerController",
         GetMyServicesStatus,
         UploadRepository,
         ListProvisionedServices,
-        GetServiceData
+        GetServiceData,
+        ListImageBuildHistory,
+        GetInstances
     }
 
     return Object.freeze(controllerServiceObject)

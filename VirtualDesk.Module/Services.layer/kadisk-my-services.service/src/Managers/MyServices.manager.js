@@ -17,10 +17,8 @@ const GetDockerfileContent = () => {
     FROM node:22
     
     ARG REPOSITORY_NAMESPACE
-    ARG EXECUTABLE_NAME
-    ARG FIXED_PATH=/tmp/repository
 
-    ENV EXECUTABLE_NAME=\${EXECUTABLE_NAME}
+    ARG FIXED_PATH=/tmp/repository
 
     RUN apt-get update && apt-get install -y sudo wget \
         && rm -rf /var/lib/apt/lists/*
@@ -45,7 +43,7 @@ const GetDockerfileContent = () => {
     COPY repository_copied \${FIXED_PATH}
     
     RUN repo register source \${REPOSITORY_NAMESPACE} LOCAL_FS --localPath \${FIXED_PATH}
-    RUN repo install \${REPOSITORY_NAMESPACE} LOCAL_FS --executables "\${EXECUTABLE_NAME}"
+    RUN repo install \${REPOSITORY_NAMESPACE} LOCAL_FS 
     
     CMD ["sh", "-c", "$EXECUTABLE_NAME"]
 `
@@ -177,11 +175,28 @@ const MyServicesManager = (params) => {
         }
     }
 
+    const GetMetadataByPackageId = async (packageId) => { 
+        const ecosystemDefaults = await ReadJsonFile(ecosystemDefaultFilePath)
+
+        const packageData = await MyWorkspaceDomainService.GetItemById(packageId)
+
+        const metadata = await LoadMetadataDir({
+            metadataDirName: ecosystemDefaults.REPOS_CONF_DIRNAME_METADATA,
+            path: packageData.itemPath
+        })
+
+        return {
+            schema : metadata["startup-params-schema"],
+            value  : metadata["startup-params"],
+        }
+
+    }
+
     const ListBootablePackages = async ({ userId, username }) => {
 
-        const packageItems  = await MyWorkspaceDomainService.ListPackageItemByUserId(userId)
-
         const ecosystemDefaults = await ReadJsonFile(ecosystemDefaultFilePath)
+
+        const packageItems  = await MyWorkspaceDomainService.ListPackageItemByUserId(userId)
 
         const packageItemsWithMetadataPromises = packageItems
             .map(async (packageItem) => {
@@ -206,48 +221,6 @@ const MyServicesManager = (params) => {
         
     }
 
-    const ListApplications = async (userId) => {
-
-        const repositories  = await MyWorkspaceDomainService.ListRepositories(userId)
-
-        const ecosystemDefaults = await ReadJsonFile(ecosystemDefaultFilePath)
-
-        const repositoriesDataPromises = repositories
-            .map(async (repository) => {
-                const metadata = await LoadMetadataDir({
-                    metadataDirName: ecosystemDefaults.REPOS_CONF_DIRNAME_METADATA,
-                    path: repository.repositoryCodePath
-                })
-                return {
-                    repository,
-                    metadata
-                }
-            })
-
-        const repositoriesData = await Promise.all(repositoriesDataPromises)
-
-        const applications = repositoriesData
-            .reduce((acc, { repository, metadata }) => {
-
-                const { applications } = metadata
-                if (applications) {
-                    const applicationData = applications.map((application) => ({
-                        type: application.appType,
-                        executableName: application.executable,
-                        repositoryNamespace: repository.namespace,
-                        package: application.packageNamespace,
-                        repositoryId: repository.id,
-                    }))
-                    return [...acc, ...applicationData]
-                }
-                return acc
-
-            }, [])
-
-        return applications
-
-    }
-
     const ListRepositories = async (userId) => {
         const repositoriesData  = await MyWorkspaceDomainService.ListRepositories(userId)
         
@@ -260,38 +233,41 @@ const MyServicesManager = (params) => {
         return repositories
     }
 
-    const ProvisionServiceFromApplication = async ({
+    const ProvisionService = async ({
         userId, 
         username,
-        appType, 
-        executableName, 
-        repositoryId, 
-        packagePath 
+        packageId,
+        serviceName,
+        serviceDescription,
+        startupParams
     }) => {
-        const repositoryData = await MyWorkspaceDomainService.GetRepository.ById(repositoryId)
-        const itemPath = join(repositoryData.repositoryCodePath, packagePath)
-        const packageData = await MyWorkspaceDomainService.GetPackageItemByPath({ path: itemPath, userId })
 
+        console.log(startupParams)
+        //const repositoryData = await MyWorkspaceDomainService.GetRepository.ById(repositoryId)
+        //const itemPath = join(repositoryData.repositoryCodePath, packagePath)
+        const packageData = await MyWorkspaceDomainService.GetPackageItemById({ id: packageId, userId })
+
+        console.log(packageData)
+        
         const serviceData = await MyWorkspaceDomainService
             .RegisterServiceProvisioning({
-                executableName,
-                appType,
-                repositoryId,
+                serviceName,
+                serviceDescription,
+                repositoryId: packageData.repositoryId,
                 packageId: packageData.id,
             })
 
 
-        const imageTagName = `ecosystem_${username}_${repositoryData.namespace}__${packageData.itemName}-${packageData.itemType}:${executableName}-${serviceData.id}`.toLowerCase()
+        const imageTagName = `ecosystem_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}:${serviceName}-${serviceData.id}`.toLowerCase()
 
         const buildargs = {
-            REPOSITORY_NAMESPACE: repositoryData.namespace,
-            EXECUTABLE_NAME: executableName
+            REPOSITORY_NAMESPACE: packageData.repositoryNamespace,
 
         }
 
-        const contextTarStream = _GetContextTarStream(repositoryData.repositoryCodePath)
+        const contextTarStream = _GetContextTarStream(packageData.repositoryCodePath)
         
-        const _handleData = chunk => {
+        /*const _handleData = chunk => {
             try {
                 const lines = chunk.toString().split('\n').filter(Boolean)
         
@@ -344,6 +320,7 @@ const MyServicesManager = (params) => {
 
         await container.start()
         console.log(`[INFO] Container '${containerName}' iniciado com a imagem '${imageTagName}'`)
+        */
     }
 
     const ListProvisionedServices = async (userId) => {
@@ -379,7 +356,7 @@ const MyServicesManager = (params) => {
 
             return {
                 serviceId           : service.id,
-                executableName      : service.executableName,
+                serviceName         : service.serviceName,
                 appType             : service.appType,
                 packageId           : service.packageId,
                 repositoryId        : repository.id,
@@ -417,7 +394,7 @@ const MyServicesManager = (params) => {
 
         return {
             serviceId           : serviceData.id,
-            executableName      : serviceData.executableName,
+            serviceName         : serviceData.serviceName,
             appType             : serviceData.appType,
             repositoryId        : Repository.id,
             repositoryNamespace : Repository.namespace,
@@ -437,11 +414,13 @@ const MyServicesManager = (params) => {
         SaveUploadedRepository,
         GetStatus,
         ListBootablePackages,
-        ListApplications,
         ListRepositories,
-        ProvisionServiceFromApplication,
+        ProvisionService,
         ListProvisionedServices,
-        GetServiceData
+        GetServiceData,
+        ListImageBuildHistory: MyWorkspaceDomainService.ListImageBuildHistory,
+        GetInstancesByServiceId: MyWorkspaceDomainService.GetInstancesByServiceId,
+        GetMetadataByPackageId
     }
 
 }

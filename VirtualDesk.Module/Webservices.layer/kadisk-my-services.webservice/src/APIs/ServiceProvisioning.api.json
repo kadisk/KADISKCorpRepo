@@ -7,50 +7,45 @@
 			"summary": "ListBootablePackages"
 		},
 		{
-			"path": "/applications",
-			"method": "GET",
-			"summary": "ListApplications"
-		},
-		{
 			"path": "/provision-service/package",
 			"method": "POST",
-			"summary":"ProvisionServiceFromPackage",
+			"summary":"ProvisionService",
 			"parameters": [
 				{
 					"in": "body",
 					"name": "packageId",
 					"type": "number",
 					"required": true
+				},
+				{
+					"in": "body",
+					"name": "serviceName",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "serviceDescription",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "startupParams",
+					"type": "string",
+					"required": true
 				}
 			]
 		},
 		{
-			"path": "/provision-service/application",
-			"method": "POST",
-			"summary":"ProvisionServiceFromApplication",
+			"path": "/provision-service/startup-params/data/:packageId",
+			"method": "GET",
+			"summary":"GetStartupParamsData",
 			"parameters": [
 				{
-					"in": "body",
-					"name": "repositoryId",
+					"name": "packageId",
+					"in": "path",
 					"type": "number",
-					"required": true
-				},
-				{
-					"in": "body",
-					"name": "executableName",
-					"type": "string",
-					"required": true
-				},
-				{
-					"in": "body",
-					"name": "packagePath",
-					"type": "string",
-					"required": true
-				},
-				{
-					"in": "body",
-					"name": "appType",
-					"type": "string",
 					"required": true
 				}
 			]

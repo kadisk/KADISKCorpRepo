@@ -33,9 +33,35 @@
 			"summary": "ListProvisionedServices"
 		},
 		{
-			"path": "/service-data",
+			"path": "/service/data",
 			"method": "GET",
 			"summary": "GetServiceData",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/image-build-history",
+			"method": "GET",
+			"summary": "ListImageBuildHistory",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+{
+			"path": "/service/instances",
+			"method": "GET",
+			"summary": "GetInstances",
 			"parameters": [
 				{
 					"name": "serviceId",

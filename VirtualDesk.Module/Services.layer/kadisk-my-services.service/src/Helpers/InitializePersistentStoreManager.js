@@ -67,11 +67,12 @@ const InitializePersistentStoreManager = (storage) => {
             autoIncrement: true,
             primaryKey: true
         },
-        executableName: {
+        serviceName: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+            unique: true
         },
-        appType: {
+        serviceDescription: {
             type: DataTypes.STRING,
             allowNull: false
         },

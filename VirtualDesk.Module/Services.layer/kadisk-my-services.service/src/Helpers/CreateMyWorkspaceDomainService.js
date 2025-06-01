@@ -132,15 +132,15 @@ const CreateMyWorkspaceDomainService = ({
     }
 
     const RegisterServiceProvisioning = ({ 
-        executableName,
-        appType,
+        serviceName,
+        serviceDescription,
         repositoryId,
         packageId
     }) => 
         ProvisionedServiceModel
             .create({ 
-                executableName,
-                appType,
+                serviceName,
+                serviceDescription,
                 repositoryId,
                 packageId
             })
@@ -168,6 +168,26 @@ const CreateMyWorkspaceDomainService = ({
                 serviceId
             })
 
+    const ListImageBuildHistory = async (serviceId) => {
+        const items = await ImageBuildHistoryModel.findAll({
+            where: {
+                serviceId
+            }
+        })
+
+        return items.map(item => item.get({ plain: true }))
+    }
+    
+    const GetInstancesByServiceId = async (serviceId) => {
+        const items = await ServiceInstanceModel.findAll({
+            where: {
+                serviceId
+            }
+        })
+
+        return items.map(item => item.get({ plain: true }))
+    }
+
     return {
         RegisterRepository,
         RegisterServiceProvisioning,
@@ -185,6 +205,8 @@ const CreateMyWorkspaceDomainService = ({
         GetPackageItemByPath,
         ListProvisionedServices,
         GetServiceById,
+        ListImageBuildHistory,
+        GetInstancesByServiceId
     }
 }
 

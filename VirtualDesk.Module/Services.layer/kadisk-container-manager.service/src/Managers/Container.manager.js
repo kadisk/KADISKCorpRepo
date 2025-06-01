@@ -1,14 +1,43 @@
 const Docker = require('dockerode')
+const EventEmitter = require('node:events')
 
 const ContainerManager = (params) => {
 
     const docker = new Docker({ socketPath: '/var/run/docker.sock' })
+
+    const eventEmitter = new EventEmitter()
 
     const {
         onReady
     } = params
 
     const _Start = async () => {
+
+        docker.getEvents({}, (err, stream) => {
+            
+            if (err) {
+                console.error(err)
+                return
+            }
+
+            stream.on('data', (chunk) => {
+                try {
+                    const event = JSON.parse(chunk.toString())
+                    console.log('Evento do Docker:', event)
+                } catch (parseErr) {
+                    console.error(parseErr)
+                }
+            })
+
+            stream.on('error', (err) => {
+                console.error(err)
+            })
+
+            stream.on('end', () => {
+                console.log('Stream de eventos encerrado.')
+            })
+        })
+
         onReady()
     }
 
@@ -139,6 +168,10 @@ const ContainerManager = (params) => {
         }
     }
 
+
+    const RegisterDockerEventListener = (f) => 
+        eventEmitter.on(EVENT, (eventData) => f(eventData))
+
     return {
         StartContainer,
         StopContainer,
@@ -148,7 +181,8 @@ const ContainerManager = (params) => {
         CreateNewContainer,
         InspectContainer,
         ListAllImages,
-        ListAllNetworks
+        ListAllNetworks,
+        RegisterDockerEventListener
     }
 
 }

@@ -8,37 +8,37 @@ const ServiceProvisioningController = (params) => {
         return myServicesManagerService.ListBootablePackages({ userId, username })
     }
 
-    const ListApplications = ({ authenticationData }) => {
-        const { userId, username } = authenticationData
-        return myServicesManagerService.ListApplications(userId)
-    }
 
-    
-
-    const ProvisionServiceFromApplication = async ({ appType, executableName, repositoryId, packagePath }, { authenticationData }) => {  
-        const { userId, username } = authenticationData
+    const ProvisionService = async ({
+        packageId,
+        serviceName,
+        serviceDescription,
+        startupParams
+    }, { authenticationData }) => {
+         const { userId, username } = authenticationData
         
-        myServicesManagerService.ProvisionServiceFromApplication({
+        myServicesManagerService
+            .ProvisionService({
                 userId, 
                 username,
-                appType, 
-                executableName, 
-                repositoryId, 
-                packagePath 
+                packageId,
+                serviceName,
+                serviceDescription,
+                startupParams
             })
-
     }
 
-    const ProvisionServiceFromPackage = async (packageId, { authenticationData }) => {
-        
+    const GetStartupParamsData = async (packageId) => { 
+        const metadata = await myServicesManagerService.GetMetadataByPackageId(packageId)
+
+        return metadata
     }
 
     const controllerServiceObject = {
         controllerName: "ServiceProvisioningController",
         ListBootablePackages,
-        ProvisionServiceFromPackage,
-        ProvisionServiceFromApplication,
-        ListApplications
+        ProvisionService,
+        GetStartupParamsData
     }
 
     return Object.freeze(controllerServiceObject)

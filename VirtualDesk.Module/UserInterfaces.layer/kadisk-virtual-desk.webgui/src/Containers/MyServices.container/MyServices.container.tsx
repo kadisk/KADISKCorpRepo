@@ -124,7 +124,7 @@ const MyServicesContainer = ({
                                                     <div className="card-header py-2">
                                                         <span className={`${GetSatatusBadgeClasses(provisionedService.containerStatus)} me-2`}>{provisionedService.containerStatus}</span>
                                                         <div>
-                                                            <h4 className="card-title">{provisionedService.executableName}</h4>
+                                                            <h4 className="card-title">{provisionedService.serviceName}</h4>
                                                             <p className="card-subtitle">{provisionedService.repositoryNamespace}/{provisionedService.packageName}/{provisionedService.packageType}</p>
                                                         </div>
                                                     </div>
