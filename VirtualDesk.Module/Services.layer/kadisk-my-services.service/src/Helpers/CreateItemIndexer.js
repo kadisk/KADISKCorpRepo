@@ -1,4 +1,4 @@
-const { resolve } = require("path")
+const { resolve, join } = require("path")
 const { 
     readdir
 } = require('node:fs/promises')
@@ -19,30 +19,30 @@ const FilterByExtList = (extList) => ({name}) => {
     return extList.indexOf(itemType) > -1
 }
 
-const ListPackageItem = async (itemsDirPath) => {
-    const repositoryDirectories = await ListDir(itemsDirPath)
+const ListPackageItem = async (parentDirPath) => {
+    const repositoryDirectories = await ListDir(parentDirPath)
     return repositoryDirectories.filter(FilterByExtList(["lib", "service", "webservice", "webgui", "webpapp", "app", "cli"]))
 }
 
-const ListItemByType = async (itemsDirPath, itemType) => {
-    const repositoryDirectories = await ListDir(itemsDirPath)
+const ListItemByType = async (parentDirPath, itemType) => {
+    const repositoryDirectories = await ListDir(parentDirPath)
     return repositoryDirectories.filter(FilterByExt(itemType))
 }
 
 const ScanPackageItemType = async ({
-    itemsDirPath, 
+    parentDirPath, 
     callbackfn
 }) => {
-    const dirList = await ListPackageItem(itemsDirPath)
+    const dirList = await ListPackageItem(parentDirPath)
     dirList.forEach(callbackfn)
 }
 
-const ScanRepositoryByItemType = async ({
-    itemsDirPath,
+const ScanItemByType = async ({
+    parentDirPath,
     itemType, 
     callbackfn
 }) => {
-    const dirList = await ListItemByType(itemsDirPath, itemType)
+    const dirList = await ListItemByType(parentDirPath, itemType)
     dirList.forEach(callbackfn)
 }
 
@@ -62,7 +62,7 @@ const CreateItemIndexer = ({
     }) => {
     
         const [ itemName, itemType ] = packageDirName.split(".")
-        const itemPath = resolve(itemParentPath, packageDirName)
+        const itemPath = join(itemParentPath, packageDirName)
     
         const itemData = await _AddRepositoryItem({ repositoryId, itemName, itemType, itemPath, parentId })
     }
@@ -71,15 +71,17 @@ const CreateItemIndexer = ({
         repositoryId,
         parentId,
         groupDirName,
-        layerPath
+        layerPath,
+        repositoryCodePath
     }) => {
         const [ itemName, itemType ] = groupDirName.split(".")
-        const itemPath = resolve(layerPath, groupDirName)
+        const itemPath = join(layerPath, groupDirName)
+        const itemAbsolutPath = resolve(repositoryCodePath, itemPath)
     
         const itemData = await _AddRepositoryItem({ repositoryId, itemName, itemType, itemPath, parentId })
     
         ScanPackageItemType({
-            itemsDirPath: itemPath,
+            itemsDirPath: itemAbsolutPath,
             callbackfn: (dirItem) => {
                 _IndexPackage({
                     repositoryId,
@@ -96,35 +98,39 @@ const CreateItemIndexer = ({
         repositoryId,
         parentId,
         layerDirName,
-        modulePath
+        modulePath,
+        repositoryCodePath
     }) => {
         const [ itemName, itemType ] = layerDirName.split(".")
-        const itemPath = resolve(modulePath, layerDirName)
+        const itemPath = join(modulePath, layerDirName)
+        const itemAbsolutPath = resolve(repositoryCodePath, itemPath)
     
         const itemData = await _AddRepositoryItem({ repositoryId, itemName, itemType, itemPath, parentId })
     
-        ScanRepositoryByItemType({
-            itemsDirPath: itemPath,
+        ScanItemByType({
+            parentDirPath: itemAbsolutPath,
             itemType:"group", 
             callbackfn: (dirItem) => {
                 _IndexGroup({
                     repositoryId,
                     parentId: itemData.id,
                     groupDirName: dirItem.name,
-                    layerPath: itemPath
+                    layerPath: itemPath,
+                    repositoryCodePath
                 })
             }
         })
     
     
         ScanPackageItemType({
-            itemsDirPath: itemPath,
+            parentDirPath: itemAbsolutPath,
             callbackfn: (dirItem) => {
                 _IndexPackage({
                     repositoryId,
                     parentId: itemData.id,
                     packageDirName: dirItem.name,
-                    itemParentPath: itemPath
+                    itemParentPath: itemPath,
+                    repositoryCodePath
                 })
             }
         })
@@ -136,19 +142,21 @@ const CreateItemIndexer = ({
         repositoryCodePath
     }) => {
         const [ itemName, itemType ] = moduleDirName.split(".")
-        const itemPath = resolve(repositoryCodePath, moduleDirName)
+
+        const itemAbsolutPath = resolve(repositoryCodePath, moduleDirName)
     
-        const itemData = await _AddRepositoryItem({ repositoryId, itemName, itemType, itemPath })
+        const itemData = await _AddRepositoryItem({ repositoryId, itemName, itemType, itemPath: moduleDirName })
     
-        ScanRepositoryByItemType({
-            itemsDirPath: itemPath,
+        ScanItemByType({
+            parentDirPath: itemAbsolutPath,
             itemType:"layer", 
             callbackfn: (dirItem) => {
                 _IndexLayer({
                     repositoryId,
                     parentId: itemData.id,
                     layerDirName: dirItem.name,
-                    modulePath: itemPath
+                    modulePath: moduleDirName,
+                    repositoryCodePath
                 })
             }
         })
@@ -157,8 +165,8 @@ const CreateItemIndexer = ({
 
     const _IndexRepository = ({ repositoryId, repositoryCodePath }) => {
 
-        ScanRepositoryByItemType({
-            itemsDirPath: repositoryCodePath,
+        ScanItemByType({
+            parentDirPath: repositoryCodePath,
             itemType:"Module", 
             callbackfn: (dirItem) => {
                 _IndexModule({
