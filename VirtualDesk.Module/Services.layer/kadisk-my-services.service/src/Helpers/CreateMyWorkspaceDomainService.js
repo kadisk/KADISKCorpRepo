@@ -23,10 +23,17 @@ const CreateMyWorkspaceDomainService = ({
 
     const ListPackageItemByUserId = async (userId) => {
         const items = await RepositoryItemModel.findAll({
+             attributes: {
+                include: [
+                    [literal('"Repository"."id"'), "repositoryId"],
+                    [literal('"Repository"."namespace"'), "repositoryNamespace"],
+                    [literal('"Repository"."repositoryCodePath"'), "repositoryCodePath"],
+                ]
+            },
             include: [{
                 model: RepositoryModel,
                 where: { userId },
-                attributes: ["id", "namespace"]
+                attributes: []
             }],
             where: {
                 itemType: PACKAGE_ITEM_TYPE
