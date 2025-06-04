@@ -1,4 +1,5 @@
 const { join, resolve} = require("path")
+const path = require('path')
 const tarStream = require('tar-stream')
 const fs = require('fs')
 const os = require('os')
@@ -12,42 +13,7 @@ const CreateItemIndexer                = require("../Helpers/CreateItemIndexer")
 const CreateMyWorkspaceDomainService   = require("../Helpers/CreateMyWorkspaceDomainService")
 
 
-const GetDockerfileContent = () => {
-    return `
-    FROM node:22
-    
-    ARG REPOSITORY_NAMESPACE
-
-    ARG FIXED_PATH=/tmp/repository
-
-    RUN apt-get update && apt-get install -y sudo wget \
-        && rm -rf /var/lib/apt/lists/*
-    
-    RUN useradd -ms /bin/bash myecosystem
-    RUN usermod -aG sudo myecosystem
-    RUN echo "myecosystem ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-    USER myecosystem
-    
-    WORKDIR /home/myecosystem
-    
-    RUN git clone https://github.com/Meta-Platform/meta-platform-package-executor-command-line.git package-executor
-    RUN cd package-executor && npm install && sudo npm link
-    
-    WORKDIR /home/myecosystem
-    RUN wget https://github.com/Meta-Platform/meta-platform-setup-wizard-command-line/releases/download/0.0.19/meta-platform-setup-wizard-command-line-0.0.19-preview-linux-x64 -O mywizard && chmod +x mywizard
-    
-    RUN ./mywizard install release-standard
-    
-    ENV PATH="/home/myecosystem/EcosystemData/executables:\"\${PATH}\""
-    
-    COPY repository_copied \${FIXED_PATH}
-    
-    RUN repo register source \${REPOSITORY_NAMESPACE} LOCAL_FS --localPath \${FIXED_PATH}
-    RUN repo install \${REPOSITORY_NAMESPACE} LOCAL_FS 
-    
-    CMD ["sh", "-c", "$EXECUTABLE_NAME"]
-`
-}
+const GetDockerfileContent = () => fs.readFileSync(join(__dirname, "Dockerfile"), {encoding:'utf8'})
 
 const MyServicesManager = (params) => {
 
@@ -97,10 +63,22 @@ const MyServicesManager = (params) => {
         ServiceInstanceModel
     })
 
-    const _GetContextTarStream = (repositoryPath) => {
 
+    const _GetContextTarStream = ({
+        repositoryPathForCopy,
+        packagePathForCopy,
+        startupParams
+    }) => {
         const contextTarStream = tarStream.pack()
+        
+
         contextTarStream.entry({ name: 'Dockerfile' }, GetDockerfileContent())
+
+        if (startupParams) {
+            contextTarStream.entry({ 
+                name: 'context_data/startup-params.json' 
+            }, JSON.stringify(startupParams, null, 4))
+        }
 
         const _addFiles = (dirPath, basePath = '') => {
             const items = fs.readdirSync(dirPath)
@@ -108,7 +86,7 @@ const MyServicesManager = (params) => {
                 if (item === 'node_modules' || item === '.git') continue
     
                 const fullPath = join(dirPath, item)
-                const entryPath = join('repository_copied', basePath, item)
+                const entryPath = join(basePath, item)
                 const stats = fs.statSync(fullPath)
     
                 if (stats.isDirectory()) {
@@ -119,10 +97,11 @@ const MyServicesManager = (params) => {
                 }
             }
         }
+       
+        _addFiles(repositoryPathForCopy, 'context_data/repository')
+        _addFiles(packagePathForCopy, 'context_data/package')
 
-        _addFiles(repositoryPath)
         contextTarStream.finalize()
-
         return contextTarStream
     }
 
@@ -174,15 +153,18 @@ const MyServicesManager = (params) => {
             return "NO_REPOSITORIES"
         }
     }
-
+    
     const GetMetadataByPackageId = async (packageId) => { 
         const ecosystemDefaults = await ReadJsonFile(ecosystemDefaultFilePath)
 
         const packageData = await MyWorkspaceDomainService.GetItemById(packageId)
 
+        const packageAbsolutPath = join(packageData.repositoryCodePath, packageData.itemPath)
+        console.log(`[INFO] Loading metadata for package item at path: ${packageAbsolutPath}`)
+
         const metadata = await LoadMetadataDir({
             metadataDirName: ecosystemDefaults.REPOS_CONF_DIRNAME_METADATA,
-            path: packageData.itemPath
+            path: packageAbsolutPath
         })
 
         return {
@@ -195,15 +177,18 @@ const MyServicesManager = (params) => {
     const ListBootablePackages = async ({ userId, username }) => {
 
         const ecosystemDefaults = await ReadJsonFile(ecosystemDefaultFilePath)
-
         const packageItems  = await MyWorkspaceDomainService.ListPackageItemByUserId(userId)
+        console.log(`[INFO] Found ${packageItems.length} package items for user ${username} userId ${userId}`)
 
         const packageItemsWithMetadataPromises = packageItems
             .map(async (packageItem) => {
 
+                const packageAbsolutPath = join(packageItem.repositoryCodePath, packageItem.itemPath)
+                console.log(`[INFO] Loading metadata for package item at path: ${packageAbsolutPath}`)
+
                 const metadata = await LoadMetadataDir({
                     metadataDirName: ecosystemDefaults.REPOS_CONF_DIRNAME_METADATA,
-                    path: packageItem.itemPath
+                    path: packageAbsolutPath
                 })
 
                 return {
@@ -214,9 +199,7 @@ const MyServicesManager = (params) => {
 
 
         const allPackageItems = await Promise.all(packageItemsWithMetadataPromises)
-
         const bootablePacakgeItems = allPackageItems.filter(({metadata}) => metadata && metadata.boot)
-        
         return bootablePacakgeItems
         
     }
@@ -247,7 +230,7 @@ const MyServicesManager = (params) => {
         //const itemPath = join(repositoryData.repositoryCodePath, packagePath)
         const packageData = await MyWorkspaceDomainService.GetPackageItemById({ id: packageId, userId })
 
-        console.log(packageData)
+        //console.log(packageData)
         
         const serviceData = await MyWorkspaceDomainService
             .RegisterServiceProvisioning({
@@ -257,7 +240,6 @@ const MyServicesManager = (params) => {
                 packageId: packageData.id,
             })
 
-
         const imageTagName = `ecosystem_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}:${serviceName}-${serviceData.id}`.toLowerCase()
 
         const buildargs = {
@@ -265,9 +247,15 @@ const MyServicesManager = (params) => {
 
         }
 
-        const contextTarStream = _GetContextTarStream(packageData.repositoryCodePath)
+        const packageAbsolutPath = join(packageData.repositoryCodePath, packageData.itemPath)
+
+        const contextTarStream = _GetContextTarStream({
+            repositoryPathForCopy: packageData.repositoryCodePath,
+            packagePathForCopy: packageAbsolutPath,
+            startupParams
+        })
         
-        /*const _handleData = chunk => {
+        const _handleData = chunk => {
             try {
                 const lines = chunk.toString().split('\n').filter(Boolean)
         
@@ -298,7 +286,7 @@ const MyServicesManager = (params) => {
             onData: _handleData
         })
 
-        const buildData = await MyWorkspaceDomainService
+        /*const buildData = await MyWorkspaceDomainService
             .RegisterBuildedImage({
                 serviceId: serviceData.id,
                 tag: imageTagName,

@@ -23,14 +23,14 @@ const ContainerManager = (params) => {
             stream.on('data', (chunk) => {
                 try {
                     const event = JSON.parse(chunk.toString())
-                    console.log('Evento do Docker:', event)
+                    //console.log('Evento do Docker:', event)
                 } catch (parseErr) {
-                    console.error(parseErr)
+                   // console.error(parseErr)
                 }
             })
 
             stream.on('error', (err) => {
-                console.error(err)
+               // console.error(err)
             })
 
             stream.on('end', () => {

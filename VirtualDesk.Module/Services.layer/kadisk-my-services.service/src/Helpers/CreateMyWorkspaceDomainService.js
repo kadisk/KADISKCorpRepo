@@ -19,7 +19,23 @@ const CreateMyWorkspaceDomainService = ({
     const RegisterRepository = ({ repositoryNamespace , userId, repositoryCodePath }) => RepositoryModel.create({ namespace: repositoryNamespace, userId, repositoryCodePath})
 
     const ListItemByRepositoryId = (repositoryId) => RepositoryItemModel.findAll({ where: { repositoryId }, raw: true})
-    const GetItemById = (id) => RepositoryItemModel.findOne({ where: { id } })
+
+
+    const GetItemById = (id) => RepositoryItemModel.findOne({
+        attributes: {
+            include: [
+                [literal('"Repository"."id"'), "repositoryId"],
+                [literal('"Repository"."namespace"'), "repositoryNamespace"],
+                [literal('"Repository"."repositoryCodePath"'), "repositoryCodePath"],
+            ]
+        },
+        include: [{
+            model: RepositoryModel,
+            attributes: []
+        }],
+        where: { id }, 
+        raw: true 
+    })
 
     const ListPackageItemByUserId = async (userId) => {
         const items = await RepositoryItemModel.findAll({
