@@ -17,7 +17,7 @@ const ServiceProvisioningController = (params) => {
     }, { authenticationData }) => {
          const { userId, username } = authenticationData
         
-        myServicesManagerService
+        await myServicesManagerService
             .ProvisionService({
                 userId, 
                 username,

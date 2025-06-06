@@ -225,13 +225,8 @@ const MyServicesManager = (params) => {
         startupParams
     }) => {
 
-        console.log(startupParams)
-        //const repositoryData = await MyWorkspaceDomainService.GetRepository.ById(repositoryId)
-        //const itemPath = join(repositoryData.repositoryCodePath, packagePath)
         const packageData = await MyWorkspaceDomainService.GetPackageItemById({ id: packageId, userId })
 
-        //console.log(packageData)
-        
         const serviceData = await MyWorkspaceDomainService
             .RegisterServiceProvisioning({
                 serviceName,
