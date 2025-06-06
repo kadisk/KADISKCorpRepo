@@ -286,14 +286,14 @@ const MyServicesManager = (params) => {
             onData: _handleData
         })
 
-        /*const buildData = await MyWorkspaceDomainService
+        const buildData = await MyWorkspaceDomainService
             .RegisterBuildedImage({
                 serviceId: serviceData.id,
                 tag: imageTagName,
                 hashId: imageInfo.Id
             })
         
-        const containerName = `container_${username}_${repositoryData.namespace}__${packageData.itemName}-${packageData.itemType}--${executableName}--${buildData.id}`
+        const containerName = `container_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}--${serviceName}--${buildData.id}`
 
         const container = await CreateNewContainer({
             imageName: imageTagName,
@@ -308,7 +308,7 @@ const MyServicesManager = (params) => {
 
         await container.start()
         console.log(`[INFO] Container '${containerName}' iniciado com a imagem '${imageTagName}'`)
-        */
+        
     }
 
     const ListProvisionedServices = async (userId) => {
