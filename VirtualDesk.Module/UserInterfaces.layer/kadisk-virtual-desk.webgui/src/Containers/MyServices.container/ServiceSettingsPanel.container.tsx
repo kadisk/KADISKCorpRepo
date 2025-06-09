@@ -11,8 +11,6 @@ const STOP_ICON = <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24}
 
 
 
-
-
 const PACKAGE_INFORMATION_TABS_LIST = [
 	{ label: "Startup Params", code: "startup-params" },
 	{ label: "Metadata", code: "metadata" }
@@ -121,27 +119,6 @@ const ServiceSettingsPanelContainer = ({
 							</ul>
 						</div>
 					</div>
-					<div className="col-md-auto ms-auto d-print-none">
-						<div className="btn-list">
-							{
-								Status === "exited"
-								&& <button className="btn btn-primary" onClick={() => { }}>
-									{START_ICON}start
-								</button>
-							}
-							{
-								Status === "running"
-								&& <>
-									<button className="btn btn-orange">
-										{RESTART_ICON}restart
-									</button>
-									<button className="btn btn-danger" onClick={() => { }}>
-										{STOP_ICON}stop
-									</button>
-								</>
-							}
-						</div>
-					</div>
 				</div>
 				<div className="row row-cards mt-2">
 					<div className="col-12">
@@ -196,31 +173,31 @@ const ServiceSettingsPanelContainer = ({
 								{
 									serviceInfoTabCodeSelected === "image-build-history"
 									&& <div className="card-table table-responsive">
-										<table className="table">
-											<thead>
-												<tr>
-													<th>ID</th>
-													<th>Created At</th>
-													<th>Tag</th>
-												</tr>
-											</thead>
-											<tbody>
-												{imageBuildHistory.length === 0 ? (
+											<table className="table">
+												<thead>
 													<tr>
-														<td colSpan={3} className="text-center">No build history found.</td>
+														<th>ID</th>
+														<th>Created At</th>
+														<th>Tag</th>
 													</tr>
-												) : (
-													imageBuildHistory.map((item: any) => (
-														<tr key={item.id}>
-															<td>{item.id}</td>
-															<td>{new Date(item.createdAt).toLocaleString()}</td>
-															<td>{item.tag}</td>
+												</thead>
+												<tbody>
+													{imageBuildHistory.length === 0 ? (
+														<tr>
+															<td colSpan={3} className="text-center">No build history found.</td>
 														</tr>
-													))
-												)}
-											</tbody>
-										</table>
-									</div>
+													) : (
+														imageBuildHistory.map((item: any) => (
+															<tr key={item.id}>
+																<td>{item.id}</td>
+																<td>{new Date(item.createdAt).toLocaleString()}</td>
+																<td>{item.tag}</td>
+															</tr>
+														))
+													)}
+												</tbody>
+											</table>
+										</div>
 								}
 							</div>
 						</div>

@@ -216,26 +216,13 @@ const MyServicesManager = (params) => {
         return repositories
     }
 
-    const ProvisionService = async ({
-        userId, 
+    const BuildImage = async ({
         username,
-        packageId,
-        serviceName,
-        serviceDescription,
+        serviceData,
+        packageData,
         startupParams
     }) => {
-
-        const packageData = await MyWorkspaceDomainService.GetPackageItemById({ id: packageId, userId })
-
-        const serviceData = await MyWorkspaceDomainService
-            .RegisterServiceProvisioning({
-                serviceName,
-                serviceDescription,
-                repositoryId: packageData.repositoryId,
-                packageId: packageData.id,
-            })
-
-        const imageTagName = `ecosystem_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}:${serviceName}-${serviceData.id}`.toLowerCase()
+        const imageTagName = `ecosystem_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}:${serviceData.serviceName}-${serviceData.id}`.toLowerCase()
 
         const buildargs = {
             REPOSITORY_NAMESPACE: packageData.repositoryNamespace,
@@ -287,12 +274,26 @@ const MyServicesManager = (params) => {
                 tag: imageTagName,
                 hashId: imageInfo.Id
             })
-        
-        const containerName = `container_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}--${serviceName}--${buildData.id}`
+
+
+        return buildData
+    }
+
+    const StartNewContainer = async ({
+        username,
+        serviceData,
+        packageData,
+        buildData,
+        ports = []
+    }) => {
+        const containerName = `container_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}--${serviceData.serviceName}--${buildData.id}`
+
+        const _RemapPort = (ports) => ports.map(({ servicePort, hostPort }) => ({ containerPort:servicePort, hostPort }))
 
         const container = await CreateNewContainer({
-            imageName: imageTagName,
-            containerName
+            imageName: buildData.tag,
+            containerName,
+            ports: _RemapPort(ports)
         })
 
         await MyWorkspaceDomainService.RegisterServiceInstance({
@@ -302,7 +303,64 @@ const MyServicesManager = (params) => {
         })
 
         await container.start()
-        console.log(`[INFO] Container '${containerName}' iniciado com a imagem '${imageTagName}'`)
+        console.log(`[INFO] Container '${containerName}' iniciado com a imagem '${buildData.tag}'`)
+
+    }
+
+
+    const CreateNewServiceInstance = async({
+        username,
+        serviceData,
+        packageData,
+        startupParams,
+        ports
+    }) => {
+
+        const buildData = await BuildImage({
+            username,
+            serviceData,
+            packageData,
+            startupParams
+        })
+        
+        await StartNewContainer({
+            username,
+            serviceData,
+            packageData,
+            buildData,
+            ports
+        })
+    }
+
+    const ProvisionService = async ({
+        userId, 
+        username,
+        packageId,
+        serviceName,
+        serviceDescription,
+        startupParams,
+        ports = []
+    }) => {
+
+        const packageData = await MyWorkspaceDomainService.GetPackageItemById({ id: packageId, userId })
+
+        const serviceData = await MyWorkspaceDomainService
+            .RegisterServiceProvisioning({
+                serviceName,
+                serviceDescription,
+                repositoryId: packageData.repositoryId,
+                packageId: packageData.id,
+            })
+
+        
+
+        await CreateNewServiceInstance({
+            username,
+            serviceData,
+            packageData,
+            startupParams,
+            ports
+        }) 
         
     }
 
@@ -352,9 +410,9 @@ const MyServicesManager = (params) => {
                 buildId             : lastBuild.id,
                 imageTagName        : lastBuild.tag,
                 hashId              : lastBuild.hashId,
-                containerIPAddress  : inpectContainerData.NetworkSettings.IPAddress,
-                containerStatus     : inpectContainerData.State.Status,
-                containerPorts      : inpectContainerData.NetworkSettings.Ports
+                containerIPAddress  : inpectContainerData?.NetworkSettings.IPAddress,
+                containerStatus     : inpectContainerData?.State.Status,
+                containerPorts      : inpectContainerData?.NetworkSettings.Ports
             }
         })
 
@@ -373,8 +431,6 @@ const MyServicesManager = (params) => {
             RepositoryItem,
         } = serviceData
 
-        //const inpectContainerData = await InspectContainer(lastInstance.containerName)
-
         return {
             serviceId           : serviceData.id,
             serviceName         : serviceData.serviceName,
@@ -384,11 +440,6 @@ const MyServicesManager = (params) => {
             packageId           : RepositoryItem.id,
             packageName         : RepositoryItem.itemName,
             packageType         : RepositoryItem.itemType,
-            /*containerData       : {
-                IPAddress : inpectContainerData.NetworkSettings.IPAddress,
-                Status    : inpectContainerData.State.Status,
-                Ports     : inpectContainerData.NetworkSettings.Ports
-            }*/
         }
 
     }

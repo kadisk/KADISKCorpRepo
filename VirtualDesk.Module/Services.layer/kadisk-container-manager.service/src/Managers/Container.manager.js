@@ -113,11 +113,30 @@ const ContainerManager = (params) => {
 
     const CreateNewContainer = ({
         imageName,
-        containerName
+        containerName,
+        ports = []
     }) => {
+
+        const portBindings = {}
+        const exposedPorts = {}
+
+        ports.forEach(({ containerPort, hostPort }) => {
+            const containerPortKey = `${containerPort}/tcp`
+            exposedPorts[containerPortKey] = {}
+            portBindings[containerPortKey] = [
+                {
+                    HostPort: hostPort.toString()
+                }
+            ]
+        })
+
         return docker.createContainer({
             Image: imageName,
-            name: containerName
+            name: containerName,
+            ExposedPorts: exposedPorts,
+            HostConfig: {
+                PortBindings: portBindings
+            }
         })
     }
 
@@ -163,8 +182,8 @@ const ContainerManager = (params) => {
             const containerInfo = await container.inspect()
             return containerInfo
         } catch (error) {
-            console.error(`Error inspecting container ${containerIdOrName}:`, error)
-            throw error
+            console.error(error)
+            return null
         }
     }
 

@@ -13,7 +13,8 @@ const ServiceProvisioningController = (params) => {
         packageId,
         serviceName,
         serviceDescription,
-        startupParams
+        startupParams,
+        ports
     }, { authenticationData }) => {
          const { userId, username } = authenticationData
         
@@ -24,7 +25,8 @@ const ServiceProvisioningController = (params) => {
                 packageId,
                 serviceName,
                 serviceDescription,
-                startupParams
+                startupParams, 
+                ports
             })
     }
 

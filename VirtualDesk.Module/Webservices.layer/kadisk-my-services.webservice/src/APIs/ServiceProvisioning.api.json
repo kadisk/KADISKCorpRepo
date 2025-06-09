@@ -32,7 +32,13 @@
 				{
 					"in": "body",
 					"name": "startupParams",
-					"type": "string",
+					"type": "json",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "ports",
+					"type": "json",
 					"required": true
 				}
 			]
