@@ -157,15 +157,17 @@ const CreateMyWorkspaceDomainService = ({
     const RegisterServiceProvisioning = ({ 
         serviceName,
         serviceDescription,
-        repositoryId,
-        packageId
+        originRepositoryId,
+        packageId,
+        instanceRepositoryCodePath
     }) => 
         ProvisionedServiceModel
             .create({ 
                 serviceName,
                 serviceDescription,
-                repositoryId,
-                packageId
+                originRepositoryId,
+                packageId,
+                instanceRepositoryCodePath
             })
 
     const RegisterBuildedImage = ({

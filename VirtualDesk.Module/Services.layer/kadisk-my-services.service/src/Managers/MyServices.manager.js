@@ -1,8 +1,7 @@
 const { join, resolve} = require("path")
-const path = require('path')
-const tarStream = require('tar-stream')
-const fs = require('fs')
 const os = require('os')
+const fs = require('fs')
+const path = require('path')
 
 const ConvertPathToAbsolutPath = (_path) => join(_path)
     .replace('~', os.homedir())
@@ -11,16 +10,32 @@ const InitializePersistentStoreManager = require("../Helpers/InitializePersisten
 const PrepareDirPath                   = require("../Helpers/PrepareDirPath")
 const CreateItemIndexer                = require("../Helpers/CreateItemIndexer")
 const CreateMyWorkspaceDomainService   = require("../Helpers/CreateMyWorkspaceDomainService")
+const GetContextTarStream              = require("../Helpers/GetContextTarStream")
 
+const CopyDirRepository = async (src, dest) => {
+    await fs.promises.mkdir(dest, { recursive: true })
+    const entries = await fs.promises.readdir(src, { withFileTypes: true })
 
-const GetDockerfileContent = () => fs.readFileSync(join(__dirname, "Dockerfile"), {encoding:'utf8'})
+    for (let entry of entries) {
+        if (entry.name === '.git' || entry.name === 'node_modules') continue
+        const srcPath = path.join(src, entry.name)
+        const destPath = path.join(dest, entry.name)
+
+        if (entry.isDirectory()) {
+            await CopyDirRepository(srcPath, destPath)
+        } else {
+            await fs.promises.copyFile(srcPath, destPath)
+        }
+    }
+}
 
 const MyServicesManager = (params) => {
 
     const {
         onReady,
         storageFilePath,
-        repositoriesSourceCodeDirPath,
+        importedRepositoriesSourceCodeDirPath,
+        instanceDataDirPath,
         ecosystemDefaultsFileRelativePath,
         ecosystemdataHandlerService,
         containerManagerService,
@@ -42,7 +57,8 @@ const MyServicesManager = (params) => {
     const ecosystemDefaultFilePath = resolve(ecosystemdataHandlerService.GetEcosystemDataPath(), ecosystemDefaultsFileRelativePath)
 
     const absolutStorageFilePath = ConvertPathToAbsolutPath(storageFilePath)
-    const absolutRepositoryEditorDirPath = ConvertPathToAbsolutPath(repositoriesSourceCodeDirPath)
+    const absolutImportedRepositoriesSourceCodeDirPath = ConvertPathToAbsolutPath(importedRepositoriesSourceCodeDirPath)
+    const absolutInstanceDataDirPath     = ConvertPathToAbsolutPath(instanceDataDirPath)
 
     const PersistentStoreManager = InitializePersistentStoreManager(absolutStorageFilePath)
     const {
@@ -64,53 +80,17 @@ const MyServicesManager = (params) => {
     })
 
 
-    const _GetContextTarStream = ({
-        repositoryPathForCopy,
-        packagePathForCopy,
-        startupParams
-    }) => {
-        const contextTarStream = tarStream.pack()
-        
-
-        contextTarStream.entry({ name: 'Dockerfile' }, GetDockerfileContent())
-
-        if (startupParams) {
-            contextTarStream.entry({ 
-                name: 'context_data/startup-params.json' 
-            }, JSON.stringify(startupParams, null, 4))
-        }
-
-        const _addFiles = (dirPath, basePath = '') => {
-            const items = fs.readdirSync(dirPath)
-            for (const item of items) {
-                if (item === 'node_modules' || item === '.git') continue
-    
-                const fullPath = join(dirPath, item)
-                const entryPath = join(basePath, item)
-                const stats = fs.statSync(fullPath)
-    
-                if (stats.isDirectory()) {
-                    _addFiles(fullPath, join(basePath, item))
-                } else if (stats.isFile()) {
-                    const content = fs.readFileSync(fullPath)
-                    contextTarStream.entry({ name: entryPath }, content)
-                }
-            }
-        }
-       
-        _addFiles(repositoryPathForCopy, 'context_data/repository')
-        _addFiles(packagePathForCopy, 'context_data/package')
-
-        contextTarStream.finalize()
-        return contextTarStream
-    }
-
-    const _GetPrepareAndRepositoriesCodePath = ({username, repositoryNamespace}) => {
-        const repositoriesCodePath = resolve(absolutRepositoryEditorDirPath, username, repositoryNamespace)
+    const _MountPathImportedRepositoriesSourceCodeDirPath = ({username, repositoryNamespace}) => {
+        const repositoriesCodePath = resolve(absolutImportedRepositoriesSourceCodeDirPath, username, repositoryNamespace)
         PrepareDirPath(repositoriesCodePath)
         return repositoriesCodePath
     }
 
+    const _MountPathInstanceRepositoriesSourceCodeDirPath = ({username, repositoryNamespace, serviceDataDirName}) => {
+        const repositoriesCodePath = resolve(absolutInstanceDataDirPath, username, serviceDataDirName, repositoryNamespace)
+        PrepareDirPath(repositoriesCodePath)
+        return repositoriesCodePath
+    }
 
     const _Start = async () => {
         await PersistentStoreManager.ConnectAndSync()
@@ -120,7 +100,7 @@ const MyServicesManager = (params) => {
     _Start()
 
     const SaveUploadedRepository = async ({ repositoryNamespace, userId, username , repositoryFilePath }) => {
-        const repositoriesCodePath = _GetPrepareAndRepositoriesCodePath({username, repositoryNamespace})
+        const repositoriesCodePath = _MountPathImportedRepositoriesSourceCodeDirPath({username, repositoryNamespace})
 
         const newRepositoryCodePath = await ExtractTarGz(repositoryFilePath, repositoriesCodePath)
         const repoData = await RecordNewRepository({ userId, repositoryNamespace, repositoryCodePath: newRepositoryCodePath})
@@ -145,7 +125,7 @@ const MyServicesManager = (params) => {
     }
 
     const GetStatus = async (userId) => {
-        const repositoryCount = await RepositoryModel.count({ where: { userId } });
+        const repositoryCount = await RepositoryModel.count({ where: { userId } })
     
         if (repositoryCount > 0) {
             return "READY"
@@ -229,10 +209,10 @@ const MyServicesManager = (params) => {
 
         }
 
-        const packageAbsolutPath = join(packageData.repositoryCodePath, packageData.itemPath)
+        const packageAbsolutPath = join(serviceData.instanceRepositoryCodePath, packageData.itemPath)
 
-        const contextTarStream = _GetContextTarStream({
-            repositoryPathForCopy: packageData.repositoryCodePath,
+        const contextTarStream = GetContextTarStream({
+            repositoryPathForCopy: serviceData.instanceRepositoryCodePath,
             packagePathForCopy: packageAbsolutPath,
             startupParams
         })
@@ -308,7 +288,7 @@ const MyServicesManager = (params) => {
     }
 
 
-    const CreateNewServiceInstance = async({
+    const CreateNewInstance = async({
         username,
         serviceData,
         packageData,
@@ -343,24 +323,36 @@ const MyServicesManager = (params) => {
     }) => {
 
         const packageData = await MyWorkspaceDomainService.GetPackageItemById({ id: packageId, userId })
+        const { repositoryCodePath } = packageData
+
+
+        const instanceRepositoryCodePath = _MountPathInstanceRepositoriesSourceCodeDirPath({
+            username, 
+            repositoryNamespace: packageData.repositoryNamespace,
+            serviceDataDirName:serviceName
+        })
 
         const serviceData = await MyWorkspaceDomainService
             .RegisterServiceProvisioning({
                 serviceName,
                 serviceDescription,
-                repositoryId: packageData.repositoryId,
+                originRepositoryId: packageData.repositoryId,
                 packageId: packageData.id,
-            })
+                instanceRepositoryCodePath
+        })
+
+
+        await CopyDirRepository(repositoryCodePath, instanceRepositoryCodePath)
 
         
 
-        await CreateNewServiceInstance({
+        await CreateNewInstance({
             username,
             serviceData,
             packageData,
             startupParams,
             ports
-        }) 
+        })
         
     }
 

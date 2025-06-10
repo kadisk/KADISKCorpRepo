@@ -11,8 +11,9 @@
         "myWorkspaceManagerServiceStorageFilePath",
         "myServicesManagerServiceStorageFilePath",
         "myWorkspaceRepositoriesSourceCodeDirPath",
-        "myServicesManagerSourceCodeDirPath",
+        "myServicesManagerImportedSourceCodeDirPath",
         "myServicesRepositoriesUploadDirPath",
+        "myServicesInstanceDataDirPath",
         "myWorkbenchRepositoriesUploadDirPath",
         "installDataDirPath",
         "ecosystemDefaultsFileRelativePath",
@@ -102,9 +103,10 @@
                 "containerManagerService":"@@/container-manager-service"
             },
             "params":{
-                "repositoriesSourceCodeDirPath": "{{myServicesManagerSourceCodeDirPath}}",
+                "importedRepositoriesSourceCodeDirPath": "{{myServicesManagerImportedSourceCodeDirPath}}",
                 "storageFilePath": "{{myServicesManagerServiceStorageFilePath}}",
-                "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}"
+                "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}",
+                "instanceDataDirPath": "{{myServicesInstanceDataDirPath}}"
             }
         }
     ],

@@ -76,7 +76,11 @@ const InitializePersistentStoreManager = (storage) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        repositoryId: {
+        instanceRepositoryCodePath: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        originRepositoryId: {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
@@ -163,7 +167,7 @@ const InitializePersistentStoreManager = (storage) => {
     })
 
     RepositoryModel.hasMany(ProvisionedServiceModel, {
-        foreignKey: "repositoryId",
+        foreignKey: "originRepositoryId",
         onDelete: "CASCADE"
     })
 
@@ -187,7 +191,7 @@ const InitializePersistentStoreManager = (storage) => {
     })
 
     ProvisionedServiceModel.belongsTo(RepositoryModel, {
-        foreignKey: "repositoryId"
+        foreignKey: "originRepositoryId"
     })
 
     ProvisionedServiceModel.belongsTo(RepositoryItemModel, {
