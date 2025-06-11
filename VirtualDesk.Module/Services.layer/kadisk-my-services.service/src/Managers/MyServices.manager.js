@@ -66,7 +66,7 @@ const MyServicesManager = (params) => {
         RepositoryItem     : RepositoryItemModel,
         ProvisionedService : ProvisionedServiceModel,
         ImageBuildHistory  : ImageBuildHistoryModel,
-        ServiceInstance    : ServiceInstanceModel
+        Instance    : InstanceModel
     } = PersistentStoreManager.models
 
     const ItemIndexer = CreateItemIndexer({RepositoryItemModel})
@@ -76,7 +76,7 @@ const MyServicesManager = (params) => {
         RepositoryItemModel, 
         ProvisionedServiceModel,
         ImageBuildHistoryModel,
-        ServiceInstanceModel
+        InstanceModel
     })
 
 
@@ -288,13 +288,17 @@ const MyServicesManager = (params) => {
     }
 
 
-    const CreateNewInstance = async({
+    const CreateInstance = async({
         username,
         serviceData,
         packageData,
         startupParams,
         ports
     }) => {
+
+        //é preciso atualizar as instances para que era tenha um registro de mudança de status
+        //o ImageBuildHistory precisa estar associado a instancia
+        //criar ContainerStatusHistory
 
         const buildData = await BuildImage({
             username,
@@ -310,6 +314,7 @@ const MyServicesManager = (params) => {
             buildData,
             ports
         })
+
     }
 
     const ProvisionService = async ({
@@ -346,7 +351,7 @@ const MyServicesManager = (params) => {
 
         
 
-        await CreateNewInstance({
+        await CreateInstance({
             username,
             serviceData,
             packageData,

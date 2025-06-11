@@ -100,17 +100,14 @@ const InitializePersistentStoreManager = (storage) => {
         }
     })
 
-    const ImageBuildHistoryModel = sequelize.define("ImageBuildHistory", {
+    
+    const InstanceModel = sequelize.define("Instance", {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true
         },
-        tag: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        hashId: {
+        containerName: {
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -125,30 +122,26 @@ const InitializePersistentStoreManager = (storage) => {
         }
     })
 
-    const ServiceInstanceModel = sequelize.define("ServiceInstance", {
+
+    const ImageBuildHistoryModel = sequelize.define("ImageBuildHistory", {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true
         },
-        containerName: {
+        tag: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        buildId: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-            references: {
-                model: ImageBuildHistoryModel,
-                key: "id"
-            },
-            onDelete: "CASCADE"
+        hashId: {
+            type: DataTypes.STRING,
+            allowNull: false
         },
-        serviceId: {
+        instanceId: {
             type: DataTypes.INTEGER,
             allowNull: true,
             references: {
-                model: ProvisionedServiceModel,
+                model: InstanceModel,
                 key: "id"
             },
             onDelete: "CASCADE"
@@ -176,12 +169,12 @@ const InitializePersistentStoreManager = (storage) => {
         onDelete: "CASCADE"
     })
 
-    ImageBuildHistoryModel.hasMany(ServiceInstanceModel, {
-        foreignKey: "buildId",
+    InstanceModel.hasMany(ImageBuildHistoryModel, {
+        foreignKey: "instanceId",
         onDelete: "CASCADE"
     })
 
-    ProvisionedServiceModel.hasMany(ServiceInstanceModel, {
+    ProvisionedServiceModel.hasMany(InstanceModel, {
         foreignKey: "serviceId",
         onDelete: "CASCADE"
     })
@@ -198,15 +191,15 @@ const InitializePersistentStoreManager = (storage) => {
         foreignKey: "packageId"
     })
 
-    ImageBuildHistoryModel.belongsTo(ProvisionedServiceModel, {
+    ImageBuildHistoryModel.belongsTo(InstanceModel, {
+        foreignKey: "instanceId"
+    })
+
+    InstanceModel.belongsTo(ProvisionedServiceModel, {
         foreignKey: "serviceId"
     })
 
-    ServiceInstanceModel.belongsTo(ImageBuildHistoryModel, {
-        foreignKey: "buildId"
-    })
-
-    ServiceInstanceModel.belongsTo(ProvisionedServiceModel, {
+    InstanceModel.belongsTo(ProvisionedServiceModel, {
         foreignKey: "serviceId"
     })
 
@@ -221,7 +214,7 @@ const InitializePersistentStoreManager = (storage) => {
             RepositoryItem: RepositoryItemModel,
             ProvisionedService: ProvisionedServiceModel,
             ImageBuildHistory: ImageBuildHistoryModel,
-            ServiceInstance: ServiceInstanceModel
+            Instance: InstanceModel
         },
         ConnectAndSync: async () => {
             await sequelize.authenticate()

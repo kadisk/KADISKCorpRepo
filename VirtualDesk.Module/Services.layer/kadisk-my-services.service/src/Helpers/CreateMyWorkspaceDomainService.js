@@ -8,7 +8,7 @@ const CreateMyWorkspaceDomainService = ({
     RepositoryItemModel,
     ProvisionedServiceModel,
     ImageBuildHistoryModel,
-    ServiceInstanceModel
+    InstanceModel
 }) => {
 
     const ListRepositories = (userId) => RepositoryModel.findAll({where: { userId }})
@@ -121,7 +121,7 @@ const CreateMyWorkspaceDomainService = ({
                 {
                     model: ImageBuildHistoryModel,
                     include: [{
-                        model: ServiceInstanceModel
+                        model: InstanceModel
                     }]
                 }
             ],
@@ -186,7 +186,7 @@ const CreateMyWorkspaceDomainService = ({
         containerName,
         buildId,
         serviceId
-    }) => ServiceInstanceModel
+    }) => InstanceModel
             .create({
                 containerName,
                 buildId,
@@ -204,7 +204,7 @@ const CreateMyWorkspaceDomainService = ({
     }
     
     const GetInstancesByServiceId = async (serviceId) => {
-        const items = await ServiceInstanceModel.findAll({
+        const items = await InstanceModel.findAll({
             where: {
                 serviceId
             }
