@@ -62,11 +62,11 @@ const MyServicesManager = (params) => {
 
     const PersistentStoreManager = InitializePersistentStoreManager(absolutStorageFilePath)
     const {
-        Repository         : RepositoryModel,
-        RepositoryItem     : RepositoryItemModel,
-        Service : ServiceModel,
-        ImageBuildHistory  : ImageBuildHistoryModel,
-        Instance    : InstanceModel
+        Repository        : RepositoryModel,
+        RepositoryItem    : RepositoryItemModel,
+        Service           : ServiceModel,
+        ImageBuildHistory : ImageBuildHistoryModel,
+        Instance          : InstanceModel
     } = PersistentStoreManager.models
 
     const ItemIndexer = CreateItemIndexer({RepositoryItemModel})
@@ -200,7 +200,7 @@ const MyServicesManager = (params) => {
         username,
         serviceData,
         packageData,
-        startupParams
+        instanceData
     }) => {
         const imageTagName = `ecosystem_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}:${serviceData.serviceName}-${serviceData.id}`.toLowerCase()
 
@@ -214,7 +214,7 @@ const MyServicesManager = (params) => {
         const contextTarStream = GetContextTarStream({
             repositoryPathForCopy: serviceData.instanceRepositoryCodePath,
             packagePathForCopy: packageAbsolutPath,
-            startupParams
+            startupParams: instanceData.startupParams
         })
         
         const _handleData = chunk => {
@@ -250,9 +250,9 @@ const MyServicesManager = (params) => {
 
         const buildData = await MyWorkspaceDomainService
             .RegisterBuildedImage({
-                serviceId: serviceData.id,
+                instanceId: instanceData.id,
                 tag: imageTagName,
-                hashId: imageInfo.Id
+                hashId: imageInfo.Id, 
             })
 
 
@@ -297,13 +297,16 @@ const MyServicesManager = (params) => {
         //criar ContainerStatusHistory
 
         const instanceData = await MyWorkspaceDomainService
-            .RegisterInstance(serviceData.id)
+            .RegisterInstance({
+                serviceId: serviceData.id,
+                startupParams
+            })
 
         const buildData = await BuildImage({
             username,
             serviceData,
             packageData,
-            startupParams
+            instanceData
         })
         
         await StartNewContainer({

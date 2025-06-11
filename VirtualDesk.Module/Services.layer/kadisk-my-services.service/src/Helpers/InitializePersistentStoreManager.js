@@ -106,9 +106,9 @@ const InitializePersistentStoreManager = (storage) => {
             autoIncrement: true,
             primaryKey: true
         },
-        containerName: {
-            type: DataTypes.STRING,
-            allowNull: false
+        startupParams: {
+            type: DataTypes.JSON,
+            allowNull: true
         },
         serviceId: {
             type: DataTypes.INTEGER,

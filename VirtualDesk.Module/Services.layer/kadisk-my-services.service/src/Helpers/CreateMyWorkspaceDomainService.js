@@ -171,18 +171,19 @@ const CreateMyWorkspaceDomainService = ({
             })
 
     const RegisterBuildedImage = ({
-        serviceId,
+        instanceId,
         tag,
         hashId
     }) => ImageBuildHistoryModel
             .create({ 
-                serviceId,
+                instanceId,
                 tag,
                 hashId,
             })
     
 
-    const RegisterInstance = (serviceId) => InstanceModel.create({ serviceId })
+    const RegisterInstance = ({ serviceId, startupParams }) => 
+            InstanceModel.create({ serviceId, startupParams })
 
     const ListImageBuildHistory = async (serviceId) => {
         const items = await ImageBuildHistoryModel.findAll({
