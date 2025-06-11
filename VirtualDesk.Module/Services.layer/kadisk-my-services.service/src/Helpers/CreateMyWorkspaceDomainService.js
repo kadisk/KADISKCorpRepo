@@ -6,7 +6,7 @@ const PACKAGE_ITEM_TYPE = ["app", "cli", "webapp", "webgui", "webservice", "serv
 const CreateMyWorkspaceDomainService = ({
     RepositoryModel,
     RepositoryItemModel,
-    ProvisionedServiceModel,
+    ServiceModel,
     ImageBuildHistoryModel,
     InstanceModel
 }) => {
@@ -107,7 +107,7 @@ const CreateMyWorkspaceDomainService = ({
     }
     
     const ListProvisionedServices = async (userId) => {
-        const items = await ProvisionedServiceModel.findAll({
+        const items = await ServiceModel.findAll({
             include: [
                 {
                     model: RepositoryModel,
@@ -132,7 +132,7 @@ const CreateMyWorkspaceDomainService = ({
     }
 
     const GetServiceById = async ({serviceId, userId}) => {
-        const item = await ProvisionedServiceModel.findOne({
+        const item = await ServiceModel.findOne({
             include: [
                 {
                     model: RepositoryModel,
@@ -161,7 +161,7 @@ const CreateMyWorkspaceDomainService = ({
         packageId,
         instanceRepositoryCodePath
     }) => 
-        ProvisionedServiceModel
+        ServiceModel
             .create({ 
                 serviceName,
                 serviceDescription,
@@ -182,16 +182,7 @@ const CreateMyWorkspaceDomainService = ({
             })
     
 
-    const RegisterServiceInstance = ({
-        containerName,
-        buildId,
-        serviceId
-    }) => InstanceModel
-            .create({
-                containerName,
-                buildId,
-                serviceId
-            })
+    const RegisterInstance = (serviceId) => InstanceModel.create({ serviceId })
 
     const ListImageBuildHistory = async (serviceId) => {
         const items = await ImageBuildHistoryModel.findAll({
@@ -216,7 +207,7 @@ const CreateMyWorkspaceDomainService = ({
     return {
         RegisterRepository,
         RegisterServiceProvisioning,
-        RegisterServiceInstance,
+        RegisterInstance,
         RegisterBuildedImage,
         ListRepositories,
         GetRepository:{

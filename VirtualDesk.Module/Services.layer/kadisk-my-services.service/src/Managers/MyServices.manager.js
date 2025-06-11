@@ -64,7 +64,7 @@ const MyServicesManager = (params) => {
     const {
         Repository         : RepositoryModel,
         RepositoryItem     : RepositoryItemModel,
-        ProvisionedService : ProvisionedServiceModel,
+        Service : ServiceModel,
         ImageBuildHistory  : ImageBuildHistoryModel,
         Instance    : InstanceModel
     } = PersistentStoreManager.models
@@ -74,7 +74,7 @@ const MyServicesManager = (params) => {
     const MyWorkspaceDomainService = CreateMyWorkspaceDomainService({
         RepositoryModel, 
         RepositoryItemModel, 
-        ProvisionedServiceModel,
+        ServiceModel,
         ImageBuildHistoryModel,
         InstanceModel
     })
@@ -276,11 +276,7 @@ const MyServicesManager = (params) => {
             ports: _RemapPort(ports)
         })
 
-        await MyWorkspaceDomainService.RegisterServiceInstance({
-            containerName,
-            buildId: buildData.id,
-            serviceId: serviceData.id
-        })
+        
 
         await container.start()
         console.log(`[INFO] Container '${containerName}' iniciado com a imagem '${buildData.tag}'`)
@@ -299,6 +295,9 @@ const MyServicesManager = (params) => {
         //é preciso atualizar as instances para que era tenha um registro de mudança de status
         //o ImageBuildHistory precisa estar associado a instancia
         //criar ContainerStatusHistory
+
+        const instanceData = await MyWorkspaceDomainService
+            .RegisterInstance(serviceData.id)
 
         const buildData = await BuildImage({
             username,
@@ -348,8 +347,6 @@ const MyServicesManager = (params) => {
 
 
         await CopyDirRepository(repositoryCodePath, instanceRepositoryCodePath)
-
-        
 
         await CreateInstance({
             username,
