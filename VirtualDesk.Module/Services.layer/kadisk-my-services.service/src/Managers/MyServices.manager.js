@@ -1,7 +1,6 @@
 const { join, resolve} = require("path")
 const os = require('os')
-const fs = require('fs')
-const path = require('path')
+const EventEmitter = require("events")
 
 const ConvertPathToAbsolutPath = (_path) => join(_path)
     .replace('~', os.homedir())
@@ -11,21 +10,118 @@ const PrepareDirPath                   = require("../Helpers/PrepareDirPath")
 const CreateItemIndexer                = require("../Helpers/CreateItemIndexer")
 const CreateMyWorkspaceDomainService   = require("../Helpers/CreateMyWorkspaceDomainService")
 const GetContextTarStream              = require("../Helpers/GetContextTarStream")
+const CopyDirRepository                = require("../Helpers/CopyDirRepository")
 
-const CopyDirRepository = async (src, dest) => {
-    await fs.promises.mkdir(dest, { recursive: true })
-    const entries = await fs.promises.readdir(src, { withFileTypes: true })
 
-    for (let entry of entries) {
-        if (entry.name === '.git' || entry.name === 'node_modules') continue
-        const srcPath = path.join(src, entry.name)
-        const destPath = path.join(dest, entry.name)
+const LifecycleStatusOptions = Object.freeze({
+    LOADING    : Symbol("LOADING"),
+    STARTING   : Symbol("STARTING"),
+    STOPPING   : Symbol("STOPPING"),
+    RUNNING    : Symbol("RUNNING"),
+    FAILURE    : Symbol("FAILURE"),
+    TERMINATED : Symbol("TERMINATED")
+}) 
 
-        if (entry.isDirectory()) {
-            await CopyDirRepository(srcPath, destPath)
-        } else {
-            await fs.promises.copyFile(srcPath, destPath)
+const INITIAL_STATE = {
+    status: undefined,
+    data: {},
+    error: undefined
+}
+
+const CreateServiceRuntimeStateManager = () => {
+
+    const { LOADING } = LifecycleStatusOptions
+
+    const state = {}
+
+    const eventEmitter = new EventEmitter()
+
+    const STATUS_CHANGE_EVENT = Symbol()
+    const REQUEST_INSTANCE_DATA_EVENT = Symbol()
+    const RECEIVE_INSTANCE_DATA_EVENT = Symbol()
+
+    const _CreateInitialState = () => ({...INITIAL_STATE})
+
+    const _ValidateServiceDoesNotExist = (serviceId) => {
+        if (state[serviceId]) {
+            throw new Error(`Service with ID ${serviceId} already exists`)
         }
+    }
+
+    const _ValidateServiceExist = (serviceId) => {
+        if (!state[serviceId]) {
+            throw new Error(`Service with ID ${serviceId} does not exist`)
+        }
+    }
+
+    const _RequestInstanceData = (serviceId) => eventEmitter.emit(REQUEST_INSTANCE_DATA_EVENT, { serviceId })
+
+    const _ProcessServiceStatusChange = (serviceId) => {
+        switch (state[serviceId].status) {
+            case LifecycleStatusOptions.LOADING:
+                _RequestInstanceData(serviceId)
+                break
+            case LifecycleStatusOptions.STARTING:
+                console.log(`Service ${serviceId} is starting`)
+                break          
+            case LifecycleStatusOptions.STOPPING:
+                console.log(`Service ${serviceId} is stopping`)
+                break
+            case LifecycleStatusOptions.RUNNING:
+                console.log(`Service ${serviceId} is running`)
+                break
+            case LifecycleStatusOptions.FAILURE:
+                console.error(`Service ${serviceId} has failed`)
+                break
+            case LifecycleStatusOptions.TERMINATED:
+                console.log(`Service ${serviceId} has been terminated`)
+                break
+            default:
+                console.warn(`Service ${serviceId} has an unknown status: ${state[serviceId].status}`)
+        }
+
+    }
+
+    eventEmitter.on(STATUS_CHANGE_EVENT, ({ serviceId }) => _ProcessServiceStatusChange(serviceId))
+
+    const AddServiceInStateManagement = (serviceId) => {
+        _ValidateServiceDoesNotExist()
+        state[serviceId] = _CreateInitialState()
+        ChangeServiceStatus(serviceId, LOADING)
+    }
+
+    const _GetServiceState = (serviceId) => {
+        _ValidateServiceExist(serviceId)    
+        const state = state[serviceId]
+        return state
+    }
+
+    const GetServiceStatus = (serviceId) => {
+        const status = _GetServiceState(serviceId).status
+        return status.toString()
+    }
+
+    const ChangeServiceStatus = (serviceId, newStatus) => {
+        _ValidateServiceExist(serviceId)
+        state[serviceId].status = newStatus
+        eventEmitter.emit(STATUS_CHANGE_EVENT, { serviceId })
+    }
+
+    const SubscribeListenerRuntimeRequestInstanceData = (onRequestData) => {
+        eventEmitter.on(REQUEST_INSTANCE_DATA_EVENT, ({ serviceId }) => {
+            const instanceData = onRequestData(serviceId) 
+            console.log(instanceData)
+
+        })
+
+        
+    }
+
+    return {
+        AddServiceInStateManagement,
+        GetServiceStatus,
+        ChangeServiceStatus,
+        SubscribeListenerRuntimeRequestInstanceData
     }
 }
 
@@ -44,23 +140,18 @@ const MyServicesManager = (params) => {
         jsonFileUtilitiesLib
     } = params
 
-    const { 
-        BuildImageFromDockerfileString,
-        CreateNewContainer,
-        InspectContainer
-    } = containerManagerService
-
-    const ExtractTarGz = extractTarGzLib.require("ExtractTarGz")
+    const ExtractTarGz    = extractTarGzLib.require("ExtractTarGz")
     const LoadMetadataDir = loadMetatadaDirLib.require("LoadMetadataDir")
     const ReadJsonFile    = jsonFileUtilitiesLib.require("ReadJsonFile")
 
     const ecosystemDefaultFilePath = resolve(ecosystemdataHandlerService.GetEcosystemDataPath(), ecosystemDefaultsFileRelativePath)
 
-    const absolutStorageFilePath = ConvertPathToAbsolutPath(storageFilePath)
+    const absolutStorageFilePath                       = ConvertPathToAbsolutPath(storageFilePath)
     const absolutImportedRepositoriesSourceCodeDirPath = ConvertPathToAbsolutPath(importedRepositoriesSourceCodeDirPath)
-    const absolutInstanceDataDirPath     = ConvertPathToAbsolutPath(instanceDataDirPath)
+    const absolutInstanceDataDirPath                   = ConvertPathToAbsolutPath(instanceDataDirPath)
 
     const PersistentStoreManager = InitializePersistentStoreManager(absolutStorageFilePath)
+
     const {
         Repository        : RepositoryModel,
         RepositoryItem    : RepositoryItemModel,
@@ -79,6 +170,21 @@ const MyServicesManager = (params) => {
         InstanceModel
     })
 
+    const { 
+        BuildImageFromDockerfileString,
+        CreateNewContainer,
+        InspectContainer,
+        RegisterDockerEventListener
+    } = containerManagerService
+
+    const ServiceRuntimeStateManager = CreateServiceRuntimeStateManager()
+
+    const {
+        AddServiceInStateManagement,
+        GetServiceStatus,
+        ChangeServiceStatus,
+        SubscribeListenerRuntimeRequestInstanceData,
+    } = ServiceRuntimeStateManager
 
     const _MountPathImportedRepositoriesSourceCodeDirPath = ({username, repositoryNamespace}) => {
         const repositoriesCodePath = resolve(absolutImportedRepositoriesSourceCodeDirPath, username, repositoryNamespace)
@@ -94,10 +200,25 @@ const MyServicesManager = (params) => {
 
     const _Start = async () => {
         await PersistentStoreManager.ConnectAndSync()
+        RegisterDockerEventListener((eventData) => {
+            console.log(eventData) 
+        })
+        
+        SubscribeListenerRuntimeRequestInstanceData((serviceId) => {
+            console.log(serviceId)
+        })
+        
+        await InitializeAllServiceStateManagement()
+
         onReady()
     }
 
-    _Start()
+    const InitializeAllServiceStateManagement = async  () => {
+        const servicesData = await MyWorkspaceDomainService.GetAllServices()
+        servicesData.forEach(serviceData => {
+            AddServiceInStateManagement(serviceData.id)
+        })
+    }
 
     const SaveUploadedRepository = async ({ repositoryNamespace, userId, username , repositoryFilePath }) => {
         const repositoriesCodePath = _MountPathImportedRepositoriesSourceCodeDirPath({username, repositoryNamespace})
@@ -197,22 +318,21 @@ const MyServicesManager = (params) => {
     }
 
     const BuildImage = async ({
-        username,
-        serviceData,
-        packageData,
+        imageTagName,
+        repositoryCodePath,
+        repositoryNamespace,
+        packagePath,
         instanceData
     }) => {
-        const imageTagName = `ecosystem_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}:${serviceData.serviceName}-${serviceData.id}`.toLowerCase()
-
+        
         const buildargs = {
-            REPOSITORY_NAMESPACE: packageData.repositoryNamespace,
-
+            REPOSITORY_NAMESPACE: repositoryNamespace
         }
 
-        const packageAbsolutPath = join(serviceData.instanceRepositoryCodePath, packageData.itemPath)
+        const packageAbsolutPath = join(repositoryCodePath, packagePath)
 
         const contextTarStream = GetContextTarStream({
-            repositoryPathForCopy: serviceData.instanceRepositoryCodePath,
+            repositoryPathForCopy: repositoryCodePath,
             packagePathForCopy: packageAbsolutPath,
             startupParams: instanceData.startupParams
         })
@@ -239,7 +359,6 @@ const MyServicesManager = (params) => {
                 console.error('Failed to parse Docker output chunk:', chunk.toString())
             }
         }
-
         
         const imageInfo = await BuildImageFromDockerfileString({
             buildargs,
@@ -259,30 +378,24 @@ const MyServicesManager = (params) => {
         return buildData
     }
 
-    const StartNewContainer = async ({
-        username,
-        serviceData,
-        packageData,
-        buildData,
+    const CreateAndStartContainer = async ({
+        containerName,
+        imageName,
         ports = []
     }) => {
-        const containerName = `container_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}--${serviceData.serviceName}--${buildData.id}`
 
         const _RemapPort = (ports) => ports.map(({ servicePort, hostPort }) => ({ containerPort:servicePort, hostPort }))
 
         const container = await CreateNewContainer({
-            imageName: buildData.tag,
+            imageName,
             containerName,
             ports: _RemapPort(ports)
         })
 
-        
-
         await container.start()
-        console.log(`[INFO] Container '${containerName}' iniciado com a imagem '${buildData.tag}'`)
+        console.log(`[INFO] Container '${containerName}' iniciado com a imagem '${imageName}'`)
 
     }
-
 
     const CreateInstance = async({
         username,
@@ -302,20 +415,20 @@ const MyServicesManager = (params) => {
                 startupParams
             })
 
+        const imageTagName = `ecosystem_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}:${serviceData.serviceName}-${serviceData.id}`.toLowerCase()
+
         const buildData = await BuildImage({
-            username,
-            serviceData,
-            packageData,
+            imageTagName,
+            repositoryCodePath: serviceData.instanceRepositoryCodePath,
+            repositoryNamespace: packageData.repositoryNamespace,
+            packagePath: packageData.itemPath,
             instanceData
         })
-        
-        await StartNewContainer({
-            username,
-            serviceData,
-            packageData,
-            buildData,
-            ports
-        })
+
+        const containerName = `container_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}--${serviceData.serviceName}--${buildData.id}`
+        const imageName = buildData.tag
+
+        await CreateAndStartContainer({ containerName, imageName, ports })
 
     }
 
@@ -332,7 +445,6 @@ const MyServicesManager = (params) => {
         const packageData = await MyWorkspaceDomainService.GetPackageItemById({ id: packageId, userId })
         const { repositoryCodePath } = packageData
 
-
         const instanceRepositoryCodePath = _MountPathInstanceRepositoriesSourceCodeDirPath({
             username, 
             repositoryNamespace: packageData.repositoryNamespace,
@@ -348,9 +460,9 @@ const MyServicesManager = (params) => {
                 instanceRepositoryCodePath
         })
 
-
         await CopyDirRepository(repositoryCodePath, instanceRepositoryCodePath)
 
+        
         await CreateInstance({
             username,
             serviceData,
@@ -358,62 +470,39 @@ const MyServicesManager = (params) => {
             startupParams,
             ports
         })
+
+        AddServiceInStateManagement(serviceData.id)
         
     }
 
     const ListProvisionedServices = async (userId) => {
-        const provisionedServices = await MyWorkspaceDomainService.ListProvisionedServices(userId)
-    
-        const provisionedServicesWithMetadataPromises = provisionedServices
-            .map(async (provisionedService) => {
+
+        const servicesData = await MyWorkspaceDomainService.ListServices(userId)
+
+        const provisionedServicesData = servicesData
+            .map((provisionedService) => {
+
+                const { 
+                    id,
+                    serviceName,
+                    packageId,
+                    RepositoryItem,
+                    Repository
+                } = provisionedService
+
                 return {
-                    service:provisionedService,
-                    repository: provisionedService.Repository,
-                    repositoryItem: provisionedService.RepositoryItem,
-                    builds: provisionedService.ImageBuildHistories,
-                    instances: provisionedService.ImageBuildHistories?.flatMap(build => build.ServiceInstances)
+                    status : "running", // TODO: Implement status check
+                    serviceId           : id,
+                    serviceName,
+                    packageId,
+                    repositoryId        : Repository.id,
+                    repositoryNamespace : Repository.namespace,
+                    packageId           : RepositoryItem.id,
+                    packageName         : RepositoryItem.itemName,
+                    packageType         : RepositoryItem.itemType
                 }
+                
             })
-    
-        const provisionedServicesRawData = await Promise.all(provisionedServicesWithMetadataPromises)
-
-        const provisionedServicesDataPromises = provisionedServicesRawData
-        .map(async (provisionedService) => {
-            const { 
-                repository,
-                repositoryItem,
-                service,
-                builds,
-                instances
-            } = provisionedService
-
-            const lastBuild = builds.at(-1)
-            const lastInstance = instances.at(-1)
-
-            const inpectContainerData = await InspectContainer(lastInstance.containerName)
-
-            return {
-                serviceId           : service.id,
-                serviceName         : service.serviceName,
-                appType             : service.appType,
-                packageId           : service.packageId,
-                repositoryId        : repository.id,
-                repositoryNamespace : repository.namespace,
-                packageId           : repositoryItem.id,
-                packageName         : repositoryItem.itemName,
-                packageType         : repositoryItem.itemType,
-                instanceId          : lastInstance.id,
-                containerName       : lastInstance.containerName,
-                buildId             : lastBuild.id,
-                imageTagName        : lastBuild.tag,
-                hashId              : lastBuild.hashId,
-                containerIPAddress  : inpectContainerData?.NetworkSettings.IPAddress,
-                containerStatus     : inpectContainerData?.State.Status,
-                containerPorts      : inpectContainerData?.NetworkSettings.Ports
-            }
-        })
-
-        const provisionedServicesData = await Promise.all(provisionedServicesDataPromises)
 
         return provisionedServicesData
     }
@@ -440,6 +529,8 @@ const MyServicesManager = (params) => {
         }
 
     }
+
+    _Start()
 
     return {
         SaveUploadedRepository,
