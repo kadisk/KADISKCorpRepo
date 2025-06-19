@@ -32,6 +32,8 @@ const GetSatatusBadgeClasses = (status: string) => {
             return "badge bg-green-lt text-green"
         case "exited":
             return "badge bg-red-lt text-red"
+        case "LOADED":
+            return "badge bg-yellow-lt text-yellow"
         default:
             return "badge bg-orange-lt text-orange"
     }
@@ -123,28 +125,25 @@ const MyServicesContainer = ({
                                                 <div className="card card-link mb-3">
 
                                                     <div className="card-header py-2">
-                                                        <span className={`${GetSatatusBadgeClasses(provisionedService.containerStatus)} me-2`}>{provisionedService.containerStatus}</span>
+                                                        <span className={`${GetSatatusBadgeClasses(provisionedService.status)} me-2`}>{provisionedService.status}</span>
                                                         <div>
                                                             <h4 className="card-title">{provisionedService.serviceName}</h4>
                                                             <p className="card-subtitle">{provisionedService.repositoryNamespace}/{provisionedService.packageName}/{provisionedService.packageType}</p>
                                                         </div>
                                                     </div>
                                                     <div className="card-body">
-                                                        <dl className="row">
-                                                            <dt className="col-5">IP Address</dt>
-                                                            <dd className="col-7">{provisionedService.containerIPAddress}</dd>
-                                                        </dl>
+                                                        TEXT HERE!
                                                     </div>
                                                     <div className="card-footer bg-blue-lt">
                                                         <div className="btn-list justify-content-end">
                                                             {
-                                                                provisionedService.containerStatus === "exited"
+                                                                provisionedService.status === "exited"
                                                                 && <button className="btn btn-primary" onClick={() => {}}>
                                                                         {START_ICON}start
                                                                     </button>
                                                             }
                                                             {
-                                                                provisionedService.containerStatus === "running"
+                                                                provisionedService.status === "running"
                                                                 && <>
                                                                         <button className="btn btn-orange">
                                                                             {RESTART_ICON}restart
@@ -158,7 +157,7 @@ const MyServicesContainer = ({
                                                                 {SETTINGS_ICON}settings
                                                             </a>
                                                             {
-                                                                !provisionedService.containerStatus
+                                                                !provisionedService.status
                                                                 && <button className="btn btn-dark" onClick={() => {}}>
                                                                         {WORLD_OFF_ICON}decommission
                                                                     </button>

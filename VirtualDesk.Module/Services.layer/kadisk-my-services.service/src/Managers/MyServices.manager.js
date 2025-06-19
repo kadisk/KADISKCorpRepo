@@ -14,7 +14,9 @@ const CopyDirRepository                = require("../Helpers/CopyDirRepository")
 
 
 const LifecycleStatusOptions = Object.freeze({
+    UNKNOWN    : Symbol("UNKNOWN"),
     LOADING    : Symbol("LOADING"),
+    LOADED     : Symbol("LOADED"),
     STARTING   : Symbol("STARTING"),
     STOPPING   : Symbol("STOPPING"),
     RUNNING    : Symbol("RUNNING"),
@@ -23,14 +25,15 @@ const LifecycleStatusOptions = Object.freeze({
 }) 
 
 const INITIAL_STATE = {
-    status: undefined,
-    data: {},
-    error: undefined
+    status      : undefined,
+    staticData  : {},
+    dynamicData : {},
+    error       : undefined
 }
 
 const CreateServiceRuntimeStateManager = () => {
 
-    const { LOADING } = LifecycleStatusOptions
+    const { LOADING, LOADED, UNKNOWN } = LifecycleStatusOptions
 
     const state = {}
 
@@ -56,10 +59,19 @@ const CreateServiceRuntimeStateManager = () => {
 
     const _RequestInstanceData = (serviceId) => eventEmitter.emit(REQUEST_INSTANCE_DATA_EVENT, { serviceId })
 
+    const _RequestContainerData = (serviceId) => {
+
+    }
+
     const _ProcessServiceStatusChange = (serviceId) => {
         switch (state[serviceId].status) {
             case LifecycleStatusOptions.LOADING:
+                console.log(`Service ${serviceId} is starting instance data loading`)
                 _RequestInstanceData(serviceId)
+                break
+            case LifecycleStatusOptions.LOADED:
+                console.log(`Service ${serviceId} has loaded instance data`)
+                _RequestContainerData(serviceId)
                 break
             case LifecycleStatusOptions.STARTING:
                 console.log(`Service ${serviceId} is starting`)
@@ -79,7 +91,20 @@ const CreateServiceRuntimeStateManager = () => {
             default:
                 console.warn(`Service ${serviceId} has an unknown status: ${state[serviceId].status}`)
         }
+    }
 
+    const _SetStaticData = (serviceId, data) => {
+        state[serviceId].staticData = Object.freeze(data)
+    }
+
+    const _ReceiveInstanceData = (serviceId, instanceData) => {
+        if(instanceData.serviceId === serviceId){
+            const { id: instanceId, createdAt, startupParams } = instanceData
+            _SetStaticData(serviceId, { instanceId, startupParams, createdAt })
+            ChangeServiceStatus(serviceId, LOADED)
+        } else {
+            throw "Instance serviceId does not match the corresponding service."
+        }
     }
 
     eventEmitter.on(STATUS_CHANGE_EVENT, ({ serviceId }) => _ProcessServiceStatusChange(serviceId))
@@ -92,13 +117,18 @@ const CreateServiceRuntimeStateManager = () => {
 
     const _GetServiceState = (serviceId) => {
         _ValidateServiceExist(serviceId)    
-        const state = state[serviceId]
-        return state
+        const serviceState = state[serviceId]
+        return serviceState
     }
 
     const GetServiceStatus = (serviceId) => {
-        const status = _GetServiceState(serviceId).status
-        return status.toString()
+        try{
+            const status = _GetServiceState(serviceId).status
+            return status.description
+        } catch(e) {
+            console.log(e)
+            return UNKNOWN.description
+        }
     }
 
     const ChangeServiceStatus = (serviceId, newStatus) => {
@@ -108,10 +138,9 @@ const CreateServiceRuntimeStateManager = () => {
     }
 
     const SubscribeListenerRuntimeRequestInstanceData = (onRequestData) => {
-        eventEmitter.on(REQUEST_INSTANCE_DATA_EVENT, ({ serviceId }) => {
-            const instanceData = onRequestData(serviceId) 
-            console.log(instanceData)
-
+        eventEmitter.on(REQUEST_INSTANCE_DATA_EVENT, async ({ serviceId }) => {
+            const instanceData = await onRequestData(serviceId) 
+            _ReceiveInstanceData(serviceId, instanceData)
         })
 
         
@@ -204,8 +233,9 @@ const MyServicesManager = (params) => {
             console.log(eventData) 
         })
         
-        SubscribeListenerRuntimeRequestInstanceData((serviceId) => {
-            console.log(serviceId)
+        SubscribeListenerRuntimeRequestInstanceData(async (serviceId) => {
+            const instanceData = await MyWorkspaceDomainService.GetLastInstanceByServiceId(serviceId)
+            return instanceData
         })
         
         await InitializeAllServiceStateManagement()
@@ -483,7 +513,7 @@ const MyServicesManager = (params) => {
             .map((provisionedService) => {
 
                 const { 
-                    id,
+                    id: serviceId,
                     serviceName,
                     packageId,
                     RepositoryItem,
@@ -491,8 +521,8 @@ const MyServicesManager = (params) => {
                 } = provisionedService
 
                 return {
-                    status : "running", // TODO: Implement status check
-                    serviceId           : id,
+                    status              : GetServiceStatus(serviceId),
+                    serviceId,
                     serviceName,
                     packageId,
                     repositoryId        : Repository.id,
