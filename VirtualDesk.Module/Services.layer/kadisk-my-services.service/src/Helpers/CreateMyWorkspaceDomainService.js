@@ -8,7 +8,9 @@ const CreateMyWorkspaceDomainService = ({
     RepositoryItemModel,
     ServiceModel,
     ImageBuildHistoryModel,
-    InstanceModel
+    InstanceModel,
+    ContainerModel,
+    ContainerEventLogModel
 }) => {
 
     const ListRepositories = (userId) => RepositoryModel.findAll({where: { userId }})
@@ -203,6 +205,23 @@ const CreateMyWorkspaceDomainService = ({
                 tag,
                 hashId,
             })
+
+    const RegisterContainer = ({
+            containerName,
+            instanceId,
+            buildId
+        }) =>
+        ContainerModel
+        .create({
+            containerName,
+            instanceId,
+            buildId
+        })
+
+    /*const NotifyContainerEvent = () => {
+
+        ContainerStatusHistoryModel
+    }*/
     
 
     const RegisterInstance = ({ serviceId, startupParams }) => 
@@ -256,7 +275,8 @@ const CreateMyWorkspaceDomainService = ({
         GetServiceById,
         ListImageBuildHistory,
         GetInstancesByServiceId,
-        GetLastInstanceByServiceId
+        GetLastInstanceByServiceId,
+        RegisterContainer
     }
 }
 

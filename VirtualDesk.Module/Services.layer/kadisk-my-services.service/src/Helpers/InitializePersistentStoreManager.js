@@ -121,36 +121,6 @@ const InitializePersistentStoreManager = (storage) => {
         }
     })
 
-    const ContainerStatusHistoryModel = sequelize.define("ContainerStatusHistory", {
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true
-        },
-        containerName: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        status: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        timestamp: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            defaultValue: DataTypes.NOW
-        },
-        instanceId: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-            references: {
-                model: InstanceModel,
-                key: "id"
-            },
-            onDelete: "CASCADE"
-        }
-    })
-
     const ImageBuildHistoryModel = sequelize.define("ImageBuildHistory", {
         id: {
             type: DataTypes.INTEGER,
@@ -170,6 +140,66 @@ const InitializePersistentStoreManager = (storage) => {
             allowNull: true,
             references: {
                 model: InstanceModel,
+                key: "id"
+            },
+            onDelete: "CASCADE"
+        }
+    })
+
+    const ContainerModel = sequelize.define("Container", {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true
+        },
+        containerName: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        instanceId: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: InstanceModel,
+                key: "id"
+            },
+            onDelete: "CASCADE"
+        },
+        buildId: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: ImageBuildHistoryModel,
+                key: "id"
+            },
+            onDelete: "CASCADE"
+        }
+    })
+
+    const ContainerEventLogModel = sequelize.define("ContainerEventLogModel", {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true
+        },
+        event: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        payload: {
+            type: DataTypes.JSON,
+            allowNull: true
+        },
+        timestamp: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW
+        },
+        containerId: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: ContainerModel,
                 key: "id"
             },
             onDelete: "CASCADE"
@@ -202,8 +232,23 @@ const InitializePersistentStoreManager = (storage) => {
         onDelete: "CASCADE"
     })
 
+    InstanceModel.hasMany(ContainerModel, {
+        foreignKey: "instanceId",
+        onDelete: "CASCADE"
+    })
+
+    ImageBuildHistoryModel.hasMany(ContainerModel, {
+        foreignKey: "buildId",
+        onDelete: "CASCADE"
+    })
+
     ServiceModel.hasMany(InstanceModel, {
         foreignKey: "serviceId",
+        onDelete: "CASCADE"
+    })
+
+    ContainerModel.hasMany(ContainerEventLogModel, {
+        foreignKey: "containerId",
         onDelete: "CASCADE"
     })
 
@@ -217,6 +262,18 @@ const InitializePersistentStoreManager = (storage) => {
 
     ServiceModel.belongsTo(RepositoryItemModel, {
         foreignKey: "packageId"
+    })
+
+    ContainerModel.belongsTo(InstanceModel, {
+        foreignKey: "instanceId"
+    })
+
+    ContainerModel.belongsTo(ImageBuildHistoryModel, {
+        foreignKey: "buildId"
+    })
+
+    ContainerEventLogModel.belongsTo(ImageBuildHistoryModel, {
+        foreignKey: "containerId"
     })
 
     ImageBuildHistoryModel.belongsTo(InstanceModel, {
@@ -242,7 +299,9 @@ const InitializePersistentStoreManager = (storage) => {
             RepositoryItem: RepositoryItemModel,
             Service: ServiceModel,
             ImageBuildHistory: ImageBuildHistoryModel,
-            Instance: InstanceModel
+            Instance: InstanceModel,
+            Container: ContainerModel,
+            ContainerEventLog: ContainerEventLogModel
         },
         ConnectAndSync: async () => {
             await sequelize.authenticate()

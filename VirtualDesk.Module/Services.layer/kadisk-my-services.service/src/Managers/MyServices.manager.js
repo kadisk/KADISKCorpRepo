@@ -1,6 +1,5 @@
 const { join, resolve} = require("path")
 const os = require('os')
-const EventEmitter = require("events")
 
 const ConvertPathToAbsolutPath = (_path) => join(_path)
     .replace('~', os.homedir())
@@ -45,7 +44,9 @@ const MyServicesManager = (params) => {
         RepositoryItem    : RepositoryItemModel,
         Service           : ServiceModel,
         ImageBuildHistory : ImageBuildHistoryModel,
-        Instance          : InstanceModel
+        Instance          : InstanceModel,
+        Container         : ContainerModel,
+        ContainerEventLog : ContainerEventLogModel
     } = PersistentStoreManager.models
 
     const ItemIndexer = CreateItemIndexer({RepositoryItemModel})
@@ -55,7 +56,9 @@ const MyServicesManager = (params) => {
         RepositoryItemModel, 
         ServiceModel,
         ImageBuildHistoryModel,
-        InstanceModel
+        InstanceModel,
+        ContainerModel,
+        ContainerEventLogModel
     })
 
     const { 
@@ -206,7 +209,7 @@ const MyServicesManager = (params) => {
         return repositories
     }
 
-    const BuildImage = async ({
+    const _BuildImage = async ({
         imageTagName,
         repositoryCodePath,
         repositoryNamespace,
@@ -267,7 +270,7 @@ const MyServicesManager = (params) => {
         return buildData
     }
 
-    const CreateAndStartContainer = async ({
+    const _CreateAndStartContainer = async ({
         containerName,
         imageName,
         ports = []
@@ -286,7 +289,28 @@ const MyServicesManager = (params) => {
 
     }
 
-    const CreateInstance = async({
+    const _CreateContainer = async ({
+        username,
+        instanceData,
+        packageData,
+        serviceData,
+        buildData,
+        ports
+    }) => {
+
+        const containerName = `container_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}--${serviceData.serviceName}--${buildData.id}`
+
+        await MyWorkspaceDomainService
+            .RegisterContainer({
+                containerName,
+                instanceId: instanceData.id,
+                buildId: buildData.id
+            })
+
+        await _CreateAndStartContainer({ containerName, imageName: buildData.tag, ports })
+    }
+
+    const _CreateInstance = async({
         username,
         serviceData,
         packageData,
@@ -306,7 +330,7 @@ const MyServicesManager = (params) => {
 
         const imageTagName = `ecosystem_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}:${serviceData.serviceName}-${serviceData.id}`.toLowerCase()
 
-        const buildData = await BuildImage({
+        const buildData = await _BuildImage({
             imageTagName,
             repositoryCodePath: serviceData.instanceRepositoryCodePath,
             repositoryNamespace: packageData.repositoryNamespace,
@@ -314,11 +338,16 @@ const MyServicesManager = (params) => {
             instanceData
         })
 
-        const containerName = `container_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}--${serviceData.serviceName}--${buildData.id}`
-        const imageName = buildData.tag
+    
+        await _CreateContainer({
+            username,
+            instanceData,
+            packageData,
+            serviceData,
+            buildData
+        })
 
-        await CreateAndStartContainer({ containerName, imageName, ports })
-
+        
     }
 
     const ProvisionService = async ({
@@ -352,7 +381,7 @@ const MyServicesManager = (params) => {
         await CopyDirRepository(repositoryCodePath, instanceRepositoryCodePath)
 
         
-        await CreateInstance({
+        await _CreateInstance({
             username,
             serviceData,
             packageData,
