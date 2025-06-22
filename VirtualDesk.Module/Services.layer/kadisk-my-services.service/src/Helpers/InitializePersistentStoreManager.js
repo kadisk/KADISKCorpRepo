@@ -206,92 +206,27 @@ const InitializePersistentStoreManager = (storage) => {
         }
     })
 
-    RepositoryModel.hasMany(RepositoryItemModel, {
-        foreignKey: "repositoryId",
-        onDelete: "CASCADE"
-    })
+    RepositoryModel       .hasMany(RepositoryItemModel,    { foreignKey: "repositoryId", onDelete: "CASCADE" })
+    RepositoryItemModel   .hasMany(RepositoryItemModel,    { foreignKey: "parentId", as: "children", onDelete: "CASCADE" })
+    RepositoryModel       .hasMany(ServiceModel,           { foreignKey: "originRepositoryId", onDelete: "CASCADE" })
+    ServiceModel          .hasMany(ImageBuildHistoryModel, { foreignKey: "serviceId",   onDelete: "CASCADE" })
+    InstanceModel         .hasMany(ImageBuildHistoryModel, { foreignKey: "instanceId",  onDelete: "CASCADE" })
+    InstanceModel         .hasMany(ContainerModel,         { foreignKey: "instanceId",  onDelete: "CASCADE" })
+    ImageBuildHistoryModel.hasMany(ContainerModel,         { foreignKey: "buildId",     onDelete: "CASCADE" })
+    ServiceModel          .hasMany(InstanceModel,          { foreignKey: "serviceId",   onDelete: "CASCADE" })
+    ContainerModel        .hasMany(ContainerEventLogModel, { foreignKey: "containerId", onDelete: "CASCADE" })
 
-    RepositoryItemModel.hasMany(RepositoryItemModel, {
-        foreignKey: "parentId",
-        as: "children",
-        onDelete: "CASCADE"
-    })
 
-    RepositoryModel.hasMany(ServiceModel, {
-        foreignKey: "originRepositoryId",
-        onDelete: "CASCADE"
-    })
-
-    ServiceModel.hasMany(ImageBuildHistoryModel, {
-        foreignKey: "serviceId",
-        onDelete: "CASCADE"
-    })
-
-    InstanceModel.hasMany(ImageBuildHistoryModel, {
-        foreignKey: "instanceId",
-        onDelete: "CASCADE"
-    })
-
-    InstanceModel.hasMany(ContainerModel, {
-        foreignKey: "instanceId",
-        onDelete: "CASCADE"
-    })
-
-    ImageBuildHistoryModel.hasMany(ContainerModel, {
-        foreignKey: "buildId",
-        onDelete: "CASCADE"
-    })
-
-    ServiceModel.hasMany(InstanceModel, {
-        foreignKey: "serviceId",
-        onDelete: "CASCADE"
-    })
-
-    ContainerModel.hasMany(ContainerEventLogModel, {
-        foreignKey: "containerId",
-        onDelete: "CASCADE"
-    })
-
-    RepositoryItemModel.belongsTo(RepositoryModel, {
-        foreignKey: "repositoryId"
-    })
-
-    ServiceModel.belongsTo(RepositoryModel, {
-        foreignKey: "originRepositoryId"
-    })
-
-    ServiceModel.belongsTo(RepositoryItemModel, {
-        foreignKey: "packageId"
-    })
-
-    ContainerModel.belongsTo(InstanceModel, {
-        foreignKey: "instanceId"
-    })
-
-    ContainerModel.belongsTo(ImageBuildHistoryModel, {
-        foreignKey: "buildId"
-    })
-
-    ContainerEventLogModel.belongsTo(ImageBuildHistoryModel, {
-        foreignKey: "containerId"
-    })
-
-    ImageBuildHistoryModel.belongsTo(InstanceModel, {
-        foreignKey: "instanceId"
-    })
-
-    InstanceModel.belongsTo(ServiceModel, {
-        foreignKey: "serviceId"
-    })
-
-    InstanceModel.belongsTo(ServiceModel, {
-        foreignKey: "serviceId"
-    })
-
-    RepositoryItemModel.belongsTo(RepositoryItemModel, {
-        foreignKey: "parentId",
-        as: "parent"
-    })
+    RepositoryItemModel   .belongsTo(RepositoryModel,        { foreignKey: "repositoryId" })
+    ServiceModel          .belongsTo(RepositoryModel,        { foreignKey: "originRepositoryId" })
+    ServiceModel          .belongsTo(RepositoryItemModel,    { foreignKey: "packageId" })
+    ContainerModel        .belongsTo(InstanceModel,          { foreignKey: "instanceId" })
+    ContainerModel        .belongsTo(ImageBuildHistoryModel, { foreignKey: "buildId" })
+    ContainerEventLogModel.belongsTo(ImageBuildHistoryModel, { foreignKey: "containerId" })
+    ImageBuildHistoryModel.belongsTo(InstanceModel,          { foreignKey: "instanceId" })
+    InstanceModel         .belongsTo(ServiceModel,           { foreignKey: "serviceId" })
+    InstanceModel         .belongsTo(ServiceModel,           { foreignKey: "serviceId" })
+    RepositoryItemModel   .belongsTo(RepositoryItemModel,    { foreignKey: "parentId", as: "parent"})
 
     return {
         models: {

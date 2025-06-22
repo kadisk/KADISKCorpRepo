@@ -247,6 +247,12 @@ const CreateMyWorkspaceDomainService = ({
         return items.map(item => item.get({ plain: true }))
     }
 
+    const GetContainerInfoByInstanceId = async (instanceId) => {
+        const containerData = await ContainerModel
+            .findOne({ where: { instanceId } })
+        return containerData ? containerData.get({ plain: true }) : null
+    }
+
     const GetLastInstanceByServiceId = async (serviceId) => {
         const instance = await InstanceModel.findOne({
             where: { serviceId },
@@ -276,6 +282,7 @@ const CreateMyWorkspaceDomainService = ({
         ListImageBuildHistory,
         GetInstancesByServiceId,
         GetLastInstanceByServiceId,
+        GetContainerInfoByInstanceId,
         RegisterContainer
     }
 }

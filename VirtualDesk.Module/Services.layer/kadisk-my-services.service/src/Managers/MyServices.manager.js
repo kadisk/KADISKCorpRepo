@@ -74,7 +74,9 @@ const MyServicesManager = (params) => {
         AddServiceInStateManagement,
         GetServiceStatus,
         ChangeServiceStatus,
-        SubscribeListenerRuntimeRequestInstanceData,
+        onRequestInstanceData,
+        onRequestContainerData,
+        onRequestContainerInspectionData
     } = ServiceRuntimeStateManager
 
     const _MountPathImportedRepositoriesSourceCodeDirPath = ({username, repositoryNamespace}) => {
@@ -90,19 +92,30 @@ const MyServicesManager = (params) => {
     }
 
     const _Start = async () => {
+
         await PersistentStoreManager.ConnectAndSync()
         RegisterDockerEventListener((eventData) => {
             console.log(eventData) 
         })
         
-        SubscribeListenerRuntimeRequestInstanceData(async (serviceId) => {
+        onRequestInstanceData(async (serviceId) => {
             const instanceData = await MyWorkspaceDomainService.GetLastInstanceByServiceId(serviceId)
             return instanceData
         })
+
+        onRequestContainerData(async (instanceId) => {
+            const containerData = await MyWorkspaceDomainService.GetContainerInfoByInstanceId(instanceId)
+            return containerData
+        })
+
+        onRequestContainerInspectionData(async (containerName) => {
+            const inspectData = await InspectContainer(containerName)
+            return inspectData
+        })
         
         await InitializeAllServiceStateManagement()
-
         onReady()
+
     }
 
     const InitializeAllServiceStateManagement = async  () => {
@@ -317,10 +330,6 @@ const MyServicesManager = (params) => {
         startupParams,
         ports
     }) => {
-
-        //é preciso atualizar as instances para que era tenha um registro de mudança de status
-        //o ImageBuildHistory precisa estar associado a instancia
-        //criar ContainerStatusHistory
 
         const instanceData = await MyWorkspaceDomainService
             .RegisterInstance({

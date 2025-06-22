@@ -11,59 +11,71 @@ const INITIAL_STATE = {
 
 const CreateServiceRuntimeStateManager = () => {
 
-    const { LOADING, LOADED, UNKNOWN } = LifecycleStatusOptions
+    const {
+        LOADING_INSTANCE_DATA,
+        INSTANCE_DATA_LOADED,
+        CONTAINER_DATA_LOADED,
+        STARTING,
+        STOPPING,
+        RUNNING,
+        FAILURE,
+        TERMINATED,
+        UNKNOWN
+    } = LifecycleStatusOptions
 
     const state = {}
 
     const eventEmitter = new EventEmitter()
 
-    const STATUS_CHANGE_EVENT = Symbol()
-    const REQUEST_INSTANCE_DATA_EVENT = Symbol()
-    const RECEIVE_INSTANCE_DATA_EVENT = Symbol()
+    const STATUS_CHANGE_EVENT                     = Symbol()
+    const REQUEST_INSTANCE_DATA_EVENT             = Symbol()
+    const REQUEST_CONTAINER_DATA_EVENT            = Symbol()
+    const REQUEST_CONTAINER_INSPECTION_DATA_EVENT = Symbol()
+
 
     const _CreateInitialState = () => ({...INITIAL_STATE})
 
     const _ValidateServiceDoesNotExist = (serviceId) => {
-        if (state[serviceId]) {
+        if (state[serviceId])
             throw new Error(`Service with ID ${serviceId} already exists`)
-        }
     }
 
     const _ValidateServiceExist = (serviceId) => {
-        if (!state[serviceId]) {
+        if (!state[serviceId])
             throw new Error(`Service with ID ${serviceId} does not exist`)
-        }
     }
 
-    const _RequestInstanceData = (serviceId) => eventEmitter.emit(REQUEST_INSTANCE_DATA_EVENT, { serviceId })
+    const _GetInstanceId    = (serviceId) => _GetStaticData(serviceId).instanceId
+    const _GetContainerName = (serviceId) => _GetStaticData(serviceId).containerName
 
-    const _RequestContainerData = (serviceId) => {
-
-    }
+    const _RequestInstanceData            = (serviceId) => eventEmitter.emit(REQUEST_INSTANCE_DATA_EVENT, { serviceId })
+    const _RequestContainerData           = (serviceId) => eventEmitter.emit(REQUEST_CONTAINER_DATA_EVENT, { serviceId, instanceId: _GetInstanceId(serviceId) })
+    const _RequestContainerInspectionData = (serviceId) => eventEmitter.emit(REQUEST_CONTAINER_INSPECTION_DATA_EVENT, { serviceId, containerName: _GetContainerName(serviceId) })
 
     const _ProcessServiceStatusChange = (serviceId) => {
         switch (state[serviceId].status) {
-            case LifecycleStatusOptions.LOADING:
-                console.log(`Service ${serviceId} is starting instance data loading`)
+            case LOADING_INSTANCE_DATA:
                 _RequestInstanceData(serviceId)
                 break
-            case LifecycleStatusOptions.LOADED:
-                console.log(`Service ${serviceId} has loaded instance data`)
+            case INSTANCE_DATA_LOADED:
                 _RequestContainerData(serviceId)
                 break
-            case LifecycleStatusOptions.STARTING:
+            case CONTAINER_DATA_LOADED:
+                _RequestContainerInspectionData(serviceId)
+                break
+            case STARTING:
                 console.log(`Service ${serviceId} is starting`)
                 break          
-            case LifecycleStatusOptions.STOPPING:
+            case STOPPING:
                 console.log(`Service ${serviceId} is stopping`)
                 break
-            case LifecycleStatusOptions.RUNNING:
+            case RUNNING:
                 console.log(`Service ${serviceId} is running`)
                 break
-            case LifecycleStatusOptions.FAILURE:
+            case FAILURE:
                 console.error(`Service ${serviceId} has failed`)
                 break
-            case LifecycleStatusOptions.TERMINATED:
+            case TERMINATED:
                 console.log(`Service ${serviceId} has been terminated`)
                 break
             default:
@@ -71,18 +83,41 @@ const CreateServiceRuntimeStateManager = () => {
         }
     }
 
-    const _SetStaticData = (serviceId, data) => {
+    const _SetData = (serviceId, data) => {
         state[serviceId].staticData = Object.freeze(data)
     }
 
+    const _AppendData = (serviceId, data) => {
+        const staticData = _GetStaticData(serviceId)
+        _SetData(serviceId, { ...staticData, ...data } )
+    }
+
+    const _UpdateDynamicData = (serviceId, property, data) => {
+        state[serviceId].dynamicData[property] = Object.freeze(data)
+    }
+
+    const _GetStaticData = (serviceId) => state[serviceId].staticData
+
     const _ReceiveInstanceData = (serviceId, instanceData) => {
         if(instanceData.serviceId === serviceId){
-            const { id: instanceId, createdAt, startupParams } = instanceData
-            _SetStaticData(serviceId, { instanceId, startupParams, createdAt })
-            ChangeServiceStatus(serviceId, LOADED)
+            const { id: instanceId, startupParams } = instanceData
+            _SetData(serviceId, { instanceId, startupParams })
+            ChangeServiceStatus(serviceId, INSTANCE_DATA_LOADED)
         } else {
             throw "Instance serviceId does not match the corresponding service."
         }
+    }
+
+    const _ReceiveContainerData = (serviceId, containerData) => {
+        const { id:containerId, containerName  } = containerData
+        _AppendData(serviceId, {containerId, containerName} )
+        ChangeServiceStatus(serviceId, CONTAINER_DATA_LOADED)
+    }
+
+    const _ReceiveContainerInspectionData = (serviceId, containerInspectionData) => {
+        const { State, NetworkSettings } = containerInspectionData
+        _UpdateDynamicData(serviceId, "containerState", State) 
+        _UpdateDynamicData(serviceId, "containerNetworkSettings", NetworkSettings) 
     }
 
     eventEmitter.on(STATUS_CHANGE_EVENT, ({ serviceId }) => _ProcessServiceStatusChange(serviceId))
@@ -90,7 +125,7 @@ const CreateServiceRuntimeStateManager = () => {
     const AddServiceInStateManagement = (serviceId) => {
         _ValidateServiceDoesNotExist()
         state[serviceId] = _CreateInitialState()
-        ChangeServiceStatus(serviceId, LOADING)
+        ChangeServiceStatus(serviceId, LOADING_INSTANCE_DATA)
     }
 
     const _GetServiceState = (serviceId) => {
@@ -115,20 +150,36 @@ const CreateServiceRuntimeStateManager = () => {
         eventEmitter.emit(STATUS_CHANGE_EVENT, { serviceId })
     }
 
-    const SubscribeListenerRuntimeRequestInstanceData = (onRequestData) => {
+    const onRequestInstanceData = (onRequestData) => {
         eventEmitter.on(REQUEST_INSTANCE_DATA_EVENT, async ({ serviceId }) => {
             const instanceData = await onRequestData(serviceId) 
             _ReceiveInstanceData(serviceId, instanceData)
         })
-
-        
     }
+
+    const onRequestContainerData = (onRequestData) => {
+        eventEmitter.on(REQUEST_CONTAINER_DATA_EVENT, async ({ serviceId, instanceId }) => {
+            const containerData = await onRequestData(instanceId) 
+            _ReceiveContainerData(serviceId, containerData)
+        })
+    }
+    
+    const onRequestContainerInspectionData = (onRequestData) => {
+        eventEmitter.on(REQUEST_CONTAINER_INSPECTION_DATA_EVENT, async ({ serviceId, containerName }) => {
+            const containerInspectionData = await onRequestData(containerName)
+
+            _ReceiveContainerInspectionData(serviceId, containerInspectionData)
+        })
+    }
+
 
     return {
         AddServiceInStateManagement,
         GetServiceStatus,
         ChangeServiceStatus,
-        SubscribeListenerRuntimeRequestInstanceData
+        onRequestInstanceData,
+        onRequestContainerData,
+        onRequestContainerInspectionData
     }
 }
 
