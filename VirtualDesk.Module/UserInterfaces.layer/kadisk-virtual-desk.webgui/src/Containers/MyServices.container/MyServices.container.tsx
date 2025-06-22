@@ -28,7 +28,7 @@ const WORLD_OFF_ICON = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  hei
 
 const GetSatatusBadgeClasses = (status: string) => {
     switch (status) {
-        case "running":
+        case "RUNNING":
             return "badge bg-green-lt text-green"
         case "exited":
             return "badge bg-red-lt text-red"
@@ -143,7 +143,7 @@ const MyServicesContainer = ({
                                                                     </button>
                                                             }
                                                             {
-                                                                provisionedService.status === "running"
+                                                                provisionedService.status === "RUNNING"
                                                                 && <>
                                                                         <button className="btn btn-orange">
                                                                             {RESTART_ICON}restart

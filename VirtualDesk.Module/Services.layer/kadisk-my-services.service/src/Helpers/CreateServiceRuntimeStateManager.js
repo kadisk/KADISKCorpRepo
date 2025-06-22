@@ -28,6 +28,8 @@ const CreateServiceRuntimeStateManager = () => {
     const eventEmitter = new EventEmitter()
 
     const STATUS_CHANGE_EVENT                     = Symbol()
+    const DYNAMIC_DATA_CHANGE_EVENT               = Symbol()
+
     const REQUEST_INSTANCE_DATA_EVENT             = Symbol()
     const REQUEST_CONTAINER_DATA_EVENT            = Symbol()
     const REQUEST_CONTAINER_INSPECTION_DATA_EVENT = Symbol()
@@ -94,6 +96,7 @@ const CreateServiceRuntimeStateManager = () => {
 
     const _UpdateDynamicData = (serviceId, property, data) => {
         state[serviceId].dynamicData[property] = Object.freeze(data)
+        eventEmitter.emit(DYNAMIC_DATA_CHANGE_EVENT, { serviceId, property })
     }
 
     const _GetStaticData = (serviceId) => state[serviceId].staticData
@@ -120,7 +123,25 @@ const CreateServiceRuntimeStateManager = () => {
         _UpdateDynamicData(serviceId, "containerNetworkSettings", NetworkSettings) 
     }
 
+    const _GetDynamicData = (serviceId, property) => {
+        return state[serviceId].dynamicData[property] 
+    }
+
+    const _ReconcileServiceStatus = (serviceId) => {
+        const containerState = _GetDynamicData(serviceId, "containerState")
+        if(containerState.Running){
+            ChangeServiceStatus(serviceId, RUNNING)
+        }
+    }
+
+    const _ProcessDynamicDataChange = (serviceId, property) => {
+        if(property === "containerState"){
+            _ReconcileServiceStatus(serviceId)
+        }
+    }
+
     eventEmitter.on(STATUS_CHANGE_EVENT, ({ serviceId }) => _ProcessServiceStatusChange(serviceId))
+    eventEmitter.on(DYNAMIC_DATA_CHANGE_EVENT, ({ serviceId, property })=> _ProcessDynamicDataChange(serviceId, property))
 
     const AddServiceInStateManagement = (serviceId) => {
         _ValidateServiceDoesNotExist()
@@ -172,6 +193,10 @@ const CreateServiceRuntimeStateManager = () => {
         })
     }
 
+    const onChangeServiceStatus = (f) => {
+        eventEmitter.on(STATUS_CHANGE_EVENT, ({ serviceId }) => f(serviceId, state[serviceId].status))
+    }
+
 
     return {
         AddServiceInStateManagement,
@@ -179,7 +204,8 @@ const CreateServiceRuntimeStateManager = () => {
         ChangeServiceStatus,
         onRequestInstanceData,
         onRequestContainerData,
-        onRequestContainerInspectionData
+        onRequestContainerInspectionData,
+        onChangeServiceStatus
     }
 }
 
