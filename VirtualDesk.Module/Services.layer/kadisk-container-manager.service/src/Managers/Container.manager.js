@@ -1,6 +1,8 @@
 const Docker = require('dockerode')
 const EventEmitter = require('node:events')
 
+const DOCKER_EVENT = Symbol('dockerEvent')
+
 const ContainerManager = (params) => {
 
     const docker = new Docker({ socketPath: '/var/run/docker.sock' })
@@ -22,19 +24,19 @@ const ContainerManager = (params) => {
 
             stream.on('data', (chunk) => {
                 try {
-                    const event = JSON.parse(chunk.toString())
-                    //console.log('Evento do Docker:', event)
+                    const eventData = JSON.parse(chunk.toString())
+                    eventEmitter.emit(DOCKER_EVENT, eventData)
                 } catch (parseErr) {
-                   // console.error(parseErr)
+                   console.error(parseErr)
                 }
             })
 
             stream.on('error', (err) => {
-               // console.error(err)
+               console.error(err)
             })
 
             stream.on('end', () => {
-                console.log('Stream de eventos encerrado.')
+                console.log('Event stream closed.')
             })
         })
 
@@ -189,7 +191,7 @@ const ContainerManager = (params) => {
 
 
     const RegisterDockerEventListener = (f) => 
-        eventEmitter.on(EVENT, (eventData) => f(eventData))
+        eventEmitter.on(DOCKER_EVENT, (eventData) => f(eventData))
 
     return {
         StartContainer,

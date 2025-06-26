@@ -2,13 +2,6 @@ const EventEmitter = require("events")
 
 const LifecycleStatusOptions = require("./LifecycleStatus.options")
 
-const INITIAL_STATE = {
-    status      : undefined,
-    staticData  : {},
-    dynamicData : {},
-    error       : undefined
-}
-
 const CreateServiceRuntimeStateManager = () => {
 
     const {
@@ -17,6 +10,7 @@ const CreateServiceRuntimeStateManager = () => {
         CONTAINER_DATA_LOADED,
         STARTING,
         STOPPING,
+        STOPPED,
         RUNNING,
         FAILURE,
         TERMINATED,
@@ -34,8 +28,17 @@ const CreateServiceRuntimeStateManager = () => {
     const REQUEST_CONTAINER_DATA_EVENT            = Symbol()
     const REQUEST_CONTAINER_INSPECTION_DATA_EVENT = Symbol()
 
+    const CONTAINER_STOPPING_EVENT = Symbol()
+    const CONTAINER_STOPPED_EVENT = Symbol()
+    const CONTAINER_STARTING_EVENT = Symbol()
 
-    const _CreateInitialState = () => ({...INITIAL_STATE})
+
+    const _CreateInitialState = () => ({
+        status      : undefined,
+        staticData  : {},
+        dynamicData : {},
+        error       : undefined
+    })
 
     const _ValidateServiceDoesNotExist = (serviceId) => {
         if (state[serviceId])
@@ -81,7 +84,7 @@ const CreateServiceRuntimeStateManager = () => {
                 console.log(`Service ${serviceId} has been terminated`)
                 break
             default:
-                console.warn(`Service ${serviceId} has an unknown status: ${state[serviceId].status}`)
+                console.warn(`Service ${serviceId} has an unknown status: ${state[serviceId].status.description}`)
         }
     }
 
@@ -95,47 +98,62 @@ const CreateServiceRuntimeStateManager = () => {
     }
 
     const _UpdateDynamicData = (serviceId, property, data) => {
-        state[serviceId].dynamicData[property] = Object.freeze(data)
+        state[serviceId].dynamicData[property] = data
         eventEmitter.emit(DYNAMIC_DATA_CHANGE_EVENT, { serviceId, property })
     }
 
     const _GetStaticData = (serviceId) => state[serviceId].staticData
+    
+    const _GetDynamicData = (serviceId, property) => state[serviceId].dynamicData[property] 
 
     const _ReceiveInstanceData = (serviceId, instanceData) => {
         if(instanceData.serviceId === serviceId){
             const { id: instanceId, startupParams } = instanceData
             _SetData(serviceId, { instanceId, startupParams })
-            ChangeServiceStatus(serviceId, INSTANCE_DATA_LOADED)
+            _ChangeStatus(serviceId, INSTANCE_DATA_LOADED)
         } else {
             throw "Instance serviceId does not match the corresponding service."
+        }
+    }
+
+    const _FindServiceIdByContainerHashId = (containerHashId) => {
+        for (const serviceId in state) {
+            const containerData = _GetDynamicData(serviceId, "containerData")
+            if (containerData && containerData.Id === containerHashId)
+                return serviceId
         }
     }
 
     const _ReceiveContainerData = (serviceId, containerData) => {
         const { id:containerId, containerName  } = containerData
         _AppendData(serviceId, {containerId, containerName} )
-        ChangeServiceStatus(serviceId, CONTAINER_DATA_LOADED)
+        _ChangeStatus(serviceId, CONTAINER_DATA_LOADED)
     }
 
     const _ReceiveContainerInspectionData = (serviceId, containerInspectionData) => {
-        const { State, NetworkSettings } = containerInspectionData
-        _UpdateDynamicData(serviceId, "containerState", State) 
-        _UpdateDynamicData(serviceId, "containerNetworkSettings", NetworkSettings) 
-    }
-
-    const _GetDynamicData = (serviceId, property) => {
-        return state[serviceId].dynamicData[property] 
+        if(containerInspectionData){
+            const { Id, State, NetworkSettings } = containerInspectionData
+            console.log(Id)
+            console.log(serviceId)
+            _UpdateDynamicData(serviceId, "containerData", { Id, State, NetworkSettings })
+        } else 
+            _ChangeStatus(serviceId, TERMINATED)
     }
 
     const _ReconcileServiceStatus = (serviceId) => {
-        const containerState = _GetDynamicData(serviceId, "containerState")
-        if(containerState.Running){
-            ChangeServiceStatus(serviceId, RUNNING)
+        const containerData = _GetDynamicData(serviceId, "containerData")
+
+        const { State } = containerData
+
+        if(State.Running){
+            _ChangeStatus(serviceId, RUNNING)
+        } else {
+            _ChangeStatus(serviceId, STOPPED)
         }
     }
 
     const _ProcessDynamicDataChange = (serviceId, property) => {
-        if(property === "containerState"){
+        if(property === "containerData"){
             _ReconcileServiceStatus(serviceId)
         }
     }
@@ -146,7 +164,7 @@ const CreateServiceRuntimeStateManager = () => {
     const AddServiceInStateManagement = (serviceId) => {
         _ValidateServiceDoesNotExist()
         state[serviceId] = _CreateInitialState()
-        ChangeServiceStatus(serviceId, LOADING_INSTANCE_DATA)
+        _ChangeStatus(serviceId, LOADING_INSTANCE_DATA)
     }
 
     const _GetServiceState = (serviceId) => {
@@ -165,7 +183,7 @@ const CreateServiceRuntimeStateManager = () => {
         }
     }
 
-    const ChangeServiceStatus = (serviceId, newStatus) => {
+    const _ChangeStatus = (serviceId, newStatus) => {
         _ValidateServiceExist(serviceId)
         state[serviceId].status = newStatus
         eventEmitter.emit(STATUS_CHANGE_EVENT, { serviceId })
@@ -194,18 +212,72 @@ const CreateServiceRuntimeStateManager = () => {
     }
 
     const onChangeServiceStatus = (f) => {
-        eventEmitter.on(STATUS_CHANGE_EVENT, ({ serviceId }) => f(serviceId, state[serviceId].status))
+        eventEmitter.on(STATUS_CHANGE_EVENT, ({ serviceId }) => f({serviceId, status: GetServiceStatus(serviceId)}))
     }
 
+    const _NotifyStoppingContainer = (containerHashId) => {
+        const serviceId = _FindServiceIdByContainerHashId(containerHashId)
+        _ChangeStatus(serviceId, STOPPING)
+    }
+
+    const _NotifyDieContainer = (containerHashId) => {
+        const serviceId = _FindServiceIdByContainerHashId(containerHashId)
+        _ChangeStatus(serviceId, STOPPED)
+    }
+
+    const NotifyContainerActivity = ({ ID, Action, Attributes }) => {
+
+        //console.log("=========================================================")
+        //console.log(` ID ${ID}`)
+        //console.log(` Action ${Action}`)
+        //console.log(Attributes)
+        //console.log("=========================================================")
+
+        switch(Action) {
+            case "start":
+                break
+            case "kill":
+                _NotifyStoppingContainer(ID)
+                break
+            case "stop":
+                break
+            case "die":
+                _NotifyDieContainer(ID)
+                break
+            case "attach":
+            case "commit":
+            case "copy":
+            case "create":
+            case "destroy":
+            case "detach":
+            case "exec_create":
+            case "exec_detach":
+            case "exec_die":
+            case "exec_start":
+            case "export":
+            case "health_status":
+            case "oom":
+            case "pause":
+            case "rename":
+            case "resize":
+            case "restart":
+            case "top":
+            case "unpause":
+            case "update":
+            default:
+                console.log({ ID, Action, Attributes }) 
+        }
+
+    }
 
     return {
         AddServiceInStateManagement,
         GetServiceStatus,
-        ChangeServiceStatus,
         onRequestInstanceData,
         onRequestContainerData,
         onRequestContainerInspectionData,
-        onChangeServiceStatus
+        onChangeServiceStatus,
+        NotifyContainerActivity
     }
 }
 

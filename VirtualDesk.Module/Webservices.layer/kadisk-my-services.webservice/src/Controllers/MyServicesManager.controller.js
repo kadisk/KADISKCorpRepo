@@ -92,6 +92,16 @@ const MyServicesManagerController = (params) => {
         return myServicesManagerService.GetInstancesByServiceId(serviceId)
     }
 
+    const ServicesStatusChange = async (websocket, { authenticationData }) => {
+        //const { userId } = authenticationData
+
+        myServicesManagerService
+            .onChangeServiceStatus(({ serviceId, status }) => {
+                websocket.send(JSON.stringify({ serviceId, status }))
+            })
+
+    }
+
     const controllerServiceObject = {
         controllerName: "MyServicesManagerController",
         GetMyServicesStatus,
@@ -99,7 +109,8 @@ const MyServicesManagerController = (params) => {
         ListProvisionedServices,
         GetServiceData,
         ListImageBuildHistory,
-        GetInstances
+        GetInstances,
+        ServicesStatusChange
     }
 
     return Object.freeze(controllerServiceObject)

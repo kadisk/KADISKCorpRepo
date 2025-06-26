@@ -58,7 +58,7 @@
 				}
 			]
 		},
-{
+		{
 			"path": "/service/instances",
 			"method": "GET",
 			"summary": "GetInstances",
@@ -70,6 +70,11 @@
 					"required": true
 				}
 			]
+		},
+		{
+			"summary": "ServicesStatusChange",
+			"method": "WS",
+			"path": "/services/status-change"
 		}
 	]
 }

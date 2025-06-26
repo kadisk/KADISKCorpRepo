@@ -73,10 +73,11 @@ const MyServicesManager = (params) => {
     const {
         AddServiceInStateManagement,
         GetServiceStatus,
-        ChangeServiceStatus,
+        onChangeServiceStatus,
         onRequestInstanceData,
         onRequestContainerData,
-        onRequestContainerInspectionData
+        onRequestContainerInspectionData,
+        NotifyContainerActivity,
     } = ServiceRuntimeStateManager
 
     const _MountPathImportedRepositoriesSourceCodeDirPath = ({username, repositoryNamespace}) => {
@@ -95,7 +96,41 @@ const MyServicesManager = (params) => {
 
         await PersistentStoreManager.ConnectAndSync()
         RegisterDockerEventListener((eventData) => {
-            console.log(eventData) 
+
+            const { Type, Action, Actor } = eventData
+
+            switch(Type){
+                case "container":
+                    const { ID, Attributes } = Actor
+                    NotifyContainerActivity({ ID, Action, Attributes })
+                    break
+                case "network":
+                    switch(Action){
+                        case "connect":
+                            break
+                        case "disconnect":
+                            break
+                        default:
+                            //console.log(eventData) 
+                    }
+                    break
+                case "images":
+                    switch(Action){
+                        case "create":
+                            break
+                        case "tag":
+                            break
+                        default:
+                            //console.log(eventData) 
+                    }
+
+                
+                default:
+                    //console.log(eventData) 
+            }
+                    
+
+
         })
         
         onRequestInstanceData(async (serviceId) => {
@@ -469,7 +504,8 @@ const MyServicesManager = (params) => {
         GetServiceData,
         ListImageBuildHistory: MyWorkspaceDomainService.ListImageBuildHistory,
         GetInstancesByServiceId: MyWorkspaceDomainService.GetInstancesByServiceId,
-        GetMetadataByPackageId
+        GetMetadataByPackageId,
+        onChangeServiceStatus
     }
 
 }

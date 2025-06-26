@@ -7,6 +7,7 @@ const LifecycleStatusOptions = Object.freeze({
     BUILDING              : Symbol("BUILDING"),
     STARTING              : Symbol("STARTING"),
     STOPPING              : Symbol("STOPPING"),
+    STOPPED               : Symbol("STOPPED"),
     RUNNING               : Symbol("RUNNING"),
     FAILURE               : Symbol("FAILURE"),
     TERMINATED            : Symbol("TERMINATED")

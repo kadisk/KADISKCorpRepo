@@ -1,5 +1,5 @@
 import * as React             from "react"
-import {useEffect, useState}  from "react"
+import {useEffect, useState, useRef}  from "react"
 import { connect }            from "react-redux"
 import { bindActionCreators } from "redux"
 
@@ -10,6 +10,9 @@ import ImportRepositoryModal from "./ImportRepository.modal"
 import ServiceProvisioningModal from "./ServiceProvisioning.modal"
 import RepositoriesManagerModal from "./RepositoriesManager.modal"
 import ImportingModal from "./Importing.modal"
+
+
+import useWebSocket from "../../Hooks/useWebSocket"
 
 const DEFAULT_MODE              = Symbol()
 const IMPORT_SELECT_MODE        = Symbol()
@@ -30,8 +33,9 @@ const GetSatatusBadgeClasses = (status: string) => {
     switch (status) {
         case "RUNNING":
             return "badge bg-green-lt text-green"
-        case "exited":
+        case "FAILURE":
             return "badge bg-red-lt text-red"
+        case "TERMINATED":
         case "LOADED":
             return "badge bg-yellow-lt text-yellow"
         default:
@@ -46,6 +50,11 @@ const MyServicesContainer = ({
     const [ importDataCurrent, setImportDataCurrent ] = useState<{repositoryNamespace:string, sourceCodeURL:string}>()
     const [ interfaceModeType,  changeMode] = useState<any>(LOADING_MODE)
     const [ provisionedServicesList, setProvisionedServicesList ] = useState([])
+    const provisionedServicesListRef = useRef(provisionedServicesList)
+
+    useEffect(() => {
+        provisionedServicesListRef.current = provisionedServicesList
+    }, [provisionedServicesList])
 
     useEffect(() => {
 
@@ -56,12 +65,30 @@ const MyServicesContainer = ({
         }
 
     }, [interfaceModeType])
-    
+
     const getMyServicesManagerAPI = () => 
         GetAPI({ 
             apiName:"MyServicesManager",  
             serverManagerInformation: HTTPServerManager
         })
+
+    const updateServiceStatus = ({serviceId, status}) => {
+        const listWithStatusUpdated = provisionedServicesListRef.current
+            .map((serviceData) => {
+                if(parseInt(serviceId) === serviceData.serviceId){
+                    serviceData.status = status
+                }
+                return serviceData
+            })
+        setProvisionedServicesList(listWithStatusUpdated)
+    }
+
+    useWebSocket({
+		socket          : getMyServicesManagerAPI().ServicesStatusChange,
+		onMessage       : updateServiceStatus,
+		onConnection    : () => {},
+		onDisconnection : () => {}
+	})
 
     const fetchMyServicesStatus = async () => {
         const api = getMyServicesManagerAPI()
