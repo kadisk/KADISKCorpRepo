@@ -27,6 +27,8 @@ const CreateServiceRuntimeStateManager = () => {
     const REQUEST_INSTANCE_DATA_EVENT             = Symbol()
     const REQUEST_CONTAINER_DATA_EVENT            = Symbol()
     const REQUEST_CONTAINER_INSPECTION_DATA_EVENT = Symbol()
+    const REQUEST_START_CONTAINER_EVENT           = Symbol()
+    const REQUEST_STOP_CONTAINER_EVENT            = Symbol()
 
     const CONTAINER_STOPPING_EVENT = Symbol()
     const CONTAINER_STOPPED_EVENT = Symbol()
@@ -56,6 +58,8 @@ const CreateServiceRuntimeStateManager = () => {
     const _RequestInstanceData            = (serviceId) => eventEmitter.emit(REQUEST_INSTANCE_DATA_EVENT, { serviceId })
     const _RequestContainerData           = (serviceId) => eventEmitter.emit(REQUEST_CONTAINER_DATA_EVENT, { serviceId, instanceId: _GetInstanceId(serviceId) })
     const _RequestContainerInspectionData = (serviceId) => eventEmitter.emit(REQUEST_CONTAINER_INSPECTION_DATA_EVENT, { serviceId, containerName: _GetContainerName(serviceId) })
+    const _RequestStartContainer          = (serviceId) => eventEmitter.emit(REQUEST_START_CONTAINER_EVENT, { serviceId, containerHashId: _GetContainerHashId(serviceId) })
+    const _RequestStopContainer           = (serviceId) => eventEmitter.emit(REQUEST_STOP_CONTAINER_EVENT, { serviceId, containerHashId: _GetContainerHashId(serviceId) })
 
     const _ProcessServiceStatusChange = (serviceId) => {
         switch (state[serviceId].status) {
@@ -69,7 +73,7 @@ const CreateServiceRuntimeStateManager = () => {
                 _RequestContainerInspectionData(serviceId)
                 break
             case STARTING:
-                console.log(`Service ${serviceId} is starting`)
+                _RequestContainerData(serviceId)
                 break          
             case STOPPING:
                 console.log(`Service ${serviceId} is stopping`)
@@ -116,10 +120,14 @@ const CreateServiceRuntimeStateManager = () => {
         }
     }
 
+    const _GetContainerHashId = (serviceId) => {
+        const containerData = _GetDynamicData(serviceId, "containerData")
+        return containerData && containerData.Id
+    }
+
     const _FindServiceIdByContainerHashId = (containerHashId) => {
         for (const serviceId in state) {
-            const containerData = _GetDynamicData(serviceId, "containerData")
-            if (containerData && containerData.Id === containerHashId)
+            if (_GetContainerHashId(serviceId) === containerHashId)
                 return serviceId
         }
     }
@@ -133,8 +141,6 @@ const CreateServiceRuntimeStateManager = () => {
     const _ReceiveContainerInspectionData = (serviceId, containerInspectionData) => {
         if(containerInspectionData){
             const { Id, State, NetworkSettings } = containerInspectionData
-            console.log(Id)
-            console.log(serviceId)
             _UpdateDynamicData(serviceId, "containerData", { Id, State, NetworkSettings })
         } else 
             _ChangeStatus(serviceId, TERMINATED)
@@ -211,6 +217,19 @@ const CreateServiceRuntimeStateManager = () => {
         })
     }
 
+    const onRequestStartContainer = (onRequestData) => {
+        eventEmitter.on(REQUEST_START_CONTAINER_EVENT, ({ serviceId, containerHashId }) => {
+            onRequestData(containerHashId)
+        })
+    }
+
+    const onRequestStopContainer = (onRequestData) => {
+        eventEmitter.on(REQUEST_STOP_CONTAINER_EVENT, ({ serviceId, containerHashId }) => {
+            onRequestData(containerHashId)
+        })
+    }
+
+
     const onChangeServiceStatus = (f) => {
         eventEmitter.on(STATUS_CHANGE_EVENT, ({ serviceId }) => f({serviceId, status: GetServiceStatus(serviceId)}))
     }
@@ -225,6 +244,11 @@ const CreateServiceRuntimeStateManager = () => {
         _ChangeStatus(serviceId, STOPPED)
     }
 
+    const _NotifyStartingContainer = (containerHashId) => {
+        const serviceId = _FindServiceIdByContainerHashId(containerHashId)
+        _ChangeStatus(serviceId, STARTING)
+    }
+
     const NotifyContainerActivity = ({ ID, Action, Attributes }) => {
 
         //console.log("=========================================================")
@@ -235,6 +259,7 @@ const CreateServiceRuntimeStateManager = () => {
 
         switch(Action) {
             case "start":
+                _NotifyStartingContainer(ID)
                 break
             case "kill":
                 _NotifyStoppingContainer(ID)
@@ -270,14 +295,21 @@ const CreateServiceRuntimeStateManager = () => {
 
     }
 
+    const StartService = (serviceId) => _RequestStartContainer(serviceId)
+    const StopService = (serviceId) => _RequestStopContainer(serviceId)
+
     return {
         AddServiceInStateManagement,
         GetServiceStatus,
         onRequestInstanceData,
         onRequestContainerData,
         onRequestContainerInspectionData,
+        onRequestStartContainer,
+        onRequestStopContainer,
         onChangeServiceStatus,
-        NotifyContainerActivity
+        NotifyContainerActivity,
+        StartService,
+        StopService
     }
 }
 

@@ -72,6 +72,32 @@
 			]
 		},
 		{
+			"path": "/service/start",
+			"method": "POST",
+			"summary": "StartService",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "body",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/stop",
+			"method": "POST",
+			"summary": "StopService",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "body",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
 			"summary": "ServicesStatusChange",
 			"method": "WS",
 			"path": "/services/status-change"

@@ -22,7 +22,6 @@ const LOADING_MODE              = Symbol()
 const SERVICE_PROVISIONING_MODE = Symbol()
 const REPOSITORIES_MANAGER_MODE = Symbol()
 
-
 const START_ICON = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-player-play"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 4v16l13 -8z" /></svg>
 const RESTART_ICON = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-refresh"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /></svg>
 const STOP_ICON = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-player-stop"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 5m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z" /></svg>
@@ -33,9 +32,12 @@ const GetSatatusBadgeClasses = (status: string) => {
     switch (status) {
         case "RUNNING":
             return "badge bg-green-lt text-green"
+        case "STARTING":
+            return "badge bg-cyan-lt text-cyan"
         case "FAILURE":
             return "badge bg-red-lt text-red"
         case "TERMINATED":
+        case "STOPPED":
         case "LOADED":
             return "badge bg-yellow-lt text-yellow"
         default:
@@ -66,7 +68,7 @@ const MyServicesContainer = ({
 
     }, [interfaceModeType])
 
-    const getMyServicesManagerAPI = () => 
+    const _MyServicesAPI = () => 
         GetAPI({ 
             apiName:"MyServicesManager",  
             serverManagerInformation: HTTPServerManager
@@ -84,14 +86,14 @@ const MyServicesContainer = ({
     }
 
     useWebSocket({
-		socket          : getMyServicesManagerAPI().ServicesStatusChange,
+		socket          : _MyServicesAPI().ServicesStatusChange,
 		onMessage       : updateServiceStatus,
 		onConnection    : () => {},
 		onDisconnection : () => {}
 	})
 
     const fetchMyServicesStatus = async () => {
-        const api = getMyServicesManagerAPI()
+        const api = _MyServicesAPI()
         const response = await api.GetMyServicesStatus()
         if(response.data === "READY"){
             changeMode(DEFAULT_MODE)
@@ -100,8 +102,18 @@ const MyServicesContainer = ({
         }
     }
 
+    const startService = async (serviceId) => {
+        const api = _MyServicesAPI()
+        await api.StartService({serviceId})
+    }
+
+    const stopService = async (serviceId) => {
+        const api = _MyServicesAPI()
+        await api.StopService({serviceId})
+    }
+
     const fetchProvisionedServices = async () => {
-        const api = getMyServicesManagerAPI()
+        const api = _MyServicesAPI()
         const response = await api.ListProvisionedServices()
         setProvisionedServicesList(response.data)
     }
@@ -109,6 +121,10 @@ const MyServicesContainer = ({
     const handleUseFromMyWorkspace = () => {
         console.log("== handleUseFromMyWorkspace")
     }
+
+    const handleStartService = (serviceId) => startService(serviceId)
+
+    const handleStopService = (serviceId) => stopService(serviceId)
 
     const handleImportingMode = (importData) => {
         setImportDataCurrent(importData)
@@ -158,14 +174,18 @@ const MyServicesContainer = ({
                                                             <p className="card-subtitle">{provisionedService.repositoryNamespace}/{provisionedService.packageName}/{provisionedService.packageType}</p>
                                                         </div>
                                                     </div>
-                                                    <div className="card-body">
+                                                    {/*
+                                                         <div className="card-body">
                                                         TEXT HERE!
                                                     </div>
+                                                         
+                                                    */}
                                                     <div className="card-footer bg-blue-lt">
                                                         <div className="btn-list justify-content-end">
                                                             {
-                                                                provisionedService.status === "exited"
-                                                                && <button className="btn btn-primary" onClick={() => {}}>
+                                                                ( provisionedService.status === "STOPPED"
+                                                                || provisionedService.status === "TERMINATED" )
+                                                                && <button className="btn btn-primary" onClick={() => handleStartService(provisionedService.serviceId)}>
                                                                         {START_ICON}start
                                                                     </button>
                                                             }
@@ -175,7 +195,7 @@ const MyServicesContainer = ({
                                                                         <button className="btn btn-orange">
                                                                             {RESTART_ICON}restart
                                                                         </button>
-                                                                        <button className="btn btn-danger" onClick={() => {}}>
+                                                                        <button className="btn btn-danger" onClick={() => handleStopService(provisionedService.serviceId)}>
                                                                             {STOP_ICON}stop
                                                                         </button>
                                                                     </>
@@ -184,7 +204,8 @@ const MyServicesContainer = ({
                                                                 {SETTINGS_ICON}settings
                                                             </a>
                                                             {
-                                                                !provisionedService.status
+                                                                (provisionedService.status === "STOPPED"
+                                                                || provisionedService.status === "TERMINATED")
                                                                 && <button className="btn btn-dark" onClick={() => {}}>
                                                                         {WORLD_OFF_ICON}decommission
                                                                     </button>

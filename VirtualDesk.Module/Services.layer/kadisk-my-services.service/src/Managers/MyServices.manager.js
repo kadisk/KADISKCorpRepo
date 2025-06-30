@@ -65,7 +65,9 @@ const MyServicesManager = (params) => {
         BuildImageFromDockerfileString,
         CreateNewContainer,
         InspectContainer,
-        RegisterDockerEventListener
+        RegisterDockerEventListener,
+        StartContainer,
+        StopContainer
     } = containerManagerService
 
     const ServiceRuntimeStateManager = CreateServiceRuntimeStateManager()
@@ -77,7 +79,11 @@ const MyServicesManager = (params) => {
         onRequestInstanceData,
         onRequestContainerData,
         onRequestContainerInspectionData,
+        onRequestStartContainer,
+        onRequestStopContainer,
         NotifyContainerActivity,
+        StartService,
+        StopService
     } = ServiceRuntimeStateManager
 
     const _MountPathImportedRepositoriesSourceCodeDirPath = ({username, repositoryNamespace}) => {
@@ -147,7 +153,15 @@ const MyServicesManager = (params) => {
             const inspectData = await InspectContainer(containerName)
             return inspectData
         })
-        
+
+        onRequestStartContainer((containerHashId) => {
+            StartContainer(containerHashId)
+        })
+
+        onRequestStopContainer((containerHashId) => {
+            StopContainer(containerHashId)
+        })
+
         await InitializeAllServiceStateManagement()
         onReady()
 
@@ -161,10 +175,10 @@ const MyServicesManager = (params) => {
     }
 
     const SaveUploadedRepository = async ({ repositoryNamespace, userId, username , repositoryFilePath }) => {
-        const repositoriesCodePath = _MountPathImportedRepositoriesSourceCodeDirPath({username, repositoryNamespace})
+        const repositoriesCodePath = _MountPathImportedRepositoriesSourceCodeDirPath({ username, repositoryNamespace })
 
         const newRepositoryCodePath = await ExtractTarGz(repositoryFilePath, repositoriesCodePath)
-        const repoData = await RecordNewRepository({ userId, repositoryNamespace, repositoryCodePath: newRepositoryCodePath})
+        const repoData = await RecordNewRepository({ userId, repositoryNamespace, repositoryCodePath: newRepositoryCodePath })
 
         ItemIndexer.IndexRepository({
             repositoryId: repoData.id,
@@ -505,7 +519,9 @@ const MyServicesManager = (params) => {
         ListImageBuildHistory: MyWorkspaceDomainService.ListImageBuildHistory,
         GetInstancesByServiceId: MyWorkspaceDomainService.GetInstancesByServiceId,
         GetMetadataByPackageId,
-        onChangeServiceStatus
+        onChangeServiceStatus,
+        StartService,
+        StopService
     }
 
 }

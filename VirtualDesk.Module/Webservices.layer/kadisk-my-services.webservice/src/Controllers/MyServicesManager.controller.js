@@ -102,6 +102,12 @@ const MyServicesManagerController = (params) => {
 
     }
 
+    const StartService = ( serviceId ) => 
+        myServicesManagerService.StartService(serviceId)
+
+    const StopService  = ( serviceId ) =>
+        myServicesManagerService.StopService(serviceId)
+
     const controllerServiceObject = {
         controllerName: "MyServicesManagerController",
         GetMyServicesStatus,
@@ -110,7 +116,9 @@ const MyServicesManagerController = (params) => {
         GetServiceData,
         ListImageBuildHistory,
         GetInstances,
-        ServicesStatusChange
+        ServicesStatusChange,
+        StartService,
+        StopService
     }
 
     return Object.freeze(controllerServiceObject)
