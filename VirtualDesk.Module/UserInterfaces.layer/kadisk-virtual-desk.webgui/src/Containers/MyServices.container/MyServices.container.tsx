@@ -10,6 +10,7 @@ import ImportRepositoryModal from "./ImportRepository.modal"
 import ServiceProvisioningModal from "./ServiceProvisioning.modal"
 import RepositoriesManagerModal from "./RepositoriesManager.modal"
 import ImportingModal from "./Importing.modal"
+import ServiceDetailsOffcanvas from "./ServiceDetails.offcanvas"
 
 
 import useWebSocket from "../../Hooks/useWebSocket"
@@ -52,6 +53,9 @@ const MyServicesContainer = ({
     const [ importDataCurrent, setImportDataCurrent ] = useState<{repositoryNamespace:string, sourceCodeURL:string}>()
     const [ interfaceModeType,  changeMode] = useState<any>(LOADING_MODE)
     const [ provisionedServicesList, setProvisionedServicesList ] = useState([])
+
+    const [ serviceIdSelected, setServiceIdSelected] = useState()
+
     const provisionedServicesListRef = useRef(provisionedServicesList)
 
     useEffect(() => {
@@ -133,8 +137,13 @@ const MyServicesContainer = ({
 
     const handleFinishedImportModal = () => changeMode(LOADING_MODE)
 
-    return <>
+    const handleSelectService = (serviceId) => setServiceIdSelected(serviceId)
 
+    return <>
+                {
+                    serviceIdSelected
+                    && <ServiceDetailsOffcanvas />
+                }
                 <div className="container-xl">
                     <div className="row g-2 align-items-center">
                         <div className="col">
@@ -165,7 +174,7 @@ const MyServicesContainer = ({
                                     {
                                         provisionedServicesList.map((provisionedService, index) => (
                                             <div key={index} className="col-md-4">
-                                                <div className="card card-link mb-3">
+                                                <div className="card card-link mb-3 hover-shadow-lg cursor-pointer" onClick={() => handleSelectService(provisionedService.serviceId)}>
 
                                                     <div className="card-header py-2">
                                                         <span className={`${GetSatatusBadgeClasses(provisionedService.status)} me-2`}>{provisionedService.status}</span>
@@ -174,12 +183,14 @@ const MyServicesContainer = ({
                                                             <p className="card-subtitle">{provisionedService.repositoryNamespace}/{provisionedService.packageName}/{provisionedService.packageType}</p>
                                                         </div>
                                                     </div>
-                                                    {/*
-                                                         <div className="card-body">
-                                                        TEXT HERE!
-                                                    </div>
-                                                         
-                                                    */}
+                                                    {
+                                                            ( provisionedService.status === "STOPPING"|| provisionedService.status === "STARTING" )
+                                                            &&<div className="card-body">
+                                                                    <div className="progress progress-sm">
+                                                                        <div className="progress-bar progress-bar-indeterminate"></div>
+                                                                    </div>
+                                                                </div>
+                                                    }
                                                     <div className="card-footer bg-blue-lt">
                                                         <div className="btn-list justify-content-end">
                                                             {

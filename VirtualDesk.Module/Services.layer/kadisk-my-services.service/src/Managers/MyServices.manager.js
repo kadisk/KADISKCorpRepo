@@ -402,7 +402,8 @@ const MyServicesManager = (params) => {
             instanceData,
             packageData,
             serviceData,
-            buildData
+            buildData,
+            ports
         })
 
         
