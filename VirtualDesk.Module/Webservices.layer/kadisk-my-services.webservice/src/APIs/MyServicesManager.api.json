@@ -98,6 +98,19 @@
 			]
 		},
 		{
+			"path": "/service/status",
+			"method": "GET",
+			"summary": "GetServiceStatus",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
 			"summary": "ServicesStatusChange",
 			"method": "WS",
 			"path": "/services/status-change"

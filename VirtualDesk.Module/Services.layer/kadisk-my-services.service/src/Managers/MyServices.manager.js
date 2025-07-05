@@ -497,6 +497,7 @@ const MyServicesManager = (params) => {
         return {
             serviceId           : serviceData.id,
             serviceName         : serviceData.serviceName,
+            serviceDescription  : serviceData.serviceDescription,
             appType             : serviceData.appType,
             repositoryId        : Repository.id,
             repositoryNamespace : Repository.namespace,
@@ -520,6 +521,7 @@ const MyServicesManager = (params) => {
         ListImageBuildHistory: MyWorkspaceDomainService.ListImageBuildHistory,
         GetInstancesByServiceId: MyWorkspaceDomainService.GetInstancesByServiceId,
         GetMetadataByPackageId,
+        GetServiceStatus,
         onChangeServiceStatus,
         StartService,
         StopService

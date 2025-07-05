@@ -108,6 +108,11 @@ const MyServicesManagerController = (params) => {
     const StopService  = ( serviceId ) =>
         myServicesManagerService.StopService(serviceId)
 
+    const GetServiceStatus = (serviceId, { authenticationData }) => {
+        //const { userId } = authenticationData
+        return myServicesManagerService.GetServiceStatus(serviceId) 
+    }
+
     const controllerServiceObject = {
         controllerName: "MyServicesManagerController",
         GetMyServicesStatus,
@@ -117,6 +122,7 @@ const MyServicesManagerController = (params) => {
         ListImageBuildHistory,
         GetInstances,
         ServicesStatusChange,
+        GetServiceStatus,
         StartService,
         StopService
     }
