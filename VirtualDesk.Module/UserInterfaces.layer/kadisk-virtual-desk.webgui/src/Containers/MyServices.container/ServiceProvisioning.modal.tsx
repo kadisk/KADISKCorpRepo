@@ -76,6 +76,12 @@ const ServiceProvisioningModal = ({
         }
     }, [startupParams, startupParamsData, typeMode])
 
+
+    useEffect(() => {
+        if (networkSelected === NONE_NETWORK_OPTION || networkSelected === HOST_NETWORK_OPTION)
+            setPorts([])
+    }, [networkSelected])
+
     useEffect(() => {
         if (startupParamsData?.value) {
             setStartupParams(startupParamsData.value)
@@ -206,13 +212,6 @@ const ServiceProvisioningModal = ({
         newPorts.splice(index, 1)
         setPorts(newPorts)
     }
-
-    console.log("networkSelected == > ")
-    console.log(networkSelected)
-    console.log("servicePortForAdd == > ")
-    console.log(servicePortForAdd)
-    console.log("hostPortForAdd == > ")
-    console.log(hostPortForAdd)
 
     return <div className="modal modal-blur show" role="dialog" aria-hidden="false" style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.8)" }}>
         <div className="modal-dialog modal-xl" role="document">
