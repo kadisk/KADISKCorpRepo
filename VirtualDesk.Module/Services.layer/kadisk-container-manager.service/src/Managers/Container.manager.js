@@ -78,6 +78,7 @@ const ContainerManager = (params) => {
         }
 
     }
+
     const ListAllNetworks = async () => {
         try {
             const networks = await docker.listNetworks()
@@ -116,7 +117,8 @@ const ContainerManager = (params) => {
     const CreateNewContainer = ({
         imageName,
         containerName,
-        ports = []
+        ports = [],
+        networkmode= 'bridge'
     }) => {
 
         const portBindings = {}
@@ -137,7 +139,8 @@ const ContainerManager = (params) => {
             name: containerName,
             ExposedPorts: exposedPorts,
             HostConfig: {
-                PortBindings: portBindings
+                PortBindings: portBindings,
+                NetworkMode: networkmode
             }
         })
     }
@@ -188,7 +191,6 @@ const ContainerManager = (params) => {
             return null
         }
     }
-
 
     const RegisterDockerEventListener = (f) => 
         eventEmitter.on(DOCKER_EVENT, (eventData) => f(eventData))

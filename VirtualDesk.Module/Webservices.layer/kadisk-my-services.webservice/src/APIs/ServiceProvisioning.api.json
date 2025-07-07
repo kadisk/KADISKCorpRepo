@@ -40,6 +40,12 @@
 					"name": "ports",
 					"type": "json",
 					"required": true
+				},
+				{
+					"in": "body",
+					"name": "networkmode",
+					"type": "string",
+					"required": true
 				}
 			]
 		},

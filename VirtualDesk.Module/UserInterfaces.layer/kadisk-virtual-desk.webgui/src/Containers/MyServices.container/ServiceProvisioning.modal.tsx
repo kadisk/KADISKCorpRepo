@@ -182,7 +182,8 @@ const ServiceProvisioningModal = ({
                 serviceName,
                 serviceDescription,
                 startupParams,
-                ports
+                ports,
+                networkmode: networkSelected.description
             })
             changeTypeMode(PROVISIONING_COMPLETION_MODE)
         } catch (error) {

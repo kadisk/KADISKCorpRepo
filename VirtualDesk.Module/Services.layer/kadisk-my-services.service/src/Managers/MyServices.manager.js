@@ -335,7 +335,8 @@ const MyServicesManager = (params) => {
     const _CreateAndStartContainer = async ({
         containerName,
         imageName,
-        ports = []
+        ports = [],
+        networkmode
     }) => {
 
         const _RemapPort = (ports) => ports.map(({ servicePort, hostPort }) => ({ containerPort:servicePort, hostPort }))
@@ -343,7 +344,8 @@ const MyServicesManager = (params) => {
         const container = await CreateNewContainer({
             imageName,
             containerName,
-            ports: _RemapPort(ports)
+            ports: _RemapPort(ports),
+            networkmode
         })
 
         await container.start()
@@ -357,7 +359,8 @@ const MyServicesManager = (params) => {
         packageData,
         serviceData,
         buildData,
-        ports
+        ports,
+        networkmode
     }) => {
 
         const containerName = `container_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}--${serviceData.serviceName}--${buildData.id}`
@@ -369,7 +372,7 @@ const MyServicesManager = (params) => {
                 buildId: buildData.id
             })
 
-        await _CreateAndStartContainer({ containerName, imageName: buildData.tag, ports })
+        await _CreateAndStartContainer({ containerName, imageName: buildData.tag, ports, networkmode })
     }
 
     const _CreateInstance = async({
@@ -377,7 +380,8 @@ const MyServicesManager = (params) => {
         serviceData,
         packageData,
         startupParams,
-        ports
+        ports,
+        networkmode
     }) => {
 
         const instanceData = await MyWorkspaceDomainService
@@ -396,17 +400,16 @@ const MyServicesManager = (params) => {
             instanceData
         })
 
-    
         await _CreateContainer({
             username,
             instanceData,
             packageData,
             serviceData,
             buildData,
-            ports
+            ports,
+            networkmode
         })
 
-        
     }
 
     const ProvisionService = async ({
@@ -416,7 +419,8 @@ const MyServicesManager = (params) => {
         serviceName,
         serviceDescription,
         startupParams,
-        ports = []
+        ports = [],
+        networkmode
     }) => {
 
         const packageData = await MyWorkspaceDomainService.GetPackageItemById({ id: packageId, userId })
@@ -439,13 +443,13 @@ const MyServicesManager = (params) => {
 
         await CopyDirRepository(repositoryCodePath, instanceRepositoryCodePath)
 
-        
         await _CreateInstance({
             username,
             serviceData,
             packageData,
             startupParams,
-            ports
+            ports,
+            networkmode
         })
 
         AddServiceInStateManagement(serviceData.id)
