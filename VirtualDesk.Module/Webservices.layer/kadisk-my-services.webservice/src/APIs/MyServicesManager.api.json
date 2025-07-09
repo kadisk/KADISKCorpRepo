@@ -127,6 +127,19 @@
 					"required": true
 				}
 			]
+		}, 
+		{
+			"path": "/service/instance/startup-params",
+			"method": "GET",
+			"summary": "GetInstanceStartupParamsData",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
 		}
 	]
 }

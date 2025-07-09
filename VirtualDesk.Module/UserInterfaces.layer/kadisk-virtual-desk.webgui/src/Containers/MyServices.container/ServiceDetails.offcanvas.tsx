@@ -31,11 +31,13 @@ const ServiceDetailsOffcanvas = ({
     const [ serviceData, setServiceData ] = useState<any>()
     const [ status, setStatus ] = useState("PENDING")
     const [ networksSettings, setNetworksSettings ] = useState<any>()
+    const [ instanceStartupParams, setInstanceStartupParams ] = useState<any>()
 
     useEffect(() => {
         fetchServiceData()
         fetchStatus()
         fetchNetworksSettings()
+        fetchInstanceStartupParams()
     }, [])
 
 
@@ -64,7 +66,13 @@ const ServiceDetailsOffcanvas = ({
         setNetworksSettings(response.data)
     }
 
-    return <div className="offcanvas offcanvas-end show" data-bs-backdrop="false" style={{"width":"500px"}}>
+    const fetchInstanceStartupParams = async () => {
+        const api = getMyServicesManagerAPI()
+        const response = await api.GetInstanceStartupParamsData({ serviceId })
+        setInstanceStartupParams(response.data)
+    }
+
+    return <div className="offcanvas offcanvas-end show" data-bs-backdrop="false" style={{"width":"600px"}}>
                 <div className="offcanvas-header">
                     <div className="row g-3 align-items-center">
                         <div className="col-auto">
@@ -97,6 +105,35 @@ const ServiceDetailsOffcanvas = ({
                         <dt className="col-5">repository namespace:</dt>
                         <dd className="col-7">{serviceData?.repositoryNamespace}</dd>
                     </dl>
+                    {
+
+                        instanceStartupParams
+                        && <>
+                            <div className="hr-text hr-text-center hr-text-spaceless my-3">Instance Startup Params</div>
+                            <div className="card">
+                                <div className="table-responsive">
+                                    <table className="table table-vcenter card-table">
+                                        <thead>
+                                            <tr>
+                                                <th className="p-1" >Parameter</th>
+                                                <th className="p-1" >Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                Object.keys(instanceStartupParams)
+                                                .map((property) => 
+                                                    <tr>
+                                                        <td className="p-1"><strong>{property}</strong></td>
+                                                        <td className="p-1">{instanceStartupParams[property]}</td>
+                                                    </tr>)
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </>
+                    }
                     {
                         networksSettings
                         && Object.keys(networksSettings.ports).length > 0
@@ -161,7 +198,7 @@ const ServiceDetailsOffcanvas = ({
                                                             networksSettings.networks
                                                             .map(({name, ipAddress, gateway}, index) => 
                                                                 <tr>
-                                                                    <td className="p-1">{name}</td>
+                                                                    <td className="p-1"><strong>{name}</strong></td>
                                                                     <td className="p-1">{ipAddress}</td>
                                                                     <td className="p-1">{gateway}</td>
                                                                 </tr>)

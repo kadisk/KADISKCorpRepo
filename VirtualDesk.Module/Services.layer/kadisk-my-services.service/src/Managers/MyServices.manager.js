@@ -513,6 +513,11 @@ const MyServicesManager = (params) => {
 
     }
 
+    const GetInstanceStartupParamsData = async (serviceId) => {
+        const instanceData = await MyWorkspaceDomainService.GetLastInstanceByServiceId(serviceId)
+        return instanceData.startupParams || {}
+    }
+
     _Start()
 
     return {
@@ -530,7 +535,8 @@ const MyServicesManager = (params) => {
         GetNetworksSettings,
         onChangeServiceStatus,
         StartService,
-        StopService
+        StopService,
+        GetInstanceStartupParamsData
     }
 
 }
