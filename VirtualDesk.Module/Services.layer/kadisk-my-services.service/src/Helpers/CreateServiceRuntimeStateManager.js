@@ -298,6 +298,27 @@ const CreateServiceRuntimeStateManager = () => {
     const StartService = (serviceId) => _RequestStartContainer(serviceId)
     const StopService = (serviceId) => _RequestStopContainer(serviceId)
 
+    const GetNetworksSettings  = async (serviceId) => {
+        
+        const containerData = _GetDynamicData(serviceId, "containerData")
+        const { NetworkSettings } = containerData
+
+        const { Ports, Networks } = NetworkSettings
+        
+        return {
+            ports: Ports,
+            networks: Object.keys(Networks)
+                .map(networkName => {
+                    const network = Networks[networkName]
+                    return {
+                        name: networkName,
+                        ipAddress: network.IPAddress,
+                        gateway: network.Gateway
+                    }
+                })
+        }
+    }
+
     return {
         AddServiceInStateManagement,
         GetServiceStatus,
@@ -309,7 +330,8 @@ const CreateServiceRuntimeStateManager = () => {
         onChangeServiceStatus,
         NotifyContainerActivity,
         StartService,
-        StopService
+        StopService,
+        GetNetworksSettings
     }
 }
 

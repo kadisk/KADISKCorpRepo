@@ -113,12 +113,18 @@ const MyServicesManagerController = (params) => {
         return myServicesManagerService.GetServiceStatus(serviceId) 
     }
 
+    const GetNetworksSettings = (serviceId, { authenticationData }) => {
+        //const { userId } = authenticationData
+        return myServicesManagerService.GetNetworksSettings(serviceId)
+    }
+
     const controllerServiceObject = {
         controllerName: "MyServicesManagerController",
         GetMyServicesStatus,
         UploadRepository,
         ListProvisionedServices,
         GetServiceData,
+        GetNetworksSettings,
         ListImageBuildHistory,
         GetInstances,
         ServicesStatusChange,

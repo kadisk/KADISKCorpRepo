@@ -114,6 +114,19 @@
 			"summary": "ServicesStatusChange",
 			"method": "WS",
 			"path": "/services/status-change"
+		},
+		{
+			"path": "/service/networks-settings",
+			"method": "GET",
+			"summary": "GetNetworksSettings",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
 		}
 	]
 }

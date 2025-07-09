@@ -75,6 +75,7 @@ const MyServicesManager = (params) => {
     const {
         AddServiceInStateManagement,
         GetServiceStatus,
+        GetNetworksSettings,
         onChangeServiceStatus,
         onRequestInstanceData,
         onRequestContainerData,
@@ -526,6 +527,7 @@ const MyServicesManager = (params) => {
         GetInstancesByServiceId: MyWorkspaceDomainService.GetInstancesByServiceId,
         GetMetadataByPackageId,
         GetServiceStatus,
+        GetNetworksSettings,
         onChangeServiceStatus,
         StartService,
         StopService

@@ -30,10 +30,12 @@ const ServiceDetailsOffcanvas = ({
 
     const [ serviceData, setServiceData ] = useState<any>()
     const [ status, setStatus ] = useState("PENDING")
+    const [ networksSettings, setNetworksSettings ] = useState<any>()
 
     useEffect(() => {
         fetchServiceData()
         fetchStatus()
+        fetchNetworksSettings()
     }, [])
 
 
@@ -55,6 +57,12 @@ const ServiceDetailsOffcanvas = ({
 		const response = await api.GetServiceData({ serviceId })
         setServiceData(response.data)
 	}
+
+    const fetchNetworksSettings = async () => {
+        const api = getMyServicesManagerAPI()
+        const response = await api.GetNetworksSettings({ serviceId })
+        setNetworksSettings(response.data)
+    }
 
     return <div className="offcanvas offcanvas-end show" data-bs-backdrop="false" style={{"width":"500px"}}>
                 <div className="offcanvas-header">
@@ -89,6 +97,83 @@ const ServiceDetailsOffcanvas = ({
                         <dt className="col-5">repository namespace:</dt>
                         <dd className="col-7">{serviceData?.repositoryNamespace}</dd>
                     </dl>
+                    {
+                        networksSettings
+                        && Object.keys(networksSettings.ports).length > 0
+                        && <>
+                                <div className="hr-text hr-text-center hr-text-spaceless my-3">Ports</div>
+                                {
+                                    Object.keys(networksSettings.ports).length > 0
+                                    && <div className="card">
+                                            <div className="table-responsive">
+                                                <table className="table table-vcenter card-table text-center">
+                                                    <thead>
+                                                        <tr>
+                                                            <th  className="p-1" rowSpan={2}>service port</th>
+                                                            <th  className="p-1" colSpan={2}>host</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th className="p-1" >ip</th>
+                                                            <th className="p-1" >port</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {
+                                                            Object.keys(networksSettings.ports)
+                                                            .map((servicePort, index) => {
+                                                                const hostMap = networksSettings.ports[servicePort]
+                                                                return hostMap.map((host, hostIndex) => {
+                                                                        return <tr>
+                                                                                    {hostIndex === 0 && <td className="p-1" rowSpan={hostMap.length}>{servicePort}</td>}
+                                                                                    <td className="p-1">{host.HostIp}</td>
+                                                                                    <td className="p-1">{host.HostPort}</td>
+                                                                                </tr>
+                                                                    })
+                                                            })
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                }
+                                    
+                        </>
+                    }
+                    {
+                        networksSettings
+                        && networksSettings.networks.length > 0
+                        && <>
+                                <div className="hr-text hr-text-center hr-text-spaceless my-3">Networks</div>
+                                {
+                                    networksSettings.networks.length > 0
+                                    && <div className="card">
+                                            <div className="table-responsive">
+                                                <table className="table table-vcenter card-table text-center">
+                                                    <thead>
+                                                        <tr>
+                                                            <th className="p-1" >Name</th>
+                                                            <th className="p-1" >IP Address</th>
+                                                            <th className="p-1" >Gateway</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {
+                                                            networksSettings.networks
+                                                            .map(({name, ipAddress, gateway}, index) => 
+                                                                <tr>
+                                                                    <td className="p-1">{name}</td>
+                                                                    <td className="p-1">{ipAddress}</td>
+                                                                    <td className="p-1">{gateway}</td>
+                                                                </tr>)
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                }
+                                    
+                        </>
+                    }
                 </div>
             </div>
 }
