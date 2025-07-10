@@ -123,6 +123,16 @@ const MyServicesManagerController = (params) => {
         return myServicesManagerService.GetInstanceStartupParamsData(serviceId)
     }
 
+    const GetInstancePortsData = (serviceId, { authenticationData }) => {
+        //const { userId } = authenticationData
+        return myServicesManagerService.GetInstancePortsData(serviceId)
+    }
+
+    const GetNetworkModeData = (serviceId, { authenticationData }) => {
+        //const { userId } = authenticationData
+        return myServicesManagerService.GetNetworkModeData(serviceId)
+    }
+
     const controllerServiceObject = {
         controllerName: "MyServicesManagerController",
         GetMyServicesStatus,
@@ -136,7 +146,9 @@ const MyServicesManagerController = (params) => {
         GetServiceStatus,
         StartService,
         StopService,
-        GetInstanceStartupParamsData
+        GetInstanceStartupParamsData,
+        GetInstancePortsData,
+        GetNetworkModeData
     }
 
     return Object.freeze(controllerServiceObject)

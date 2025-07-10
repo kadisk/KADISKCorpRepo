@@ -224,8 +224,8 @@ const CreateMyWorkspaceDomainService = ({
     }*/
     
 
-    const RegisterInstance = ({ serviceId, startupParams }) => 
-            InstanceModel.create({ serviceId, startupParams })
+    const RegisterInstance = ({ serviceId, startupParams, ports, networkmode}) => 
+            InstanceModel.create({ serviceId, startupParams, ports, networkmode })
 
     const ListImageBuildHistory = async (serviceId) => {
         const items = await ImageBuildHistoryModel.findAll({

@@ -388,7 +388,9 @@ const MyServicesManager = (params) => {
         const instanceData = await MyWorkspaceDomainService
             .RegisterInstance({
                 serviceId: serviceData.id,
-                startupParams
+                startupParams,
+                ports,
+                networkmode
             })
 
         const imageTagName = `ecosystem_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}:${serviceData.serviceName}-${serviceData.id}`.toLowerCase()
@@ -421,7 +423,7 @@ const MyServicesManager = (params) => {
         serviceDescription,
         startupParams,
         ports = [],
-        networkmode
+        networkmode= "bridge"
     }) => {
 
         const packageData = await MyWorkspaceDomainService.GetPackageItemById({ id: packageId, userId })
@@ -454,7 +456,7 @@ const MyServicesManager = (params) => {
         })
 
         AddServiceInStateManagement(serviceData.id)
-        
+
     }
 
     const ListProvisionedServices = async (userId) => {
@@ -518,6 +520,16 @@ const MyServicesManager = (params) => {
         return instanceData.startupParams || {}
     }
 
+    const GetInstancePortsData = async (serviceId) => {
+        const instanceData = await MyWorkspaceDomainService.GetLastInstanceByServiceId(serviceId)
+        return instanceData.ports || []
+    }
+
+    const GetNetworkModeData = async (serviceId) => {
+        const instanceData = await MyWorkspaceDomainService.GetLastInstanceByServiceId(serviceId)
+        return instanceData.networkmode
+    }
+
     _Start()
 
     return {
@@ -536,7 +548,9 @@ const MyServicesManager = (params) => {
         onChangeServiceStatus,
         StartService,
         StopService,
-        GetInstanceStartupParamsData
+        GetInstanceStartupParamsData,
+        GetInstancePortsData,
+        GetNetworkModeData
     }
 
 }

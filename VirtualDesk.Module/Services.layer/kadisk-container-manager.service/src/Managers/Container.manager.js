@@ -118,7 +118,7 @@ const ContainerManager = (params) => {
         imageName,
         containerName,
         ports = [],
-        networkmode= 'bridge'
+        networkmode
     }) => {
 
         const portBindings = {}

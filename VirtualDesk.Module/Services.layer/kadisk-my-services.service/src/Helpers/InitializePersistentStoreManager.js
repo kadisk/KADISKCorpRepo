@@ -110,6 +110,14 @@ const InitializePersistentStoreManager = (storage) => {
             type: DataTypes.JSON,
             allowNull: true
         },
+        ports: {
+            type: DataTypes.JSON,
+            allowNull: true
+        },
+        networkmode: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
         serviceId: {
             type: DataTypes.INTEGER,
             allowNull: true,

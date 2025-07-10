@@ -127,11 +127,37 @@
 					"required": true
 				}
 			]
-		}, 
+		},
 		{
 			"path": "/service/instance/startup-params",
 			"method": "GET",
 			"summary": "GetInstanceStartupParamsData",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/instance/ports",
+			"method": "GET",
+			"summary": "GetInstancePortsData",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/instance/network-mode",
+			"method": "GET",
+			"summary": "GetNetworkModeData",
 			"parameters": [
 				{
 					"name": "serviceId",
