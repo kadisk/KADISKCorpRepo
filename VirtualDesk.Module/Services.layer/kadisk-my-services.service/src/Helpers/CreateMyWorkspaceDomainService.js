@@ -224,8 +224,12 @@ const CreateMyWorkspaceDomainService = ({
     }*/
     
 
-    const RegisterInstance = ({ serviceId, startupParams, ports, networkmode}) => 
+    const RegisterInstanceCreation = ({ serviceId, startupParams, ports, networkmode}) => 
             InstanceModel.create({ serviceId, startupParams, ports, networkmode })
+
+    const RegisterTerminateInstance = async (instanceId) => 
+        InstanceModel.update({ terminateDate: new Date() },{ where: { id: instanceId } }
+)
 
     const ListImageBuildHistory = async (serviceId) => {
         const items = await ImageBuildHistoryModel.findAll({
@@ -264,7 +268,8 @@ const CreateMyWorkspaceDomainService = ({
     return {
         RegisterRepository,
         RegisterServiceProvisioning,
-        RegisterInstance,
+        RegisterInstanceCreation,
+        RegisterTerminateInstance,
         RegisterBuildedImage,
         ListRepositories,
         GetRepository:{

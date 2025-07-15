@@ -126,6 +126,10 @@ const InitializePersistentStoreManager = (storage) => {
                 key: "id"
             },
             onDelete: "CASCADE"
+        },
+        terminateDate: {
+            type: DataTypes.DATE,
+            allowNull: true
         }
     })
 

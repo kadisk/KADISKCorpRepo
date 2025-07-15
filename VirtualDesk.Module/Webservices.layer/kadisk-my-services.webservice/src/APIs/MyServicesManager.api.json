@@ -155,6 +155,25 @@
 			]
 		},
 		{
+			"path": "/service/ports",
+			"method": "POST",
+			"summary": "UpdateServicePorts",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "body",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "ports",
+					"type": "json",
+					"required": true
+				}
+			]
+		},
+		{
 			"path": "/service/instance/network-mode",
 			"method": "GET",
 			"summary": "GetNetworkModeData",

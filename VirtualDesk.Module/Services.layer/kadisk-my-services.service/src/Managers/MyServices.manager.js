@@ -84,7 +84,8 @@ const MyServicesManager = (params) => {
         onRequestStopContainer,
         NotifyContainerActivity,
         StartService,
-        StopService
+        StopService,
+        UpdatePorts
     } = ServiceRuntimeStateManager
 
     const _MountPathImportedRepositoriesSourceCodeDirPath = ({username, repositoryNamespace}) => {
@@ -386,7 +387,7 @@ const MyServicesManager = (params) => {
     }) => {
 
         const instanceData = await MyWorkspaceDomainService
-            .RegisterInstance({
+            .RegisterInstanceCreation({
                 serviceId: serviceData.id,
                 startupParams,
                 ports,
@@ -530,6 +531,15 @@ const MyServicesManager = (params) => {
         return instanceData.networkmode
     }
 
+    const UpdateServicePorts = async ({ serviceId, ports }) => {
+        const instanceData = await MyWorkspaceDomainService.GetLastInstanceByServiceId(serviceId)
+
+        MyWorkspaceDomainService.
+            RegisterTerminateInstance(instanceData.id)
+        //UpdatePorts({ serviceId, ports })
+        
+    }
+
     _Start()
 
     return {
@@ -550,7 +560,8 @@ const MyServicesManager = (params) => {
         StopService,
         GetInstanceStartupParamsData,
         GetInstancePortsData,
-        GetNetworkModeData
+        GetNetworkModeData,
+        UpdateServicePorts
     }
 
 }

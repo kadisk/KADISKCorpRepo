@@ -34,7 +34,8 @@ const ServiceDetailsOffcanvas = ({
     const [ instanceStartupParams, setInstanceStartupParams ] = useState<any>()
 
     const [ isUpdatePortsMode , setIsUpdatePortsMode ] = useState(false)
-    const [ newPortsForBinding, setNewPortsForBinding ] = useState([])
+    const [ instancePortsBinding, setInstancePortsBinding ] = useState([])
+    const [ newInstancePortsForBinding, setNewInstancePortsForBinding ] = useState<any[]>()
     const [ networkMode, setNetworkMode ] = useState()
 
     const [ servicePortForAdd, setServicePortForAdd ] = useState<string>("")
@@ -44,7 +45,7 @@ const ServiceDetailsOffcanvas = ({
 
     useEffect(() => {
         setIsUpdatePortsMode(false)
-        setNewPortsForBinding([])
+        setInstancePortsBinding([])
         setServicePortForAdd("")
         setHostPortForAdd("")
         fetchServiceData()
@@ -100,29 +101,51 @@ const ServiceDetailsOffcanvas = ({
     const handleUpdatePortsMode = async () => {
         const api = getMyServicesManagerAPI()
         const response = await api.GetInstancePortsData({ serviceId })
-        setNewPortsForBinding(response.data)
+        setInstancePortsBinding(response.data)
         setIsUpdatePortsMode(true)
+    }
+
+
+    const handleCancelUpdatePorts = () => {
+        reset()
+        setIsUpdatePortsMode(false)
+        setInstancePortsBinding([])
+    }
+
+    const reset = () => {
+        setNewInstancePortsForBinding(undefined)
+        setServicePortForAdd("")
+        setHostPortForAdd("")
+    }
+
+    const handleResetEditPorts = () => reset()
+
+    const handleUpdatePorts = async () => {
+        const api = getMyServicesManagerAPI()
+		const response = await api.UpdateServicePorts({ serviceId, ports: newInstancePortsForBinding })
+
+        console.log(response.data)
     }
 
     const handleAddNewPort = () => {
         if (!servicePortForAdd || !hostPortForAdd) return
 
         const newPorts = [
-            ...newPortsForBinding,
+            ...(newInstancePortsForBinding || instancePortsBinding),
             {
                 servicePort: servicePortForAdd,
                 hostPort: hostPortForAdd
             }
         ]
-        setNewPortsForBinding(newPorts)
+        setNewInstancePortsForBinding(newPorts)
         setServicePortForAdd("")
         setHostPortForAdd("")
     }
 
     const handleRemovePort = (index) => {
-        const newPorts = [...newPortsForBinding]
+        const newPorts = [...(newInstancePortsForBinding || instancePortsBinding)]
         newPorts.splice(index, 1)
-        setNewPortsForBinding(newPorts)
+        setNewInstancePortsForBinding(newPorts)
     }
 
     return <div className="offcanvas offcanvas-end show" data-bs-backdrop="false" style={{"width":"600px"}}>
@@ -249,7 +272,7 @@ const ServiceDetailsOffcanvas = ({
                                                     </thead>
                                                     <tbody>
                                                         {
-                                                            newPortsForBinding
+                                                            (newInstancePortsForBinding || instancePortsBinding)
                                                             .map((port, index) => (
                                                                 <tr key={index}>
                                                                     <td>
@@ -313,10 +336,19 @@ const ServiceDetailsOffcanvas = ({
                                             }
                                             {
                                                 isUpdatePortsMode
-                                                && <a className="btn btn-primary" onClick={() => {}}>
-                                                        <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-refresh"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /></svg>
-                                                        update
-                                                    </a>
+                                                && <>
+                                                        <button className="btn btn-secondary" onClick={() => handleCancelUpdatePorts()}>
+                                                            <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-cancel"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M18.364 5.636l-12.728 12.728" /></svg>
+                                                            cancel
+                                                        </button>
+                                                        <button className="btn btn-secondary" disabled={!newInstancePortsForBinding} onClick={() => handleResetEditPorts()}>
+                                                            reset
+                                                        </button>
+                                                        <button className="btn btn-orange" disabled={!newInstancePortsForBinding} onClick={() => handleUpdatePorts()}>
+                                                            <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-pencil-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" /><path d="M13.5 6.5l4 4" /><path d="M15 19l2 2l4 -4" /></svg>
+                                                            update
+                                                        </button>
+                                                    </>
                                             }
                                         </div>
                                     </div>
