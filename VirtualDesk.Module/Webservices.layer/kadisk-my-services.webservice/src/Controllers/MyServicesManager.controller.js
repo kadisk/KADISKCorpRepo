@@ -133,6 +133,11 @@ const MyServicesManagerController = (params) => {
         return myServicesManagerService.GetNetworkModeData(serviceId)
     }
 
+    const UpdateServicePorts = async ({ serviceId, ports }, { authenticationData }) => {
+        const { userId, username } = authenticationData 
+        await myServicesManagerService.UpdateServicePorts({ serviceId, username, userId, ports })
+    }
+
     const controllerServiceObject = {
         controllerName: "MyServicesManagerController",
         GetMyServicesStatus,
@@ -148,7 +153,8 @@ const MyServicesManagerController = (params) => {
         StopService,
         GetInstanceStartupParamsData,
         GetInstancePortsData,
-        GetNetworkModeData
+        GetNetworkModeData,
+        UpdateServicePorts
     }
 
     return Object.freeze(controllerServiceObject)

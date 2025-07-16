@@ -259,7 +259,10 @@ const CreateMyWorkspaceDomainService = ({
 
     const GetLastInstanceByServiceId = async (serviceId) => {
         const instance = await InstanceModel.findOne({
-            where: { serviceId },
+            where: { 
+                serviceId,
+                terminateDate: null
+            },
             order: [['createdAt', 'DESC']]
         })
         return instance ? instance.get({ plain: true }) : null
