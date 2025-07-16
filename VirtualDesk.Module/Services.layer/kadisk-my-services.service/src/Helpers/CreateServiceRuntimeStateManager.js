@@ -1,7 +1,7 @@
 const EventEmitter = require("events")
 
 const LifecycleStatusOptions = require("./LifecycleStatus.options")
-
+const RequestTypes  = require("./Request.types")
 
 const CreateServiceRuntimeStateManager = () => {
 
@@ -22,14 +22,9 @@ const CreateServiceRuntimeStateManager = () => {
 
     const eventEmitter = new EventEmitter()
 
-    const STATUS_CHANGE_EVENT                     = Symbol()
-    const DYNAMIC_DATA_CHANGE_EVENT               = Symbol()
-    const REQUEST_LAST_INSTANCE_DATA_EVENT        = Symbol()
-    const REQUEST_CONTAINER_DATA_EVENT            = Symbol()
-    const REQUEST_CONTAINER_INSPECTION_DATA_EVENT = Symbol()
-    const REQUEST_START_CONTAINER_EVENT           = Symbol()
-    const REQUEST_STOP_CONTAINER_EVENT            = Symbol()
-
+    const STATUS_CHANGE_EVENT       = Symbol()
+    const DYNAMIC_DATA_CHANGE_EVENT = Symbol()
+    const REQUEST_EVENT             = Symbol()
 
 
     const _CreateInitialState = () => ({
@@ -52,11 +47,13 @@ const CreateServiceRuntimeStateManager = () => {
     const _GetInstanceId    = (serviceId) => _GetStaticData(serviceId).instanceId
     const _GetContainerName = (serviceId) => _GetStaticData(serviceId).containerName
 
-    const _RequestLastInstanceData        = (serviceId) => eventEmitter.emit(REQUEST_LAST_INSTANCE_DATA_EVENT, { serviceId })
-    const _RequestContainerData           = (serviceId) => eventEmitter.emit(REQUEST_CONTAINER_DATA_EVENT, { serviceId, instanceId: _GetInstanceId(serviceId) })
-    const _RequestContainerInspectionData = (serviceId) => eventEmitter.emit(REQUEST_CONTAINER_INSPECTION_DATA_EVENT, { serviceId, containerName: _GetContainerName(serviceId) })
-    const _RequestStartContainer          = (serviceId) => eventEmitter.emit(REQUEST_START_CONTAINER_EVENT, { serviceId, containerHashId: _GetContainerHashId(serviceId) })
-    const _RequestStopContainer           = (serviceId) => eventEmitter.emit(REQUEST_STOP_CONTAINER_EVENT, { serviceId, containerHashId: _GetContainerHashId(serviceId) })
+    const _RequestData = (requestType, requestData) => eventEmitter.emit(REQUEST_EVENT, { requestType, ... requestData})
+
+    const _RequestLastInstanceData        = (serviceId) => _RequestData(RequestTypes.LAST_INSTANCE_DATA,        { serviceId })
+    const _RequestContainerData           = (serviceId) => _RequestData(RequestTypes.CONTAINER_DATA,            { serviceId, instanceId: _GetInstanceId(serviceId) })
+    const _RequestContainerInspectionData = (serviceId) => _RequestData(RequestTypes.CONTAINER_INSPECTION_DATA, { serviceId, containerName: _GetContainerName(serviceId) })
+    const _RequestStartContainer          = (serviceId) => _RequestData(RequestTypes.START_CONTAINER,           { serviceId, containerHashId: _GetContainerHashId(serviceId) })
+    const _RequestStopContainer           = (serviceId) => _RequestData(RequestTypes.STOP_CONTAINER,            { serviceId, containerHashId: _GetContainerHashId(serviceId) })
 
     const _ProcessServiceStatusChange = (serviceId) => {
         switch (state[serviceId].status) {
@@ -192,39 +189,32 @@ const CreateServiceRuntimeStateManager = () => {
         eventEmitter.emit(STATUS_CHANGE_EVENT, { serviceId })
     }
 
-    const onRequestInstanceData = (onRequestData) => {
-        eventEmitter.on(REQUEST_LAST_INSTANCE_DATA_EVENT, async ({ serviceId }) => {
-            const instanceData = await onRequestData(serviceId) 
-            _ReceiveLastInstanceData(serviceId, instanceData)
+    const onRequestData = (onRequestData) => {
+        eventEmitter.on(REQUEST_EVENT, async (requestData) => {
+            
+            const { requestType } = requestData
+            switch (requestType) {
+                case RequestTypes.LAST_INSTANCE_DATA:
+                    const instanceData = await onRequestData(requestType, { serviceId: requestData.serviceId })
+                    _ReceiveLastInstanceData(requestData.serviceId, instanceData)
+                    break
+                case RequestTypes.CONTAINER_DATA:
+                    const containerData = await onRequestData(requestType, { instanceId: requestData.instanceId }) 
+                    _ReceiveContainerData(requestData.serviceId, containerData)
+                    break
+                case RequestTypes.CONTAINER_INSPECTION_DATA:
+                    const containerInspectionData = await onRequestData(requestType, { containerName: requestData.containerName })
+                    _ReceiveContainerInspectionData(requestData.serviceId, containerInspectionData)
+                    break
+                case RequestTypes.START_CONTAINER:
+                case RequestTypes.STOP_CONTAINER:
+                    onRequestData(requestType, { containerHashId: requestData.containerHashId })
+                    break
+                default:
+                    console.warn(`Unknown request type: ${requestType}`)
+            }
         })
-    }
-
-    const onRequestContainerData = (onRequestData) => {
-        eventEmitter.on(REQUEST_CONTAINER_DATA_EVENT, async ({ serviceId, instanceId }) => {
-            const containerData = await onRequestData(instanceId) 
-            _ReceiveContainerData(serviceId, containerData)
-        })
-    }
-    
-    const onRequestContainerInspectionData = (onRequestData) => {
-        eventEmitter.on(REQUEST_CONTAINER_INSPECTION_DATA_EVENT, async ({ serviceId, containerName }) => {
-            const containerInspectionData = await onRequestData(containerName)
-
-            _ReceiveContainerInspectionData(serviceId, containerInspectionData)
-        })
-    }
-
-    const onRequestStartContainer = (onRequestData) => {
-        eventEmitter.on(REQUEST_START_CONTAINER_EVENT, ({ serviceId, containerHashId }) => {
-            onRequestData(containerHashId)
-        })
-    }
-
-    const onRequestStopContainer = (onRequestData) => {
-        eventEmitter.on(REQUEST_STOP_CONTAINER_EVENT, ({ serviceId, containerHashId }) => {
-            onRequestData(containerHashId)
-        })
-    }
+    } 
 
     const onChangeServiceStatus = (f) => {
         eventEmitter.on(STATUS_CHANGE_EVENT, ({ serviceId }) => f({serviceId, status: GetServiceStatus(serviceId)}))
@@ -248,11 +238,7 @@ const CreateServiceRuntimeStateManager = () => {
     const NotifyInstanceSwap = ({
         serviceId,
         nextInstanceId
-    }) => {
-        
-
-        
-    }
+    }) => {}
 
     const NotifyContainerActivity = ({ ID, Action, Attributes }) => {
 
@@ -318,35 +304,17 @@ const CreateServiceRuntimeStateManager = () => {
         }
     }
 
-    /*const _RequestTerminateInstance = ( instanceId ) => {
-        _RequestStopContainer(serviceId)
-    }*/
-
-    /*const UpdatePorts = async ({ serviceId, ports }) => {
-        _ValidateServiceExist(serviceId)
-        _RequestTerminateInstance(_GetInstanceId(serviceId))
-
-
-    }*/
-
     return {
         AddServiceInStateManagement,
         GetServiceStatus,
-        onRequestInstanceData,
-        onRequestContainerData,
-        onRequestContainerInspectionData,
-        onRequestStartContainer,
-        onRequestStopContainer,
+        onRequestData,
         onChangeServiceStatus,
         NotifyContainerActivity,
         NotifyInstanceSwap,
         StartService,
         StopService,
-        GetNetworksSettings,
-        //UpdatePorts
+        GetNetworksSettings
     }
 }
-
-
 
 module.exports = CreateServiceRuntimeStateManager

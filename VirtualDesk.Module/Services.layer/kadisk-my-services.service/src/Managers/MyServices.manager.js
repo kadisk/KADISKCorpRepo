@@ -12,6 +12,8 @@ const GetContextTarStream              = require("../Helpers/GetContextTarStream
 const CopyDirRepository                = require("../Helpers/CopyDirRepository")
 const CreateServiceRuntimeStateManager = require("../Helpers/CreateServiceRuntimeStateManager")
 
+const RequestTypes                     = require("../Helpers/Request.types")
+
 const MyServicesManager = (params) => {
 
     const {
@@ -77,11 +79,7 @@ const MyServicesManager = (params) => {
         GetServiceStatus,
         GetNetworksSettings,
         onChangeServiceStatus,
-        onRequestInstanceData,
-        onRequestContainerData,
-        onRequestContainerInspectionData,
-        onRequestStartContainer,
-        onRequestStopContainer,
+        onRequestData,
         NotifyContainerActivity,
         StartService,
         StopService,
@@ -140,28 +138,26 @@ const MyServicesManager = (params) => {
 
 
         })
-        
-        onRequestInstanceData(async (serviceId) => {
-            const instanceData = await MyWorkspaceDomainService.GetLastInstanceByServiceId(serviceId)
-            return instanceData
-        })
 
-        onRequestContainerData(async (instanceId) => {
-            const containerData = await MyWorkspaceDomainService.GetContainerInfoByInstanceId(instanceId)
-            return containerData
-        })
-
-        onRequestContainerInspectionData(async (containerName) => {
-            const inspectData = await InspectContainer(containerName)
-            return inspectData
-        })
-
-        onRequestStartContainer((containerHashId) => {
-            StartContainer(containerHashId)
-        })
-
-        onRequestStopContainer((containerHashId) => {
-            StopContainer(containerHashId)
+        onRequestData(async (requestType, data) => {
+            
+            switch (requestType) {
+                case RequestTypes.LAST_INSTANCE_DATA:
+                    return await MyWorkspaceDomainService.GetLastInstanceByServiceId(data.serviceId)
+                case RequestTypes.CONTAINER_DATA:
+                    return await await MyWorkspaceDomainService.GetContainerInfoByInstanceId(data.instanceId)
+                case RequestTypes.CONTAINER_INSPECTION_DATA:
+                    return await InspectContainer(data.containerName)
+                case RequestTypes.START_CONTAINER:
+                    StartContainer(data.containerHashId)
+                    break
+                case RequestTypes.STOP_CONTAINER:
+                    StopContainer(data.containerHashId)
+                    break
+                    
+                default:
+                    console.warn(`Unknown request type: ${requestType}`)
+            }
         })
 
         await InitializeAllServiceStateManagement()
