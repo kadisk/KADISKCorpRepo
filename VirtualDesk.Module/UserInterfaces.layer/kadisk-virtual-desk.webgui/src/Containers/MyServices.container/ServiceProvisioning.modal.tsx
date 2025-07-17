@@ -66,11 +66,13 @@ const ServiceProvisioningModal = ({
 
     useEffect(() => {
         if (typeMode === PACKAGE_SETUP_MODE && startupParamsData?.schema) {
+            debugger
             try {
                 const validate = ajv.compile(startupParamsData.schema)
                 const valid = validate(startupParams)
                 setIsStartupParamsValid(Boolean(valid))
-            } catch {
+            } catch(e) {
+                console.error(e)
                 setIsStartupParamsValid(false)
             }
         }

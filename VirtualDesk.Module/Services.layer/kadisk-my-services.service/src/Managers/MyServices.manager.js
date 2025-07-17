@@ -14,6 +14,9 @@ const CreateServiceRuntimeStateManager = require("../Helpers/CreateServiceRuntim
 
 const RequestTypes                     = require("../Helpers/Request.types")
 
+
+const CreateServiceHandler = require("../Helpers/CreateServiceHandler")
+
 const MyServicesManager = (params) => {
 
     const {
@@ -85,6 +88,13 @@ const MyServicesManager = (params) => {
         StopService,
         NotifyInstanceSwap
     } = ServiceRuntimeStateManager
+
+
+    const ServiceHandler = CreateServiceHandler({
+        absolutInstanceDataDirPath,
+        MyWorkspaceDomainService,
+        BuildImageFromDockerfileString
+    })
 
     const _MountPathImportedRepositoriesSourceCodeDirPath = ({username, repositoryNamespace}) => {
         const repositoriesCodePath = resolve(absolutImportedRepositoriesSourceCodeDirPath, username, repositoryNamespace)
@@ -374,9 +384,7 @@ const MyServicesManager = (params) => {
     }
 
     const _CreateInstance = async({
-        username,
-        serviceData,
-        packageData,
+        serviceId,
         startupParams,
         ports,
         networkmode
@@ -384,31 +392,11 @@ const MyServicesManager = (params) => {
 
         const instanceData = await MyWorkspaceDomainService
             .RegisterInstanceCreation({
-                serviceId: serviceData.id,
+                serviceId,
                 startupParams,
                 ports,
                 networkmode
             })
-
-        const imageTagName = `ecosystem_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}:${serviceData.serviceName}-${serviceData.id}`.toLowerCase()
-
-        const buildData = await _BuildImage({
-            imageTagName,
-            repositoryCodePath: serviceData.instanceRepositoryCodePath,
-            repositoryNamespace: packageData.repositoryNamespace,
-            packagePath: packageData.itemPath,
-            instanceData
-        })
-
-        await _CreateContainer({
-            username,
-            instanceData,
-            packageData,
-            serviceData,
-            buildData,
-            ports,
-            networkmode
-        })
 
         return instanceData
     }
@@ -444,11 +432,29 @@ const MyServicesManager = (params) => {
 
         await CopyDirRepository(repositoryCodePath, instanceRepositoryCodePath)
 
-        await _CreateInstance({
-            username,
-            serviceData,
-            packageData,
+        const instanceData = await _CreateInstance({
+            serviceId: serviceData.id,
             startupParams,
+            ports,
+            networkmode
+        })
+
+        const imageTagName = `ecosystem_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}:${serviceData.serviceName}-${serviceData.id}`.toLowerCase()
+
+        const buildData = await _BuildImage({
+            imageTagName,
+            repositoryCodePath: serviceData.instanceRepositoryCodePath,
+            repositoryNamespace: packageData.repositoryNamespace,
+            packagePath: packageData.itemPath,
+            instanceData
+        })
+
+        await _CreateContainer({
+            username,
+            instanceData,
+            packageData,
+            serviceData,
+            buildData,
             ports,
             networkmode
         })
