@@ -8,8 +8,6 @@ const InitializePersistentStoreManager = require("../Helpers/InitializePersisten
 const PrepareDirPath                   = require("../Helpers/PrepareDirPath")
 const CreateItemIndexer                = require("../Helpers/CreateItemIndexer")
 const CreateMyWorkspaceDomainService   = require("../Helpers/CreateMyWorkspaceDomainService")
-const GetContextTarStream              = require("../Helpers/GetContextTarStream")
-const CopyDirRepository                = require("../Helpers/CopyDirRepository")
 const CreateServiceRuntimeStateManager = require("../Helpers/CreateServiceRuntimeStateManager")
 
 const RequestTypes                     = require("../Helpers/Request.types")
@@ -93,17 +91,12 @@ const MyServicesManager = (params) => {
     const ServiceHandler = CreateServiceHandler({
         absolutInstanceDataDirPath,
         MyWorkspaceDomainService,
-        BuildImageFromDockerfileString
+        BuildImageFromDockerfileString,
+        CreateNewContainer
     })
 
     const _MountPathImportedRepositoriesSourceCodeDirPath = ({username, repositoryNamespace}) => {
         const repositoriesCodePath = resolve(absolutImportedRepositoriesSourceCodeDirPath, username, repositoryNamespace)
-        PrepareDirPath(repositoriesCodePath)
-        return repositoriesCodePath
-    }
-
-    const _MountPathInstanceRepositoriesSourceCodeDirPath = ({username, repositoryNamespace, serviceDataDirName}) => {
-        const repositoriesCodePath = resolve(absolutInstanceDataDirPath, username, serviceDataDirName, repositoryNamespace)
         PrepareDirPath(repositoriesCodePath)
         return repositoriesCodePath
     }
@@ -279,128 +272,6 @@ const MyServicesManager = (params) => {
         return repositories
     }
 
-    const _BuildImage = async ({
-        imageTagName,
-        repositoryCodePath,
-        repositoryNamespace,
-        packagePath,
-        instanceData
-    }) => {
-        
-        const buildargs = {
-            REPOSITORY_NAMESPACE: repositoryNamespace
-        }
-
-        const packageAbsolutPath = join(repositoryCodePath, packagePath)
-
-        const contextTarStream = GetContextTarStream({
-            repositoryPathForCopy: repositoryCodePath,
-            packagePathForCopy: packageAbsolutPath,
-            startupParams: instanceData.startupParams
-        })
-        
-        const _handleData = chunk => {
-            try {
-                const lines = chunk.toString().split('\n').filter(Boolean)
-        
-                for (const line of lines) {
-                    const parsed = JSON.parse(line)
-        
-                    if (parsed.stream) {
-                        console.log(parsed.stream)
-                    } else if (parsed.status) {
-                        console.log(`[STATUS] ${parsed.status}`)
-                    } else if (parsed.error) {
-                        console.log(parsed.error)
-                    } else {
-                        console.log(`[OTHER] ${line}`)
-                    }
-                }
-        
-            } catch (err) {
-                console.error('Failed to parse Docker output chunk:', chunk.toString())
-            }
-        }
-        
-        const imageInfo = await BuildImageFromDockerfileString({
-            buildargs,
-            contextTarStream,
-            imageTagName,
-            onData: _handleData
-        })
-
-        const buildData = await MyWorkspaceDomainService
-            .RegisterBuildedImage({
-                instanceId: instanceData.id,
-                tag: imageTagName,
-                hashId: imageInfo.Id, 
-            })
-
-
-        return buildData
-    }
-
-    const _CreateAndStartContainer = async ({
-        containerName,
-        imageName,
-        ports = [],
-        networkmode
-    }) => {
-
-        const _RemapPort = (ports) => ports.map(({ servicePort, hostPort }) => ({ containerPort:servicePort, hostPort }))
-
-        const container = await CreateNewContainer({
-            imageName,
-            containerName,
-            ports: _RemapPort(ports),
-            networkmode
-        })
-
-        await container.start()
-        console.log(`[INFO] Container '${containerName}' iniciado com a imagem '${imageName}'`)
-
-    }
-
-    const _CreateContainer = async ({
-        username,
-        instanceData,
-        packageData,
-        serviceData,
-        buildData,
-        ports,
-        networkmode
-    }) => {
-
-        const containerName = `container_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}--${serviceData.serviceName}--${buildData.id}`
-
-        await MyWorkspaceDomainService
-            .RegisterContainer({
-                containerName,
-                instanceId: instanceData.id,
-                buildId: buildData.id
-            })
-
-        await _CreateAndStartContainer({ containerName, imageName: buildData.tag, ports, networkmode })
-    }
-
-    const _CreateInstance = async({
-        serviceId,
-        startupParams,
-        ports,
-        networkmode
-    }) => {
-
-        const instanceData = await MyWorkspaceDomainService
-            .RegisterInstanceCreation({
-                serviceId,
-                startupParams,
-                ports,
-                networkmode
-            })
-
-        return instanceData
-    }
-
     const ProvisionService = async ({
         userId, 
         username,
@@ -412,52 +283,46 @@ const MyServicesManager = (params) => {
         networkmode= "bridge"
     }) => {
 
-        const packageData = await MyWorkspaceDomainService.GetPackageItemById({ id: packageId, userId })
-        const { repositoryCodePath } = packageData
-
-        const instanceRepositoryCodePath = _MountPathInstanceRepositoriesSourceCodeDirPath({
-            username, 
-            repositoryNamespace: packageData.repositoryNamespace,
-            serviceDataDirName:serviceName
-        })
-
-        const serviceData = await MyWorkspaceDomainService
-            .RegisterServiceProvisioning({
+        const serviceData = await ServiceHandler
+            .CreateService({
+                userId, 
+                username,
+                packageId,
                 serviceName,
-                serviceDescription,
-                originRepositoryId: packageData.repositoryId,
-                packageId: packageData.id,
-                instanceRepositoryCodePath
-        })
+                serviceDescription
+            })
+        
+        const packageData = await MyWorkspaceDomainService.GetPackageItemById({ id: packageId, userId })
 
-        await CopyDirRepository(repositoryCodePath, instanceRepositoryCodePath)
-
-        const instanceData = await _CreateInstance({
-            serviceId: serviceData.id,
-            startupParams,
-            ports,
-            networkmode
-        })
+        const instanceData = await ServiceHandler
+            .CreateInstance({
+                serviceId: serviceData.id,
+                startupParams,
+                ports,
+                networkmode
+            })
 
         const imageTagName = `ecosystem_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}:${serviceData.serviceName}-${serviceData.id}`.toLowerCase()
 
-        const buildData = await _BuildImage({
-            imageTagName,
-            repositoryCodePath: serviceData.instanceRepositoryCodePath,
-            repositoryNamespace: packageData.repositoryNamespace,
-            packagePath: packageData.itemPath,
-            instanceData
-        })
+        const buildData = await ServiceHandler
+            .BuildImage({
+                imageTagName,
+                repositoryCodePath: serviceData.instanceRepositoryCodePath,
+                repositoryNamespace: packageData.repositoryNamespace,
+                packagePath: packageData.itemPath,
+                instanceData
+            })
 
-        await _CreateContainer({
-            username,
-            instanceData,
-            packageData,
-            serviceData,
-            buildData,
-            ports,
-            networkmode
-        })
+        const containerName = `container_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}--${serviceData.serviceName}--${buildData.id}`
+
+        await ServiceHandler
+            .CreateContainer({
+                containerName,
+                instanceId: instanceData.id,
+                buildData,
+                ports,
+                networkmode
+            })
 
         AddServiceInStateManagement(serviceData.id)
 
@@ -540,14 +405,14 @@ const MyServicesManager = (params) => {
         const packageData = await MyWorkspaceDomainService.GetItemById(serviceData.packageId)
         const instanceData = await MyWorkspaceDomainService.GetLastInstanceByServiceId(serviceId)
 
-        const nextInstance = await _CreateInstance({
+        /*const nextInstance = await _CreateInstance({
             username,
             serviceData,
             packageData,
             startupParams: instanceData.startupParams,
             ports,
             networkmode: instanceData.networkmode
-        })
+        })*/
 
         NotifyInstanceSwap({
             serviceId: serviceData.id,
