@@ -145,8 +145,10 @@ const MyServicesManager = (params) => {
         onRequestData(async (requestType, data) => {
             
             switch (requestType) {
-                case RequestTypes.LAST_INSTANCE_DATA:
-                    return await MyWorkspaceDomainService.GetLastInstanceByServiceId(data.serviceId)
+                case RequestTypes.ACTIVE_INSTANCE_INFO_LIST:
+                    const instanceDataList = await MyWorkspaceDomainService.ListActiveInstancesByServiceId(data.serviceId)
+                    const instanceInfoList = instanceDataList.map(({ id:instanceId , startupParams, ports, networkmode }) => ({instanceId,  startupParams, ports, networkmode }) )
+                    return instanceInfoList
                 case RequestTypes.CONTAINER_DATA:
                     return await await MyWorkspaceDomainService.GetContainerInfoByInstanceId(data.instanceId)
                 case RequestTypes.CONTAINER_INSPECTION_DATA:
@@ -169,7 +171,7 @@ const MyServicesManager = (params) => {
     }
 
     const InitializeAllServiceStateManagement = async  () => {
-        const servicesData = await MyWorkspaceDomainService.GetAllServices()
+        const servicesData = await MyWorkspaceDomainService.ListServices()
         servicesData.forEach(serviceData => {
             AddServiceInStateManagement(serviceData.id)
         })
@@ -292,7 +294,7 @@ const MyServicesManager = (params) => {
                 serviceDescription
             })
         
-        const packageData = await MyWorkspaceDomainService.GetPackageItemById({ id: packageId, userId })
+        /*const packageData = await MyWorkspaceDomainService.GetPackageItemById({ id: packageId, userId })
 
         const instanceData = await ServiceHandler
             .CreateInstance({
@@ -322,7 +324,7 @@ const MyServicesManager = (params) => {
                 buildData,
                 ports,
                 networkmode
-            })
+            })*/
 
         AddServiceInStateManagement(serviceData.id)
 
@@ -330,7 +332,7 @@ const MyServicesManager = (params) => {
 
     const ListProvisionedServices = async (userId) => {
 
-        const servicesData = await MyWorkspaceDomainService.ListServices(userId)
+        const servicesData = await MyWorkspaceDomainService.ListServicesByUserId(userId)
 
         const provisionedServicesData = servicesData
             .map((provisionedService) => {
@@ -432,7 +434,7 @@ const MyServicesManager = (params) => {
         ListProvisionedServices,
         GetServiceData,
         ListImageBuildHistory: MyWorkspaceDomainService.ListImageBuildHistory,
-        GetInstancesByServiceId: MyWorkspaceDomainService.GetInstancesByServiceId,
+        ListInstancesByServiceId: MyWorkspaceDomainService.ListInstancesByServiceId,
         GetMetadataByPackageId,
         GetServiceStatus,
         GetNetworksSettings,

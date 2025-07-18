@@ -1,14 +1,25 @@
 const EventEmitter = require("events")
 
-const LifecycleStatusOptions = require("./LifecycleStatus.options")
+const LifecycleStatusOptions = Object.freeze({
+    UNKNOWN               : Symbol("UNKNOWN"),
+    WAITING               : Symbol("WAITING"),
+    SWAPPING_INSTANCE     : Symbol("SWAPPING_INSTANCE"),
+    STARTING              : Symbol("STARTING"),
+    STOPPING              : Symbol("STOPPING"),
+    STOPPED               : Symbol("STOPPED"),
+    RUNNING               : Symbol("RUNNING"),
+    FAILURE               : Symbol("FAILURE"),
+    TERMINATED            : Symbol("TERMINATED")
+})
+
+
 const RequestTypes  = require("./Request.types")
 
 const CreateServiceRuntimeStateManager = () => {
 
     const {
-        LOADING_LAST_INSTANCE_DATA,
-        INSTANCE_DATA_LOADED,
-        CONTAINER_DATA_LOADED,
+        WAITING,
+        SWAPPING_INSTANCE,
         STARTING,
         STOPPING,
         STOPPED,
@@ -49,7 +60,7 @@ const CreateServiceRuntimeStateManager = () => {
 
     const _RequestData = (requestType, requestData) => eventEmitter.emit(REQUEST_EVENT, { requestType, ... requestData})
 
-    const _RequestLastInstanceData        = (serviceId) => _RequestData(RequestTypes.LAST_INSTANCE_DATA,        { serviceId })
+    const _RequestInstanceDataList        = (serviceId) => _RequestData(RequestTypes.INSTANCE_DATA_LIST,        { serviceId })
     const _RequestContainerData           = (serviceId) => _RequestData(RequestTypes.CONTAINER_DATA,            { serviceId, instanceId: _GetInstanceId(serviceId) })
     const _RequestContainerInspectionData = (serviceId) => _RequestData(RequestTypes.CONTAINER_INSPECTION_DATA, { serviceId, containerName: _GetContainerName(serviceId) })
     const _RequestStartContainer          = (serviceId) => _RequestData(RequestTypes.START_CONTAINER,           { serviceId, containerHashId: _GetContainerHashId(serviceId) })
@@ -57,15 +68,9 @@ const CreateServiceRuntimeStateManager = () => {
 
     const _ProcessServiceStatusChange = (serviceId) => {
         switch (state[serviceId].status) {
-            case LOADING_LAST_INSTANCE_DATA:
-                _RequestLastInstanceData(serviceId)
-                break
-            case INSTANCE_DATA_LOADED:
-                _RequestContainerData(serviceId)
-                break
-            case CONTAINER_DATA_LOADED:
-                _RequestContainerInspectionData(serviceId)
-                break
+            case WAITING:
+                _RequestInstanceDataList(serviceId)
+                break        
             case STARTING:
                 _RequestContainerData(serviceId)
                 break          
@@ -108,7 +113,7 @@ const CreateServiceRuntimeStateManager = () => {
         if(instanceData.serviceId === serviceId){
             const { id: instanceId, startupParams } = instanceData
             _SetData(serviceId, { instanceId, startupParams })
-            _ChangeStatus(serviceId, INSTANCE_DATA_LOADED)
+            _RequestContainerData(serviceId)
         } else {
             throw "Instance serviceId does not match the corresponding service."
         }
@@ -129,7 +134,7 @@ const CreateServiceRuntimeStateManager = () => {
     const _ReceiveContainerData = (serviceId, containerData) => {
         const { id:containerId, containerName  } = containerData
         _AppendData(serviceId, {containerId, containerName} )
-        _ChangeStatus(serviceId, CONTAINER_DATA_LOADED)
+        _RequestContainerInspectionData(serviceId)
     }
 
     const _ReceiveContainerInspectionData = (serviceId, containerInspectionData) => {
@@ -164,7 +169,7 @@ const CreateServiceRuntimeStateManager = () => {
     const AddServiceInStateManagement = (serviceId) => {
         _ValidateServiceDoesNotExist()
         state[serviceId] = _CreateInitialState()
-        _ChangeStatus(serviceId, LOADING_LAST_INSTANCE_DATA)
+        _ChangeStatus(serviceId, WAITING)
     }
 
     const _GetServiceState = (serviceId) => {
@@ -194,7 +199,7 @@ const CreateServiceRuntimeStateManager = () => {
             
             const { requestType } = requestData
             switch (requestType) {
-                case RequestTypes.LAST_INSTANCE_DATA:
+                case RequestTypes.INSTANCE_DATA_LIST:
                     const instanceData = await onRequestData(requestType, { serviceId: requestData.serviceId })
                     _ReceiveLastInstanceData(requestData.serviceId, instanceData)
                     break

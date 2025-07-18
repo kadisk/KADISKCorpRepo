@@ -108,7 +108,7 @@ const CreateMyWorkspaceDomainService = ({
         return item
     }
     
-    const ListServices = async (userId) => {
+    const ListServicesByUserId = async (userId) => {
         const items = await ServiceModel.findAll({
             include: [
                 {
@@ -133,7 +133,7 @@ const CreateMyWorkspaceDomainService = ({
         return items.map(item => item.get({ plain: true }))
     }
 
-    const GetAllServices = async () => {
+    const ListServices = async () => {
         const items = await ServiceModel.findAll({
             include: [
                 {
@@ -241,10 +241,21 @@ const CreateMyWorkspaceDomainService = ({
         return items.map(item => item.get({ plain: true }))
     }
     
-    const GetInstancesByServiceId = async (serviceId) => {
+    const ListInstancesByServiceId = async (serviceId) => {
         const items = await InstanceModel.findAll({
             where: {
                 serviceId
+            }
+        })
+
+        return items.map(item => item.get({ plain: true }))
+    }
+
+    const ListActiveInstancesByServiceId = async (serviceId) => {
+        const items = await InstanceModel.findAll({
+            where: {
+                serviceId,
+                terminateDate: null
             }
         })
 
@@ -285,10 +296,11 @@ const CreateMyWorkspaceDomainService = ({
         GetPackageItemById,
         GetPackageItemByPath,
         ListServices,
-        GetAllServices,
+        ListServicesByUserId,
         GetServiceById,
         ListImageBuildHistory,
-        GetInstancesByServiceId,
+        ListInstancesByServiceId,
+        ListActiveInstancesByServiceId,
         GetLastInstanceByServiceId,
         GetContainerInfoByInstanceId,
         RegisterContainer

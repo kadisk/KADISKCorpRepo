@@ -89,7 +89,7 @@ const MyServicesManagerController = (params) => {
 
     const GetInstances = (serviceId, { authenticationData }) => {
         //const { userId } = authenticationData
-        return myServicesManagerService.GetInstancesByServiceId(serviceId)
+        return myServicesManagerService.ListInstancesByServiceId(serviceId)
     }
 
     const ServicesStatusChange = async (websocket, { authenticationData }) => {
