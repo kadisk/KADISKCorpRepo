@@ -6,7 +6,7 @@ const CreateStateManager = require("./CreateStateManager")
 const LifecycleStatusOptions = Object.freeze({
     UNKNOWN               : Symbol("UNKNOWN"),
     WAITING               : Symbol("WAITING"),
-    SWAPPING_INSTANCE     : Symbol("SWAPPING_INSTANCE"),
+    LOADING               : Symbol("LOADING"),
     STARTING              : Symbol("STARTING"),
     STOPPING              : Symbol("STOPPING"),
     STOPPED               : Symbol("STOPPED"),
@@ -17,6 +17,7 @@ const LifecycleStatusOptions = Object.freeze({
 
 const {
         WAITING,
+        LOADING,
         STARTING,
         STOPPING,
         STOPPED,
@@ -167,17 +168,20 @@ const CreateServiceRuntimeStateManager = () => {
 
             switch (requestType) {
                 case RequestTypes.ACTIVE_INSTANCE_INFO_LIST:
+                    ChangeStatus(SERVICE_STATE_GROUP, requestData.serviceId, LOADING)
                     const instanceInfoList = await onRequestData(requestType, { serviceId: requestData.serviceId })
                     instanceInfoList
                         .forEach((instanceInfo) => CreateNewInstanceState(requestData.serviceId, instanceInfo))
                     break
                 case RequestTypes.CONTAINER_DATA:
+                    ChangeStatus(INSTANCE_STATE_GROUP, requestData.instanceId, LOADING)
                     const containerData = await onRequestData(requestType, { instanceId: requestData.instanceId }) 
                     const { id:containerId, containerName  } = containerData
                     CreateNewContainerState(requestData.serviceId, { containerId, containerName  })
                     _RequestData(RequestTypes.CONTAINER_INSPECTION_DATA, { serviceId, containerId, containerName })
                     break
                 case RequestTypes.CONTAINER_INSPECTION_DATA:
+                    ChangeStatus(INSTANCE_STATE_GROUP, requestData.instanceId, LOADING)
                     const inspectionData = await onRequestData(requestType, { containerName: requestData.containerName })
                     _ProcessInspectionData({ containerId: requestData.containerId, inspectionData })
                     break

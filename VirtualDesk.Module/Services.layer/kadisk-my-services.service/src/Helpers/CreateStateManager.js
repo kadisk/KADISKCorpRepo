@@ -41,9 +41,8 @@ const CreateStateManager = () => {
 
     const ChangeStatus = (group, key, newStatus) => {
         const state = GetState(group, key)
-        if (!state) {
-            throw new Error(`State with group ${group.description} and key ${key} does not exist`)
-        }
+        if (!state) throw new Error(`State with group ${group.description} and key ${key} does not exist`)
+        if (state.status === newStatus) return
         state.status = newStatus
         eventEmitter.emit(STATUS_CHANGE_EVENT, {group, key})
     }
