@@ -29,14 +29,23 @@ const {
 
 const RequestTypes  = require("./Request.types")
 
-const SERVICE_STATE_GROUP = Symbol()
-const INSTANCE_STATE_GROUP = Symbol()
-const CONTAINER_STATE_GROUP = Symbol()
+const SERVICE_STATE_GROUP = Symbol("SERVICE_STATE_GROUP")
+const INSTANCE_STATE_GROUP = Symbol("INSTANCE_STATE_GROUP")
+const CONTAINER_STATE_GROUP = Symbol("CONTAINER_STATE_GROUP")
 
 
 const CreateServiceRuntimeStateManager = () => {
 
-    const stateManager = CreateStateManager()
+    const {
+        CreateNewState,
+        ChangeStatus,
+        GetState,
+        FindData,
+        onChangeStatus,
+        SetData,
+        UpdateData,
+        FindKey
+    } = CreateStateManager()
 
     const eventEmitter = new EventEmitter()
 
@@ -77,16 +86,14 @@ const CreateServiceRuntimeStateManager = () => {
         }
     }
 
-    stateManager
-        .onChangeStatus(SERVICE_STATE_GROUP, ({ key: serviceId }) => _ProcessServiceStatusChange(serviceId))
+    onChangeStatus(SERVICE_STATE_GROUP, ({ key: serviceId }) => _ProcessServiceStatusChange(serviceId))
 
-    stateManager
-        .onChangeStatus(SERVICE_STATE_GROUP, ({ key: instanceId }) => _ProcessInstanceStatusChange(instanceId))
+    onChangeStatus(INSTANCE_STATE_GROUP, ({ key: instanceId }) => _ProcessInstanceStatusChange(instanceId))
 
     const _CreateNewState = (group, key, data) => {
-        stateManager.CreateNewState(group, key)
-        stateManager.SetData(group, key, data)
-        stateManager.ChangeStatus(group, key, WAITING)
+        CreateNewState(group, key)
+        SetData(group, key, data)
+        ChangeStatus(group, key, WAITING)
     }
 
     const CreateNewInstanceState = (serviceId, instanceInfo) => {
@@ -99,14 +106,14 @@ const CreateServiceRuntimeStateManager = () => {
     }
 
     const _FindContainerIdByHash = (containerHashId) => 
-        stateManager.FindKey(CONTAINER_STATE_GROUP, "Id", containerHashId)
+        FindKey(CONTAINER_STATE_GROUP, "Id", containerHashId)
 
     const _ProcessInspectionData = ({ containerId, inspectionData }) => {
         if(inspectionData){
             const { Id, State, NetworkSettings } = inspectionData
-            stateManager.UpdateData(CONTAINER_STATE_GROUP, containerId, { Id, State, NetworkSettings })
+            UpdateData(CONTAINER_STATE_GROUP, containerId, { Id, State, NetworkSettings })
         } else 
-            stateManager.ChangeStatus(CONTAINER_STATE_GROUP, containerId, TERMINATED)
+            ChangeStatus(CONTAINER_STATE_GROUP, containerId, TERMINATED)
     }
 
     /*
@@ -133,8 +140,8 @@ const CreateServiceRuntimeStateManager = () => {
 
     const AddServiceInStateManagement = (serviceId) => {
         _ValidateServiceDoesNotExist()
-        stateManager.CreateNewState(SERVICE_STATE_GROUP, serviceId)
-        stateManager.ChangeStatus(SERVICE_STATE_GROUP, serviceId, WAITING)
+        CreateNewState(SERVICE_STATE_GROUP, serviceId)
+        ChangeStatus(SERVICE_STATE_GROUP, serviceId, WAITING)
     }
 
     const _GetServiceState = (serviceId) => {
@@ -191,7 +198,7 @@ const CreateServiceRuntimeStateManager = () => {
 
     const _ChangeContainerStatus = (containerHashId, newStatus) => {
         const containerId = _FindContainerIdByHash(containerHashId)
-        stateManager.ChangeStatus(CONTAINER_STATE_GROUP, containerId, newStatus)
+        ChangeStatus(CONTAINER_STATE_GROUP, containerId, newStatus)
     }
 
     const _NotifyStoppingContainer = (containerHashId) => _ChangeContainerStatus(containerHashId, STOPPING)
@@ -243,17 +250,17 @@ const CreateServiceRuntimeStateManager = () => {
     }
 
     const StartService = (serviceId) => {
-        const data = stateManager.FindData(CONTAINER_STATE_GROUP, "serviceId", serviceId)
+        const data = FindData(CONTAINER_STATE_GROUP, "serviceId", serviceId)
         _RequestData(RequestTypes.START_CONTAINER, { serviceId, containerHashId: data.Id })
     }
 
     const StopService = (serviceId) => {
-        const data = stateManager.FindData(CONTAINER_STATE_GROUP, "serviceId", serviceId)
+        const data = FindData(CONTAINER_STATE_GROUP, "serviceId", serviceId)
         _RequestData(RequestTypes.STOP_CONTAINER, { serviceId, containerHashId: data.Id })
     }
 
     const GetNetworksSettings  = async (serviceId) => {
-        const data = stateManager.FindData(CONTAINER_STATE_GROUP, "serviceId", serviceId)
+        const data = FindData(CONTAINER_STATE_GROUP, "serviceId", serviceId)
         const { NetworkSettings } = data
         const { Ports, Networks } = NetworkSettings
         

@@ -23,9 +23,6 @@ const CreateStateManager = () => {
 
     const GetState = (group, key) => {
         const state = stateList.find(s => s.group === group && s.key === key)
-        if (!state) {
-            throw new Error(`State with group ${group} and key ${key} does not exist`)
-        }
         return state
     }
 
@@ -40,11 +37,13 @@ const CreateStateManager = () => {
     const FindData = (group, property, value) => {
         const state = FindState(group, property, value)
         return state.data
-
     }
 
     const ChangeStatus = (group, key, newStatus) => {
-        const state = _GetState(group, key)
+        const state = GetState(group, key)
+        if (!state) {
+            throw new Error(`State with group ${group.description} and key ${key} does not exist`)
+        }
         state.status = newStatus
         eventEmitter.emit(STATUS_CHANGE_EVENT, {group, key})
     }
