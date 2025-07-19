@@ -87,11 +87,16 @@ const MyServicesManagerController = (params) => {
         return myServicesManagerService.ListImageBuildHistory(serviceId)
     }
 
-    const GetInstances = (serviceId, { authenticationData }) => {
+    const ListInstances = (serviceId, { authenticationData }) => {
         //const { userId } = authenticationData
         return myServicesManagerService.ListInstancesByServiceId(serviceId)
     }
 
+    const ListContainers = (serviceId, { authenticationData }) => {
+        //const { userId } = authenticationData
+        return myServicesManagerService.ListContainersByServiceId(serviceId)
+    }
+    
     const ServicesStatusChange = async (websocket, { authenticationData }) => {
         //const { userId } = authenticationData
 
@@ -146,7 +151,8 @@ const MyServicesManagerController = (params) => {
         GetServiceData,
         GetNetworksSettings,
         ListImageBuildHistory,
-        GetInstances,
+        ListInstances,
+        ListContainers,
         ServicesStatusChange,
         GetServiceStatus,
         StartService,

@@ -251,6 +251,17 @@ const CreateMyWorkspaceDomainService = ({
         return items.map(item => item.get({ plain: true }))
     }
 
+    const ListContainersByServiceId = async (serviceId) => {
+        const items = await ContainerModel.findAll({
+            include: [{
+                model: InstanceModel,
+                where: { serviceId },
+                attributes: [] // Não traz os dados da instância, só filtra
+            }]
+        })
+        return items.map(item => item.get({ plain: true }))
+    }
+
     const ListActiveInstancesByServiceId = async (serviceId) => {
         const items = await InstanceModel.findAll({
             where: {
@@ -300,6 +311,7 @@ const CreateMyWorkspaceDomainService = ({
         GetServiceById,
         ListImageBuildHistory,
         ListInstancesByServiceId,
+        ListContainersByServiceId,
         ListActiveInstancesByServiceId,
         GetLastInstanceByServiceId,
         GetContainerInfoByInstanceId,

@@ -435,6 +435,7 @@ const MyServicesManager = (params) => {
         GetServiceData,
         ListImageBuildHistory: MyWorkspaceDomainService.ListImageBuildHistory,
         ListInstancesByServiceId: MyWorkspaceDomainService.ListInstancesByServiceId,
+        ListContainersByServiceId: MyWorkspaceDomainService.ListContainersByServiceId,
         GetMetadataByPackageId,
         GetServiceStatus,
         GetNetworksSettings,
