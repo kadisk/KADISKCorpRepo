@@ -5,6 +5,8 @@ import { bindActionCreators } from "redux"
 
 import GetAPI from "../../Utils/GetAPI"
 
+import useWebSocket from "../../Hooks/useWebSocket"
+
 const INITIAL_PROVISIONED_SERVICE = {
 	serviceName: "",
 	repositoryNamespace: "",
@@ -17,8 +19,10 @@ const ServiceSettingsPanelContainer = ({
 	serviceId
 }) => {
 
-	const [provisionedService, setProvisionedService] = useState(INITIAL_PROVISIONED_SERVICE)	
-	const [instances, setInstance] = useState([])
+	const [ provisionedService, setProvisionedService ] = useState(INITIAL_PROVISIONED_SERVICE)	
+	const [ instances, setInstance ] = useState([])
+	const [ containers, setContainers ] = useState([])
+	const [ serviceStatus, setServiceStatus ] = useState("")
 
 	const {
 		serviceName,
@@ -30,17 +34,37 @@ const ServiceSettingsPanelContainer = ({
 	useEffect(() => {
 		fetchServiceData()
 		fetchInstances()
+		fetchContainers()
+		fetchServiceStatus()
 	}, [])
 
-	const getMyServicesManagerAPI = () =>
+	const _MyServicesAPI = () =>
 		GetAPI({
 			apiName: "MyServicesManager",
 			serverManagerInformation: HTTPServerManager
 		})
 
 
+	const updateServiceStatus = ({serviceId, status}) => {
+		if (serviceId !== serviceId) return
+		setServiceStatus(status)
+    }
+
+    useWebSocket({
+		socket          : _MyServicesAPI().ServicesStatusChange,
+		onMessage       : updateServiceStatus,
+		onConnection    : () => {},
+		onDisconnection : () => {}
+	})
+
+	const fetchServiceStatus = async () => {
+		const api = _MyServicesAPI()
+		const response = await api.GetServiceStatus({ serviceId })
+		setServiceStatus(response.data)
+	}
+
 	const fetchServiceData = async () => {
-		const api = getMyServicesManagerAPI()
+		const api = _MyServicesAPI()
 		const response = await api.GetServiceData({ serviceId })
 
 		setProvisionedService(response.data)
@@ -48,9 +72,16 @@ const ServiceSettingsPanelContainer = ({
 
 	const fetchInstances = async () => {
 		setInstance([])
-		const api = getMyServicesManagerAPI()
-		const response = await api.GetInstances({ serviceId })
+		const api = _MyServicesAPI()
+		const response = await api.ListInstances({ serviceId })
 		setInstance(response.data)
+	}
+
+	const fetchContainers = async () => {
+		setContainers([])
+		const api = _MyServicesAPI()
+		const response = await api.ListContainers({ serviceId })
+		setContainers(response.data)
 	}
 
 	return <>
@@ -62,7 +93,7 @@ const ServiceSettingsPanelContainer = ({
 						<h2 className="page-title">{serviceName}</h2>
 						<div className="text-secondary">
 							<ul className="list-inline list-inline-dots mb-0">
-								<li className="list-inline-item"><span className="text-green">{"LOADING".toUpperCase()}</span></li>
+								<li className="list-inline-item"><span className="text-green">{serviceStatus.toUpperCase()}</span></li>
 								<li className="list-inline-item">{repositoryNamespace}/{packageName}/{packageType}</li>
 							</ul>
 						</div>
@@ -71,16 +102,16 @@ const ServiceSettingsPanelContainer = ({
 				<div className="row row-cards mt-2">
 					<div className="col-12">
 						<div className="card">
-							<div className="card-header">
+							<div className="card-header p-2">
 								<div className="subheader">Instances</div>
 							</div>
 							<div className="card-body p-0">
-								<div className="card-table table-responsive">
+								<div className="card-table table-responsive table-vcenter">
 									<table className="table">
 										<thead>
 											<tr>
+												<th>Status</th>
 												<th>ID</th>
-												<th>Created At</th>
 												<th>Network Mode</th>
 												<th>Ports</th>
 												<th>Startup Params</th>
@@ -94,11 +125,58 @@ const ServiceSettingsPanelContainer = ({
 											) : (
 												instances.map((item: any) => (
 													<tr key={item.id}>
+														<td>
+															<span className="status status-green">
+																<span className="status-dot status-dot-animated"></span>
+																RUNNING
+															</span>
+														</td>
 														<td>{item.id}</td>
-														<td>{new Date(item.createdAt).toLocaleString()}</td>
 														<td>{item.networkmode}</td>
 														<td>{JSON.stringify(item.ports, null, 2)}</td>
 														<td>{JSON.stringify(item.startupParams, null, 2)}</td>
+													</tr>
+												))
+											)}
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="row row-cards mt-2">
+					<div className="col-12">
+						<div className="card">
+							<div className="card-header p-2">
+								<div className="subheader">Containers</div>
+							</div>
+							<div className="card-body p-0">
+								<div className="card-table table-responsive table-vcenter">
+									<table className="table">
+										<thead>
+											<tr>
+												<th>Status</th>
+												<th>ID</th>
+												<th>Container Name</th>
+											</tr>
+										</thead>
+										<tbody>
+											{containers.length === 0 ? (
+												<tr>
+													<td colSpan={3} className="text-center">No containers found.</td>
+												</tr>
+											) : (
+												containers.map((item: any) => (
+													<tr key={item.id}>
+														<td>
+															<span className="status status-green">
+																<span className="status-dot status-dot-animated"></span>
+																RUNNING
+															</span>
+														</td>
+														<td>{item.id}</td>
+														<td>{item.containerName}</td>
 													</tr>
 												))
 											)}
