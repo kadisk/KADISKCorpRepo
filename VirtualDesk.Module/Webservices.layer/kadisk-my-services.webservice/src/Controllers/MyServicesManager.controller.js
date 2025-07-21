@@ -89,7 +89,7 @@ const MyServicesManagerController = (params) => {
 
     const ListInstances = (serviceId, { authenticationData }) => {
         //const { userId } = authenticationData
-        return myServicesManagerService.ListInstancesByServiceId(serviceId)
+        return myServicesManagerService.ListInstances(serviceId)
     }
 
     const ListContainers = (serviceId, { authenticationData }) => {

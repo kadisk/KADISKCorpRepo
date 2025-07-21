@@ -171,8 +171,8 @@ const MyServicesManager = (params) => {
     }
 
     const InitializeAllServiceStateManagement = async  () => {
-        const servicesData = await MyWorkspaceDomainService.ListServices()
-        servicesData.forEach(serviceData => {
+        const serviceDataList = await MyWorkspaceDomainService.ListServices()
+        serviceDataList.forEach(serviceData => {
             AddServiceInStateManagement(serviceData.id)
         })
     }
@@ -423,6 +423,11 @@ const MyServicesManager = (params) => {
         
     }
 
+    const ListInstances = async (serviceId) => {
+        return await ServiceRuntimeStateManager.ListInstances(serviceId)
+    }
+
+
     _Start()
 
     return {
@@ -434,7 +439,7 @@ const MyServicesManager = (params) => {
         ListProvisionedServices,
         GetServiceData,
         ListImageBuildHistory: MyWorkspaceDomainService.ListImageBuildHistory,
-        ListInstancesByServiceId: MyWorkspaceDomainService.ListInstancesByServiceId,
+        ListInstances,
         ListContainersByServiceId: MyWorkspaceDomainService.ListContainersByServiceId,
         GetMetadataByPackageId,
         GetServiceStatus,

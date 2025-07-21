@@ -14,7 +14,6 @@ const CreateStateManager = () => {
             group,
             key,
             status      : defaultStatus,
-            dynamicData : {},
             data        : {},
             error       : undefined
         }
@@ -22,21 +21,21 @@ const CreateStateManager = () => {
     }
 
     const GetState = (group, key) => {
-        const state = stateList.find(s => s.group === group && s.key === key)
+        const state = stateList.find(s => s.group === group && s.key == key)
         return state
     }
 
     const FindState = (group, property, value) => {
         const state = stateList.find(s => s.group === group && s.data[property] === value)
-        if (!state) {
-            throw new Error(`State with group ${group}, key ${key} and property ${property} with value ${value} does not exist`)
-        }
         return state
     }
 
     const FindData = (group, property, value) => {
         const state = FindState(group, property, value)
-        return state.data
+
+        if (state?.data) {
+            return state.data
+        }
     }
 
     const ChangeStatus = (group, key, newStatus) => {
@@ -65,23 +64,38 @@ const CreateStateManager = () => {
         state.data = { ...state.data, ...data }
     }
 
-    const FindKey = (group, property, value) => {
-        const state = stateList.find(s => s.group === group && s.data[property] === value)
+    const FindKeyByPropertyData = (group, property, value) => {
+        const state = ListStates(group)?.find(s => s.data[property] === value)
         if (!state) {
             throw new Error(`State with group ${group} and property ${property} with value ${value} does not exist`)
         }
         return state.key
     }
 
+    const ListStates = (group) => {
+        return stateList.filter(s => s.group === group)
+    }
+
+    const ListStatesByPropertyData = (group, property, value) => {
+        const stateList =  ListStates(group)
+        const list = stateList.filter(s => s.data[property] == value)
+        if (!list) {
+            return []
+        }
+        return list
+    }
+
     return {
         CreateNewState,
         ChangeStatus,
         GetState,
+        ListStates,
+        ListStatesByPropertyData,
         FindData,
         onChangeStatus,
         SetData,
         UpdateData,
-        FindKey
+        FindKeyByPropertyData
     }
 }
 
