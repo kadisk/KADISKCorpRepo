@@ -7,6 +7,25 @@ import GetAPI from "../../Utils/GetAPI"
 
 import useWebSocket from "../../Hooks/useWebSocket"
 
+const GetColorByStatus = (status: string) => {
+    switch (status) {
+        case "RUNNING":
+            return "green"
+        case "STARTING":
+            return "cyan"
+        case "FAILURE":
+            return "red"
+        case "TERMINATED":
+        case "STOPPED":
+			return "gray"
+		case "WAITING":
+		case "LOADING":
+            return "yellow"
+        default:
+            return "orange"
+    }
+}
+
 const INITIAL_PROVISIONED_SERVICE = {
 	serviceName: "",
 	repositoryNamespace: "",
@@ -93,7 +112,7 @@ const ServiceSettingsPanelContainer = ({
 						<h2 className="page-title">{serviceName}</h2>
 						<div className="text-secondary">
 							<ul className="list-inline list-inline-dots mb-0">
-								<li className="list-inline-item"><span className="text-green">{serviceStatus.toUpperCase()}</span></li>
+								<li className="list-inline-item"><span className={`text-${GetColorByStatus(serviceStatus.toUpperCase())}`}>{serviceStatus.toUpperCase()}</span></li>
 								<li className="list-inline-item">{repositoryNamespace}/{packageName}/{packageType}</li>
 							</ul>
 						</div>
@@ -126,12 +145,12 @@ const ServiceSettingsPanelContainer = ({
 												instances.map((item: any) => (
 													<tr key={item.id}>
 														<td>
-															<span className="status status-green">
+															<span className={`status status-${GetColorByStatus(item.status)}`}>
 																<span className="status-dot status-dot-animated"></span>
-																RUNNING
+																{item.status}
 															</span>
 														</td>
-														<td>{item.id}</td>
+														<td>{item.instanceId}</td>
 														<td>{item.networkmode}</td>
 														<td>{JSON.stringify(item.ports, null, 2)}</td>
 														<td>{JSON.stringify(item.startupParams, null, 2)}</td>
@@ -170,9 +189,9 @@ const ServiceSettingsPanelContainer = ({
 												containers.map((item: any) => (
 													<tr key={item.id}>
 														<td>
-															<span className="status status-green">
+															<span className={`status status-${GetColorByStatus(item.status)}`}>
 																<span className="status-dot status-dot-animated"></span>
-																RUNNING
+																{item.status}
 															</span>
 														</td>
 														<td>{item.id}</td>

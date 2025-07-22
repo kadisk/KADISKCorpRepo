@@ -84,7 +84,9 @@ const MyServicesManager = (params) => {
         NotifyContainerActivity,
         StartService,
         StopService,
-        NotifyInstanceSwap
+        NotifyInstanceSwap,
+        ListInstances,
+        ListContainers
     } = ServiceRuntimeStateManager
 
 
@@ -423,11 +425,6 @@ const MyServicesManager = (params) => {
         
     }
 
-    const ListInstances = async (serviceId) => {
-        return await ServiceRuntimeStateManager.ListInstances(serviceId)
-    }
-
-
     _Start()
 
     return {
@@ -440,7 +437,7 @@ const MyServicesManager = (params) => {
         GetServiceData,
         ListImageBuildHistory: MyWorkspaceDomainService.ListImageBuildHistory,
         ListInstances,
-        ListContainersByServiceId: MyWorkspaceDomainService.ListContainersByServiceId,
+        ListContainers,
         GetMetadataByPackageId,
         GetServiceStatus,
         GetNetworksSettings,

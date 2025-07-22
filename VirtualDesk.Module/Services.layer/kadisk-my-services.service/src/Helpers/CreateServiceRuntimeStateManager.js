@@ -75,7 +75,8 @@ const CreateServiceRuntimeStateManager = () => {
     }
 
     const _ProcessInstanceStatusChange = (instanceId) => {
-        const { status, serviceId } = GetState(INSTANCE_STATE_GROUP, instanceId)
+        const { status, data } = GetState(INSTANCE_STATE_GROUP, instanceId)
+        const { serviceId } = data
         switch (status) {
             case WAITING:
                 _RequestData(RequestTypes.CONTAINER_DATA, { serviceId, instanceId })
@@ -283,10 +284,21 @@ const CreateServiceRuntimeStateManager = () => {
     }
 
     const ListInstances = async (serviceId) => {
-
         const stateList = ListStatesByPropertyData(INSTANCE_STATE_GROUP, "serviceId", serviceId)
-        return stateList
+        const instanceDataList = stateList.map(state => {
+            const { key: instanceId, status, data } = state
+            return { instanceId, status:status.description, ...data }
+        })
+        return instanceDataList
+    }
 
+    const ListContainers = async (serviceId) => {
+        const stateList = ListStatesByPropertyData(CONTAINER_STATE_GROUP, "serviceId", serviceId)
+        const containerDataList = stateList.map(state => {
+            const { key: containerId, status, data } = state
+            return {containerId, status:status.description,...data}
+        })
+        return containerDataList
     }
 
     return {
@@ -299,7 +311,8 @@ const CreateServiceRuntimeStateManager = () => {
         StartService,
         StopService,
         GetNetworksSettings,
-        ListInstances
+        ListInstances,
+        ListContainers
     }
 }
 
