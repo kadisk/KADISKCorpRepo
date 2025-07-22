@@ -3,9 +3,11 @@ import { useEffect, useState, useRef } from "react"
 
 const useWebSocket = ({
 	socket:_socket,
+	socketParams=undefined,
 	onMessage,
 	onConnection,
-	onDisconnection
+	onDisconnection,
+	autoConnect=true
 }) => {
 
     const [ socket, setSocket ] = useState<any>()
@@ -13,12 +15,14 @@ const useWebSocket = ({
 	const reconnectInterval = useRef<number | null>(null)
 
     useEffect(() => {
-		connectToSocket()
-		return () => {
-            if (reconnectInterval.current) {
-                clearInterval(reconnectInterval.current)
-            }
-        }
+		if(autoConnect){
+			connectToSocket()
+			return () => {
+				if (reconnectInterval.current) {
+					clearInterval(reconnectInterval.current)
+				}
+			}
+		}
 	}, [])
 
     useEffect(() => {
@@ -46,8 +50,13 @@ const useWebSocket = ({
 		socket.onclose = (event:any) => handleTaskListSocketDisconnection()
 	}
 
-    const connectToSocket = () => {
-		setSocket(_socket())
+    const connectToSocket = (params=undefined) => {
+		if (params)
+			setSocket(_socket(params))
+		else if(socketParams)
+			setSocket(_socket(socketParams))
+		else 
+			setSocket(_socket())
 	}
 
     const handleTaskListSocketConnection = () => {
@@ -63,6 +72,11 @@ const useWebSocket = ({
 		changeStatusConnection(false)
 		setSocket(undefined)
 		onDisconnection()
+	}
+
+	return {
+		connect: connectToSocket,
+		isConneted: () => statusConnection
 	}
 
 }
