@@ -297,13 +297,26 @@ const CreateServiceRuntimeStateManager = () => {
         return containerDataList
     }
 
-
     const onChangeContainerListData = (serviceId, f) => {
-        onChangeStatus(CONTAINER_STATE_GROUP, async ({ key: serviceId }) => {
-            const containerList = await ListContainers(serviceId)
-            f(containerList)
+        onChangeStatus(CONTAINER_STATE_GROUP, async ({ key }) => {
+            const { data } = GetState(CONTAINER_STATE_GROUP, key)
+            if(data.serviceId == serviceId){
+                const containerList = await ListContainers(serviceId)
+                f(containerList)
+            }
         })
     }
+
+    const onChangeInstanceListData = (serviceId, f) => {
+        onChangeStatus(INSTANCE_STATE_GROUP, async ({ key }) => {
+            const { data } = GetState(INSTANCE_STATE_GROUP, key)
+            if(data.serviceId == serviceId){
+                const instanceList = await ListInstances(serviceId)
+                f(instanceList)
+            }
+        })
+    }
+
 
     return {
         AddServiceInStateManagement,
@@ -317,7 +330,8 @@ const CreateServiceRuntimeStateManager = () => {
         GetNetworksSettings,
         ListInstances,
         ListContainers,
-        onChangeContainerListData
+        onChangeContainerListData,
+        onChangeInstanceListData
     }
 }
 

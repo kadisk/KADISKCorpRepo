@@ -146,10 +146,10 @@ const MyServicesManagerController = (params) => {
     const InstanceListChange = async (websocket, serviceId, { authenticationData }) => {
         //const { userId } = authenticationData
 
-        /*myServicesManagerService
-            .onChangeServiceStatus(({ serviceId, status }) => {
-                websocket.send(JSON.stringify({ serviceId, status }))
-            })*/
+        myServicesManagerService
+            .onChangeInstanceListData(serviceId, (instanceList) => {
+                websocket.send(JSON.stringify(instanceList))
+            })
 
     }
 

@@ -87,7 +87,8 @@ const MyServicesManager = (params) => {
         NotifyInstanceSwap,
         ListInstances,
         ListContainers,
-        onChangeContainerListData
+        onChangeContainerListData,
+        onChangeInstanceListData
     } = ServiceRuntimeStateManager
 
 
@@ -438,6 +439,7 @@ const MyServicesManager = (params) => {
         ListInstances,
         ListContainers,
         onChangeContainerListData,
+        onChangeInstanceListData,
         GetMetadataByPackageId,
         GetServiceStatus,
         GetNetworksSettings,
