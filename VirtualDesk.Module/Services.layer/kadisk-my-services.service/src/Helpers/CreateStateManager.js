@@ -65,9 +65,9 @@ const CreateStateManager = () => {
     }
 
     const FindKeyByPropertyData = (group, property, value) => {
-        const state = ListStates(group)?.find(s => s.data[property] === value)
+        const state = ListStates(group)?.find(s => s.data[property] == value)
         if (!state) {
-            throw new Error(`State with group ${group} and property ${property} with value ${value} does not exist`)
+            throw new Error(`State with group ${group.description} and property ${property} with value ${value} does not exist`)
         }
         return state.key
     }
@@ -85,6 +85,14 @@ const CreateStateManager = () => {
         return list
     }
 
+    const GetDataByKey = (group, key) => {
+        const state = GetState(group, key)
+        if (!state) {
+            return undefined
+        }
+        return state.data
+    }
+
     return {
         CreateNewState,
         ChangeStatus,
@@ -92,6 +100,7 @@ const CreateStateManager = () => {
         ListStates,
         ListStatesByPropertyData,
         FindData,
+        GetDataByKey,
         onChangeStatus,
         SetData,
         UpdateData,

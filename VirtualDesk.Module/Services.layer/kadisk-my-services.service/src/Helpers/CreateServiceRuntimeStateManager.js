@@ -16,24 +16,22 @@ const LifecycleStatusOptions = Object.freeze({
 })
 
 const {
-        WAITING,
-        LOADING,
-        STARTING,
-        STOPPING,
-        STOPPED,
-        RUNNING,
-        FAILURE,
-        TERMINATED,
-        UNKNOWN
-    } = LifecycleStatusOptions
-
+    WAITING,
+    LOADING,
+    STARTING,
+    STOPPING,
+    STOPPED,
+    RUNNING,
+    FAILURE,
+    TERMINATED,
+    UNKNOWN
+} = LifecycleStatusOptions
 
 const RequestTypes  = require("./Request.types")
 
 const SERVICE_STATE_GROUP = Symbol("SERVICE_STATE_GROUP")
 const INSTANCE_STATE_GROUP = Symbol("INSTANCE_STATE_GROUP")
 const CONTAINER_STATE_GROUP = Symbol("CONTAINER_STATE_GROUP")
-
 
 const CreateServiceRuntimeStateManager = () => {
 
@@ -46,14 +44,13 @@ const CreateServiceRuntimeStateManager = () => {
         onChangeStatus,
         SetData,
         UpdateData,
-        FindKeyByPropertyData
+        FindKeyByPropertyData,
+        GetDataByKey
     } = CreateStateManager()
 
     const eventEmitter = new EventEmitter()
 
-    //const STATUS_CHANGE_EVENT       = Symbol()
-    //const DYNAMIC_DATA_CHANGE_EVENT = Symbol()
-    const REQUEST_EVENT             = Symbol()
+    const REQUEST_EVENT = Symbol()
 
     const _ValidateServiceDoesNotExist = (serviceId) => {
         if (GetState(SERVICE_STATE_GROUP, serviceId))
@@ -86,9 +83,26 @@ const CreateServiceRuntimeStateManager = () => {
         }
     }
 
-    onChangeStatus(SERVICE_STATE_GROUP, ({ key: serviceId }) => _ProcessServiceStatusChange(serviceId))
+    const _ProcessContainerStatusChange = (containerId) => {
+        const { status, data } = GetState(CONTAINER_STATE_GROUP, containerId)
+        switch (status) {
+            case WAITING:
+            case STARTING:
+                _RequestData(RequestTypes.CONTAINER_INSPECTION_DATA, { 
+                        serviceId: data.serviceId,
+                        instanceId: data.instanceId,
+                        containerId,
+                        containerName: data.containerName
+                    })
+                break
+            default:
+                console.warn(`Container ${containerId} has an unknown status: ${status.description}`)
+        }
+    }
 
-    onChangeStatus(INSTANCE_STATE_GROUP, ({ key: instanceId }) => _ProcessInstanceStatusChange(instanceId))
+    onChangeStatus(SERVICE_STATE_GROUP,   ({ key: serviceId })   => _ProcessServiceStatusChange(serviceId))
+    onChangeStatus(INSTANCE_STATE_GROUP,  ({ key: instanceId })  => _ProcessInstanceStatusChange(instanceId))
+    onChangeStatus(CONTAINER_STATE_GROUP, ({ key: containerId }) => _ProcessContainerStatusChange(containerId))
 
     const _CreateNewState = (group, key, data) => {
         CreateNewState(group, key)
@@ -101,42 +115,30 @@ const CreateServiceRuntimeStateManager = () => {
         _CreateNewState(INSTANCE_STATE_GROUP, instanceId, {serviceId, startupParams, ports, networkmode})
     }
 
-    const CreateNewContainerState = (serviceId, { containerId, containerName  }) => {
-        _CreateNewState(CONTAINER_STATE_GROUP, containerId, { serviceId, containerName })
+    const CreateNewContainerState = (containerId, { instanceId, serviceId, containerName  }) => {
+        _CreateNewState(CONTAINER_STATE_GROUP, containerId, { instanceId, serviceId, containerName })
     }
 
-    const _FindContainerIdByHash = (containerHashId) => 
-        FindKeyByPropertyData(CONTAINER_STATE_GROUP, "Id", containerHashId)
-
-    const _ProcessInspectionData = ({ containerId, inspectionData }) => {
+    const _ReceiveInspectionData = ({ containerId, inspectionData }) => {
         if(inspectionData){
             const { Id, State, NetworkSettings } = inspectionData
             UpdateData(CONTAINER_STATE_GROUP, containerId, { Id, State, NetworkSettings })
+            _ReconcileContainerStatus(containerId)
         } else 
             ChangeStatus(CONTAINER_STATE_GROUP, containerId, TERMINATED)
     }
 
-    /*
-    const _ReconcileServiceStatus = (serviceId) => {
-        const containerData = _GetDynamicData(serviceId, "containerData")
-
+    const _ReconcileContainerStatus = (containerId) => {
+        const containerData = GetDataByKey(CONTAINER_STATE_GROUP, containerId)
         const { State } = containerData
-
-        if(State.Running){
-            _ChangeStatus(serviceId, RUNNING)
+        if (State.Running) {
+            ChangeStatus(CONTAINER_STATE_GROUP, containerId, RUNNING)
+        } else if (State.Status === "exited") {
+            ChangeStatus(CONTAINER_STATE_GROUP, containerId, STOPPED)
         } else {
-            _ChangeStatus(serviceId, STOPPED)
+            ChangeStatus(CONTAINER_STATE_GROUP, containerId, TERMINATED)
         }
     }
-
-    const _ProcessDynamicDataChange = (serviceId, property) => {
-        if(property === "containerData"){
-            _ReconcileServiceStatus(serviceId)
-        }
-    }
-
-    eventEmitter.on(DYNAMIC_DATA_CHANGE_EVENT, ({ serviceId, property })=> _ProcessDynamicDataChange(serviceId, property))
-    */
 
     const AddServiceInStateManagement = (serviceId) => {
         _ValidateServiceDoesNotExist()
@@ -173,18 +175,12 @@ const CreateServiceRuntimeStateManager = () => {
                     ChangeStatus(INSTANCE_STATE_GROUP, requestData.instanceId, LOADING)
                     const containerData = await onRequestData(requestType, { instanceId: requestData.instanceId }) 
                     const { id:containerId, containerName  } = containerData
-                    CreateNewContainerState(requestData.serviceId, { containerId, containerName  })
-                    _RequestData(RequestTypes.CONTAINER_INSPECTION_DATA, { 
-                        serviceId: requestData.serviceId,
-                        instanceId: requestData.instanceId,
-                        containerId,
-                        containerName 
-                    })
+                    CreateNewContainerState(containerId, { instanceId: requestData.instanceId, serviceId:requestData.serviceId, containerName  })
                     break
                 case RequestTypes.CONTAINER_INSPECTION_DATA:
                     ChangeStatus(INSTANCE_STATE_GROUP, requestData.instanceId, LOADING)
                     const inspectionData = await onRequestData(requestType, { containerName: requestData.containerName })
-                    _ProcessInspectionData({ containerId: requestData.containerId, inspectionData })
+                    _ReceiveInspectionData({ containerId: requestData.containerId, inspectionData })
                     break
                 case RequestTypes.START_CONTAINER:
                 case RequestTypes.STOP_CONTAINER:
@@ -201,14 +197,14 @@ const CreateServiceRuntimeStateManager = () => {
         onChangeStatus(SERVICE_STATE_GROUP, ({ key: serviceId }) => f({serviceId, status: GetServiceStatus(serviceId)}))
     }
 
-    const _ChangeContainerStatus = (containerHashId, newStatus) => {
-        const containerId = _FindContainerIdByHash(containerHashId)
+    const _ChangeContainerStatusByHash = (containerHashId, newStatus) => {
+        const containerId = FindKeyByPropertyData(CONTAINER_STATE_GROUP, "Id", containerHashId)
         ChangeStatus(CONTAINER_STATE_GROUP, containerId, newStatus)
     }
 
-    const _NotifyStoppingContainer = (containerHashId) => _ChangeContainerStatus(containerHashId, STOPPING)
-    const _NotifyDieContainer      = (containerHashId) => _ChangeContainerStatus(containerHashId, STOPPED)
-    const _NotifyStartingContainer = (containerHashId) => _ChangeContainerStatus(containerHashId, STARTING)
+    const _NotifyStoppingContainer = (containerHashId) => _ChangeContainerStatusByHash(containerHashId, STOPPING)
+    const _NotifyDieContainer      = (containerHashId) => _ChangeContainerStatusByHash(containerHashId, STOPPED)
+    const _NotifyStartingContainer = (containerHashId) => _ChangeContainerStatusByHash(containerHashId, STARTING)
 
     const NotifyInstanceSwap = ({
         serviceId,

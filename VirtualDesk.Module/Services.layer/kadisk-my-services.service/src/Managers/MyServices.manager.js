@@ -174,9 +174,7 @@ const MyServicesManager = (params) => {
 
     const InitializeAllServiceStateManagement = async  () => {
         const serviceDataList = await MyWorkspaceDomainService.ListServices()
-        serviceDataList.forEach(serviceData => {
-            AddServiceInStateManagement(serviceData.id)
-        })
+        serviceDataList.forEach(serviceData => AddServiceInStateManagement(serviceData.id))
     }
 
     const SaveUploadedRepository = async ({ repositoryNamespace, userId, username , repositoryFilePath }) => {
