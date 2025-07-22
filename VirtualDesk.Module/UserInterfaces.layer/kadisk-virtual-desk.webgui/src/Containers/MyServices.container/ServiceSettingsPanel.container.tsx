@@ -27,10 +27,14 @@ const GetColorByStatus = (status: string) => {
 }
 
 const INITIAL_PROVISIONED_SERVICE = {
-	serviceName: "",
-	repositoryNamespace: "",
-	packageName: "",
-	packageType: ""
+    "serviceId": undefined,
+    "serviceName": "",
+    "serviceDescription": "",
+    "repositoryId": undefined,
+    "repositoryNamespace": "",
+    "packageId": undefined,
+    "packageName": "",
+    "packageType": ""
 }
 
 const ServiceSettingsPanelContainer = ({
@@ -38,7 +42,7 @@ const ServiceSettingsPanelContainer = ({
 	serviceId
 }) => {
 
-	const [ provisionedService, setProvisionedService ] = useState(INITIAL_PROVISIONED_SERVICE)	
+	const [ serviceData, setServiceData ] = useState(INITIAL_PROVISIONED_SERVICE)	
 	const [ instances, setInstance ] = useState([])
 	const [ containers, setContainers ] = useState([])
 	const [ serviceStatus, setServiceStatus ] = useState("")
@@ -48,7 +52,7 @@ const ServiceSettingsPanelContainer = ({
 		repositoryNamespace,
 		packageName,
 		packageType
-	} = provisionedService
+	} = serviceData
 
 	useEffect(() => {
 		fetchServiceData()
@@ -76,6 +80,20 @@ const ServiceSettingsPanelContainer = ({
 		onDisconnection : () => {}
 	})
 
+	const containerListSocketHandler = useWebSocket({
+		socket          : _MyServicesAPI().ContainerListChange,
+		onMessage       : (containers) => setContainers(containers),
+		onConnection    : () => {},
+		onDisconnection : () => {},
+		autoConnect     : false    
+	})
+
+	useEffect(() => {
+		if(serviceData.serviceId && !containerListSocketHandler.isConneted()){
+			containerListSocketHandler.connect({ serviceId: serviceData.serviceId })
+		}
+	}, [serviceData.serviceId])
+
 	const fetchServiceStatus = async () => {
 		const api = _MyServicesAPI()
 		const response = await api.GetServiceStatus({ serviceId })
@@ -86,7 +104,7 @@ const ServiceSettingsPanelContainer = ({
 		const api = _MyServicesAPI()
 		const response = await api.GetServiceData({ serviceId })
 
-		setProvisionedService(response.data)
+		setServiceData(response.data)
 	}
 
 	const fetchInstances = async () => {

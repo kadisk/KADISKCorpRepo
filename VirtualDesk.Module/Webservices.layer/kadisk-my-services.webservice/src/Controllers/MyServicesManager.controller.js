@@ -143,6 +143,26 @@ const MyServicesManagerController = (params) => {
         await myServicesManagerService.UpdateServicePorts({ serviceId, username, userId, ports })
     }
 
+    const InstanceListChange = async (websocket, serviceId, { authenticationData }) => {
+        //const { userId } = authenticationData
+
+        /*myServicesManagerService
+            .onChangeServiceStatus(({ serviceId, status }) => {
+                websocket.send(JSON.stringify({ serviceId, status }))
+            })*/
+
+    }
+
+    const ContainerListChange = async (websocket, serviceId, { authenticationData }) => {
+        //const { userId } = authenticationData
+
+        myServicesManagerService
+            .onChangeContainerListData(serviceId, (containerList) => {
+                websocket.send(JSON.stringify(containerList))
+            })
+
+    }
+
     const controllerServiceObject = {
         controllerName: "MyServicesManagerController",
         GetMyServicesStatus,
@@ -154,6 +174,8 @@ const MyServicesManagerController = (params) => {
         ListInstances,
         ListContainers,
         ServicesStatusChange,
+        InstanceListChange,
+        ContainerListChange,
         GetServiceStatus,
         StartService,
         StopService,

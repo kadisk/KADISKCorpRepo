@@ -72,13 +72,39 @@
 			]
 		},
 		{
-			"path": "/service/continers",
+			"path": "/service/containers",
 			"method": "GET",
 			"summary": "ListContainers",
 			"parameters": [
 				{
 					"name": "serviceId",
 					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/instance-list/:serviceId",
+			"method": "WS",
+			"summary": "InstanceListChange",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "path",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/container-list/:serviceId",
+			"method": "WS",
+			"summary": "ContainerListChange",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "path",
 					"type": "string",
 					"required": true
 				}

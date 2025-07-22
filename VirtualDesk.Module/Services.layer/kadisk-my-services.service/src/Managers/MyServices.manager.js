@@ -86,7 +86,8 @@ const MyServicesManager = (params) => {
         StopService,
         NotifyInstanceSwap,
         ListInstances,
-        ListContainers
+        ListContainers,
+        onChangeContainerListData
     } = ServiceRuntimeStateManager
 
 
@@ -436,6 +437,7 @@ const MyServicesManager = (params) => {
         ListImageBuildHistory: MyWorkspaceDomainService.ListImageBuildHistory,
         ListInstances,
         ListContainers,
+        onChangeContainerListData,
         GetMetadataByPackageId,
         GetServiceStatus,
         GetNetworksSettings,

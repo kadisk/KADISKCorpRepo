@@ -297,6 +297,14 @@ const CreateServiceRuntimeStateManager = () => {
         return containerDataList
     }
 
+
+    const onChangeContainerListData = (serviceId, f) => {
+        onChangeStatus(CONTAINER_STATE_GROUP, async ({ key: serviceId }) => {
+            const containerList = await ListContainers(serviceId)
+            f(containerList)
+        })
+    }
+
     return {
         AddServiceInStateManagement,
         GetServiceStatus,
@@ -308,7 +316,8 @@ const CreateServiceRuntimeStateManager = () => {
         StopService,
         GetNetworksSettings,
         ListInstances,
-        ListContainers
+        ListContainers,
+        onChangeContainerListData
     }
 }
 
