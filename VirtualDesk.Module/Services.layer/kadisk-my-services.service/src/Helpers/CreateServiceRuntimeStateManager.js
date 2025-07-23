@@ -78,6 +78,15 @@ const CreateServiceRuntimeStateManager = () => {
             case WAITING:
                 _RequestData(RequestTypes.CONTAINER_DATA, { serviceId, instanceId })
                 break
+            case RUNNING:
+                ChangeStatus(SERVICE_STATE_GROUP, serviceId, RUNNING)
+                break
+            case STOPPING:
+                ChangeStatus(SERVICE_STATE_GROUP, serviceId, STOPPING)
+                break
+            case STOPPED:
+                ChangeStatus(SERVICE_STATE_GROUP, serviceId, STOPPED)
+                break
             default:
                 console.warn(`Instance ${instanceId} has an unknown status: ${status.description}`)
         }
@@ -87,6 +96,13 @@ const CreateServiceRuntimeStateManager = () => {
         const { status, data } = GetState(CONTAINER_STATE_GROUP, containerId)
         switch (status) {
             case WAITING:
+                _RequestData(RequestTypes.CONTAINER_INSPECTION_DATA, { 
+                        serviceId: data.serviceId,
+                        instanceId: data.instanceId,
+                        containerId,
+                        containerName: data.containerName
+                    })
+                break
             case STARTING:
                 _RequestData(RequestTypes.CONTAINER_INSPECTION_DATA, { 
                         serviceId: data.serviceId,
@@ -94,6 +110,15 @@ const CreateServiceRuntimeStateManager = () => {
                         containerId,
                         containerName: data.containerName
                     })
+                break
+            case RUNNING:
+                ChangeStatus(INSTANCE_STATE_GROUP, data.instanceId, RUNNING)
+                break
+            case STOPPING:
+                ChangeStatus(INSTANCE_STATE_GROUP, data.instanceId, STOPPING)
+                break
+            case STOPPED:
+                ChangeStatus(INSTANCE_STATE_GROUP, data.instanceId, STOPPED)
                 break
             default:
                 console.warn(`Container ${containerId} has an unknown status: ${status.description}`)
@@ -262,20 +287,23 @@ const CreateServiceRuntimeStateManager = () => {
 
     const GetNetworksSettings  = async (serviceId) => {
         const data = FindData(CONTAINER_STATE_GROUP, "serviceId", serviceId)
-        const { NetworkSettings } = data
-        const { Ports, Networks } = NetworkSettings
-        
-        return {
-            ports: Ports,
-            networks: Object.keys(Networks)
-                .map(networkName => {
-                    const network = Networks[networkName]
-                    return {
-                        name: networkName,
-                        ipAddress: network.IPAddress,
-                        gateway: network.Gateway
-                    }
-                })
+
+        if(data){
+            const { NetworkSettings } = data
+            const { Ports, Networks } = NetworkSettings
+            
+            return {
+                ports: Ports,
+                networks: Object.keys(Networks)
+                    .map(networkName => {
+                        const network = Networks[networkName]
+                        return {
+                            name: networkName,
+                            ipAddress: network.IPAddress,
+                            gateway: network.Gateway
+                        }
+                    })
+            }
         }
     }
 

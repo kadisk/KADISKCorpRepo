@@ -400,7 +400,8 @@ const MyServicesManager = (params) => {
 
     const GetNetworkModeData = async (serviceId) => {
         const instanceData = await MyWorkspaceDomainService.GetLastInstanceByServiceId(serviceId)
-        return instanceData.networkmode
+        if(instanceData?.networkmode)
+            return instanceData.networkmode
     }
 
     const UpdateServicePorts = async ({ serviceId, username, userId, ports }) => {
