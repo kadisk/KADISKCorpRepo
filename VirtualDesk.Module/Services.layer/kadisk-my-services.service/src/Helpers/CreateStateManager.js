@@ -9,7 +9,7 @@ const CreateStateManager = () => {
 
     const stateList = []
 
-    const CreateNewState = (group, key, defaultStatus) => {
+    const AddNewState = (group, key, defaultStatus) => {
         const newState = {
             group,
             key,
@@ -94,7 +94,7 @@ const CreateStateManager = () => {
     }
 
     return {
-        CreateNewState,
+        AddNewState,
         ChangeStatus,
         GetState,
         ListStates,

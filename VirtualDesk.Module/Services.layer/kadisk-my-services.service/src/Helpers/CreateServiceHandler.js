@@ -40,13 +40,12 @@ const CreateServiceHandler = ({
     }
 
     const CreateService = async ({
-        userId, 
         username,
         packageId,
         serviceName,
         serviceDescription
     }) => {
-        const packageData = await MyWorkspaceDomainService.GetPackageItemById({ id: packageId, userId })
+        const packageData = await MyWorkspaceDomainService.GetPackageById(packageId)
         const { repositoryCodePath } = packageData
 
         const instanceRepositoryCodePath = _MountPathInstanceRepositoriesSourceCodeDirPath({
@@ -95,7 +94,8 @@ const CreateServiceHandler = ({
         repositoryCodePath,
         repositoryNamespace,
         packagePath,
-        instanceData
+        instanceId,
+        startupParams
     }) => {
 
         const buildargs = {
@@ -107,7 +107,7 @@ const CreateServiceHandler = ({
         const contextTarStream = GetContextTarStream({
             repositoryPathForCopy: repositoryCodePath,
             packagePathForCopy: packageAbsolutPath,
-            startupParams: instanceData.startupParams
+            startupParams
         })
         
         const _handleData = chunk => {
@@ -142,7 +142,7 @@ const CreateServiceHandler = ({
 
         const buildData = await MyWorkspaceDomainService
             .RegisterBuildedImage({
-                instanceId: instanceData.id,
+                instanceId,
                 tag: imageTagName,
                 hashId: imageInfo.Id, 
             })

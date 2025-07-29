@@ -36,7 +36,7 @@ const CONTAINER_STATE_GROUP = Symbol("CONTAINER_STATE_GROUP")
 const CreateServiceRuntimeStateManager = () => {
 
     const {
-        CreateNewState,
+        AddNewState,
         ChangeStatus,
         GetState,
         ListStatesByPropertyData,
@@ -129,19 +129,19 @@ const CreateServiceRuntimeStateManager = () => {
     onChangeStatus(INSTANCE_STATE_GROUP,  ({ key: instanceId })  => _ProcessInstanceStatusChange(instanceId))
     onChangeStatus(CONTAINER_STATE_GROUP, ({ key: containerId }) => _ProcessContainerStatusChange(containerId))
 
-    const _CreateNewState = (group, key, data) => {
-        CreateNewState(group, key)
+    const _AddNewState = (group, key, data) => {
+        AddNewState(group, key)
         SetData(group, key, data)
         ChangeStatus(group, key, WAITING)
     }
 
-    const CreateNewInstanceState = (serviceId, instanceInfo) => {
+    const AddNewInstanceState = (serviceId, instanceInfo) => {
         const { instanceId, startupParams, ports, networkmode } = instanceInfo
-        _CreateNewState(INSTANCE_STATE_GROUP, instanceId, {serviceId, startupParams, ports, networkmode})
+        _AddNewState(INSTANCE_STATE_GROUP, instanceId, {serviceId, startupParams, ports, networkmode})
     }
 
-    const CreateNewContainerState = (containerId, { instanceId, serviceId, containerName  }) => {
-        _CreateNewState(CONTAINER_STATE_GROUP, containerId, { instanceId, serviceId, containerName })
+    const AddNewContainerState = (containerId, { instanceId, serviceId, containerName  }) => {
+        _AddNewState(CONTAINER_STATE_GROUP, containerId, { instanceId, serviceId, containerName })
     }
 
     const _ReceiveInspectionData = ({ containerId, inspectionData }) => {
@@ -167,7 +167,7 @@ const CreateServiceRuntimeStateManager = () => {
 
     const AddServiceInStateManagement = (serviceId) => {
         _ValidateServiceDoesNotExist()
-        CreateNewState(SERVICE_STATE_GROUP, serviceId)
+        AddNewState(SERVICE_STATE_GROUP, serviceId)
         ChangeStatus(SERVICE_STATE_GROUP, serviceId, WAITING)
     }
     
@@ -194,13 +194,13 @@ const CreateServiceRuntimeStateManager = () => {
                     ChangeStatus(SERVICE_STATE_GROUP, requestData.serviceId, LOADING)
                     const instanceInfoList = await onRequestData(requestType, { serviceId: requestData.serviceId })
                     instanceInfoList
-                        .forEach((instanceInfo) => CreateNewInstanceState(requestData.serviceId, instanceInfo))
+                        .forEach((instanceInfo) => AddNewInstanceState(requestData.serviceId, instanceInfo))
                     break
                 case RequestTypes.CONTAINER_DATA:
                     ChangeStatus(INSTANCE_STATE_GROUP, requestData.instanceId, LOADING)
                     const containerData = await onRequestData(requestType, { instanceId: requestData.instanceId }) 
                     const { id:containerId, containerName  } = containerData
-                    CreateNewContainerState(containerId, { instanceId: requestData.instanceId, serviceId:requestData.serviceId, containerName  })
+                    AddNewContainerState(containerId, { instanceId: requestData.instanceId, serviceId:requestData.serviceId, containerName  })
                     break
                 case RequestTypes.CONTAINER_INSPECTION_DATA:
                     ChangeStatus(INSTANCE_STATE_GROUP, requestData.instanceId, LOADING)

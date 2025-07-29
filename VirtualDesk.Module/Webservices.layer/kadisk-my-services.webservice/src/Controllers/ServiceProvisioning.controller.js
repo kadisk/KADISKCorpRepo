@@ -21,7 +21,6 @@ const ServiceProvisioningController = (params) => {
         
         await myServicesManagerService
             .ProvisionService({
-                userId, 
                 username,
                 packageId,
                 serviceName,

@@ -85,7 +85,7 @@ const CreateMyWorkspaceDomainService = ({
         return item
     }
 
-    const GetPackageItemById = async ({ id, userId }) => {
+    const GetPackageById = async (id) => {
         const item = await RepositoryItemModel.findOne({
             attributes: {
                 include: [
@@ -95,7 +95,6 @@ const CreateMyWorkspaceDomainService = ({
             },
             include: [{
                 model: RepositoryModel,
-                where: { userId },
                 attributes: []
             }],
             where: {
@@ -156,12 +155,11 @@ const CreateMyWorkspaceDomainService = ({
         return items.map(item => item.get({ plain: true }))
     }
 
-    const GetServiceById = async ({serviceId, userId}) => {
+    const GetServiceById = async (serviceId) => {
         const item = await ServiceModel.findOne({
             include: [
                 {
                     model: RepositoryModel,
-                    where: { userId },
                     attributes: ["id", "namespace"]
                 },
                 {
@@ -304,7 +302,7 @@ const CreateMyWorkspaceDomainService = ({
         ListItemByRepositoryId,
         GetItemById,
         ListPackageItemByUserId,
-        GetPackageItemById,
+        GetPackageById,
         GetPackageItemByPath,
         ListServices,
         ListServicesByUserId,
