@@ -39,7 +39,9 @@ const GetStatusBadgeClasses = (status: string) => {
             return "badge bg-red-lt text-red"
         case "TERMINATED":
         case "STOPPED":
-        case "LOADED":
+            return "badge bg-gray-lt text-gray"
+        case "WAITING":
+		case "LOADING":
             return "badge bg-yellow-lt text-yellow"
         default:
             return "badge bg-orange-lt text-orange"
