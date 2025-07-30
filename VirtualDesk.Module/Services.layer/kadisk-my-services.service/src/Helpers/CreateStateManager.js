@@ -26,7 +26,7 @@ const CreateStateManager = () => {
     }
 
     const FindState = (group, property, value) => {
-        const state = stateList.find(s => s.group === group && s.data[property] === value)
+        const state = stateList.find(s => s.group === group && s.data[property] == value)
         return state
     }
 
