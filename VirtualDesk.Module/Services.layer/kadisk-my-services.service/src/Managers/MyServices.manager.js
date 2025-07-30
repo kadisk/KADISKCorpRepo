@@ -163,7 +163,22 @@ const MyServicesManager = (params) => {
                 case RequestTypes.STOP_CONTAINER:
                     StopContainer(data.containerHashId)
                     break
-                    
+                case RequestTypes.SERVICE_DATA:
+                    const serviceData = await MyWorkspaceDomainService.GetServiceById(data.serviceId)
+                    return serviceData
+                case RequestTypes.CREATE_NEW_CONTAINER:
+                    const containerData = await CreateContainer({
+                        packageId          : data.packageId,
+                        instanceId         : data.instanceId,
+                        serviceId          : data.serviceId,
+                        serviceName        : data.serviceName,
+                        repositoryCodePath : data.repositoryCodePath,
+                        networkmode        : data.networkmode,
+                        ports              : data.ports,
+                        startupParams      : data.startupParams,
+                    })
+                    return containerData
+                    break
                 default:
                     console.warn(`Unknown request type: ${requestType}`)
             }
@@ -276,8 +291,64 @@ const MyServicesManager = (params) => {
         return repositories
     }
 
+    const CreateInstance = ({
+        serviceId,
+        startupParams,
+        ports,
+        networkmode
+    }) => {
+
+        return ServiceHandler
+            .CreateInstance({
+                serviceId,
+                startupParams,
+                ports,
+                networkmode
+            })
+    }
+
+
+    const CreateContainer = async ({
+        packageId,
+        instanceId,
+        serviceId,
+        serviceName,
+        repositoryCodePath,
+        networkmode,
+        ports,
+        startupParams
+    }) => {
+
+        const packageData = await MyWorkspaceDomainService.GetPackageById(packageId)
+
+        const imageTagName = `ecosystem_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}:${serviceName}-${serviceId}`.toLowerCase()
+
+        const buildData = await ServiceHandler
+            .BuildImage({
+                imageTagName,
+                repositoryCodePath,
+                repositoryNamespace: packageData.repositoryNamespace,
+                packagePath: packageData.itemPath,
+                instanceId,
+                startupParams
+            })
+
+        const containerName = `container_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}--${serviceName}--${buildData.id}`
+
+        const containerData = await ServiceHandler
+            .CreateContainer({
+                containerName,
+                instanceId,
+                buildData,
+                ports,
+                networkmode
+            })
+
+        return containerData
+        
+    }
+
     const ProvisionService = async ({
-        userId, 
         username,
         packageId,
         serviceName,
@@ -289,45 +360,19 @@ const MyServicesManager = (params) => {
 
         const serviceData = await ServiceHandler
             .CreateService({
-                userId, 
                 username,
                 packageId,
                 serviceName,
                 serviceDescription
             })
+
+        await CreateInstance({
+            serviceId: serviceData.id,
+            startupParams,
+            ports,
+            networkmode
+        })
         
-        /*const packageData = await MyWorkspaceDomainService.GetPackageItemById({ id: packageId, userId })
-
-        const instanceData = await ServiceHandler
-            .CreateInstance({
-                serviceId: serviceData.id,
-                startupParams,
-                ports,
-                networkmode
-            })
-
-        const imageTagName = `ecosystem_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}:${serviceData.serviceName}-${serviceData.id}`.toLowerCase()
-
-        const buildData = await ServiceHandler
-            .BuildImage({
-                imageTagName,
-                repositoryCodePath: serviceData.instanceRepositoryCodePath,
-                repositoryNamespace: packageData.repositoryNamespace,
-                packagePath: packageData.itemPath,
-                instanceData
-            })
-
-        const containerName = `container_${username}_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}--${serviceData.serviceName}--${buildData.id}`
-
-        await ServiceHandler
-            .CreateContainer({
-                containerName,
-                instanceId: instanceData.id,
-                buildData,
-                ports,
-                networkmode
-            })*/
-
         AddServiceInStateManagement(serviceData.id)
 
     }
@@ -365,9 +410,9 @@ const MyServicesManager = (params) => {
     }
 
 
-    const GetServiceData = async ({ serviceId, userId }) => {
+    const GetServiceData = async (serviceId) => {
             
-        const serviceData = await MyWorkspaceDomainService.GetServiceById({serviceId, userId})
+        const serviceData = await MyWorkspaceDomainService.GetServiceById(serviceId)
         
         const { 
             Repository, 
@@ -404,9 +449,9 @@ const MyServicesManager = (params) => {
             return instanceData.networkmode
     }
 
-    const UpdateServicePorts = async ({ serviceId, username, userId, ports }) => {
+    const UpdateServicePorts = async ({ serviceId, ports }) => {
 
-        const serviceData = await MyWorkspaceDomainService.GetServiceById({ serviceId, userId })
+        const serviceData = await MyWorkspaceDomainService.GetServiceById(serviceId)
         const packageData = await MyWorkspaceDomainService.GetItemById(serviceData.packageId)
         const instanceData = await MyWorkspaceDomainService.GetLastInstanceByServiceId(serviceId)
 

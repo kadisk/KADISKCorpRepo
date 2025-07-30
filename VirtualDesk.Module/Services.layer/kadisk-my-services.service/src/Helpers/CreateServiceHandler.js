@@ -159,7 +159,7 @@ const CreateServiceHandler = ({
         networkmode
     }) => {
 
-        await MyWorkspaceDomainService
+        const containerData = await MyWorkspaceDomainService
             .RegisterContainer({
                 containerName,
                 instanceId,
@@ -167,6 +167,9 @@ const CreateServiceHandler = ({
             })
 
         await _CreateAndStartContainer({ containerName, imageName: buildData.tag, ports, networkmode })
+
+
+        return containerData
     }
 
     return {

@@ -208,8 +208,7 @@ const CreateMyWorkspaceDomainService = ({
             containerName,
             instanceId,
             buildId
-        }) =>
-        ContainerModel
+        }) => ContainerModel
         .create({
             containerName,
             instanceId,

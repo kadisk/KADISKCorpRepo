@@ -79,7 +79,7 @@ const MyServicesManagerController = (params) => {
 
     const GetServiceData = (serviceId, { authenticationData }) => {
         const { userId } = authenticationData
-        return myServicesManagerService.GetServiceData({serviceId, userId})
+        return myServicesManagerService.GetServiceData(serviceId)
     }
 
     const ListImageBuildHistory = (serviceId, { authenticationData }) => {
@@ -140,7 +140,7 @@ const MyServicesManagerController = (params) => {
 
     const UpdateServicePorts = async ({ serviceId, ports }, { authenticationData }) => {
         const { userId, username } = authenticationData 
-        await myServicesManagerService.UpdateServicePorts({ serviceId, username, userId, ports })
+        await myServicesManagerService.UpdateServicePorts({ serviceId, ports })
     }
 
     const InstanceListChange = async (websocket, serviceId, { authenticationData }) => {
