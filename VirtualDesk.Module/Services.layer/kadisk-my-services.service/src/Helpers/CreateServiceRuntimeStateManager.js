@@ -300,7 +300,10 @@ const CreateServiceRuntimeStateManager = () => {
     const NotifyInstanceSwap = ({
         serviceId,
         nextInstanceId
-    }) => {}
+    }) => {
+
+        
+    }
 
     const NotifyContainerActivity = ({ ID, Action, Attributes }) => {
 
@@ -309,7 +312,7 @@ const CreateServiceRuntimeStateManager = () => {
                 _ChangeContainerStatusByHash(ID, STARTING)
                 break
             case "kill":
-                _ChangeContainerStatusByHash(ID, STOPPED)
+                _ChangeContainerStatusByHash(ID, STOPPING)
                 break
             case "stop":
                 break

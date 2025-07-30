@@ -92,7 +92,11 @@ const MyServicesManager = (params) => {
     } = ServiceRuntimeStateManager
 
 
-    const ServiceHandler = CreateServiceHandler({
+    const {
+        BuildImage,
+        CreateContainer,
+        CreateInstance
+    } = CreateServiceHandler({
         absolutInstanceDataDirPath,
         MyWorkspaceDomainService,
         BuildImageFromDockerfileString,
@@ -167,7 +171,7 @@ const MyServicesManager = (params) => {
                     const serviceData = await MyWorkspaceDomainService.GetServiceById(data.serviceId)
                     return serviceData
                 case RequestTypes.CREATE_NEW_CONTAINER:
-                    const containerData = await CreateContainer({
+                    const containerData = await _CreateContainer({
                         packageId          : data.packageId,
                         instanceId         : data.instanceId,
                         serviceId          : data.serviceId,
@@ -291,24 +295,7 @@ const MyServicesManager = (params) => {
         return repositories
     }
 
-    const CreateInstance = ({
-        serviceId,
-        startupParams,
-        ports,
-        networkmode
-    }) => {
-
-        return ServiceHandler
-            .CreateInstance({
-                serviceId,
-                startupParams,
-                ports,
-                networkmode
-            })
-    }
-
-
-    const CreateContainer = async ({
+    const _CreateContainer = async ({
         packageId,
         instanceId,
         serviceId,
@@ -323,8 +310,7 @@ const MyServicesManager = (params) => {
 
         const imageTagName = `ecosystem_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}:${serviceName}-${serviceId}`.toLowerCase()
 
-        const buildData = await ServiceHandler
-            .BuildImage({
+        const buildData = await BuildImage({
                 imageTagName,
                 repositoryCodePath,
                 repositoryNamespace: packageData.repositoryNamespace,
@@ -335,8 +321,7 @@ const MyServicesManager = (params) => {
 
         const containerName = `container_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}--${serviceName}--${buildData.id}`
 
-        const containerData = await ServiceHandler
-            .CreateContainer({
+        const containerData = await CreateContainer({
                 containerName,
                 instanceId,
                 buildData,
@@ -358,20 +343,20 @@ const MyServicesManager = (params) => {
         networkmode= "bridge"
     }) => {
 
-        const serviceData = await ServiceHandler
-            .CreateService({
+        const serviceData = await CreateService({
                 username,
                 packageId,
                 serviceName,
                 serviceDescription
             })
 
+
         await CreateInstance({
-            serviceId: serviceData.id,
-            startupParams,
-            ports,
-            networkmode
-        })
+                serviceId: serviceData.id,
+                startupParams,
+                ports,
+                networkmode
+            })
         
         AddServiceInStateManagement(serviceData.id)
 
@@ -464,10 +449,10 @@ const MyServicesManager = (params) => {
             networkmode: instanceData.networkmode
         })*/
 
-        NotifyInstanceSwap({
+        /*NotifyInstanceSwap({
             serviceId: serviceData.id,
             nextInstanceId: nextInstance.id,
-        })
+        })*/
         
     }
 
