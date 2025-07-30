@@ -67,7 +67,7 @@ const CreateStateManager = () => {
     const FindKeyByPropertyData = (group, property, value) => {
         const state = ListStates(group)?.find(s => s.data[property] == value)
         if (!state) {
-            throw new Error(`State with group ${group.description} and property ${property} with value ${value} does not exist`)
+            return null
         }
         return state.key
     }
