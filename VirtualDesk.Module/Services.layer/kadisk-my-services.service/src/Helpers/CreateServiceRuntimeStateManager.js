@@ -62,9 +62,7 @@ const CreateServiceRuntimeStateManager = () => {
     const _RequestData = (requestType, requestData) => eventEmitter.emit(REQUEST_EVENT, { requestType, ... requestData})
 
     const _ProcessServiceStatusChange = (serviceId) => {
-
         const { status, data } = GetState(SERVICE_STATE_GROUP, serviceId)
-
         switch (status) {
             case CREATED:
                 break
@@ -97,7 +95,6 @@ const CreateServiceRuntimeStateManager = () => {
                     ports              : data.ports,
                     startupParams      : data.startupParams, 
                 })
-
                 break
             case WAITING:
                 _RequestData(RequestTypes.CONTAINER_DATA, { serviceId, instanceId })
@@ -111,6 +108,8 @@ const CreateServiceRuntimeStateManager = () => {
             case STOPPED:
                 ChangeStatus(SERVICE_STATE_GROUP, serviceId, STOPPED)
                 break
+            case TERMINATED:
+                ChangeStatus(SERVICE_STATE_GROUP, serviceId, TERMINATED)
             case LOADING:
                 break
             default:
@@ -145,6 +144,9 @@ const CreateServiceRuntimeStateManager = () => {
                 break
             case STOPPED:
                 ChangeStatus(INSTANCE_STATE_GROUP, data.instanceId, STOPPED)
+                break
+            case TERMINATED:
+                ChangeStatus(INSTANCE_STATE_GROUP, data.instanceId, TERMINATED)
                 break
             default:
                 console.warn(`Container ${containerId} has an unknown status: ${status.description}`)
@@ -291,14 +293,10 @@ const CreateServiceRuntimeStateManager = () => {
     }
 
     const _ChangeContainerStatusByHash = (containerHashId, newStatus) => {
-        /*const containerId = FindKeyByPropertyData(CONTAINER_STATE_GROUP, "Id", containerHashId)
-        ChangeStatus(CONTAINER_STATE_GROUP, containerId, newStatus)*/
+        const containerId = FindKeyByPropertyData(CONTAINER_STATE_GROUP, "Id", containerHashId)
+        ChangeStatus(CONTAINER_STATE_GROUP, containerId, newStatus)
     }
-
-    const _NotifyStoppingContainer = (containerHashId) => _ChangeContainerStatusByHash(containerHashId, STOPPING)
-    const _NotifyDieContainer      = (containerHashId) => _ChangeContainerStatusByHash(containerHashId, STOPPED)
-    const _NotifyStartingContainer = (containerHashId) => _ChangeContainerStatusByHash(containerHashId, STARTING)
-
+    
     const NotifyInstanceSwap = ({
         serviceId,
         nextInstanceId
@@ -308,21 +306,23 @@ const CreateServiceRuntimeStateManager = () => {
 
         switch(Action) {
             case "start":
-                _NotifyStartingContainer(ID)
+                _ChangeContainerStatusByHash(ID, STARTING)
                 break
             case "kill":
-                _NotifyStoppingContainer(ID)
+                _ChangeContainerStatusByHash(ID, STOPPED)
                 break
             case "stop":
                 break
             case "die":
-                _NotifyDieContainer(ID)
+                _ChangeContainerStatusByHash(ID, STOPPED)
+                break
+            case "destroy":
+                _ChangeContainerStatusByHash(ID, TERMINATED)
                 break
             case "attach":
             case "commit":
             case "copy":
             case "create":
-            case "destroy":
             case "detach":
             case "exec_create":
             case "exec_detach":
@@ -340,7 +340,6 @@ const CreateServiceRuntimeStateManager = () => {
             case "update":
             default:
                 console.log({ ID, Action, Attributes })
-                console.log(`NotifyContainerActivity ACTION [${Action}] ID [${ID}]`)
         }
     }
 
@@ -413,7 +412,6 @@ const CreateServiceRuntimeStateManager = () => {
             }
         })
     }
-
 
     return {
         AddServiceInStateManagement,
