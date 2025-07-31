@@ -26,6 +26,17 @@ const GetColorByStatus = (status: string) => {
     }
 }
 
+const isShowStatusDotAnimated = (status) => {
+
+	if(
+		status==="LOADING"
+		|| status==="RUNNING"
+		|| status==="STARTING"
+	) return true
+
+	return false
+}
+
 const INITIAL_PROVISIONED_SERVICE = {
     "serviceId": undefined,
     "serviceName": "",
@@ -48,9 +59,12 @@ const ServiceSettingsPanelContainer = ({
 	serviceId
 }) => {
 
-	const [ serviceData, setServiceData ] = useState(INITIAL_PROVISIONED_SERVICE)	
-	const [ instances, setInstance ] = useState([])
-	const [ containers, setContainers ] = useState([])
+	const [ serviceData, setServiceData ] = useState(INITIAL_PROVISIONED_SERVICE)
+
+	const [ instances, setInstance ]                  = useState([])
+	const [ containers, setContainers ]               = useState([])
+	const [ imageBuildHistory, setImageBuildHistory ] = useState([])
+
 	const [ serviceStatus, setServiceStatus ] = useState("")
 
 	const {
@@ -65,6 +79,7 @@ const ServiceSettingsPanelContainer = ({
 		fetchInstances()
 		fetchContainers()
 		fetchServiceStatus()
+		fetchImageBuildHistory()
 	}, [])
 
 	const _MyServicesAPI = () =>
@@ -102,12 +117,25 @@ const ServiceSettingsPanelContainer = ({
 		autoConnect     : false    
 	})
 
+	const imageBuildListSocketHandler = useWebSocket({
+		socket          : _MyServicesAPI().ImageBuildHistoryListChange,
+		onMessage       : (imageBuildList) => setImageBuildHistory(imageBuildList),
+		onConnection    : () => {},
+		onDisconnection : () => {},
+		autoConnect     : false    
+	})
+
 	useEffect(() => {
 		if(serviceData.serviceId){
+			
 			if(!instanceListSocketHandler.isConneted())
 				instanceListSocketHandler.connect({ serviceId: serviceData.serviceId })
+			
 			if(!containerListSocketHandler.isConneted())
 				containerListSocketHandler.connect({ serviceId: serviceData.serviceId })
+
+			if(!imageBuildListSocketHandler.isConneted())
+				imageBuildListSocketHandler.connect({ serviceId: serviceData.serviceId })
 		}
 	}, [serviceData.serviceId])
 
@@ -138,6 +166,13 @@ const ServiceSettingsPanelContainer = ({
 		setContainers(response.data)
 	}
 
+	const fetchImageBuildHistory = async () => {
+		setImageBuildHistory([])
+		const api = _MyServicesAPI()
+		const response = await api.ListImageBuildHistory({ serviceId })
+		setImageBuildHistory(response.data)
+	}
+
 	return <>
 		<div className="container-xl">
 			<div>
@@ -147,7 +182,12 @@ const ServiceSettingsPanelContainer = ({
 						<h2 className="page-title">{serviceName}</h2>
 						<div className="text-secondary">
 							<ul className="list-inline list-inline-dots mb-0">
-								<li className="list-inline-item"><span className={`text-${GetColorByStatus(serviceStatus.toUpperCase())}`}>{serviceStatus.toUpperCase()}</span></li>
+								<li className="list-inline-item">
+									<span className={`status status-${GetColorByStatus(serviceStatus)}`}>
+										<span className={isShowStatusDotAnimated(serviceStatus) ? "status-dot status-dot-animated":""}></span>
+										{serviceStatus}
+									</span>
+								</li>
 								<li className="list-inline-item">{repositoryNamespace}/{packageName}/{packageType}</li>
 							</ul>
 						</div>
@@ -186,8 +226,8 @@ const ServiceSettingsPanelContainer = ({
 									<table className="table">
 										<thead>
 											<tr>
-												<th>Status</th>
 												<th>ID</th>
+												<th>Status</th>
 												<th>Network Mode</th>
 												<th>Ports</th>
 												<th>Startup Params</th>
@@ -200,14 +240,14 @@ const ServiceSettingsPanelContainer = ({
 												</tr>
 											) : (
 												instances.map((item: any) => (
-													<tr key={item.id}>
+													<tr>
+														<td>{item.instanceId}</td>
 														<td>
 															<span className={`status status-${GetColorByStatus(item.status)}`}>
-																<span className="status-dot status-dot-animated"></span>
+																<span className={isShowStatusDotAnimated(item.status) ? "status-dot status-dot-animated":""}></span>
 																{item.status}
 															</span>
 														</td>
-														<td>{item.instanceId}</td>
 														<td>{item.networkmode}</td>
 														<td>{JSON.stringify(item.ports, null, 2)}</td>
 														<td>{JSON.stringify(item.startupParams, null, 2)}</td>
@@ -232,8 +272,8 @@ const ServiceSettingsPanelContainer = ({
 									<table className="table">
 										<thead>
 											<tr>
-												<th>Status</th>
 												<th>ID</th>
+												<th>Status</th>
 												<th>Container Name</th>
 											</tr>
 										</thead>
@@ -244,15 +284,60 @@ const ServiceSettingsPanelContainer = ({
 												</tr>
 											) : (
 												containers.map((item: any) => (
-													<tr key={item.id}>
+													<tr>
+														<td>{item.containerId}</td>
 														<td>
 															<span className={`status status-${GetColorByStatus(item.status)}`}>
-																<span className="status-dot status-dot-animated"></span>
+																<span className={isShowStatusDotAnimated(item.status) ? "status-dot status-dot-animated":""}></span>
 																{item.status}
 															</span>
 														</td>
-														<td>{item.id}</td>
 														<td>{item.containerName}</td>
+													</tr>
+												))
+											)}
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="row row-cards mt-2">
+					<div className="col-12">
+						<div className="card">
+							<div className="card-header p-2">
+								<div className="subheader">Image Build Histories</div>
+							</div>
+							<div className="card-body p-0">
+								<div className="card-table table-responsive table-vcenter">
+									<table className="table">
+										<thead>
+											<tr>
+												<th>ID</th>
+												<th>Status</th>
+												<th>Tag/Hash</th>
+											</tr>
+										</thead>
+										<tbody>
+											{imageBuildHistory.length === 0 ? (
+												<tr>
+													<td colSpan={3} className="text-center">No build history found.</td>
+												</tr>
+											) : (
+												imageBuildHistory.map((item: any) => (
+													<tr>
+														<td>{item.buildId}</td>
+														<td>
+															<span className={`status status-${GetColorByStatus(item.status)}`}>
+																<span className={isShowStatusDotAnimated(item.status) ? "status-dot status-dot-animated":""}></span>
+																{item.status}
+															</span>
+														</td>
+														<td>
+															<div>{item.tag}</div>
+															<div className="text-secondary">{item.hashId}</div>
+														</td>
 													</tr>
 												))
 											)}

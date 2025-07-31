@@ -111,6 +111,19 @@
 			]
 		},
 		{
+			"path": "/service/image-build-history-list/:serviceId",
+			"method": "WS",
+			"summary": "ImageBuildHistoryListChange",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "path",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
 			"path": "/service/start",
 			"method": "POST",
 			"summary": "StartService",

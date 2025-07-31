@@ -163,6 +163,16 @@ const MyServicesManagerController = (params) => {
 
     }
 
+    const ImageBuildHistoryListChange = async (websocket, serviceId, { authenticationData }) => {
+        //const { userId } = authenticationData
+
+        myServicesManagerService
+            .onChangeImageBuildHistoryListData(serviceId, (imageBuildHistoryList) => {
+                websocket.send(JSON.stringify(imageBuildHistoryList))
+            })
+
+    }
+
     const controllerServiceObject = {
         controllerName: "MyServicesManagerController",
         GetMyServicesStatus,
@@ -176,6 +186,7 @@ const MyServicesManagerController = (params) => {
         ServicesStatusChange,
         InstanceListChange,
         ContainerListChange,
+        ImageBuildHistoryListChange,
         GetServiceStatus,
         StartService,
         StopService,

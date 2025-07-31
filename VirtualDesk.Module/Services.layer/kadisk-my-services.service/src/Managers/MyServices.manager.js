@@ -84,11 +84,12 @@ const MyServicesManager = (params) => {
         NotifyContainerActivity,
         StartService,
         StopService,
-        NotifyInstanceSwap,
         ListInstances,
         ListContainers,
+        ListImageBuildHistory,
         onChangeContainerListData,
-        onChangeInstanceListData
+        onChangeInstanceListData,
+        onChangeImageBuildHistoryListData
     } = ServiceRuntimeStateManager
 
 
@@ -153,10 +154,10 @@ const MyServicesManager = (params) => {
         onRequestData(async (requestType, data) => {
             
             switch (requestType) {
-                case RequestTypes.ACTIVE_INSTANCE_INFO_LIST:
-                    const instanceDataList = await MyWorkspaceDomainService.ListActiveInstancesByServiceId(data.serviceId)
-                    const instanceInfoList = instanceDataList.map(({ id:instanceId , startupParams, ports, networkmode }) => ({instanceId,  startupParams, ports, networkmode }) )
-                    return instanceInfoList
+                case RequestTypes.INSTANCE_DATA_LIST:
+                    return await MyWorkspaceDomainService.ListActiveInstancesByServiceId(data.serviceId)
+                case RequestTypes.BUILD_DATA_LIST:
+                    return await MyWorkspaceDomainService.ListImageBuildHistoryByServiceId(data.serviceId)
                 case RequestTypes.CONTAINER_DATA:
                     return await await MyWorkspaceDomainService.GetContainerInfoByInstanceId(data.instanceId)
                 case RequestTypes.CONTAINER_INSPECTION_DATA:
@@ -182,9 +183,8 @@ const MyServicesManager = (params) => {
                         startupParams      : data.startupParams,
                     })
                     return containerData
-                    break
                 default:
-                    console.warn(`Unknown request type: ${requestType}`)
+                    console.warn(`Unknown request type: ${requestType.description}`)
             }
         })
 
@@ -449,10 +449,6 @@ const MyServicesManager = (params) => {
             networkmode: instanceData.networkmode
         })*/
 
-        /*NotifyInstanceSwap({
-            serviceId: serviceData.id,
-            nextInstanceId: nextInstance.id,
-        })*/
         
     }
 
@@ -466,11 +462,12 @@ const MyServicesManager = (params) => {
         ProvisionService,
         ListProvisionedServices,
         GetServiceData,
-        ListImageBuildHistory: MyWorkspaceDomainService.ListImageBuildHistory,
         ListInstances,
         ListContainers,
+        ListImageBuildHistory,
         onChangeContainerListData,
         onChangeInstanceListData,
+        onChangeImageBuildHistoryListData,
         GetMetadataByPackageId,
         GetServiceStatus,
         GetNetworksSettings,

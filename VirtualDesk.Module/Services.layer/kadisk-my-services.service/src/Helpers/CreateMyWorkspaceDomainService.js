@@ -128,7 +128,6 @@ const CreateMyWorkspaceDomainService = ({
             ],
             raw: false
         })
-
         return items.map(item => item.get({ plain: true }))
     }
 
@@ -172,9 +171,7 @@ const CreateMyWorkspaceDomainService = ({
             },
             raw: false
         })
-
         return item.get({ plain: true })
-
     }
 
     const RegisterServiceProvisioning = ({ 
@@ -215,26 +212,20 @@ const CreateMyWorkspaceDomainService = ({
             buildId
         })
 
-    /*const NotifyContainerEvent = () => {
-
-        ContainerStatusHistoryModel
-    }*/
-    
-
     const RegisterInstanceCreation = ({ serviceId, startupParams, ports, networkmode}) => 
             InstanceModel.create({ serviceId, startupParams, ports, networkmode })
 
     const RegisterTerminateInstance = async (instanceId) => 
-        InstanceModel.update({ terminateDate: new Date() },{ where: { id: instanceId } }
-)
+        InstanceModel.update({ terminateDate: new Date() },{ where: { id: instanceId } })
 
-    const ListImageBuildHistory = async (serviceId) => {
+    const ListImageBuildHistoryByServiceId = async (serviceId) => {
         const items = await ImageBuildHistoryModel.findAll({
-            where: {
-                serviceId
-            }
+            include: [{
+                model: InstanceModel,
+                where: { serviceId },
+                attributes: []
+            }]
         })
-
         return items.map(item => item.get({ plain: true }))
     }
     
@@ -306,7 +297,7 @@ const CreateMyWorkspaceDomainService = ({
         ListServices,
         ListServicesByUserId,
         GetServiceById,
-        ListImageBuildHistory,
+        ListImageBuildHistoryByServiceId,
         ListInstancesByServiceId,
         ListContainersByServiceId,
         ListActiveInstancesByServiceId,
