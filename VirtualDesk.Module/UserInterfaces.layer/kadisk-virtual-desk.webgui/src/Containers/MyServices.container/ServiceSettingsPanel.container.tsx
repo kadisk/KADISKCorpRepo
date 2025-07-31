@@ -16,6 +16,7 @@ const GetColorByStatus = (status: string) => {
         case "FAILURE":
             return "red"
         case "TERMINATED":
+		case "FINISHED":
         case "STOPPED":
 			return "gray"
 		case "WAITING":

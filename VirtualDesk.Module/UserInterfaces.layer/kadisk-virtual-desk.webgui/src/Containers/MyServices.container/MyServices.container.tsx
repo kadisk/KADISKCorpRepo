@@ -38,6 +38,7 @@ const GetStatusBadgeClasses = (status: string) => {
         case "FAILURE":
             return "badge bg-red-lt text-red"
         case "TERMINATED":
+        case "FINISHED":
         case "STOPPED":
             return "badge bg-gray-lt text-gray"
         case "WAITING":

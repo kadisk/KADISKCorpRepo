@@ -319,7 +319,7 @@ const MyServicesManager = (params) => {
                 startupParams
             })
 
-        const containerName = `container_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}--${serviceName}--${buildData.id}`
+        const containerName = `container_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}-${serviceName}-${buildData.id}`
 
         const containerData = await CreateContainer({
                 containerName,

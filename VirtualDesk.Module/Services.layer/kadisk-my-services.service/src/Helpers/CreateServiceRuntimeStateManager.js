@@ -3,31 +3,17 @@ const EventEmitter = require("events")
 
 const CreateStateManager = require("./CreateStateManager")
 
-const LifecycleStatusOptions = Object.freeze({
-    UNKNOWN               : Symbol("UNKNOWN"),
-    CREATED               : Symbol("CREATED"),
-    WAITING               : Symbol("WAITING"),
-    LOADING               : Symbol("LOADING"),
-    STARTING              : Symbol("STARTING"),
-    STOPPING              : Symbol("STOPPING"),
-    STOPPED               : Symbol("STOPPED"),
-    RUNNING               : Symbol("RUNNING"),
-    FAILURE               : Symbol("FAILURE"),
-    TERMINATED            : Symbol("TERMINATED")
-})
-
-const {
-    UNKNOWN,
-    CREATED,
-    WAITING,
-    LOADING,
-    STARTING,
-    STOPPING,
-    STOPPED,
-    RUNNING,
-    FAILURE,
-    TERMINATED,
-} = LifecycleStatusOptions
+const UNKNOWN    = Symbol("UNKNOWN")
+const CREATED    = Symbol("CREATED")
+const WAITING    = Symbol("WAITING")
+const LOADING    = Symbol("LOADING")
+const STARTING   = Symbol("STARTING")
+const STOPPING   = Symbol("STOPPING")
+const STOPPED    = Symbol("STOPPED")
+const RUNNING    = Symbol("RUNNING")
+const FAILURE    = Symbol("FAILURE")
+const FINISHED   = Symbol("FINISHED")
+const TERMINATED = Symbol("TERMINATED")
 
 const RequestTypes  = require("./Request.types")
 
@@ -182,7 +168,7 @@ const CreateServiceRuntimeStateManager = () => {
         _AddNewState(CONTAINER_STATE_GROUP, containerId, { instanceId, serviceId, containerName })
 
     const AddNewBuildState = (buildId, { tag, hashId, instanceId, serviceId }) => 
-        _AddNewState(IMAGE_BUILD_HISTORY_STATE_GROUP, buildId, { tag, hashId, instanceId, serviceId }, TERMINATED)
+        _AddNewState(IMAGE_BUILD_HISTORY_STATE_GROUP, buildId, { tag, hashId, instanceId, serviceId }, FINISHED)
 
     const _ReceiveInspectionData = ({ containerId, inspectionData }) => {
         if(inspectionData){
