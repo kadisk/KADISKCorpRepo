@@ -154,7 +154,8 @@ const CreateServiceHandler = ({
     const CreateContainer = async ({
         containerName,
         instanceId,
-        buildData,
+        buildId,
+        imageName,
         ports,
         networkmode
     }) => {
@@ -163,10 +164,10 @@ const CreateServiceHandler = ({
             .RegisterContainer({
                 containerName,
                 instanceId,
-                buildId: buildData.id
+                buildId
             })
 
-        await _CreateAndStartContainer({ containerName, imageName: buildData.tag, ports, networkmode })
+        await _CreateAndStartContainer({ containerName, imageName, ports, networkmode })
 
 
         return containerData

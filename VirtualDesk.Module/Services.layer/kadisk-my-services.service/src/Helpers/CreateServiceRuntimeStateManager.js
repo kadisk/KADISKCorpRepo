@@ -56,7 +56,7 @@ const CreateServiceRuntimeStateManager = () => {
             case WAITING:
                 if(data.serviceName) {
                     _RequestData(RequestTypes.INSTANCE_DATA_LIST, { serviceId })
-                    _RequestData(RequestTypes.BUILD_DATA_LIST, { serviceId })
+                    _RequestData(RequestTypes.IMAGE_BUILD_DATA_LIST, { serviceId })
                 } else 
                     _RequestData(RequestTypes.SERVICE_DATA, { serviceId })
                 break
@@ -73,15 +73,16 @@ const CreateServiceRuntimeStateManager = () => {
         switch (status) {
             case CREATED:
                 const { data: serviceData } = GetState(SERVICE_STATE_GROUP, serviceId)
-                _RequestData(RequestTypes.CREATE_NEW_CONTAINER, { 
+                
+                _RequestData(RequestTypes.BUILD_NEW_IMAGE, {
                     serviceId,
                     instanceId,
-                    packageId          : serviceData.packageId,
                     serviceName        : serviceData.serviceName,
+                    packageId          : serviceData.packageId,
                     repositoryCodePath : serviceData.repositoryCodePath,
+                    startupParams      : data.startupParams,
                     networkmode        : data.networkmode,
-                    ports              : data.ports,
-                    startupParams      : data.startupParams, 
+                    ports              : data.ports
                 })
                 break
             case WAITING:
@@ -98,6 +99,7 @@ const CreateServiceRuntimeStateManager = () => {
                 break
             case TERMINATED:
                 ChangeStatus(SERVICE_STATE_GROUP, serviceId, TERMINATED)
+            case STARTING:
             case LOADING:
                 break
             default:
@@ -241,7 +243,7 @@ const CreateServiceRuntimeStateManager = () => {
                     else
                         ChangeStatus(SERVICE_STATE_GROUP, requestData.serviceId, TERMINATED)
                     break
-                case RequestTypes.BUILD_DATA_LIST:
+                case RequestTypes.IMAGE_BUILD_DATA_LIST:
                     const buildDataList = await onRequestData(requestType, { serviceId: requestData.serviceId })
                         buildDataList
                             .forEach(({ id:buildId , tag, hashId, instanceId }) => AddNewBuildState(buildId, { tag, hashId, instanceId, serviceId:requestData.serviceId}))
@@ -275,13 +277,30 @@ const CreateServiceRuntimeStateManager = () => {
                     onRequestData(requestType, { containerHashId: requestData.containerHashId })
                     break
                 case RequestTypes.CREATE_NEW_CONTAINER:
-                    ChangeStatus(INSTANCE_STATE_GROUP, requestData.instanceId, LOADING)
+                    ChangeStatus(INSTANCE_STATE_GROUP, requestData.instanceId, STARTING)
                     const newContainerData = await onRequestData(requestType, requestData)
                     const { id:containerId, containerName  } = newContainerData
                     AddNewContainerState(containerId, {
                         instanceId: requestData.instanceId,
                         serviceId:requestData.serviceId,
                         containerName
+                    })
+                    break
+                case RequestTypes.BUILD_NEW_IMAGE:
+                    ChangeStatus(INSTANCE_STATE_GROUP, requestData.instanceId, STARTING)
+                    const newImageBuildData = await onRequestData(requestType, requestData)
+                    const {
+                        id:buildId, tag, hashId, instanceId
+                    } = newImageBuildData
+                    AddNewBuildState(buildId, { tag, hashId, instanceId, serviceId:requestData.serviceId})
+                    _RequestData(RequestTypes.CREATE_NEW_CONTAINER, { 
+                        instanceId,
+                        buildId,
+                        tag,
+                        serviceId   : requestData.serviceId,
+                        serviceName : requestData.serviceName,
+                        networkmode : requestData.networkmode,
+                        ports       : requestData.ports
                     })
                     break
                 default:

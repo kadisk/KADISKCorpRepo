@@ -94,6 +94,7 @@ const MyServicesManager = (params) => {
 
 
     const {
+        CreateService,
         BuildImage,
         CreateContainer,
         CreateInstance
@@ -156,7 +157,7 @@ const MyServicesManager = (params) => {
             switch (requestType) {
                 case RequestTypes.INSTANCE_DATA_LIST:
                     return await MyWorkspaceDomainService.ListActiveInstancesByServiceId(data.serviceId)
-                case RequestTypes.BUILD_DATA_LIST:
+                case RequestTypes.IMAGE_BUILD_DATA_LIST:
                     return await MyWorkspaceDomainService.ListImageBuildHistoryByServiceId(data.serviceId)
                 case RequestTypes.CONTAINER_DATA:
                     return await await MyWorkspaceDomainService.GetContainerInfoByInstanceId(data.instanceId)
@@ -171,17 +172,26 @@ const MyServicesManager = (params) => {
                 case RequestTypes.SERVICE_DATA:
                     const serviceData = await MyWorkspaceDomainService.GetServiceById(data.serviceId)
                     return serviceData
+                case RequestTypes.BUILD_NEW_IMAGE:
+                    const buildData = await _BuildImage({
+                        serviceName        : data.serviceName,
+                        serviceId          : data.serviceId,
+                        instanceId         : data.instanceId,
+                        packageId          : data.packageId,
+                        repositoryCodePath : data.repositoryCodePath,
+                        startupParams      : data.startupParams
+                    })
+                    return buildData
                 case RequestTypes.CREATE_NEW_CONTAINER:
                     const containerData = await _CreateContainer({
-                        packageId          : data.packageId,
-                        instanceId         : data.instanceId,
-                        serviceId          : data.serviceId,
-                        serviceName        : data.serviceName,
-                        repositoryCodePath : data.repositoryCodePath,
-                        networkmode        : data.networkmode,
-                        ports              : data.ports,
-                        startupParams      : data.startupParams,
+                        instanceId  : data.instanceId,
+                        buildId     : data.buildId,
+                        tag         : data.tag,
+                        serviceName : data.serviceName,
+                        networkmode : data.networkmode,
+                        ports       : data.ports
                     })
+
                     return containerData
                 default:
                     console.warn(`Unknown request type: ${requestType.description}`)
@@ -295,20 +305,18 @@ const MyServicesManager = (params) => {
         return repositories
     }
 
-    const _CreateContainer = async ({
-        packageId,
-        instanceId,
-        serviceId,
+    const _BuildImage = async ({
         serviceName,
+        serviceId,
+        instanceId,
+        packageId,
         repositoryCodePath,
-        networkmode,
-        ports,
         startupParams
     }) => {
 
         const packageData = await MyWorkspaceDomainService.GetPackageById(packageId)
 
-        const imageTagName = `ecosystem_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}:${serviceName}-${serviceId}`.toLowerCase()
+        const imageTagName = `ecosystem_${packageData.repositoryNamespace}_${packageData.itemName}-${packageData.itemType}:${serviceName}-${serviceId}`.toLowerCase()
 
         const buildData = await BuildImage({
                 imageTagName,
@@ -319,12 +327,26 @@ const MyServicesManager = (params) => {
                 startupParams
             })
 
-        const containerName = `container_${packageData.repositoryNamespace}__${packageData.itemName}-${packageData.itemType}-${serviceName}-${buildData.id}`
+
+        return buildData
+    }
+
+    const _CreateContainer = async ({
+        buildId,
+        tag,
+        instanceId,
+        serviceName,
+        networkmode,
+        ports,
+    }) => {
+
+        const containerName = `container_${serviceName}-${buildId}`
 
         const containerData = await CreateContainer({
                 containerName,
                 instanceId,
-                buildData,
+                buildId,
+                imageName: tag,
                 ports,
                 networkmode
             })
