@@ -274,7 +274,12 @@ const CreateServiceRuntimeStateManager = () => {
                     break
                 case RequestTypes.START_CONTAINER:
                 case RequestTypes.STOP_CONTAINER:
-                    onRequestData(requestType, { containerHashId: requestData.containerHashId })
+                    try{
+                        await onRequestData(requestType, { containerHashId: requestData.containerHashId })
+                    } catch(e){
+                        console.log(e)
+                        ChangeStatus(INSTANCE_STATE_GROUP, requestData.instanceId, FAILURE)
+                    }
                     break
                 case RequestTypes.CREATE_NEW_CONTAINER:
                     ChangeStatus(INSTANCE_STATE_GROUP, requestData.instanceId, STARTING)
@@ -362,14 +367,35 @@ const CreateServiceRuntimeStateManager = () => {
         }
     }
 
-    const StartService = (serviceId) => {
-        const data = FindData(CONTAINER_STATE_GROUP, "serviceId", serviceId)
-        _RequestData(RequestTypes.START_CONTAINER, { serviceId, containerHashId: data.Id })
+    const ListInstanceStateByStatus = (serviceId, status) => {
+        const instanceList = ListInstancesState(serviceId)
+        return instanceList.filter((state) => state.status === status)
+    }
+
+    const StartService = async (serviceId) => {
+
+        ListInstanceStateByStatus(serviceId, STOPPED)
+        .forEach(({key:instanceId}) => {
+            const data = FindData(CONTAINER_STATE_GROUP, "instanceId", instanceId)
+            _RequestData(RequestTypes.START_CONTAINER, { 
+                serviceId, 
+                instanceId, 
+                containerHashId: data.Id
+            })
+        })
+
     }
 
     const StopService = (serviceId) => {
-        const data = FindData(CONTAINER_STATE_GROUP, "serviceId", serviceId)
-        _RequestData(RequestTypes.STOP_CONTAINER, { serviceId, containerHashId: data.Id })
+        ListInstanceStateByStatus(serviceId, RUNNING)
+        .forEach(({key:instanceId}) => {
+            const data = FindData(CONTAINER_STATE_GROUP, "instanceId", instanceId)
+            _RequestData(RequestTypes.STOP_CONTAINER, { 
+                serviceId, 
+                instanceId, 
+                containerHashId: data.Id
+            })
+        })
     }
 
     const GetNetworksSettings  = async (serviceId) => {
@@ -394,16 +420,18 @@ const CreateServiceRuntimeStateManager = () => {
         }
     }
 
-    const ListInstances = async (serviceId) => {
-        const stateList = ListStatesByPropertyData(INSTANCE_STATE_GROUP, "serviceId", serviceId)
-        const instanceDataList = stateList.map(state => {
-            const { key: instanceId, status, data } = state
-            return { instanceId, status:status.description, ...data }
-        })
+    const ListInstancesState = (serviceId) => ListStatesByPropertyData(INSTANCE_STATE_GROUP, "serviceId", serviceId)
+
+    const ListInstances = (serviceId) => {
+        const instanceDataList = ListInstancesState(serviceId)
+            .map(state => {
+                const { key: instanceId, status, data } = state
+                return { instanceId, status:status.description, ...data }
+            })
         return instanceDataList
     }
 
-    const ListContainers = async (serviceId) => {
+    const ListContainers = (serviceId) => {
         const stateList = ListStatesByPropertyData(CONTAINER_STATE_GROUP, "serviceId", serviceId)
         const containerDataList = stateList.map(state => {
             const { key: containerId, status, data } = state
@@ -412,7 +440,7 @@ const CreateServiceRuntimeStateManager = () => {
         return containerDataList
     }
 
-    const ListImageBuildHistory = async (serviceId) => {
+    const ListImageBuildHistory = (serviceId) => {
         const stateList = ListStatesByPropertyData(IMAGE_BUILD_HISTORY_STATE_GROUP, "serviceId", serviceId)
         const buildDataList = stateList.map(state => {
             const { key: buildId, status, data } = state
@@ -422,30 +450,30 @@ const CreateServiceRuntimeStateManager = () => {
     }
 
     const onChangeContainerListData = (serviceId, f) => {
-        onChangeStatus(CONTAINER_STATE_GROUP, async ({ key }) => {
+        onChangeStatus(CONTAINER_STATE_GROUP, ({ key }) => {
             const { data } = GetState(CONTAINER_STATE_GROUP, key)
             if(data.serviceId == serviceId){
-                const containerList = await ListContainers(serviceId)
+                const containerList = ListContainers(serviceId)
                 f(containerList)
             }
         })
     }
 
     const onChangeInstanceListData = (serviceId, f) => {
-        onChangeStatus(INSTANCE_STATE_GROUP, async ({ key }) => {
+        onChangeStatus(INSTANCE_STATE_GROUP, ({ key }) => {
             const { data } = GetState(INSTANCE_STATE_GROUP, key)
             if(data.serviceId == serviceId){
-                const instanceList = await ListInstances(serviceId)
+                const instanceList = ListInstances(serviceId)
                 f(instanceList)
             }
         })
     }
 
     const onChangeImageBuildHistoryListData = (serviceId, f) => {
-        onChangeStatus(IMAGE_BUILD_HISTORY_STATE_GROUP, async ({ key }) => {
+        onChangeStatus(IMAGE_BUILD_HISTORY_STATE_GROUP, ({ key }) => {
             const { data } = GetState(IMAGE_BUILD_HISTORY_STATE_GROUP, key)
             if(data.serviceId == serviceId){
-                const buildList = await ListImageBuildHistory(serviceId)
+                const buildList = ListImageBuildHistory(serviceId)
                 f(buildList)
             }
         })

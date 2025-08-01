@@ -164,10 +164,10 @@ const MyServicesManager = (params) => {
                 case RequestTypes.CONTAINER_INSPECTION_DATA:
                     return await InspectContainer(data.containerName)
                 case RequestTypes.START_CONTAINER:
-                    StartContainer(data.containerHashId)
+                    await StartContainer(data.containerHashId)
                     break
                 case RequestTypes.STOP_CONTAINER:
-                    StopContainer(data.containerHashId)
+                    await StopContainer(data.containerHashId)
                     break
                 case RequestTypes.SERVICE_DATA:
                     const serviceData = await MyWorkspaceDomainService.GetServiceById(data.serviceId)

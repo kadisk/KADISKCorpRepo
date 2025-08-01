@@ -20,6 +20,7 @@ const GetColorByStatus = (status: string) => {
         case "STOPPED":
 			return "gray"
 		case "WAITING":
+		case "STOPPING":
 		case "LOADING":
             return "yellow"
         default:
@@ -32,6 +33,7 @@ const isShowStatusDotAnimated = (status) => {
 	if(
 		status==="LOADING"
 		|| status==="RUNNING"
+		|| status==="STOPPING"
 		|| status==="STARTING"
 	) return true
 
@@ -174,6 +176,16 @@ const ServiceSettingsPanelContainer = ({
 		setImageBuildHistory(response.data)
 	}
 
+	const startService = async () => {
+        const api = _MyServicesAPI()
+        await api.StartService({serviceId})
+    }
+
+	const stopService = async () => {
+        const api = _MyServicesAPI()
+        await api.StopService({serviceId})
+    }
+
 	return <>
 		<div className="container-xl">
 			<div>
@@ -198,7 +210,7 @@ const ServiceSettingsPanelContainer = ({
 							{
 								( serviceStatus === "STOPPED"
 								|| serviceStatus === "TERMINATED" )
-								&& <button className="btn btn-primary" onClick={() => {}}>
+								&& <button className="btn btn-primary" onClick={() => startService()}>
 										{START_ICON}start
 									</button>
 							}
@@ -208,7 +220,7 @@ const ServiceSettingsPanelContainer = ({
 										<button className="btn btn-orange">
 											{RESTART_ICON}restart
 										</button>
-										<button className="btn btn-danger" onClick={() => {}}>
+										<button className="btn btn-danger" onClick={() => stopService()}>
 											{STOP_ICON}stop
 										</button>
 									</>
@@ -227,8 +239,8 @@ const ServiceSettingsPanelContainer = ({
 									<table className="table">
 										<thead>
 											<tr>
-												<th>ID</th>
 												<th>Status</th>
+												<th>ID</th>
 												<th>Network Mode</th>
 												<th>Ports</th>
 												<th>Startup Params</th>
@@ -242,13 +254,13 @@ const ServiceSettingsPanelContainer = ({
 											) : (
 												instances.map((item: any) => (
 													<tr>
-														<td>{item.instanceId}</td>
 														<td>
 															<span className={`status status-${GetColorByStatus(item.status)}`}>
 																<span className={isShowStatusDotAnimated(item.status) ? "status-dot status-dot-animated":""}></span>
 																{item.status}
 															</span>
 														</td>
+														<td>{item.instanceId}</td>
 														<td>{item.networkmode}</td>
 														<td>{JSON.stringify(item.ports, null, 2)}</td>
 														<td>{JSON.stringify(item.startupParams, null, 2)}</td>
@@ -273,8 +285,8 @@ const ServiceSettingsPanelContainer = ({
 									<table className="table">
 										<thead>
 											<tr>
-												<th>ID</th>
 												<th>Status</th>
+												<th>ID</th>
 												<th>Container Name</th>
 											</tr>
 										</thead>
@@ -286,13 +298,13 @@ const ServiceSettingsPanelContainer = ({
 											) : (
 												containers.map((item: any) => (
 													<tr>
-														<td>{item.containerId}</td>
 														<td>
 															<span className={`status status-${GetColorByStatus(item.status)}`}>
 																<span className={isShowStatusDotAnimated(item.status) ? "status-dot status-dot-animated":""}></span>
 																{item.status}
 															</span>
 														</td>
+														<td>{item.containerId}</td>
 														<td>{item.containerName}</td>
 													</tr>
 												))
@@ -315,8 +327,8 @@ const ServiceSettingsPanelContainer = ({
 									<table className="table">
 										<thead>
 											<tr>
-												<th>ID</th>
 												<th>Status</th>
+												<th>ID</th>
 												<th>Tag/Hash</th>
 											</tr>
 										</thead>
@@ -328,13 +340,13 @@ const ServiceSettingsPanelContainer = ({
 											) : (
 												imageBuildHistory.map((item: any) => (
 													<tr>
-														<td>{item.buildId}</td>
 														<td>
 															<span className={`status status-${GetColorByStatus(item.status)}`}>
 																<span className={isShowStatusDotAnimated(item.status) ? "status-dot status-dot-animated":""}></span>
 																{item.status}
 															</span>
 														</td>
+														<td>{item.buildId}</td>
 														<td>
 															<div>{item.tag}</div>
 															<div className="text-secondary">{item.hashId}</div>

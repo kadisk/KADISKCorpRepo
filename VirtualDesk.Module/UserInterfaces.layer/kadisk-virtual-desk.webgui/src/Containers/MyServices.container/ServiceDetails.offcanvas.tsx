@@ -18,6 +18,7 @@ const GetColor = (status: string) => {
         case "STOPPED":
             return "gray"
         case "WAITING":
+        case "STOPPING":
 		case "LOADING":
             return "yellow"
         default:
