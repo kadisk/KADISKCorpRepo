@@ -316,7 +316,9 @@ const CreateServiceRuntimeStateManager = () => {
 
     const _ChangeContainerStatusByHash = (containerHashId, newStatus) => {
         const containerId = FindKeyByPropertyData(CONTAINER_STATE_GROUP, "Id", containerHashId)
-        ChangeStatus(CONTAINER_STATE_GROUP, containerId, newStatus)
+        if(containerId)
+            ChangeStatus(CONTAINER_STATE_GROUP, containerId, newStatus)
+        else console.log(`the container with hashId ${containerId} is not in the state manager`)
     }
     
     const NotifyContainerActivity = ({ ID, Action, Attributes }) => {
