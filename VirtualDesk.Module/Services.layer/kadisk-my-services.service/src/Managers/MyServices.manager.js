@@ -76,7 +76,8 @@ const MyServicesManager = (params) => {
     const ServiceRuntimeStateManager = CreateServiceRuntimeStateManager()
 
     const {
-        AddServiceInStateManagement,
+        LoadServiceInStateManagement,
+        CreateServiceInStateManagement,
         GetServiceStatus,
         GetNetworksSettings,
         onChangeServiceStatus,
@@ -172,6 +173,14 @@ const MyServicesManager = (params) => {
                 case RequestTypes.SERVICE_DATA:
                     const serviceData = await MyWorkspaceDomainService.GetServiceById(data.serviceId)
                     return serviceData
+                case RequestTypes.CREATE_NEW_INSTANCE:
+                    const instanceData = await CreateInstance({
+                        serviceId     : data.serviceId,
+                        startupParams : data.startupParams,
+                        networkmode   : data.networkmode,
+                        ports         : data.ports
+                    })
+                    return instanceData
                 case RequestTypes.BUILD_NEW_IMAGE:
                     const buildData = await _BuildImage({
                         serviceName        : data.serviceName,
@@ -205,7 +214,7 @@ const MyServicesManager = (params) => {
 
     const InitializeAllServiceStateManagement = async  () => {
         const serviceDataList = await MyWorkspaceDomainService.ListServices()
-        serviceDataList.forEach(serviceData => AddServiceInStateManagement(serviceData.id))
+        serviceDataList.forEach(serviceData => LoadServiceInStateManagement(serviceData.id))
     }
 
     const SaveUploadedRepository = async ({ repositoryNamespace, userId, username , repositoryFilePath }) => {
@@ -372,16 +381,11 @@ const MyServicesManager = (params) => {
                 serviceDescription
             })
 
-
-        await CreateInstance({
-                serviceId: serviceData.id,
-                startupParams,
-                ports,
-                networkmode
-            })
-        
-        AddServiceInStateManagement(serviceData.id)
-
+        CreateServiceInStateManagement(serviceData.id, {
+            startupParams,
+            ports,
+            networkmode
+        })
     }
 
     const ListProvisionedServices = async (userId) => {
@@ -442,7 +446,7 @@ const MyServicesManager = (params) => {
 
     const GetInstanceStartupParamsData = async (serviceId) => {
         const instanceData = await MyWorkspaceDomainService.GetLastInstanceByServiceId(serviceId)
-        return instanceData.startupParams || {}
+        return instanceData?.startupParams || {}
     }
 
     const GetInstancePortsData = async (serviceId) => {

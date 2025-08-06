@@ -249,7 +249,7 @@ const ServiceSettingsPanelContainer = ({
 										<tbody>
 											{instances.length === 0 ? (
 												<tr>
-													<td colSpan={3} className="text-center">No instances found.</td>
+													<td colSpan={5} className="text-center">No instances found.</td>
 												</tr>
 											) : (
 												instances.map((item: any) => (
