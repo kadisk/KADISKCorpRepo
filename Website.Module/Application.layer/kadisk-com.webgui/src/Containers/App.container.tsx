@@ -1,6 +1,6 @@
 import * as React             from "react"
 import {useEffect}            from "react"
-import { Dimmer, Loader}      from "semantic-ui-react"
+
 //@ts-ignore
 import { Routes, BrowserRouter, HashRouter, Route }  from "react-router-dom"
 import { connect }            from "react-redux"
@@ -16,60 +16,67 @@ const fetchHTTPServersRunning = async () => {
 }
 
 type AppContainerProps  = {
-	routesConfig: any
-	mapper: any
-	HTTPServerManager : any
-	SetHTTPServersRunning : Function
+    routesConfig: any
+    mapper: any
+    HTTPServerManager : any
+    SetHTTPServersRunning : Function
 }
 
 type RouteConfigType = {
-	path:string,
-	page:string
+    path:string,
+    page:string
 }
 
 const GetRouteObject = (routesConfig:any[], mapper:any) =>  
-	routesConfig.map(({path, page}:RouteConfigType) => {
-		const Component = mapper[page]
-		return {path, element:<Component/>}
-	})
+    routesConfig.map(({path, page}:RouteConfigType) => {
+        const Component = mapper[page]
+        return {path, element:<Component/>}
+    })
 
 interface AppRoutesProps {
-	routesConfig:any[]
-	mapper:any
+    routesConfig:any[]
+    mapper:any
 }
 
 const AppRoutes = ({routesConfig, mapper}:AppRoutesProps) => {
-	const routesObject = GetRouteObject(routesConfig, mapper)
-	//const routes = useRoutes(routesObject)
-	console.log(routesObject)
-	return 
+    const routesObject = GetRouteObject(routesConfig, mapper)
+    //const routes = useRoutes(routesObject)
+    console.log(routesObject)
+    return 
 }
 
 const AppContainer = ({
-	routesConfig,
-	mapper,
-	HTTPServerManager, 
-	SetHTTPServersRunning
+    routesConfig,
+    mapper,
+    HTTPServerManager, 
+    SetHTTPServersRunning
 }:AppContainerProps) => {
 
-	useEffect(()=>{
+    useEffect(()=>{
         fetchHTTPServersRunning()
         .then(webServersRunning => SetHTTPServersRunning(webServersRunning))
     }, [])
-	
-	return HTTPServerManager.list_web_servers_running.length > 0 
-		? <HashRouter>
-				<Routes>
-				{
-					GetRouteObject(routesConfig, mapper)
-					.map(({ path, exact, element }:any, key) => <Route key={key}{...{ path, element }}/>)
-				}
-				</Routes>
-			</HashRouter>
-		: <Dimmer active>
-				<Loader>loading web services running...</Loader>
-			</Dimmer>
-	
+    
+    return HTTPServerManager.list_web_servers_running.length > 0 
+        ? <HashRouter>
+                <Routes>
+                {
+                    GetRouteObject(routesConfig, mapper)
+                    .map(({ path, exact, element }:any, key) => <Route key={key}{...{ path, element }}/>)
+                }
+                </Routes>
+            </HashRouter>
+        : (
+            <div className="d-flex justify-content-center align-items-center" style={{minHeight: "100vh"}}>
+                <div className="text-center">
+                    <div className="spinner-border text-primary mb-3" role="status" style={{width: "3rem", height: "3rem"}}>
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                    <div>loading web services running...</div>
+                </div>
+            </div>
+        )
+    
 }
 
 const mapDispatchToProps = (dispatch:any) =>
