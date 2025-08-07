@@ -8,7 +8,8 @@ const RequestTypes = Object.freeze({
     CONTAINER_DATA            : Symbol(),
     CONTAINER_INSPECTION_DATA : Symbol(),
     START_CONTAINER           : Symbol(),
-    STOP_CONTAINER            : Symbol()
+    STOP_CONTAINER            : Symbol(),
+    REMOVE_CONTAINER          : Symbol()
 })
 
 module.exports = RequestTypes

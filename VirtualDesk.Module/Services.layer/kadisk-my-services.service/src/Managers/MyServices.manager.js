@@ -67,6 +67,7 @@ const MyServicesManager = (params) => {
     const { 
         BuildImageFromDockerfileString,
         CreateNewContainer,
+        RemoveContainer,
         InspectContainer,
         RegisterDockerEventListener,
         StartContainer,
@@ -78,6 +79,7 @@ const MyServicesManager = (params) => {
     const {
         LoadServiceInStateManagement,
         CreateServiceInStateManagement,
+        SwapRunningInstance,
         GetServiceStatus,
         GetNetworksSettings,
         onChangeServiceStatus,
@@ -86,6 +88,7 @@ const MyServicesManager = (params) => {
         StartService,
         StopService,
         ListInstances,
+        ListRunningInstances,
         ListContainers,
         ListImageBuildHistory,
         onChangeContainerListData,
@@ -169,6 +172,9 @@ const MyServicesManager = (params) => {
                     break
                 case RequestTypes.STOP_CONTAINER:
                     await StopContainer(data.containerHashId)
+                    break
+                case RequestTypes.REMOVE_CONTAINER:
+                    await RemoveContainer(data.containerHashId)
                     break
                 case RequestTypes.SERVICE_DATA:
                     const serviceData = await MyWorkspaceDomainService.GetServiceById(data.serviceId)
@@ -462,20 +468,14 @@ const MyServicesManager = (params) => {
 
     const UpdateServicePorts = async ({ serviceId, ports }) => {
 
-        const serviceData = await MyWorkspaceDomainService.GetServiceById(serviceId)
-        const packageData = await MyWorkspaceDomainService.GetItemById(serviceData.packageId)
-        const instanceData = await MyWorkspaceDomainService.GetLastInstanceByServiceId(serviceId)
-
-        /*const nextInstance = await _CreateInstance({
-            username,
-            serviceData,
-            packageData,
-            startupParams: instanceData.startupParams,
+        const runningInstances = ListRunningInstances(serviceId)
+        const [ firstInstanceRunning ] = runningInstances
+        SwapRunningInstance(serviceId, {
             ports,
-            networkmode: instanceData.networkmode
-        })*/
+            startupParams: firstInstanceRunning.startupParams,
+            networkmode: firstInstanceRunning.networkmode
+        })
 
-        
     }
 
     _Start()
