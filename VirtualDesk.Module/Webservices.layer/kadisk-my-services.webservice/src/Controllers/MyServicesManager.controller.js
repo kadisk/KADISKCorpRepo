@@ -163,6 +163,11 @@ const MyServicesManagerController = (params) => {
         return myServicesManagerService.GetInstanceStartupParamsData(serviceId)
     }
 
+    const GetInstanceStartupParamsSchema = (serviceId, { authenticationData }) => {
+        //const { userId } = authenticationData
+        return myServicesManagerService.GetInstanceStartupParamsSchema(serviceId)
+    }
+
     const GetInstancePortsData = (serviceId, { authenticationData }) => {
         //const { userId } = authenticationData
         return myServicesManagerService.GetInstancePortsData(serviceId)
@@ -176,6 +181,11 @@ const MyServicesManagerController = (params) => {
     const UpdateServicePorts = async ({ serviceId, ports }, { authenticationData }) => {
         const { userId, username } = authenticationData 
         await myServicesManagerService.UpdateServicePorts({ serviceId, ports })
+    }
+
+    const UpdateServiceStartupParams = async ({ serviceId, startupParams }, { authenticationData }) => {
+        const { userId, username } = authenticationData 
+        await myServicesManagerService.UpdateServiceStartupParams({ serviceId, startupParams })
     }
 
     const InstanceListChange = async (websocket, serviceId, { authenticationData }) => {
@@ -227,9 +237,11 @@ const MyServicesManagerController = (params) => {
         StartService,
         StopService,
         GetInstanceStartupParamsData,
+        GetInstanceStartupParamsSchema,
         GetInstancePortsData,
         GetNetworkModeData,
-        UpdateServicePorts
+        UpdateServicePorts,
+        UpdateServiceStartupParams
     }
 
     return Object.freeze(controllerServiceObject)

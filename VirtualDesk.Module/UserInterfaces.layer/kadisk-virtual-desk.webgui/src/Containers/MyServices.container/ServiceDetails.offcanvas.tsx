@@ -1,7 +1,10 @@
 import * as React from "react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
+
+import { JsonEditor } from 'json-edit-react'
+import Ajv from "ajv"
 
 import GetAPI from "../../Utils/GetAPI"
 
@@ -39,15 +42,22 @@ const ServiceDetailsOffcanvas = ({
     HTTPServerManager,
 }) => {
 
+    const [ isUpdatePortsMode , setIsUpdatePortsMode ] = useState(false)
+    const [ isUpdateStartupParamsMode , setIsUpdateStartupParamsMode ] = useState(false)
+
     const [ serviceData, setServiceData ] = useState<any>()
     const [ status, setStatus ] = useState("PENDING")
     const [ networksSettings, setNetworksSettings ] = useState<any>()
     const [ instanceStartupParams, setInstanceStartupParams ] = useState<any>()
+    const [ startupParamsSchema, setStartupParamsSchema ] = useState<any>()
+    
+    const startupParamsValidate = useRef(null)
 
-    const [ isUpdatePortsMode , setIsUpdatePortsMode ] = useState(false)
     const [ instancePortsBinding, setInstancePortsBinding ] = useState([])
     const [ newInstancePortsForBinding, setNewInstancePortsForBinding ] = useState<any[]>()
     const [ networkMode, setNetworkMode ] = useState()
+
+    const [ newStartupParamsForUpdate, setNewStartupParamsForUpdate ] = useState<any>()
 
     const [ servicePortForAdd, setServicePortForAdd ] = useState<string>("")
     const [ hostPortForAdd, setHostPortForAdd ] = useState<string>("")
@@ -59,18 +69,25 @@ const ServiceDetailsOffcanvas = ({
         setServicePortForAdd("")
         setHostPortForAdd("")
         fetchStatus()
-        fetchServiceData()
-        fetchNetworksSettings()
-        fetchInstanceStartupParams()
-        fetchNetworkMode()
     }, [serviceId])
 
     useEffect(() => {
-        fetchServiceData()
-        fetchNetworksSettings()
-        fetchInstanceStartupParams()
-        fetchNetworkMode()
+        if(status && status !== "PENDING"){
+            fetchServiceData()
+            fetchNetworksSettings()
+            fetchInstanceStartupParams()
+            fetchNetworkMode()
+        }
+        
     }, [status])
+
+    useEffect(() => {
+        if(isUpdateStartupParamsMode){
+            fetchInstanceStartupParamsSchema()
+        }else {
+            startupParamsValidate.current = undefined
+        }
+    }, [isUpdateStartupParamsMode])
 
     const getMyServicesManagerAPI = () =>
 		GetAPI({
@@ -104,6 +121,24 @@ const ServiceDetailsOffcanvas = ({
         setServiceData(response.data)
 	}
 
+    const fetchInstanceStartupParamsSchema = async () => {
+        
+        const api = getMyServicesManagerAPI()
+        const response = await api.GetInstanceStartupParamsSchema({ serviceId })
+
+        const schema = response.data
+        const ajv = new Ajv()
+        try {
+            const validate = ajv.compile(schema)
+            startupParamsValidate.current = validate
+        } catch (e) {
+            console.error(e)
+            startupParamsValidate.current = undefined
+        } finally{
+            setStartupParamsSchema(schema)
+        }
+    }
+
     const fetchNetworksSettings = async () => {
         setNetworksSettings(undefined)
         const api = getMyServicesManagerAPI()
@@ -134,25 +169,45 @@ const ServiceDetailsOffcanvas = ({
     }
 
     const handleCancelUpdatePorts = () => {
-        reset()
+        resetPorts()
         setIsUpdatePortsMode(false)
         setInstancePortsBinding([])
     }
 
-    const reset = () => {
+    const handleCancelUpdateStartupParams = () => {
+        setIsUpdateStartupParamsMode(false)
+    }
+
+    const resetPorts = () => {
         setNewInstancePortsForBinding(undefined)
         setServicePortForAdd("")
         setHostPortForAdd("")
     }
 
-    const handleResetEditPorts = () => reset()
+    const closeStartupParamsMode = () => {
+        setIsUpdateStartupParamsMode(false)
+        setStartupParamsSchema(undefined)
+        setNewStartupParamsForUpdate(undefined)
+    }
+
+    const handleResetEditPorts = () => resetPorts()
 
     const handleUpdatePorts = async () => {
         const api = getMyServicesManagerAPI()
 		const response = await api.UpdateServicePorts({ serviceId, ports: newInstancePortsForBinding })
-        reset()
+        resetPorts()
         setIsUpdatePortsMode(false)
         setInstancePortsBinding(undefined)
+    }
+
+    const handleUpdateStartupParams = async () => {
+        const api = getMyServicesManagerAPI()
+		const response = await api.UpdateServiceStartupParams({ serviceId, startupParams: newStartupParamsForUpdate })
+        closeStartupParamsMode()
+    }
+
+    const handleUpdateStartupParamsMode = () => {
+        setIsUpdateStartupParamsMode(true)
     }
 
     const handleAddNewPort = () => {
@@ -214,11 +269,26 @@ const ServiceDetailsOffcanvas = ({
                             <dt className="col-5">repository namespace:</dt>
                             <dd className="col-7">{serviceData?.repositoryNamespace}</dd>
                         </dl>
+                        <div className="hr-text hr-text-center hr-text-spaceless my-3 mt-5">Instance Startup Params</div>
+                        {
+                            instanceStartupParams
+                            && isUpdateStartupParamsMode
+                            && startupParamsValidate.current
+                            && <JsonEditor
+                                    data={ instanceStartupParams }
+                                    setData={ setNewStartupParamsForUpdate }
+                                    onUpdate={ ({ newData }) => {
+                                        const valid = startupParamsValidate.current(newData)
+                                        if (!valid) {
+                                            return 'JSON Schema error'
+                                        }
+                                    }}/>
+                        }
                         {
 
                             instanceStartupParams
+                            && !isUpdateStartupParamsMode
                             && <>
-                                <div className="hr-text hr-text-center hr-text-spaceless my-3 mt-5">Instance Startup Params</div>
                                 <div className="table-responsive bg-gray-100">
                                     <table className="table table-vcenter card-table">
                                         <thead>
@@ -241,6 +311,27 @@ const ServiceDetailsOffcanvas = ({
                                 </div>
                             </>
                         }
+
+                        <div className="btn-list justify-content-end p-2">
+                            {
+                                !isUpdateStartupParamsMode
+                                && <a className="btn btn-azure" onClick={() => handleUpdateStartupParamsMode()}>
+                                        change startup params
+                                    </a>
+                            }
+                            {
+                                isUpdateStartupParamsMode
+                                && <>
+                                        <button className="btn btn-secondary" onClick={() => handleCancelUpdateStartupParams()}>
+                                            <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-cancel"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M18.364 5.636l-12.728 12.728" /></svg>
+                                            cancel
+                                        </button>
+                                        <button className="btn btn-orange" disabled={!newStartupParamsForUpdate} onClick={() => handleUpdateStartupParams()}>
+                                            update
+                                        </button>
+                                    </>
+                            }
+                        </div>
                         
                         {
                             networkMode !== "none" && networkMode !== "host"
@@ -378,7 +469,6 @@ const ServiceDetailsOffcanvas = ({
                                                                         reset
                                                                     </button>
                                                                     <button className="btn btn-orange" disabled={!newInstancePortsForBinding} onClick={() => handleUpdatePorts()}>
-                                                                        <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-pencil-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" /><path d="M13.5 6.5l4 4" /><path d="M15 19l2 2l4 -4" /></svg>
                                                                         update
                                                                     </button>
                                                                 </>

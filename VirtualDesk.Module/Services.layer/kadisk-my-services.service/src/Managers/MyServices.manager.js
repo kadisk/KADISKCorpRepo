@@ -470,6 +470,12 @@ const MyServicesManager = (params) => {
         return instanceData?.startupParams || {}
     }
 
+    const GetInstanceStartupParamsSchema = async (serviceId) => {
+        const serviceData = await MyWorkspaceDomainService.GetServiceById(serviceId)
+        const metadata = await GetMetadataByPackageId(serviceData.packageId)
+        return metadata?.schema || {}
+    }
+
     const GetInstancePortsData = async (serviceId) => {
         const instanceData = await MyWorkspaceDomainService.GetLastInstanceByServiceId(serviceId)
         return instanceData.ports || []
@@ -481,16 +487,28 @@ const MyServicesManager = (params) => {
             return instanceData.networkmode
     }
 
-    const UpdateServicePorts = async ({ serviceId, ports }) => {
-
+    const _GetFirstRunningInstance = (serviceId) => {
         const runningInstances = ListRunningInstances(serviceId)
         const [ firstInstanceRunning ] = runningInstances
+        return firstInstanceRunning
+    }
+
+    const UpdateServicePorts = async ({ serviceId, ports }) => {
+        const firstInstanceRunning = _GetFirstRunningInstance(serviceId)
         SwapRunningInstance(serviceId, {
             ports,
             startupParams: firstInstanceRunning.startupParams,
             networkmode: firstInstanceRunning.networkmode
         })
+    }
 
+    const UpdateServiceStartupParams = async ({ serviceId, startupParams }) => {
+        const firstInstanceRunning = _GetFirstRunningInstance(serviceId)
+        SwapRunningInstance(serviceId, {
+            ports: firstInstanceRunning.ports,
+            startupParams,
+            networkmode: firstInstanceRunning.networkmode
+        })
     }
 
     _Start()
@@ -517,9 +535,11 @@ const MyServicesManager = (params) => {
         StartService,
         StopService,
         GetInstanceStartupParamsData,
+        GetInstanceStartupParamsSchema,
         GetInstancePortsData,
         GetNetworkModeData,
-        UpdateServicePorts
+        UpdateServicePorts,
+        UpdateServiceStartupParams
     }
 
 }
