@@ -27,6 +27,32 @@
 				}
 			]
 		},
+
+		{
+			"path": "/clone-repository",
+			"method": "POST",
+			"summary": "CloneRepository",
+			"parameters": [
+				{
+					"in": "body",
+					"name": "repositoryNamespace",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "repositoryGitUrl",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "personalAccessToken",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
 		{
 			"path": "/provisioned-services",
 			"method": "GET",

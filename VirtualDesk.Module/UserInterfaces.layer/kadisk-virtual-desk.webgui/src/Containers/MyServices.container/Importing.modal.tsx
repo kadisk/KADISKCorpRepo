@@ -28,6 +28,13 @@ const ImportingModal = ({
                     repositoryNamespace,
                     repositoryFile
                 }) 
+            } else if(importType === "GIT_CLONE"){
+                const { repositoryGitUrl, personalAccessToken } = importData
+                CloneRepository({
+                    repositoryNamespace,
+                    repositoryGitUrl,
+                    personalAccessToken
+                })
             }
         }
 
@@ -50,6 +57,20 @@ const ImportingModal = ({
         .UploadRepository({
             repositoryNamespace,
             repositoryFile
+        })
+        onFinishedImport()
+    }
+
+    const CloneRepository = async ({
+        repositoryNamespace,
+        repositoryGitUrl,
+        personalAccessToken
+    }) => {
+        const response = await _GetMyServicesManagerAPI()
+        .CloneRepository({
+            repositoryNamespace,
+            repositoryGitUrl,
+            personalAccessToken
         })
         onFinishedImport()
     }

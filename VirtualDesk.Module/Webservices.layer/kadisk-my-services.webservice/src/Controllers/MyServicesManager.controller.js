@@ -2,6 +2,8 @@ const multer = require('multer')
 const { join, extname } = require('path')
 const fs = require('fs')
 const os = require('os')
+const git = require('isomorphic-git')
+const http = require('isomorphic-git/http/node')
 
 const ConvertPathToAbsolutPath = (_path) => join(_path).replace('~', os.homedir())
 
@@ -20,57 +22,90 @@ const MyServicesManagerController = (params) => {
 
     const UploadRepository = (request, response, next) => {
     
-            const { authenticationData } = request
-            const { userId, username } = authenticationData
-    
-            const repositoriesDirPath = join(uploadAbsolutDirPath, username)
-    
-            if (!fs.existsSync(repositoriesDirPath)) {
-                fs.mkdirSync(repositoriesDirPath, { recursive: true })
-            }
-        
-            const uploadMiddleware = multer({ dest: repositoriesDirPath })
-    
-            uploadMiddleware.single('repositoryFile')(request, response, async (err) => {
-    
-                if (err) {
-                    return next(err)
-                }
-        
-                if (!request.file) {
-                    const error = new Error('No file uploaded')
-                    error.status = 400
-                    return next(error)
-                }
-        
-                const allowedFormats = ['.gz', '.zip']
-                const fileExt = extname(request.file.originalname).toLowerCase()
-        
-                if (!allowedFormats.includes(fileExt)) {
-                    fs.unlinkSync(request.file.path)
-                    const error = new Error('Invalid file format')
-                    error.status = 400
-                    return next(error)
-                }
-    
-                const repositoryFilePath = join(repositoriesDirPath, request.file.originalname)
-                fs.renameSync(request.file.path, repositoryFilePath)
-    
-    
-                const params = GetRequestParams(request)
-    
-                const repoData = await myServicesManagerService.SaveUploadedRepository({
-                    userId, 
-                    username,
-                    repositoryNamespace: params.repositoryNamespace, 
-                    repositoryFilePath
-                })
+        const { authenticationData } = request
+        const { userId, username } = authenticationData
 
-                return response.json(repoData)
-    
-            })
-    
+        const repositoriesDirPath = join(uploadAbsolutDirPath, username)
+
+        if (!fs.existsSync(repositoriesDirPath)) {
+            fs.mkdirSync(repositoriesDirPath, { recursive: true })
         }
+    
+        const uploadMiddleware = multer({ dest: repositoriesDirPath })
+
+        uploadMiddleware.single('repositoryFile')(request, response, async (err) => {
+
+            if (err) {
+                return next(err)
+            }
+    
+            if (!request.file) {
+                const error = new Error('No file uploaded')
+                error.status = 400
+                return next(error)
+            }
+    
+            const allowedFormats = ['.gz', '.zip']
+            const fileExt = extname(request.file.originalname).toLowerCase()
+    
+            if (!allowedFormats.includes(fileExt)) {
+                fs.unlinkSync(request.file.path)
+                const error = new Error('Invalid file format')
+                error.status = 400
+                return next(error)
+            }
+
+            const repositoryFilePath = join(repositoriesDirPath, request.file.originalname)
+            fs.renameSync(request.file.path, repositoryFilePath)
+
+
+            const params = GetRequestParams(request)
+
+            const repoData = await myServicesManagerService.SaveUploadedRepository({
+                userId, 
+                username,
+                repositoryNamespace: params.repositoryNamespace, 
+                repositoryFilePath
+            })
+
+            return response.json(repoData)
+
+        })
+
+    }
+
+    const CloneRepository = async ({
+        repositoryNamespace,
+        repositoryGitUrl,
+        personalAccessToken
+    }, { authenticationData }) => {
+        
+        const { userId, username } = authenticationData
+
+        const uniqueRandomHash = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+
+        const repositoryCodePath = join(uploadAbsolutDirPath, username+userId, `${repositoryNamespace}-${uniqueRandomHash}`)
+
+        await git.clone({
+            fs,
+            http, 
+            dir : repositoryCodePath,
+            url: repositoryGitUrl,
+                onAuth: () => ({
+                    username: personalAccessToken,
+                    password: ''
+                })
+        })
+
+        const repoData = await myServicesManagerService
+        .SaveClonedRepository({
+                userId, 
+                repositoryNamespace, 
+                repositoryCodePath
+        })
+        return repoData
+
+    }
 
     const ListProvisionedServices = ({ authenticationData }) => {
         const { userId } = authenticationData
@@ -177,6 +212,7 @@ const MyServicesManagerController = (params) => {
         controllerName: "MyServicesManagerController",
         GetMyServicesStatus,
         UploadRepository,
+        CloneRepository,
         ListProvisionedServices,
         GetServiceData,
         GetNetworksSettings,

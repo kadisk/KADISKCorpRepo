@@ -237,6 +237,21 @@ const MyServicesManager = (params) => {
         return repoData
     }
 
+    const SaveClonedRepository = async ({
+            userId, 
+            repositoryNamespace, 
+            repositoryCodePath
+    }) => {
+        
+        const repoData = await RecordNewRepository({ userId, repositoryNamespace, repositoryCodePath })
+        ItemIndexer.IndexRepository({
+            repositoryId: repoData.id,
+            repositoryCodePath
+        })
+
+        return repoData
+    }
+
     const RecordNewRepository = async ({userId, repositoryCodePath, repositoryNamespace}) => {
         const existingNamespace = await MyWorkspaceDomainService.GetRepository.ByNamespace(repositoryNamespace)
 
@@ -482,6 +497,7 @@ const MyServicesManager = (params) => {
 
     return {
         SaveUploadedRepository,
+        SaveClonedRepository,
         GetStatus,
         ListBootablePackages,
         ListRepositories,
