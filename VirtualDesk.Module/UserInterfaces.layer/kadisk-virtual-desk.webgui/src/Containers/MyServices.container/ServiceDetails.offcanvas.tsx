@@ -9,20 +9,25 @@ const GetColor = (status: string) => {
     switch (status) {
         case "RUNNING":
             return "green"
-        case "STARTING":
+		case "FINISHED":
             return "cyan"
         case "FAILURE":
             return "red"
         case "TERMINATED":
-        case "FINISHED":
+			return "gray"
         case "STOPPED":
-            return "gray"
-        case "WAITING":
-        case "STOPPING":
+			return "orange"
+		case "STARTING":
+        case "RESTARTING":
+		case  "CREATED":
+			return "azure"
+		case "STOPPING":
+			return "yellow"
+		case "WAITING":
 		case "LOADING":
-            return "yellow"
+            return "purple"
         default:
-            return "orange"
+            return "gray"
     }
 }
 

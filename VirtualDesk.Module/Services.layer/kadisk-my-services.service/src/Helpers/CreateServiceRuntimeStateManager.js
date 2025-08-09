@@ -100,7 +100,7 @@ const CreateServiceRuntimeStateManager = () => {
             case STOPPING:
             case STOPPED:
             case TERMINATED:
-                if(serviceStatus !== RESTARTING)
+                if(serviceStatus !== RESTARTING && ListRunningInstances(serviceId).length === 0)
                     ChangeStatus(SERVICE_STATE_GROUP, serviceId, status)
                 break
             case STARTING:
@@ -438,7 +438,11 @@ const CreateServiceRuntimeStateManager = () => {
     }
 
     const GetNetworksSettings  = async (serviceId) => {
-        const data = FindData(CONTAINER_STATE_GROUP, "serviceId", serviceId)
+        const containerStateList = ListStatesByPropertyData(CONTAINER_STATE_GROUP, "serviceId", serviceId)
+
+        const runningStateContainer = containerStateList.find(({status}) => status === RUNNING)
+
+        const { data } = runningStateContainer
 
         if(data){
             const { NetworkSettings } = data

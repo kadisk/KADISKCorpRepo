@@ -11,20 +11,25 @@ const GetColorByStatus = (status: string) => {
     switch (status) {
         case "RUNNING":
             return "green"
-        case "STARTING":
+		case "FINISHED":
             return "cyan"
         case "FAILURE":
             return "red"
         case "TERMINATED":
-		case "FINISHED":
-        case "STOPPED":
 			return "gray"
-		case "WAITING":
+        case "STOPPED":
+			return "orange"
+		case "RESTARTING":
+		case  "CREATED":
+		case "STARTING":
+			return "azure"
 		case "STOPPING":
+			return "yellow"
+		case "WAITING":
 		case "LOADING":
-            return "yellow"
+            return "purple"
         default:
-            return "orange"
+            return "gray"
     }
 }
 
@@ -34,6 +39,8 @@ const isShowStatusDotAnimated = (status) => {
 		status==="LOADING"
 		|| status==="RUNNING"
 		|| status==="STOPPING"
+		|| status==="RESTARTING"
+		|| status==="CREATED"
 		|| status==="STARTING"
 	) return true
 
@@ -193,7 +200,7 @@ const ServiceSettingsPanelContainer = ({
 					<div className="col">
 						<div className="page-pretitle">Service Settings</div>
 						<h2 className="page-title">{serviceName}</h2>
-						<div className="text-secondary">
+						<div className="text-secondary mt-3">
 							<ul className="list-inline list-inline-dots mb-0">
 								<li className="list-inline-item">
 									<span className={`status status-${GetColorByStatus(serviceStatus)}`}>
@@ -228,7 +235,7 @@ const ServiceSettingsPanelContainer = ({
 						</div>
 					</div>
 				</div>
-				<div className="row row-cards mt-2">
+				<div className="row row-cards mt-0">
 					<div className="col-12">
 						<div className="card">
 							<div className="card-header p-2">
@@ -262,7 +269,18 @@ const ServiceSettingsPanelContainer = ({
 														</td>
 														<td>{item.instanceId}</td>
 														<td>{item.networkmode}</td>
-														<td>{JSON.stringify(item.ports, null, 2)}</td>
+														<td style={{ whiteSpace: "nowrap" }}>
+															{item.ports.map((port) =>
+																<div className="d-flex mb-1">
+																	<div className="me-2 text-secondary text-nowrap">
+																		{"Service ".toUpperCase()}<span className="badge">{`${port.servicePort}`}</span>
+																	</div>
+																	<div className="text-nowrap">
+																		<strong>{"Host ".toUpperCase()}<span className="badge badge-outline text-dark"><strong>{`${port.hostPort}`}</strong></span></strong>
+																	</div>
+																</div>
+															)}
+														</td>
 														<td>{JSON.stringify(item.startupParams, null, 2)}</td>
 													</tr>
 												))
