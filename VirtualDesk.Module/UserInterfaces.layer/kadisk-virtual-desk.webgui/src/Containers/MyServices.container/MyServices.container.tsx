@@ -197,7 +197,7 @@ const MyServicesContainer = ({
                                                         </div>
                                                     </div>
                                                     {
-                                                            ( provisionedService.status === "STOPPING"|| provisionedService.status === "STARTING" )
+                                                            ( provisionedService.status === "STOPPING" || provisionedService.status === "STARTING" || provisionedService.status === "RESTARTING")
                                                             &&<div className="card-body">
                                                                     <div className="progress progress-sm">
                                                                         <div className="progress-bar progress-bar-indeterminate"></div>
