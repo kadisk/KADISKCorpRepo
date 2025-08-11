@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react"
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 
-import { JsonEditor } from 'json-edit-react'
+import { JsonEditor, monoLightTheme } from 'json-edit-react'
 import Ajv from "ajv"
 
 import GetAPI from "../../Utils/GetAPI"
@@ -276,6 +276,7 @@ const ServiceDetailsOffcanvas = ({
                             && startupParamsValidate.current
                             && <JsonEditor
                                     data={ instanceStartupParams }
+                                    theme={monoLightTheme}
                                     setData={ setNewStartupParamsForUpdate }
                                     onUpdate={ ({ newData }) => {
                                         const valid = startupParamsValidate.current(newData)
@@ -303,7 +304,7 @@ const ServiceDetailsOffcanvas = ({
                                                 .map((property) => 
                                                     <tr>
                                                         <td className="p-1"><strong>{property}</strong></td>
-                                                        <td className="p-1">{instanceStartupParams[property]}</td>
+                                                        <td className="p-1">{JSON.stringify(instanceStartupParams[property])}</td>
                                                     </tr>)
                                             }
                                         </tbody>

@@ -157,7 +157,7 @@ const CreateServiceRuntimeStateManager = () => {
 
         const { status, data } = GetState(IMAGE_BUILD_HISTORY_STATE_GROUP, buildId)
         const { status: statusService, data:serviceData } = GetState(SERVICE_STATE_GROUP, data.serviceId)
-        const { status:instanceStatus, data:instanceData } = GetState(INSTANCE_STATE_GROUP, data.instanceId)
+        const { status:instanceStatus, data:instanceData } = GetState(INSTANCE_STATE_GROUP, data.instanceId) || {}
 
         switch (status) {
             case WAITING:
