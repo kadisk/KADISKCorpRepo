@@ -4,7 +4,8 @@ const { literal } = require('sequelize')
 const PACKAGE_ITEM_TYPE = ["app", "cli", "webapp", "webgui", "webservice", "service", "lib"]
 
 const CreateMyWorkspaceDomainService = ({
-    RepositoryModel,
+    RepositoryNamespaceModel,
+    RepositoryImportedModel,
     RepositoryItemModel,
     ServiceModel,
     ImageBuildHistoryModel,
@@ -13,45 +14,74 @@ const CreateMyWorkspaceDomainService = ({
     ContainerEventLogModel
 }) => {
 
-    const ListRepositories = (userId) => RepositoryModel.findAll({where: { userId }})
+    const ListRepositoryNamespace = (userId) => RepositoryNamespaceModel.findAll({where: { userId }})
 
-    const GetRepositoryByNamespace = (namespace) => RepositoryModel.findOne({ where: { namespace } })
-    const GetRepositoryById = (id) => RepositoryModel.findOne({ where: { id } })
+    const GetRepositoryNamespaceId = async (namespace) => {
+        const respositoryNamespaceData = await RepositoryNamespaceModel.findOne({ where: { namespace } })
+        return respositoryNamespaceData?.id
+    }
 
-    const RegisterRepository = ({ repositoryNamespace , userId, repositoryCodePath }) => RepositoryModel.create({ namespace: repositoryNamespace, userId, repositoryCodePath})
+    const GetRepositoryImported = (id) => RepositoryImportedModel.findOne({ where: { id } })
+
+    const RegisterRepositoryNamespace = ({ namespace , userId }) => 
+        RepositoryNamespaceModel.create({ namespace, userId })
+
+    const RegisterRepositoryImported = ({ namespaceId, repositoryCodePath }) => 
+        RepositoryImportedModel.create({ namespaceId, repositoryCodePath })
 
     const ListItemByRepositoryId = (repositoryId) => RepositoryItemModel.findAll({ where: { repositoryId }, raw: true})
 
+    const GetRepositoryNamespaceByRepositoryId = async (repositoryId) => {
 
-    const GetItemById = (id) => RepositoryItemModel.findOne({
-        attributes: {
-            include: [
-                [literal('"Repository"."id"'), "repositoryId"],
-                [literal('"Repository"."namespace"'), "repositoryNamespace"],
-                [literal('"Repository"."repositoryCodePath"'), "repositoryCodePath"],
-            ]
-        },
-        include: [{
-            model: RepositoryModel,
-            attributes: []
-        }],
-        where: { id }, 
-        raw: true 
-    })
-
-    const ListPackageItemByUserId = async (userId) => {
-        const items = await RepositoryItemModel.findAll({
-             attributes: {
+        const repositoryData = await RepositoryImportedModel.findOne({
+            attributes: {
                 include: [
-                    [literal('"Repository"."id"'), "repositoryId"],
-                    [literal('"Repository"."namespace"'), "repositoryNamespace"],
-                    [literal('"Repository"."repositoryCodePath"'), "repositoryCodePath"],
+                    [literal('"RepositoryNamespace"."namespace"'), "repositoryNamespace"]
                 ]
             },
             include: [{
-                model: RepositoryModel,
-                where: { userId },
+                model: RepositoryNamespaceModel,
                 attributes: []
+            }],
+            where: { id: repositoryId },
+            raw: true
+        })
+
+        return repositoryData?.repositoryNamespace
+
+    }
+
+    const GetItemById = async (id) => {
+        const item = await RepositoryItemModel.findOne({
+            include: [{
+                model: RepositoryImportedModel,
+                attributes: ['repositoryCodePath'],
+                include: [{
+                    model: RepositoryNamespaceModel,
+                    attributes: ['namespace']
+                }]
+            }],
+            where: { id }, 
+            raw: true 
+        })
+
+        return {
+            ...item,
+            repositoryCodePath: item['RepositoryImported.repositoryCodePath'],
+            repositoryNamespace: item['RepositoryImported.RepositoryNamespace.namespace']
+        }
+    }
+
+    const ListPackageItemByUserId = async (userId) => {
+        const items = await RepositoryItemModel.findAll({
+            include: [{
+                model: RepositoryImportedModel,
+                attributes: ['repositoryCodePath'],
+                include: [{
+                    model: RepositoryNamespaceModel,
+                    attributes: ['namespace'],
+                    where: { userId }
+                }]
             }],
             where: {
                 itemType: PACKAGE_ITEM_TYPE
@@ -59,21 +89,23 @@ const CreateMyWorkspaceDomainService = ({
             raw: true
         })
 
-        return items
+        return items.map(item => ({
+            ...item,
+            repositoryCodePath: item['RepositoryImported.repositoryCodePath'],
+            repositoryNamespace: item['RepositoryImported.RepositoryNamespace.namespace']
+        }))
     }
 
     const GetPackageItemByPath = async ({ path, userId }) => {
         const item = await RepositoryItemModel.findOne({
-            attributes: {
-                include: [
-                    [literal('"Repository"."repositoryCodePath"'), "repositoryCodePath"],
-                    [literal('"Repository"."namespace"'), "repositoryNamespace"],
-                ]
-            },
             include: [{
-                model: RepositoryModel,
-                where: { userId },
-                attributes: []
+                model: RepositoryImportedModel,
+                attributes: ['repositoryCodePath'],
+                include: [{
+                    model: RepositoryNamespaceModel,
+                    where: { userId },
+                    attributes: ['namespace']
+                }]
             }],
             where: {
                 itemPath: path,
@@ -82,20 +114,22 @@ const CreateMyWorkspaceDomainService = ({
             raw: true
         })
     
-        return item
+        return {
+            ...item,
+            repositoryCodePath: item['RepositoryImported.repositoryCodePath'],
+            repositoryNamespace: item['RepositoryImported.RepositoryNamespace.namespace']
+        }
     }
 
     const GetPackageById = async (id) => {
         const item = await RepositoryItemModel.findOne({
-            attributes: {
-                include: [
-                    [literal('"Repository"."repositoryCodePath"'), "repositoryCodePath"],
-                    [literal('"Repository"."namespace"'), "repositoryNamespace"],
-                ]
-            },
             include: [{
-                model: RepositoryModel,
-                attributes: []
+                model: RepositoryImportedModel,
+                attributes: ['repositoryCodePath'],
+                include: [{
+                    model: RepositoryNamespaceModel,
+                    attributes: ['namespace']
+                }]
             }],
             where: {
                 id,
@@ -104,16 +138,26 @@ const CreateMyWorkspaceDomainService = ({
             raw: true
         })
     
-        return item
+        return {
+            ...item,
+            repositoryCodePath: item['RepositoryImported.repositoryCodePath'],
+            repositoryNamespace: item['RepositoryImported.RepositoryNamespace.namespace']
+        }
     }
     
     const ListServicesByUserId = async (userId) => {
         const items = await ServiceModel.findAll({
             include: [
                 {
-                    model: RepositoryModel,
-                    where: { userId },
-                    attributes: ["id", "namespace"]
+                    model: RepositoryImportedModel,
+                    attributes: ["id"],
+                    include: [
+                        {
+                            model: RepositoryNamespaceModel,
+                            where: { userId },
+                            attributes: ["id", "namespace"]
+                        }
+                    ]
                 },
                 {
                     model: RepositoryItemModel,
@@ -126,40 +170,37 @@ const CreateMyWorkspaceDomainService = ({
                     }]
                 }
             ],
-            raw: false
+            raw: true
         })
-        return items.map(item => item.get({ plain: true }))
+        return items
+        .map( item => ({
+            ...item,
+            packageId: item['RepositoryItem.id'],
+            packageName: item['RepositoryItem.itemName'],
+            packageType: item['RepositoryItem.itemType'],
+            repositoryId: item['RepositoryImported.id'],
+            repositoryCodePath: item['RepositoryImported.repositoryCodePath'],
+            repositoryNamespace: item['RepositoryImported.RepositoryNamespace.namespace']
+        }))
     }
 
-    const ListServices = async () => {
-        const items = await ServiceModel.findAll({
-            include: [
-                {
-                    model: RepositoryModel,
-                    attributes: ["id", "namespace"]
-                },
-                {
-                    model: RepositoryItemModel,
-                    attributes: ["id", "itemName", "itemType", "itemPath"]
-                },
-                {
-                    model: InstanceModel,
-                    include: [{
-                        model: ImageBuildHistoryModel,
-                    }]
-                }
-            ],
-            raw: false
-        })
-        return items.map(item => item.get({ plain: true }))
+    const ListServiceIds = async () => {
+        const items = await ServiceModel.findAll()
+        return items?.map( item => item.id )
     }
 
     const GetServiceById = async (serviceId) => {
         const item = await ServiceModel.findOne({
             include: [
                 {
-                    model: RepositoryModel,
-                    attributes: ["id", "namespace"]
+                    model: RepositoryImportedModel,
+                    attributes: ["id"],
+                    include: [
+                        {
+                            model: RepositoryNamespaceModel,
+                            attributes: ["id", "namespace"]
+                        }
+                    ]
                 },
                 {
                     model: RepositoryItemModel,
@@ -169,10 +210,20 @@ const CreateMyWorkspaceDomainService = ({
             where: {
                 id: serviceId
             },
-            raw: false
+            raw: true
         })
-        return item.get({ plain: true })
+        
+        return {
+            ...item,
+            packageId: item['RepositoryItem.id'],
+            packageName: item['RepositoryItem.itemName'],
+            packageType: item['RepositoryItem.itemType'],
+            repositoryId: item['RepositoryImported.id'],
+            repositoryCodePath: item['RepositoryImported.repositoryCodePath'],
+            repositoryNamespace: item['RepositoryImported.RepositoryNamespace.namespace']
+        }
     }
+
 
     const RegisterServiceProvisioning = ({ 
         serviceName,
@@ -279,22 +330,22 @@ const CreateMyWorkspaceDomainService = ({
     }
 
     return {
-        RegisterRepository,
+        RegisterRepositoryNamespace,
+        RegisterRepositoryImported,
         RegisterServiceProvisioning,
         RegisterInstanceCreation,
         RegisterTerminateInstance,
         RegisterBuildedImage,
-        ListRepositories,
-        GetRepository:{
-            ByNamespace: GetRepositoryByNamespace,
-            ById: GetRepositoryById
-        },
+        ListRepositoryNamespace,
+        GetRepositoryNamespaceId,
+        GetRepositoryNamespaceByRepositoryId,
+        GetRepositoryImported,
         ListItemByRepositoryId,
         GetItemById,
         ListPackageItemByUserId,
         GetPackageById,
         GetPackageItemByPath,
-        ListServices,
+        ListServiceIds,
         ListServicesByUserId,
         GetServiceById,
         ListImageBuildHistoryByServiceId,

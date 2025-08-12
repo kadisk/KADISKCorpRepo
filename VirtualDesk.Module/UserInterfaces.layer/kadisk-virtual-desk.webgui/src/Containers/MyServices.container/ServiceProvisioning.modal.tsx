@@ -18,8 +18,14 @@ const PROVISIONING_ERROR_MODE = Symbol()
 const NONE_NETWORK_OPTION = Symbol("none")
 const HOST_NETWORK_OPTION = Symbol("host")
 const DEFAULT_BRIDGE_NETWORK_OPTION = Symbol("bridge")
+const MYSERVICES_NETWORK_OPTION = Symbol("my-services")
 
 const NETWORK_DATA_LIST = [
+    {
+        "label": "My Services Network",
+        "description": "services connected to this network can access the internet and communicate with each other using container names via Docker's internal DNS. Only containers on 'my-services' can resolve and reach each other by name.",
+        "code": MYSERVICES_NETWORK_OPTION
+    },
     {
         "label": "Default Bridge",
         "description": "services connected to this network are isolated from the host, but can communicate with each other (via internal IP) and with the internet (via NAT)",
@@ -329,7 +335,7 @@ const ServiceProvisioningModal = ({
                                 && <div className="card-body bg-orange-lt text-orange-lt-fg">
                                         <h3 className="card-title">Network Setup</h3>
                                         <div className="mb-3 row">
-                                            <div className={`col-${networkSelected === DEFAULT_BRIDGE_NETWORK_OPTION ? "8": "12"}`}>
+                                            <div className={`col-${(networkSelected === DEFAULT_BRIDGE_NETWORK_OPTION || networkSelected === MYSERVICES_NETWORK_OPTION) ? "8": "12"}`}>
                                                 <div className="form-selectgroup form-selectgroup-boxes d-flex flex-column">
                                                     {
                                                         NETWORK_DATA_LIST
@@ -351,7 +357,7 @@ const ServiceProvisioningModal = ({
                                             </div>
                                             
                                             {
-                                                networkSelected === DEFAULT_BRIDGE_NETWORK_OPTION
+                                                (networkSelected === DEFAULT_BRIDGE_NETWORK_OPTION || networkSelected === MYSERVICES_NETWORK_OPTION)
                                                 && <div className="col-4">
                                                         <div className="table-responsive" style={{ display: 'inline-block', minWidth: 'auto' }}>
                                                             <table className="table mb-0" style={{ width: 'auto' }}>
@@ -459,7 +465,7 @@ const ServiceProvisioningModal = ({
                     {
                         (typeMode === NETWORK_SETUP_MODE)
                         && <button
-                                disabled={!((networkSelected === NONE_NETWORK_OPTION || networkSelected === HOST_NETWORK_OPTION) || (networkSelected === DEFAULT_BRIDGE_NETWORK_OPTION && !(servicePortForAdd && hostPortForAdd)))}
+                                disabled={!((networkSelected === NONE_NETWORK_OPTION || networkSelected === HOST_NETWORK_OPTION) || ((networkSelected === DEFAULT_BRIDGE_NETWORK_OPTION || networkSelected === MYSERVICES_NETWORK_OPTION) && !(servicePortForAdd && hostPortForAdd)))}
                                 className="btn btn-cyan ms-auto" onClick={() => changeTypeMode(CONFIRMATION_SERVICE_MODE)}>
                                 Confirmation
                                 <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-right ms-1"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M5 12l14 0" /><path d="M15 16l4 -4" /><path d="M15 8l4 4" /></svg>

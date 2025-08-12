@@ -4,7 +4,7 @@ const RepositoryServiceManagerController = (params) => {
 
     const ListRepositories = async ({authenticationData}) => {
         const { userId } = authenticationData
-        const repositories = await myServicesManagerService.ListRepositories(userId)
+        const repositories = await myServicesManagerService.ListRepositoryNamespace(userId)
 
         return repositories
     }

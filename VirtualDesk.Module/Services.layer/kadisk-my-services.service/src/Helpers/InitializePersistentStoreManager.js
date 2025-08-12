@@ -1,22 +1,36 @@
 const { Sequelize, DataTypes } = require("sequelize")
 
 const InitializePersistentStoreManager = (storage) => {
+
     const sequelize = new Sequelize({
         dialect: "sqlite",
         storage
     })
 
-    const RepositoryModel = sequelize.define("Repository", { 
+    const RepositoryNamespaceModel = sequelize.define("RepositoryNamespace", {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true
         },
+        userId: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
         namespace: {
             type: DataTypes.STRING,
             allowNull: false
+        }
+    })
+
+    
+    const RepositoryImportedModel = sequelize.define("RepositoryImported", { 
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true
         },
-        userId: {
+        namespaceId: {
             type: DataTypes.INTEGER,
             allowNull: false
         },
@@ -45,7 +59,7 @@ const InitializePersistentStoreManager = (storage) => {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: RepositoryModel,
+                model: RepositoryImportedModel,
                 key: "id"
             },
             onDelete: "CASCADE"
@@ -84,7 +98,7 @@ const InitializePersistentStoreManager = (storage) => {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: RepositoryModel,
+                model: RepositoryImportedModel,
                 key: "id"
             },
             onDelete: "CASCADE"
@@ -218,31 +232,33 @@ const InitializePersistentStoreManager = (storage) => {
         }
     })
 
-    RepositoryModel       .hasMany(RepositoryItemModel,    { foreignKey: "repositoryId", onDelete: "CASCADE" })
-    RepositoryItemModel   .hasMany(RepositoryItemModel,    { foreignKey: "parentId", as: "children", onDelete: "CASCADE" })
-    RepositoryModel       .hasMany(ServiceModel,           { foreignKey: "originRepositoryId", onDelete: "CASCADE" })
-    ServiceModel          .hasMany(ImageBuildHistoryModel, { foreignKey: "serviceId",   onDelete: "CASCADE" })
-    InstanceModel         .hasMany(ImageBuildHistoryModel, { foreignKey: "instanceId",  onDelete: "CASCADE" })
-    InstanceModel         .hasMany(ContainerModel,         { foreignKey: "instanceId",  onDelete: "CASCADE" })
-    ImageBuildHistoryModel.hasMany(ContainerModel,         { foreignKey: "buildId",     onDelete: "CASCADE" })
-    ServiceModel          .hasMany(InstanceModel,          { foreignKey: "serviceId",   onDelete: "CASCADE" })
-    ContainerModel        .hasMany(ContainerEventLogModel, { foreignKey: "containerId", onDelete: "CASCADE" })
+    RepositoryNamespaceModel.hasMany(RepositoryImportedModel, { foreignKey: "namespaceId", onDelete: "CASCADE" })
+    RepositoryImportedModel .hasMany(RepositoryItemModel,    { foreignKey: "repositoryId", onDelete: "CASCADE" })
+    RepositoryItemModel     .hasMany(RepositoryItemModel,    { foreignKey: "parentId", as: "children", onDelete: "CASCADE" })
+    RepositoryImportedModel .hasMany(ServiceModel,           { foreignKey: "originRepositoryId", onDelete: "CASCADE" })
+    ServiceModel            .hasMany(ImageBuildHistoryModel, { foreignKey: "serviceId",   onDelete: "CASCADE" })
+    InstanceModel           .hasMany(ImageBuildHistoryModel, { foreignKey: "instanceId",  onDelete: "CASCADE" })
+    InstanceModel           .hasMany(ContainerModel,         { foreignKey: "instanceId",  onDelete: "CASCADE" })
+    ImageBuildHistoryModel  .hasMany(ContainerModel,         { foreignKey: "buildId",     onDelete: "CASCADE" })
+    ServiceModel            .hasMany(InstanceModel,          { foreignKey: "serviceId",   onDelete: "CASCADE" })
+    ContainerModel          .hasMany(ContainerEventLogModel, { foreignKey: "containerId", onDelete: "CASCADE" })
 
-
-    RepositoryItemModel   .belongsTo(RepositoryModel,        { foreignKey: "repositoryId" })
-    ServiceModel          .belongsTo(RepositoryModel,        { foreignKey: "originRepositoryId" })
-    ServiceModel          .belongsTo(RepositoryItemModel,    { foreignKey: "packageId" })
-    ContainerModel        .belongsTo(InstanceModel,          { foreignKey: "instanceId" })
-    ContainerModel        .belongsTo(ImageBuildHistoryModel, { foreignKey: "buildId" })
-    ContainerEventLogModel.belongsTo(ImageBuildHistoryModel, { foreignKey: "containerId" })
-    ImageBuildHistoryModel.belongsTo(InstanceModel,          { foreignKey: "instanceId" })
-    InstanceModel         .belongsTo(ServiceModel,           { foreignKey: "serviceId" })
-    InstanceModel         .belongsTo(ServiceModel,           { foreignKey: "serviceId" })
-    RepositoryItemModel   .belongsTo(RepositoryItemModel,    { foreignKey: "parentId", as: "parent"})
+    RepositoryImportedModel.belongsTo(RepositoryNamespaceModel, { foreignKey: "namespaceId" })
+    RepositoryItemModel    .belongsTo(RepositoryImportedModel,  { foreignKey: "repositoryId" })
+    ServiceModel           .belongsTo(RepositoryImportedModel,  { foreignKey: "originRepositoryId" })
+    ServiceModel           .belongsTo(RepositoryItemModel,      { foreignKey: "packageId" })
+    ContainerModel         .belongsTo(InstanceModel,            { foreignKey: "instanceId" })
+    ContainerModel         .belongsTo(ImageBuildHistoryModel,   { foreignKey: "buildId" })
+    ContainerEventLogModel .belongsTo(ImageBuildHistoryModel,   { foreignKey: "containerId" })
+    ImageBuildHistoryModel .belongsTo(InstanceModel,            { foreignKey: "instanceId" })
+    InstanceModel          .belongsTo(ServiceModel,             { foreignKey: "serviceId" })
+    InstanceModel          .belongsTo(ServiceModel,             { foreignKey: "serviceId" })
+    RepositoryItemModel    .belongsTo(RepositoryItemModel,      { foreignKey: "parentId", as: "parent"})
 
     return {
         models: {
-            Repository: RepositoryModel,
+            RepositoryNamespace: RepositoryNamespaceModel,
+            RepositoryImported: RepositoryImportedModel,
             RepositoryItem: RepositoryItemModel,
             Service: ServiceModel,
             ImageBuildHistory: ImageBuildHistoryModel,

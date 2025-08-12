@@ -43,19 +43,21 @@ const MyServicesManager = (params) => {
     const PersistentStoreManager = InitializePersistentStoreManager(absolutStorageFilePath)
 
     const {
-        Repository        : RepositoryModel,
-        RepositoryItem    : RepositoryItemModel,
-        Service           : ServiceModel,
-        ImageBuildHistory : ImageBuildHistoryModel,
-        Instance          : InstanceModel,
-        Container         : ContainerModel,
-        ContainerEventLog : ContainerEventLogModel
+        RepositoryNamespace : RepositoryNamespaceModel,
+        RepositoryImported  : RepositoryImportedModel,
+        RepositoryItem      : RepositoryItemModel,
+        Service             : ServiceModel,
+        ImageBuildHistory   : ImageBuildHistoryModel,
+        Instance            : InstanceModel,
+        Container           : ContainerModel,
+        ContainerEventLog   : ContainerEventLogModel
     } = PersistentStoreManager.models
 
     const ItemIndexer = CreateItemIndexer({RepositoryItemModel})
 
     const MyWorkspaceDomainService = CreateMyWorkspaceDomainService({
-        RepositoryModel, 
+        RepositoryNamespaceModel,
+        RepositoryImportedModel, 
         RepositoryItemModel, 
         ServiceModel,
         ImageBuildHistoryModel,
@@ -219,18 +221,18 @@ const MyServicesManager = (params) => {
     }
 
     const InitializeAllServiceStateManagement = async  () => {
-        const serviceDataList = await MyWorkspaceDomainService.ListServices()
-        serviceDataList.forEach(serviceData => LoadServiceInStateManagement(serviceData.id))
+        const serviceIds = await MyWorkspaceDomainService.ListServiceIds()
+        serviceIds.forEach(serviceId => LoadServiceInStateManagement(serviceId))
     }
 
     const SaveUploadedRepository = async ({ repositoryNamespace, userId, username , repositoryFilePath }) => {
         const repositoriesCodePath = _MountPathImportedRepositoriesSourceCodeDirPath({ username, repositoryNamespace })
 
         const newRepositoryCodePath = await ExtractTarGz(repositoryFilePath, repositoriesCodePath)
-        const repoData = await RecordNewRepository({ userId, repositoryNamespace, repositoryCodePath: newRepositoryCodePath })
+        const repoData = await CreateRepository({ userId, repositoryNamespace, repositoryCodePath: newRepositoryCodePath })
 
         ItemIndexer.IndexRepository({
-            repositoryId: repoData.id,
+            repositoryId: repoData.repositoryImported.id,
             repositoryCodePath: newRepositoryCodePath
         })
 
@@ -243,28 +245,35 @@ const MyServicesManager = (params) => {
             repositoryCodePath
     }) => {
         
-        const repoData = await RecordNewRepository({ userId, repositoryNamespace, repositoryCodePath })
+        const repoData = await CreateRepository({ userId, repositoryNamespace, repositoryCodePath })
         ItemIndexer.IndexRepository({
-            repositoryId: repoData.id,
+            repositoryId: repoData.repositoryImported.id,
             repositoryCodePath
         })
 
         return repoData
     }
 
-    const RecordNewRepository = async ({userId, repositoryCodePath, repositoryNamespace}) => {
-        const existingNamespace = await MyWorkspaceDomainService.GetRepository.ByNamespace(repositoryNamespace)
+    const CreateRepository = async ({userId, repositoryCodePath, repositoryNamespace}) => {
+        const existingNamespaceId = await MyWorkspaceDomainService.GetRepositoryNamespaceId(repositoryNamespace)
 
-        if (existingNamespace) 
+        if (existingNamespaceId !== undefined) 
             throw new Error('Repository Namespace already exists')
 
-        const newRepository = await MyWorkspaceDomainService
-            .RegisterRepository({ repositoryNamespace , userId, repositoryCodePath })
-        return newRepository
+        const newRepositoryNamespace = await MyWorkspaceDomainService
+            .RegisterRepositoryNamespace({ namespace: repositoryNamespace , userId })
+
+        const newRepositoryImported = await MyWorkspaceDomainService
+            .RegisterRepositoryImported({ namespaceId: newRepositoryNamespace.id , repositoryCodePath })
+            
+        return {
+            repositoryNamespace: newRepositoryNamespace,
+            repositoryImported: newRepositoryImported
+        }
     }
 
     const GetStatus = async (userId) => {
-        const repositoryCount = await RepositoryModel.count({ where: { userId } })
+        const repositoryCount = await RepositoryNamespaceModel.count({ where: { userId } })
     
         if (repositoryCount > 0) {
             return "READY"
@@ -324,7 +333,7 @@ const MyServicesManager = (params) => {
     }
 
     const ListRepositories = async (userId) => {
-        const repositoriesData  = await MyWorkspaceDomainService.ListRepositories(userId)
+        const repositoriesData  = await MyWorkspaceDomainService.ListRepositoryNamespace(userId)
         
         const repositories = repositoriesData
             .map((repositoryData) => {
@@ -420,20 +429,22 @@ const MyServicesManager = (params) => {
                     id: serviceId,
                     serviceName,
                     packageId,
-                    RepositoryItem,
-                    Repository
+                    packageName,
+                    packageType,
+                    repositoryId,
+                    repositoryNamespace
                 } = provisionedService
 
+
                 return {
-                    status              : GetServiceStatus(serviceId),
+                    status : GetServiceStatus(serviceId),
                     serviceId,
                     serviceName,
                     packageId,
-                    repositoryId        : Repository.id,
-                    repositoryNamespace : Repository.namespace,
-                    packageId           : RepositoryItem.id,
-                    packageName         : RepositoryItem.itemName,
-                    packageType         : RepositoryItem.itemType
+                    repositoryId,
+                    repositoryNamespace,
+                    packageName,
+                    packageType
                 }
                 
             })
@@ -446,21 +457,27 @@ const MyServicesManager = (params) => {
             
         const serviceData = await MyWorkspaceDomainService.GetServiceById(serviceId)
         
-        const { 
-            Repository, 
-            RepositoryItem,
+        const {
+            serviceName,
+            serviceDescription,
+            appType,
+            packageId,
+            packageName,
+            packageType,
+            repositoryNamespace,
+            repositoryId
         } = serviceData
 
         return {
-            serviceId           : serviceData.id,
-            serviceName         : serviceData.serviceName,
-            serviceDescription  : serviceData.serviceDescription,
-            appType             : serviceData.appType,
-            repositoryId        : Repository.id,
-            repositoryNamespace : Repository.namespace,
-            packageId           : RepositoryItem.id,
-            packageName         : RepositoryItem.itemName,
-            packageType         : RepositoryItem.itemType,
+            serviceId,
+            serviceName,
+            serviceDescription,
+            appType,
+            repositoryId,
+            repositoryNamespace,
+            packageId,
+            packageName,
+            packageType,
         }
 
     }

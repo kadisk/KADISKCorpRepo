@@ -23,7 +23,7 @@ const MyWorkspaceController = (params) => {
 
     const ListRepositories = ({ authenticationData }) => {
         const { userId } = authenticationData
-        return myWorkspaceManagerService.ListRepositories(userId)
+        return myWorkspaceManagerService.ListRepositoryNamespace(userId)
     }
 
     const ImportRepository = ({ repositoryNamespace, sourceCodeURL }, { authenticationData }) => {
