@@ -8,7 +8,7 @@ import GetAPI from "../../Utils/GetAPI"
 import WelcomeMyServices from "./WelcomeMyServices"
 import ImportRepositoryModal from "./ImportRepository.modal"
 import ServiceProvisioningModal from "./ServiceProvisioning.modal"
-import RepositoriesManagerModal from "./RepositoriesManager.modal"
+import NamespaceAndRepositoryManagerModal from "./NamespaceAndRepositoryManager.modal"
 import ImportingModal from "./Importing.modal"
 import ServiceDetailsOffcanvas from "./ServiceDetails.offcanvas"
 
@@ -246,7 +246,7 @@ const MyServicesContainer = ({
                 }
                 {
                     interfaceModeType === REPOSITORIES_MANAGER_MODE
-                    && <RepositoriesManagerModal onImportNew={() => changeMode(IMPORT_SELECT_MODE)} onClose={() => changeMode(DEFAULT_MODE)} />
+                    && <NamespaceAndRepositoryManagerModal onImportNew={() => changeMode(IMPORT_SELECT_MODE)} onClose={() => changeMode(DEFAULT_MODE)} />
                 }
 
                 {

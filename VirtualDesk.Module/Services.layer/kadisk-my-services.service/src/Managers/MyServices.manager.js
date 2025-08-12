@@ -332,7 +332,7 @@ const MyServicesManager = (params) => {
         
     }
 
-    const ListRepositories = async (userId) => {
+    const ListRepositoryNamespace = async (userId) => {
         const repositoriesData  = await MyWorkspaceDomainService.ListRepositoryNamespace(userId)
         
         const repositories = repositoriesData
@@ -535,7 +535,7 @@ const MyServicesManager = (params) => {
         SaveClonedRepository,
         GetStatus,
         ListBootablePackages,
-        ListRepositories,
+        ListRepositoryNamespace,
         ProvisionService,
         ListProvisionedServices,
         GetServiceData,
