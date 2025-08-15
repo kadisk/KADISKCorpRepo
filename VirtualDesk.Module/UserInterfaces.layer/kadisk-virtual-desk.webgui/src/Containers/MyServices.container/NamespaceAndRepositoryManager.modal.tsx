@@ -307,7 +307,7 @@ const NamespaceAndRepositoryManagerModal = ({
                                                 .map(({ id, createdAt, sourceType, sourceParams }) => 
                                                     <div className="row align-items-center">
                                                         <div className="col text-truncate">
-                                                            <div className="text-truncate">[{id}] <strong>{createdAt}</strong></div>
+                                                            <div className="text-truncate"><strong>{createdAt}</strong></div>
                                                             <div className="d-block text-secondary text-truncate mt-n1">{sourceType}</div>
                                                         </div>
                                                         <code>{JSON.stringify(sourceParams, null, 2)}</code>
