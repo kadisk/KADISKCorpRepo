@@ -2,6 +2,9 @@ import * as React from "react"
 import { useEffect, useState } from "react"
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
+
+
+import { JsonEditor, monoLightTheme } from 'json-edit-react'
 import Ajv from "ajv"
 
 import GetAPI from "../../Utils/GetAPI"
@@ -71,15 +74,18 @@ const ServiceProvisioningModal = ({
     const [isStartupParamsValid, setIsStartupParamsValid] = useState(false)
 
     useEffect(() => {
-        if (typeMode === PACKAGE_SETUP_MODE && startupParamsData?.schema) {
-            debugger
-            try {
-                const validate = ajv.compile(startupParamsData.schema)
-                const valid = validate(startupParams)
-                setIsStartupParamsValid(Boolean(valid))
-            } catch(e) {
-                console.error(e)
-                setIsStartupParamsValid(false)
+        if (typeMode === PACKAGE_SETUP_MODE) {
+            if(startupParamsData?.schema){
+                try {
+                    const validate = ajv.compile(startupParamsData.schema)
+                    const valid = validate(startupParams)
+                    setIsStartupParamsValid(Boolean(valid))
+                } catch(e) {
+                    console.error(e)
+                    setIsStartupParamsValid(false)
+                }
+            }else {
+                setIsStartupParamsValid(true)
             }
         }
     }, [startupParams, startupParamsData, typeMode])
@@ -96,53 +102,7 @@ const ServiceProvisioningModal = ({
         }
     }, [startupParamsData])
 
-    const handleStartupParamChange = (key: string, value: any) => {
-        setStartupParams((prev: any) => ({
-            ...prev,
-            [key]: value
-        }))
-    }
 
-    const renderStartupParamField = (key: string, schema: any, value: any) => {
-        const type = schema.type
-        if (type === "boolean") {
-            return (
-                <div key={key}>
-                    <label className="form-label">{key}</label>
-                    <input
-                        type="checkbox"
-                        className="form-check-input"
-                        checked={!!value}
-                        onChange={e => handleStartupParamChange(key, e.target.checked)}
-                    />
-                </div>
-            )
-        }
-        if (type === "string" && schema.format === "uri") {
-            return (
-                <div key={key}>
-                    <label className="form-label">{key}</label>
-                    <input
-                        type="url"
-                        className="form-control"
-                        value={value || ""}
-                        onChange={e => handleStartupParamChange(key, e.target.value)}
-                    />
-                </div>
-            )
-        }
-        return (
-            <div key={key}>
-                <label className="form-label">{key}</label>
-                <input
-                    type="text"
-                    className="form-control"
-                    value={value || ""}
-                    onChange={e => handleStartupParamChange(key, e.target.value)}
-                />
-            </div>
-        )
-    }
 
     useEffect(() => {
 
@@ -317,15 +277,15 @@ const ServiceProvisioningModal = ({
                                 </div>
                             }
                             {
-                                (typeMode === PACKAGE_SETUP_MODE && startupParamsData?.schema)
+                                (typeMode === PACKAGE_SETUP_MODE && startupParamsData?.value)
                                 && <div className="card-body bg-blue-lt text-blue-lt-fg">
                                     <h3 className="card-title">Package Setup - <strong>startup parameters</strong></h3>
                                     <form>
                                         <div className="space-y">
-                                            {
-                                                Object.entries(startupParamsData.schema.properties || {})
-                                                    .map(([key, propSchema]: [string, any]) => renderStartupParamField(key, propSchema, startupParams?.[key]))
-                                            }
+                                            <JsonEditor
+                                                data={ startupParams  }
+                                                theme={monoLightTheme}
+                                                setData={ setStartupParams }/>
                                         </div>
                                     </form>
                                 </div>

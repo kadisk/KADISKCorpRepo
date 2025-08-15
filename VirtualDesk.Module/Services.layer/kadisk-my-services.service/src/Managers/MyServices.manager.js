@@ -363,7 +363,7 @@ const MyServicesManager = (params) => {
     const ListBootablePackages = async ({ userId, username }) => {
 
         const ecosystemDefaults = await ReadJsonFile(ecosystemDefaultFilePath)
-        const packageItems  = await MyWorkspaceDomainService.ListPackageItemByUserId(userId)
+        const packageItems  = await MyWorkspaceDomainService.ListLatestPackageItemsByUserId(userId)
         console.log(`[INFO] Found ${packageItems.length} package items for user ${username} userId ${userId}`)
 
         const packageItemsWithMetadataPromises = packageItems

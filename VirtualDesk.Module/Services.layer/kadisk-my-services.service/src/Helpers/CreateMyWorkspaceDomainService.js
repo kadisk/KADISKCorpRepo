@@ -1,5 +1,4 @@
-const { literal } = require('sequelize')
-
+const { literal, Op } = require('sequelize')
 
 const PACKAGE_ITEM_TYPE = ["app", "cli", "webapp", "webgui", "webservice", "service", "lib"]
 
@@ -79,7 +78,7 @@ const CreateMyWorkspaceDomainService = ({
         }
     }
 
-    const ListPackageItemByUserId = async (userId) => {
+    const ListLatestPackageItemsByUserId = async (userId) => {
         const items = await RepositoryItemModel.findAll({
             include: [{
                 model: RepositoryImportedModel,
@@ -88,7 +87,19 @@ const CreateMyWorkspaceDomainService = ({
                     model: RepositoryNamespaceModel,
                     attributes: ['namespace'],
                     where: { userId }
-                }]
+                }],
+                where: {
+                    createdAt: {
+                        [Op.eq]: literal(`(
+                            SELECT MAX("ri"."createdAt")
+                            FROM "RepositoryImporteds" AS ri
+                            INNER JOIN "RepositoryNamespaces" AS rn
+                                ON rn.id = ri."namespaceId"
+                            WHERE rn."userId" = ${userId}
+                            AND rn.id = "RepositoryImported"."namespaceId"
+                        )`)
+                    }
+                }
             }],
             where: {
                 itemType: PACKAGE_ITEM_TYPE
@@ -350,7 +361,7 @@ const CreateMyWorkspaceDomainService = ({
         GetRepositoryImported,
         ListItemByRepositoryId,
         GetItemById,
-        ListPackageItemByUserId,
+        ListLatestPackageItemsByUserId,
         GetPackageById,
         GetPackageItemByPath,
         ListServiceIds,
