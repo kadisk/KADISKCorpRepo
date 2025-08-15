@@ -9,6 +9,9 @@ import backgroundImageUrl from "../../Assets/pexels-ruiz-15275312.jpg"
 //@ts-ignore
 import logo1svg from "../../Assets/logo.svg"
 
+//@ts-ignore
+import logoMyPlatform from "../../Assets/logo-my-platform-final.svg"
+
 type HomepageParamsType = {
     api?: string
     summary?: string
@@ -49,10 +52,9 @@ const HomepageContainer = ({
         </header>   
         <main className="main mt-6">
             <header className="text-center pb-0">
-                <div className="container">
+                <div className="container" style={{color:"#697880ff"}}>
                     <div>
-                        <h1></h1>
-                        <p className="display-6">Apresentamos <strong>MyPlatform</strong>, o ecossistema que você controla.</p>
+                        <p className="display-6">Apresentamos <img src={logoMyPlatform} alt="logo" style={{ height: "32px" }} />, o ecossistema que você controla.</p>
                         <p className="mt-4" style={{fontSize:"1.5rem"}}>Personalize, escale e evolua sem limites.</p>
                         <div className="my-6">
                             <div className="row flex-column justify-center">
