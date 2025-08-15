@@ -225,51 +225,109 @@ const MyServicesManager = (params) => {
         serviceIds.forEach(serviceId => LoadServiceInStateManagement(serviceId))
     }
 
-    const SaveUploadedRepository = async ({ repositoryNamespace, userId, username , repositoryFilePath }) => {
-        const repositoriesCodePath = _MountPathImportedRepositoriesSourceCodeDirPath({ username, repositoryNamespace })
+    const RegisterImportedRepository = async ({
+            namespaceId,
+            repositoryCodePath,
+            sourceType,
+            sourceParams
+    }) => {
 
-        const newRepositoryCodePath = await ExtractTarGz(repositoryFilePath, repositoriesCodePath)
-        const repoData = await CreateRepository({ userId, repositoryNamespace, repositoryCodePath: newRepositoryCodePath })
-
-        ItemIndexer.IndexRepository({
-            repositoryId: repoData.repositoryImported.id,
-            repositoryCodePath: newRepositoryCodePath
+        const repositoryImportedData = await CreateRepository({
+            namespaceId, 
+            repositoryCodePath,
+            sourceType,
+            sourceParams
         })
 
-        return repoData
+        ItemIndexer.IndexRepository({
+            repositoryId: repositoryImportedData.id,
+            repositoryCodePath
+        })
+
+        return repositoryImportedData
+
     }
 
-    const SaveClonedRepository = async ({
+    const ExtractAndRegisterRepository = async ({ namespaceId, username, repositoryNamespace, repositoryFilePath }) => {
+        
+        const repositoriesCodePath = _MountPathImportedRepositoriesSourceCodeDirPath({ username, repositoryNamespace })
+        
+        const newRepositoryCodePath = await ExtractTarGz(repositoryFilePath, repositoriesCodePath)
+
+        const repositoryImportedData = await RegisterImportedRepository({
+            namespaceId,
+            repositoryCodePath: newRepositoryCodePath,
+            sourceType:"TAR_GZ_UPLOAD",
+            sourceParams: {
+                repositoryFilePath
+            }
+        })
+
+        return repositoryImportedData
+    }
+
+    const RegisterNamespaceAndRepositoryUploadedAndExtract = async ({ repositoryNamespace, userId, username , repositoryFilePath }) => {
+        
+        const namespaceData = await CreateNamespace({ userId, repositoryNamespace })
+        
+        const repositoryImportedData = await ExtractAndRegisterRepository({ 
+            username, 
+            repositoryNamespace,
+            namespaceId: namespaceData.id,
+            repositoryFilePath
+        })
+
+        return {
+            repositoryNamespace: namespaceData,
+            repositoryImported: repositoryImportedData
+        }
+    }
+
+    const RegisterNamespaceAndRepositoryCloned = async ({
             userId, 
             repositoryNamespace, 
-            repositoryCodePath
+            repositoryCodePath,
+            sourceParams
     }) => {
-        
-        const repoData = await CreateRepository({ userId, repositoryNamespace, repositoryCodePath })
-        ItemIndexer.IndexRepository({
-            repositoryId: repoData.repositoryImported.id,
-            repositoryCodePath
-        })
 
-        return repoData
+        const namespaceData = await CreateNamespace({ userId, repositoryNamespace })
+        
+        const repositoryImportedData = await RegisterImportedRepository({
+            namespaceId: namespaceData.id,
+            repositoryCodePath,
+            sourceType:"GIT_CLONE",
+            sourceParams
+        })
+        
+        return {
+            repositoryNamespace: namespaceData,
+            repositoryImported: repositoryImportedData
+        }
     }
 
-    const CreateRepository = async ({userId, repositoryCodePath, repositoryNamespace}) => {
+    const CreateNamespace = async ({ userId, repositoryNamespace }) => {
         const existingNamespaceId = await MyWorkspaceDomainService.GetRepositoryNamespaceId(repositoryNamespace)
 
         if (existingNamespaceId !== undefined) 
             throw new Error('Repository Namespace already exists')
 
-        const newRepositoryNamespace = await MyWorkspaceDomainService
+        const newNamespaceData = await MyWorkspaceDomainService
             .RegisterRepositoryNamespace({ namespace: repositoryNamespace , userId })
+            
+        return newNamespaceData
+    }
+
+    const CreateRepository = async ({ namespaceId, repositoryCodePath, sourceType, sourceParams }) => {
 
         const newRepositoryImported = await MyWorkspaceDomainService
-            .RegisterRepositoryImported({ namespaceId: newRepositoryNamespace.id , repositoryCodePath })
+            .RegisterRepositoryImported({ 
+                namespaceId,
+                repositoryCodePath, 
+                sourceType, 
+                sourceParams
+            })
             
-        return {
-            repositoryNamespace: newRepositoryNamespace,
-            repositoryImported: newRepositoryImported
-        }
+        return newRepositoryImported
     }
 
     const GetStatus = async (userId) => {
@@ -528,17 +586,30 @@ const MyServicesManager = (params) => {
         })
     }
 
+    const ListRepositories = async (namespaceId) => {
+        const repositories = await MyWorkspaceDomainService.ListRepositories(namespaceId)
+        return repositories.map(({ id, createdAt, sourceType, sourceParams }) => ({
+            id,
+            createdAt,
+            sourceType,
+            sourceParams
+        }))
+    }
+
     _Start()
 
     return {
-        SaveUploadedRepository,
-        SaveClonedRepository,
+        RegisterNamespaceAndRepositoryUploadedAndExtract,
+        ExtractAndRegisterRepository,
+        RegisterNamespaceAndRepositoryCloned,
+        RegisterImportedRepository,
         GetStatus,
         ListBootablePackages,
         ListRepositoryNamespace,
         ProvisionService,
         ListProvisionedServices,
         GetServiceData,
+        ListRepositories,
         ListInstances,
         ListContainers,
         ListImageBuildHistory,
@@ -556,7 +627,8 @@ const MyServicesManager = (params) => {
         GetInstancePortsData,
         GetNetworkModeData,
         UpdateServicePorts,
-        UpdateServiceStartupParams
+        UpdateServiceStartupParams,
+        GetNamespace: MyWorkspaceDomainService.GetNamespace
     }
 
 }

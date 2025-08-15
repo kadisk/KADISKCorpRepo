@@ -73,7 +73,7 @@ const MyWorkspaceController = (params) => {
             const params = GetRequestParams(request)
 
             const repoData = await myWorkspaceManagerService
-                .SaveUploadedRepository({
+                .RegisterNamespaceAndRepositoryUploadedAndExtract({
                     userId, 
                     username,
                     repositoryNamespace: params.repositoryNamespace, 

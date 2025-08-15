@@ -88,7 +88,7 @@ const MyWorkspaceManager = (params) => {
 
     }
 
-    const SaveUploadedRepository = async ({ repositoryNamespace, userId, username , repositoryFilePath }) => {
+    const RegisterNamespaceAndRepositoryUploadedAndExtract = async ({ repositoryNamespace, userId, username , repositoryFilePath }) => {
         const repositoriesCodePath = _GetPrepareAndRepositoriesCodePath({username, repositoryNamespace})
 
         const newRepositoryCodePath = await ExtractTarGz(repositoryFilePath, repositoriesCodePath)
@@ -204,7 +204,7 @@ const MyWorkspaceManager = (params) => {
         GetPackageSourceTree,
         GetPackageSourceFileContent,
         GetPackageMetadata,
-        SaveUploadedRepository
+        RegisterNamespaceAndRepositoryUploadedAndExtract
     }
 
 }

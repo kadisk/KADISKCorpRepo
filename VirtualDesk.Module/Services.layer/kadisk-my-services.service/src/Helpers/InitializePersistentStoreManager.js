@@ -34,7 +34,15 @@ const InitializePersistentStoreManager = (storage) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        repositoryCodePath: DataTypes.STRING
+        repositoryCodePath: DataTypes.STRING,
+        sourceType:{
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        sourceParams: {
+            type: DataTypes.JSON,
+            allowNull: true
+        }
     })
 
     const RepositoryItemModel = sequelize.define("RepositoryItem", {

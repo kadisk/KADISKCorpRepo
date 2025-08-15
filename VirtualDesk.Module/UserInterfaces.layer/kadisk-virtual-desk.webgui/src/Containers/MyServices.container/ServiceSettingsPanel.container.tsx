@@ -285,7 +285,7 @@ const ServiceSettingsPanelContainer = ({
 																</div>
 															)}
 														</td>
-														<td>{JSON.stringify(item.startupParams, null, 2)}</td>
+														<td><code>{JSON.stringify(item.startupParams, null, 2)}</code></td>
 													</tr>
 												))
 											)}

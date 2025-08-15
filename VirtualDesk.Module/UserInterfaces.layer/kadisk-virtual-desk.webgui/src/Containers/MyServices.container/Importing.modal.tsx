@@ -22,7 +22,7 @@ const ImportingModal = ({
                     repositoryNamespace,
                     sourceCodeURL
                 })*/
-            } else if(importType === "UPLOAD_LOCAL"){
+            } else if(importType === "TAR_GZ_UPLOAD"){
                 const { repositoryFile } = importData
                 UploadRepository({
                     repositoryNamespace,

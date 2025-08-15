@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useState, useEffect } from "react"
 
-const UPLOAD_LOCAL_IMPORT_TYPE   = Symbol("UPLOAD_LOCAL")
+const TAR_GZ_UPLOAD_IMPORT_TYPE   = Symbol("TAR_GZ_UPLOAD")
 const GITHUB_RELEASE_IMPORT_TYPE = Symbol("GITHUB_RELEASE")
 const GIT_CLONE_IMPORT_TYPE      = Symbol("GIT_CLONE")
 
@@ -17,7 +17,7 @@ const ImportRepositoryModal = ({
     const [ repositoryFileForUpload, setRepositoryFileForUpload ] = useState()
     const [ repositorySourceCodeURLForImport, setRepositorySourceCodeURLForImport ] = useState()
 
-    const [ importType,  setImportType] = useState(UPLOAD_LOCAL_IMPORT_TYPE)
+    const [ importType,  setImportType] = useState(TAR_GZ_UPLOAD_IMPORT_TYPE)
 
     const formValuesIsValid = () => {
         const nTotal = Object.keys(formValues).length
@@ -26,7 +26,7 @@ const ImportRepositoryModal = ({
             const isNValidItem = nValidItem === Object.keys(formValues).length
 
             const isFormContentValid =
-                (importType === UPLOAD_LOCAL_IMPORT_TYPE && repositoryFileForUpload)
+                (importType === TAR_GZ_UPLOAD_IMPORT_TYPE && repositoryFileForUpload)
                 || (importType === GITHUB_RELEASE_IMPORT_TYPE && repositorySourceCodeURLForImport)
 
 
@@ -60,7 +60,7 @@ const ImportRepositoryModal = ({
                 ...importDataChunk,
                 sourceCodeURL: repositorySourceCodeURLForImport
             })
-        } else if(importType === UPLOAD_LOCAL_IMPORT_TYPE){
+        } else if(importType === TAR_GZ_UPLOAD_IMPORT_TYPE){
             onImport({
                 ...importDataChunk,
                 repositoryFile: repositoryFileForUpload
@@ -100,7 +100,7 @@ const ImportRepositoryModal = ({
                             <div className="mb-3">
                                 <div className="form-selectgroup">
                                     <label className="form-selectgroup-item bg-blue-lt">
-                                        <input type="radio" name="icons" value="home" className="form-selectgroup-input" checked={isSelected(UPLOAD_LOCAL_IMPORT_TYPE)} onChange={createHandleType(UPLOAD_LOCAL_IMPORT_TYPE)}/>
+                                        <input type="radio" name="icons" value="home" className="form-selectgroup-input" checked={isSelected(TAR_GZ_UPLOAD_IMPORT_TYPE)} onChange={createHandleType(TAR_GZ_UPLOAD_IMPORT_TYPE)}/>
                                         <span className="form-selectgroup-label">
                                             <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="me-1 icon icon-tabler icons-tabler-outline icon-tabler-file-zip"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M6 20.735a2 2 0 0 1 -1 -1.735v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2h-1" /><path d="M11 17a2 2 0 0 1 2 2v2a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1v-2a2 2 0 0 1 2 -2z" /><path d="M11 5l-1 0" /><path d="M13 7l-1 0" /><path d="M11 9l-1 0" /><path d="M13 11l-1 0" /><path d="M11 13l-1 0" /><path d="M13 15l-1 0" /></svg>
                                             upload local repository
@@ -124,7 +124,7 @@ const ImportRepositoryModal = ({
                             </div>
                         </div>
                         {
-                            isSelected(UPLOAD_LOCAL_IMPORT_TYPE)
+                            isSelected(TAR_GZ_UPLOAD_IMPORT_TYPE)
                             && <div className="col-12 mt-0">
                                     <div className="card bg-blue-lt">
                                         <div className="card-body p-2">

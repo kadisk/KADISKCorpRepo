@@ -16,9 +16,16 @@ const CreateMyWorkspaceDomainService = ({
 
     const ListRepositoryNamespace = (userId) => RepositoryNamespaceModel.findAll({where: { userId }})
 
+    const ListRepositories = (namespaceId) => RepositoryImportedModel.findAll({ where: { namespaceId }, order: [['createdAt', 'DESC']]})
+
     const GetRepositoryNamespaceId = async (namespace) => {
         const respositoryNamespaceData = await RepositoryNamespaceModel.findOne({ where: { namespace } })
         return respositoryNamespaceData?.id
+    }
+
+    const GetNamespace = async (id) => {
+        const respositoryNamespaceData = await RepositoryNamespaceModel.findOne({ where: { id }, raw: true })
+        return respositoryNamespaceData
     }
 
     const GetRepositoryImported = (id) => RepositoryImportedModel.findOne({ where: { id } })
@@ -26,8 +33,8 @@ const CreateMyWorkspaceDomainService = ({
     const RegisterRepositoryNamespace = ({ namespace , userId }) => 
         RepositoryNamespaceModel.create({ namespace, userId })
 
-    const RegisterRepositoryImported = ({ namespaceId, repositoryCodePath }) => 
-        RepositoryImportedModel.create({ namespaceId, repositoryCodePath })
+    const RegisterRepositoryImported = ({ namespaceId, repositoryCodePath, sourceType, sourceParams }) => 
+        RepositoryImportedModel.create({ namespaceId, repositoryCodePath, sourceType, sourceParams })
 
     const ListItemByRepositoryId = (repositoryId) => RepositoryItemModel.findAll({ where: { repositoryId }, raw: true})
 
@@ -337,6 +344,7 @@ const CreateMyWorkspaceDomainService = ({
         RegisterTerminateInstance,
         RegisterBuildedImage,
         ListRepositoryNamespace,
+        ListRepositories,
         GetRepositoryNamespaceId,
         GetRepositoryNamespaceByRepositoryId,
         GetRepositoryImported,
@@ -354,7 +362,8 @@ const CreateMyWorkspaceDomainService = ({
         ListActiveInstancesByServiceId,
         GetLastInstanceByServiceId,
         GetContainerInfoByInstanceId,
-        RegisterContainer
+        RegisterContainer,
+        GetNamespace
     }
 }
 

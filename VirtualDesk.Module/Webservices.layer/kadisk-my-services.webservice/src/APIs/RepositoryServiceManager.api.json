@@ -2,9 +2,22 @@
 	"name": "RepositoryServiceManager",
 	"endpoints": [
 		{
+			"path": "/namespaces",
+			"method": "GET",
+			"summary": "ListNamespaces"
+		},
+		{
 			"path": "/repositories",
 			"method": "GET",
-			"summary": "ListRepositories"
+			"summary": "ListRepositories",
+			"parameters": [
+				{
+					"name": "namespaceId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
 		}
 	]
 }
