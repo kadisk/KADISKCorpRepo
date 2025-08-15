@@ -1,79 +1,97 @@
 import * as React from "react"
 
-import { connect }            from "react-redux"
+import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 
 //@ts-ignore
-import backgroundImageUrl from "../../Assets/pexels-g-cortez-1520507-9139967.jpg"
+import backgroundImageUrl from "../../Assets/pexels-ruiz-15275312.jpg"
 
 //@ts-ignore
 import logo1svg from "../../Assets/logo.svg"
 
 type HomepageParamsType = {
-    api     ?: string
-    summary ?: string
+    api?: string
+    summary?: string
 }
 
 type HomepageContainerProps = {
-    queryParams         : HomepageParamsType
-    onChangeQueryParams : any
-    HTTPServerManager   : any
+    queryParams: HomepageParamsType
+    onChangeQueryParams: any
+    HTTPServerManager: any
 }
-
-const SERVER_APP_NAME = process.env.SERVER_APP_NAME
 
 const HomepageContainer = ({
     queryParams,
-    onChangeQueryParams, 
+    onChangeQueryParams,
     HTTPServerManager
-}:HomepageContainerProps) => {
+}: HomepageContainerProps) => {
 
-    return <>
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark mb-0 rounded-0 py-3">
-            <div className="container-fluid">
-                <div className="collapse navbar-collapse justify-content-end">
-                    <ul className="navbar-nav">
-                        <li className="nav-item">
-                            <a className="nav-link" href="/desk">
-                                Virtual Desk
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-        <div
-            style={{
-                padding: "1em 0em",
+    return <div style={{
                 backgroundImage: `url(${backgroundImageUrl})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
-                minHeight: "87vh",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center"
-            }}
-        >
-            <div className="container-fluid">
-                <img alt='logo' src={logo1svg} style={{marginLeft: "15px", width: "40vh"}}/>
+                minHeight: "99vh"
+            }}>
+        <header className="header">
+            <div className="p-6">
+                <nav className="row items-center">
+                    <div className="col">
+                        <div className="d-flex items-center">
+                            <img
+                                src={logo1svg}
+                                alt="logo"
+                                style={{ height: "90px" }} 
+                                className="me-2"/>
+                        </div>
+                    </div>
+                </nav>
             </div>
-        </div>
-        <footer className="footer bg-dark text-white py-4">
-            <div className="container text-center">
-                <p className="mb-0">
-                    © {new Date().getFullYear()} Kadisk Engenharia de Software LTDA. Todos os direitos reservados.
-                </p>
+        </header>   
+        <main className="main mt-6">
+            <header className="text-center pb-0">
+                <div className="container">
+                    <div>
+                        <h1></h1>
+                        <p className="display-6">Apresentamos <strong>MyPlatform</strong>, o ecossistema que você controla.</p>
+                        <p className="mt-4" style={{fontSize:"1.5rem"}}>Personalize, escale e evolua sem limites.</p>
+                        <div className="my-6">
+                            <div className="row flex-column justify-center">
+                                <div className="col-auto">
+                                    <button className="btn btn-lg btn-dark">
+                                        Saiba mais
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+        </main>
+        <footer className="py-3"  
+            style={{
+            position: "fixed",
+            bottom: 0,
+            left: 0,
+            width: "100%",
+            background: "#313d3d",
+            color: "#b7ccd1",
+            zIndex: 1000
+        }}>
+            <div className="container">
+                <div className="row py-2">
+                    <div className="col-auto"><strong>© {new Date().getFullYear()} Kadisk Engenharia de Software LTDA. Todos os direitos reservados.</strong></div>
+                </div>
             </div>
         </footer>
-    </>
+    </div>
 }
 
-const mapDispatchToProps = (dispatch:any) =>
- bindActionCreators({
+const mapDispatchToProps = (dispatch: any) =>
+    bindActionCreators({
 
-}, dispatch)
+    }, dispatch)
 
-const mapStateToProps = ({HTTPServerManager}:any) => ({
+const mapStateToProps = ({ HTTPServerManager }: any) => ({
     HTTPServerManager
 })
 

@@ -3,7 +3,7 @@ import ReactDOM                         from "react-dom/client"
 import { Provider }                     from "react-redux"
 import { combineReducers, createStore } from "redux"
 
-//import APIDesignerIcon from "./APIDesigner.svg"
+
 //@ts-ignore
 import ROUTES_CONFIG from "./routes.config.json"
 
