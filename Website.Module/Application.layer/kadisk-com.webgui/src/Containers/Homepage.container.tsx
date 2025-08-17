@@ -59,9 +59,9 @@ const HomepageContainer = ({
                         <div className="my-6">
                             <div className="row flex-column justify-center">
                                 <div className="col-auto">
-                                    <button className="btn btn-lg btn-dark">
+                                    <a href="#meta-platform" className="btn btn-lg btn-dark">
                                         Saiba mais
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
                         </div>

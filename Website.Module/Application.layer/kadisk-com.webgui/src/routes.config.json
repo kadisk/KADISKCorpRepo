@@ -2,5 +2,13 @@
     {
         "path":"/",
         "page":"MainPage"
+    },
+    {
+        "path":"/meta-platform",
+        "page":"MetaPlatformPage"
+    },
+    {
+        "path":"/documentation",
+        "page":"MetaPlatformDocumentaionPage"
     }
 ]
