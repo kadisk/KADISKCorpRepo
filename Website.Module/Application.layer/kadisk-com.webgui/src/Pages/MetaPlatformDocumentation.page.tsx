@@ -9,7 +9,7 @@ import logoMyPlatform from "../../Assets/logo-my-platform-final-write.svg"
 
 import IntroducaoArticle from "../PageComponents/Introducao.article"
 import PrimeirosPassosArticle from "../PageComponents/PrimeirosPassos.article"
-
+import ArquiteturaEcosistemaArticle from "../PageComponents/ArquiteturaEcosistema.article"
 
 const Summary = {
 	"Introdução":{
@@ -23,6 +23,12 @@ const Summary = {
 		}
 	},
 	"Arquitetura Ecosistema":{
+		article:ArquiteturaEcosistemaArticle,
+		children: {
+			"Repositórios" : {},
+			"Pacotes e Metadados" : {},
+			"Ecosistema" : {},
+		}
 
 	},
 	"Pacotes":{

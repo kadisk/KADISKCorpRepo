@@ -7,33 +7,20 @@ import { bindActionCreators } from "redux"
 const IntroducaoArticle = () => {
 
 	return <div className="container-xl">
-							<div className="row">
-								<div className="col">
-									<h3>Introdução</h3>
-									<p>O My Platform temo o objetivo de ser um ecosistema completo.</p>
-								
-								</div>
-							</div>
-							<div className="row">
-								<div className="col-12">
-									<div>
-										<div className="row">
-									
-										</div>
-									</div>
-								</div>
-							</div>
-						
-						</div>
+				<div className="row">
+					<div className="col">
+						<h1>Introdução</h1>
+						<p>AQUI DEVE TER UM INTRO EXPLICANDO COMO CRIAR UM PRIMEIRO PACOTE</p>
+						{/*  */}
+					</div>
+				</div>
+			</div>
 }
 
-const mapDispatchToProps = (dispatch: any) =>
-	bindActionCreators({
+const mapDispatchToProps = (dispatch: any) => 
+	bindActionCreators({}, dispatch)
 
-	}, dispatch)
-
-const mapStateToProps = ({ HTTPServerManager }: any) => ({
-	HTTPServerManager
-})
+const mapStateToProps = ({ HTTPServerManager }: any) => 
+	({ HTTPServerManager })
 
 export default connect(mapStateToProps, mapDispatchToProps)(IntroducaoArticle)
