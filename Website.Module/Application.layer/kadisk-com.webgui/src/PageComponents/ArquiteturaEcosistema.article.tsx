@@ -9,15 +9,19 @@ const ArquiteturaEcosistemaArticle = () => {
 	return <div className="container-xl">
 				<div className="row">
 					<div className="col">
-						<h1>Arquitetura Ecosistema</h1>
-						<p>O My Platform é um conjunto de componentes, que estão divididos em <strong>Essential</strong> e <strong>Ecosystem Core</strong></p>
-						<h2>Repositório Essential</h2>
-						<p>Contem os componentes essencial para a execução de um pacote</p>
-						<h2>Repositório Ecosystem Core</h2>
-						<p>Contem os componentes necessários para a execução de um ecosistemas</p>
+					<h1>Arquitetura do Ecossistema</h1>
+					<p>
+						O <strong>My Platform</strong> é composto por um conjunto de componentes organizados em dois repositórios principais: 
+						<strong> Essential</strong> e <strong>Ecosystem Core</strong>. 
+					</p>
+					<p>
+						O <strong>Repositório Essential</strong> reúne os componentes fundamentais para execução de pacotes e manipulação básica de repositórios. 
+						Já o <strong>Repositório Ecosystem Core</strong> concentra os elementos necessários para criação, execução e gestão de um ecossistema completo.
+					</p>
 					</div>
 				</div>
 			</div>
+
 }
 
 const mapDispatchToProps = (dispatch: any) => 

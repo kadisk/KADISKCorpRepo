@@ -10,6 +10,7 @@ import logoMyPlatform from "../../Assets/logo-my-platform-final-write.svg"
 import IntroducaoArticle from "../PageComponents/Introducao.article"
 import PrimeirosPassosArticle from "../PageComponents/PrimeirosPassos.article"
 import ArquiteturaEcosistemaArticle from "../PageComponents/ArquiteturaEcosistema.article"
+import RepositoriosArticle from "../PageComponents/ArquiteturaEcosistema/Repositorios.article"
 
 const Summary = {
 	"Introdução":{
@@ -23,21 +24,36 @@ const Summary = {
 		}
 	},
 	"Arquitetura Ecosistema":{
-		article:ArquiteturaEcosistemaArticle,
+		article: ArquiteturaEcosistemaArticle,
 		children: {
-			"Repositórios" : {},
+			"Repositórios" : {
+				article: RepositoriosArticle
+			},
 			"Pacotes e Metadados" : {},
 			"Ecosistema" : {},
 		}
 
 	},
-	"Pacotes":{
+	"Referências": {
 		children:{
-			"lib": {},
-			"service": {},
-			"webservice": {},
-			"webgui": {},
-			"webapp": {}
+			"Essential": {
+				children:{
+					"Commons": {
+						"copy-directory.lib":{},
+						"download-file":{},
+						"ecosystem-install-utilities":{},
+						"extract-tar-gz":{},
+						"json-file-utilities":{}
+					},
+					"Runtime": {},
+					"Main": {},
+				}
+			},
+			"Ecosystem Core": {
+				children:{
+
+				}
+			}
 		}
 	}
 }
@@ -62,7 +78,8 @@ const MetaPlatformDocumentationPage = ({
 	const [ articleTitleCurrent, setArticleTitleCurrent ] = useState()
 	const [ ArticleComponent, setArticleComponent ] = useState<any>()
 
-	const handleSelected = ({title, article}) => {
+	const handleSelected = (e, {title, article}) => {
+		e.stopPropagation()
 		if(article){
 			setArticleTitleCurrent(title)
 			setArticleComponent(article)
@@ -88,7 +105,7 @@ const MetaPlatformDocumentationPage = ({
 									.map((title) => {
 										const { article, children } = Summary[title]
 										if(children){
-											return <li className={`nav-item ${articleTitleCurrent === title && "active"}`} onClick={() => handleSelected({title, article})}>
+											return <li className={`nav-item ${articleTitleCurrent === title && "active"}`} onClick={(e) => handleSelected(e, {title, article})}>
 														<a className="nav-link dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button">
 															<span className="nav-link-title">{title}</span>
 														</a>
@@ -100,7 +117,7 @@ const MetaPlatformDocumentationPage = ({
 																		.map((title) => {
 																			debugger
 																			const { article } = children[title]
-																			return <a className={`dropdown-item ${articleTitleCurrent === title && "active"}`} onClick={() => handleSelected({title, article})}>{title}</a>
+																			return <a className={`dropdown-item ${articleTitleCurrent === title && "active"}`} onClick={(e) => handleSelected(e, {title, article})}>{title}</a>
 																		})
 																	}
 																</div>
@@ -108,7 +125,7 @@ const MetaPlatformDocumentationPage = ({
 														</div>
 													</li>
 										} else {
-											return <li className={`nav-item ${articleTitleCurrent === title && "active"}`} onClick={() => handleSelected({title, article})}>
+											return <li className={`nav-item ${articleTitleCurrent === title && "active"}`} onClick={(e) => handleSelected(e, {title, article})}>
 														<a className="nav-link">
 															<span className="nav-link-title">{title}</span>
 														</a>
