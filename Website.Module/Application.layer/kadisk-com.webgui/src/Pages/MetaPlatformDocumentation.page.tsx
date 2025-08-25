@@ -7,66 +7,8 @@ import { bindActionCreators } from "redux"
 //@ts-ignore
 import logoMyPlatform from "../../Assets/logo-my-platform-final-write.svg"
 
-import IntroducaoArticle from "../PageComponents/Introducao.article"
-import PrimeirosPassosArticle from "../PageComponents/PrimeirosPassos.article"
-import ArquiteturaEcosistemaArticle from "../PageComponents/ArquiteturaEcosistema.article"
-import RepositoriosArticle from "../PageComponents/ArquiteturaEcosistema/Repositorios.article"
-import PacotesEMetadadosArticle from "../PageComponents/ArquiteturaEcosistema/PacotesEMetadados.article"
+import DocumentationConfigs from "../Configs/Documentation.configs"
 
-const Summary = {
-	"Introdução":{
-		article: IntroducaoArticle
-	},
-	"Primeiros passos":{
-		children:{
-			"Configurando um ecosistema localmente":{
-				article: PrimeirosPassosArticle
-			}
-		}
-	},
-	"Arquitetura Ecosistema":{
-		article: ArquiteturaEcosistemaArticle,
-		children: {
-			"Repositórios" : {
-				article: RepositoriosArticle
-			},
-			"Pacotes e Metadados" : {
-				article: PacotesEMetadadosArticle
-			},
-			"Ecosistema" : {},
-		}
-
-	},
-	"Referências": {
-		children:{
-			"Repositórios Oficiais":{
-				children:{
-					"Essential": {
-						children:{
-							"Commons": {
-								children: {
-										"copy-directory.lib":{},
-										"download-file":{},
-										"ecosystem-install-utilities":{},
-										"extract-tar-gz":{},
-										"json-file-utilities":{}
-									}
-								},
-								"Runtime": {},
-								"Main": {},
-							}
-					},
-					"Ecosystem Core": {
-						children:{
-							
-						}
-					}
-				}
-			},
-			
-		}
-	}
-}
 
 type HomepageParamsType = {
 	api?: string
@@ -111,29 +53,31 @@ const MetaPlatformDocumentationPage = ({
 
 	const renderDropdownItem = ({
 		title,
-		article
+		article,
+		icon
 	}) => {
-		return <a className={`dropdown-item ${articleTitleCurrent === title && "active"}`} onClick={(e) => handleSelected(e, {title, article})}>{title}</a>
+		return <a className={`ms-3 dropdown-item ${articleTitleCurrent === title && "active"}`} onClick={(e) => handleSelected(e, {title, article})}>{icon}{title}</a>
 	}
 
 	const renderDropEnd = ({
 		title, 
 		article,
-		children
+		icon,
+		children,
 	}) => {
-		return <div className="dropend">
+		return <div className="ms-3">
 			<a className="dropdown-item dropdown-toggle" onClick={(e) => handleSelected(e, {title, article})} data-bs-toggle="dropdown" data-bs-auto-close="false" role="button" aria-expanded="false">
-			{title}
+			{icon}{title}
 			</a>
 			<div className="dropdown-menu">
 				{
 					Object.keys(children)
 					.map((title) => {
-						const { article, children: _children } = children[title]
+						const { article, children: _children, icon } = children[title]
 						if(_children){
-							return renderDropEnd({ title, article, children: _children })
+							return renderDropEnd({ title, article, children: _children, icon })
 						} else {
-							return renderDropdownItem({ title, article })
+							return renderDropdownItem({ title, article, icon })
 						}
 					})
 				}
@@ -148,11 +92,11 @@ const MetaPlatformDocumentationPage = ({
 									{
 										Object.keys(children)
 										.map((title) => {
-											const { article, children: _children } = children[title]
+											const { article, children: _children, icon } = children[title]
 											if(_children){
-												return renderDropEnd({ title, article, children: _children })
+												return renderDropEnd({ title, article, children: _children, icon})
 											} else {
-												return renderDropdownItem({ title, article })
+												return renderDropdownItem({ title, article, icon })
 											}
 										})
 									}
@@ -180,17 +124,17 @@ const MetaPlatformDocumentationPage = ({
 	}
 
 	return <div className="page">
-				<aside className="navbar navbar-vertical navbar-expand-lg" data-bs-theme="dark">
+				<aside className="navbar navbar-vertical navbar-expand-lg" data-bs-theme="dark" style={{width: "30rem"}}>
 					<div className="container-fluid">
 						<div className="navbar-brand px-3">
-							<a href="#meta-platform"><img src={logoMyPlatform}/></a>
+						<a href="#meta-platform"><img className="pt-3" style={{maxHeight:"56px"}} src={logoMyPlatform}/></a>
 						</div>
 						<div className="collapse navbar-collapse">
 							<ul className="navbar-nav">
 								{
 									Object
-									.keys(Summary)
-									.map((title) => renderMenuItem(title, Summary[title]))
+									.keys(DocumentationConfigs)
+									.map((title) => renderMenuItem(title, DocumentationConfigs[title]))
 								}
 							</ul>
 						</div>
@@ -203,11 +147,15 @@ const MetaPlatformDocumentationPage = ({
 							&& <ArticleComponent />
 						}
 					</div>
-					<footer className="footer footer-transparent d-print-none">
+						<footer className="footer footer-transparent d-print-none">
 						<div className="container-xl">
 							<div className="row text-center align-items-center flex-row-reverse">
 								<div className="col-lg-auto ms-lg-auto">
-									© 2025 Kadisk Engenharia de Software LTDA. Todos os direitos reservados.
+									© 2025 Kadisk Engenharia de Software LTDA.  
+									Distribuído sob a licença BSD 3-Clause.  
+									<a href="https://opensource.org/licenses/BSD-3-Clause" target="_blank" rel="noopener noreferrer">
+									Saiba mais
+									</a>
 								</div>
 							</div>
 						</div>
