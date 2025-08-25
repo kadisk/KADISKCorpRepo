@@ -11,6 +11,7 @@ import IntroducaoArticle from "../PageComponents/Introducao.article"
 import PrimeirosPassosArticle from "../PageComponents/PrimeirosPassos.article"
 import ArquiteturaEcosistemaArticle from "../PageComponents/ArquiteturaEcosistema.article"
 import RepositoriosArticle from "../PageComponents/ArquiteturaEcosistema/Repositorios.article"
+import PacotesEMetadadosArticle from "../PageComponents/ArquiteturaEcosistema/PacotesEMetadados.article"
 
 const Summary = {
 	"Introdução":{
@@ -29,31 +30,40 @@ const Summary = {
 			"Repositórios" : {
 				article: RepositoriosArticle
 			},
-			"Pacotes e Metadados" : {},
+			"Pacotes e Metadados" : {
+				article: PacotesEMetadadosArticle
+			},
 			"Ecosistema" : {},
 		}
 
 	},
 	"Referências": {
 		children:{
-			"Essential": {
+			"Repositórios Oficiais":{
 				children:{
-					"Commons": {
-						"copy-directory.lib":{},
-						"download-file":{},
-						"ecosystem-install-utilities":{},
-						"extract-tar-gz":{},
-						"json-file-utilities":{}
+					"Essential": {
+						children:{
+							"Commons": {
+								children: {
+										"copy-directory.lib":{},
+										"download-file":{},
+										"ecosystem-install-utilities":{},
+										"extract-tar-gz":{},
+										"json-file-utilities":{}
+									}
+								},
+								"Runtime": {},
+								"Main": {},
+							}
 					},
-					"Runtime": {},
-					"Main": {},
+					"Ecosystem Core": {
+						children:{
+							
+						}
+					}
 				}
 			},
-			"Ecosystem Core": {
-				children:{
-
-				}
-			}
+			
 		}
 	}
 }
@@ -91,6 +101,84 @@ const MetaPlatformDocumentationPage = ({
 		setArticleTitleCurrent(undefined)
 	}
 
+	const renderSimpleItem = (title, article) =>{
+		return <li className={`nav-item ${articleTitleCurrent === title && "active"}`} onClick={(e) => handleSelected(e, {title, article})}>
+					<a className="nav-link">
+						<span className="nav-link-title">{title}</span>
+					</a>
+				</li>
+	}
+
+	const renderDropdownItem = ({
+		title,
+		article
+	}) => {
+		return <a className={`dropdown-item ${articleTitleCurrent === title && "active"}`} onClick={(e) => handleSelected(e, {title, article})}>{title}</a>
+	}
+
+	const renderDropEnd = ({
+		title, 
+		article,
+		children
+	}) => {
+		return <div className="dropend">
+			<a className="dropdown-item dropdown-toggle" onClick={(e) => handleSelected(e, {title, article})} data-bs-toggle="dropdown" data-bs-auto-close="false" role="button" aria-expanded="false">
+			{title}
+			</a>
+			<div className="dropdown-menu">
+				{
+					Object.keys(children)
+					.map((title) => {
+						const { article, children: _children } = children[title]
+						if(_children){
+							return renderDropEnd({ title, article, children: _children })
+						} else {
+							return renderDropdownItem({ title, article })
+						}
+					})
+				}
+			</div>
+		</div> 
+	}
+
+	const renderDropdownMenu = (children) => {
+		return <div className="dropdown-menu show">
+							<div className="dropdown-menu-columns">
+								<div className="dropdown-menu-column">
+									{
+										Object.keys(children)
+										.map((title) => {
+											const { article, children: _children } = children[title]
+											if(_children){
+												return renderDropEnd({ title, article, children: _children })
+											} else {
+												return renderDropdownItem({ title, article })
+											}
+										})
+									}
+								</div>
+							</div>
+						</div>
+	}
+
+	const renderNavItem = (title, article, children) => {
+		return <li className={`nav-item ${articleTitleCurrent === title && "active"}`} onClick={(e) => handleSelected(e, {title, article})}>
+						<a className="nav-link dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button">
+							<span className="nav-link-title">{title}</span>
+						</a>
+						{renderDropdownMenu(children)}
+					</li>
+
+	}
+
+	const renderMenuItem = (title, item) => {
+		const { article, children } = item
+		if(children){
+			return renderNavItem(title, article, children)
+		} else 
+			return renderSimpleItem(title, article)
+	}
+
 	return <div className="page">
 				<aside className="navbar navbar-vertical navbar-expand-lg" data-bs-theme="dark">
 					<div className="container-fluid">
@@ -102,37 +190,7 @@ const MetaPlatformDocumentationPage = ({
 								{
 									Object
 									.keys(Summary)
-									.map((title) => {
-										const { article, children } = Summary[title]
-										if(children){
-											return <li className={`nav-item ${articleTitleCurrent === title && "active"}`} onClick={(e) => handleSelected(e, {title, article})}>
-														<a className="nav-link dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button">
-															<span className="nav-link-title">{title}</span>
-														</a>
-														<div className="dropdown-menu show">
-															<div className="dropdown-menu-columns">
-																<div className="dropdown-menu-column">
-																	{
-																		Object.keys(children)
-																		.map((title) => {
-																			debugger
-																			const { article } = children[title]
-																			return <a className={`dropdown-item ${articleTitleCurrent === title && "active"}`} onClick={(e) => handleSelected(e, {title, article})}>{title}</a>
-																		})
-																	}
-																</div>
-															</div>
-														</div>
-													</li>
-										} else {
-											return <li className={`nav-item ${articleTitleCurrent === title && "active"}`} onClick={(e) => handleSelected(e, {title, article})}>
-														<a className="nav-link">
-															<span className="nav-link-title">{title}</span>
-														</a>
-													</li>
-
-										}
-									})
+									.map((title) => renderMenuItem(title, Summary[title]))
 								}
 							</ul>
 						</div>
