@@ -11,8 +11,25 @@ const ServicesMetadadoArticle = () => {
 					<div className="col">
 					<h1>Metadado Services</h1>
 					<p>
-						xyz
+						O arquivo de metadado <code>package.json</code> pode ser criado em pacotes como <em>service</em>, <em>app</em>, <em>cli</em> e <em>webapp</em>. 
+						mais usado somente por pacotes que contenha o metadado <code>boot.json</code>
 					</p>
+										<pre>
+{`[
+    {
+        "namespace": "MeuServicoExample",
+        "path": "Services/MeuServico.service",
+        "bound-params":[
+            "minhaNovoBibliotecaLib",
+            "meuServicoExampleService"
+        ],
+        "params": [
+            "param1",
+            "param2"
+        ]
+    }
+]`}
+					</pre>
 					</div>
 				</div>
 			</div>

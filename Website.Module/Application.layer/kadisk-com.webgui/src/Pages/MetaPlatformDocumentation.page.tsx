@@ -124,12 +124,12 @@ const MetaPlatformDocumentationPage = ({
 	}
 
 	return <div className="page">
-				<aside className="navbar navbar-vertical navbar-expand-lg" data-bs-theme="dark" style={{width: "30rem"}}>
+				<aside className="navbar navbar-vertical navbar-expand-lg w-auto" data-bs-theme="dark">
 					<div className="container-fluid">
 						<div className="navbar-brand px-3">
 						<a href="#meta-platform"><img className="pt-3" style={{maxHeight:"56px"}} src={logoMyPlatform}/></a>
 						</div>
-						<div className="collapse navbar-collapse">
+						<div className="collapse navbar-collapse mb-5">
 							<ul className="navbar-nav">
 								{
 									Object

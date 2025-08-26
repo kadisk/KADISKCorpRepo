@@ -6,6 +6,7 @@ import ArquiteturaEcosistemaArticle from "../PageComponents/ArquiteturaEcosistem
 import RepositoriosArticle          from "../PageComponents/ArquiteturaEcosistema/Repositorios.article"
 import PacotesEMetadadosArticle     from "../PageComponents/ArquiteturaEcosistema/PacotesEMetadados.article"
 
+import MetadadosArticle                   from "../PageComponents/Referencias/Metadados.article"
 import PackageMetadadoArticle             from "../PageComponents/Referencias/Metadados/PackageMetadado.article"
 import BootMetadadoArticle                from "../PageComponents/Referencias/Metadados/BootMetadado.article"
 import EndpointMetadadoArticle            from "../PageComponents/Referencias/Metadados/EndpointGroupMetadado.article"
@@ -46,6 +47,8 @@ const DocumentationConfigs = {
 
 	},
 	"Referências de Metadados":{
+
+		article: MetadadosArticle,
 		children: {
 			"package.json":{
 				article: PackageMetadadoArticle

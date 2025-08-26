@@ -3,56 +3,12 @@ import * as React from "react"
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 
-const PacotesEMetadadosArticle = () => {
+const MetadadosArticle = () => {
 	return (
 		<div className="container-xl">
 			<div className="row">
 				<div className="col">
-					<h1>Pacotes e Metadados</h1>
-
-					<h2>Pacotes</h2>
-					<p>
-						Na <strong>Meta Platform</strong>, os pacotes são blocos fundamentais para a construção do ecossistema. 
-						Eles servem como base para aplicações, armazenando tanto o código-fonte quanto metadados que definem seu tipo e comportamento. 
-						Um pacote pode ter dois propósitos principais:
-					</p>
-					<ul>
-						<li>Ser utilizado por outros pacotes como dependência;</li>
-						<li>Ser executado como uma aplicação.</li>
-					</ul>
-
-					<h3>Tipos de Pacotes</h3>
-					<p>Atualmente, existem os seguintes tipos de pacotes:</p>
-					<ul>
-						<li>
-							<strong>lib</strong> – Pacote de biblioteca. Agrupa trechos de código reutilizáveis, 
-							evitando duplicações em diferentes partes do sistema.
-						</li>
-						<li>
-							<strong>service</strong> – Pacote de serviço. Contém regras e lógicas de negócio que 
-							podem ser consumidas por outros pacotes. Diferente de <em>lib</em>, expõe funcionalidades completas.
-						</li>
-						<li>
-							<strong>webservice</strong> – Especialização de <em>service</em>, voltada para comunicação com outras aplicações. 
-							Fornece interfaces como REST, WebSocket, gRPC, entre outras.
-						</li>
-						<li>
-							<strong>webgui</strong> – Especialização de <em>webservice</em>, dedicada ao front-end. 
-							Disponibiliza a interface gráfica e é responsável pelo processo de build.
-						</li>
-						<li>
-							<strong>app</strong> – Pacote do tipo aplicação. Atua como container que combina diferentes pacotes 
-							para formar um programa executável localmente.
-						</li>
-						<li>
-							<strong>webapp</strong> – Especialização de <em>app</em>, projetada para rodar como aplicação web.
-						</li>
-						<li>
-							<strong>cli</strong> – Especialização de <em>app</em>, voltada para aplicativos de linha de comando.
-						</li>
-					</ul>
-
-					<h2>Metadados</h2>
+					<h1>Metadados</h1>
 					<p>
 						Todo pacote da plataforma possui um diretório chamado <code>metadata</code>. 
 						O conteúdo desse diretório, combinado com o tipo do pacote, define o seu comportamento.  
@@ -110,4 +66,4 @@ const mapDispatchToProps = (dispatch: any) =>
 const mapStateToProps = ({ HTTPServerManager }: any) =>
 	({ HTTPServerManager })
 
-export default connect(mapStateToProps, mapDispatchToProps)(PacotesEMetadadosArticle)
+export default connect(mapStateToProps, mapDispatchToProps)(MetadadosArticle)
