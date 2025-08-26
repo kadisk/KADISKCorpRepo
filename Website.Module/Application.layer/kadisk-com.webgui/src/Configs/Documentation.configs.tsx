@@ -1,10 +1,19 @@
 import * as React from "react"
 
-import IntroducaoArticle from "../PageComponents/Introducao.article"
-import PrimeirosPassosArticle from "../PageComponents/PrimeirosPassos.article"
+import IntroducaoArticle            from "../PageComponents/Introducao.article"
+import PrimeirosPassosArticle       from "../PageComponents/PrimeirosPassos.article"
 import ArquiteturaEcosistemaArticle from "../PageComponents/ArquiteturaEcosistema.article"
-import RepositoriosArticle from "../PageComponents/ArquiteturaEcosistema/Repositorios.article"
-import PacotesEMetadadosArticle from "../PageComponents/ArquiteturaEcosistema/PacotesEMetadados.article"
+import RepositoriosArticle          from "../PageComponents/ArquiteturaEcosistema/Repositorios.article"
+import PacotesEMetadadosArticle     from "../PageComponents/ArquiteturaEcosistema/PacotesEMetadados.article"
+
+import PackageMetadadoArticle             from "../PageComponents/Referencias/Metadados/PackageMetadado.article"
+import BootMetadadoArticle                from "../PageComponents/Referencias/Metadados/BootMetadado.article"
+import EndpointMetadadoArticle            from "../PageComponents/Referencias/Metadados/EndpointGroupMetadado.article"
+import CommandGroupMetadadoArticle        from "../PageComponents/Referencias/Metadados/CommandGroupMetadado.article"
+import ServicesMetadadoArticle            from "../PageComponents/Referencias/Metadados/ServicesMetadado.article"
+import StartupParamsMetadadoArticle       from "../PageComponents/Referencias/Metadados/StartupParamsMetadado.article"
+import StartupParamsSchemaMetadadoArticle from "../PageComponents/Referencias/Metadados/StartupParamsSchemaMetadado.article"
+
 
 const pkgIcon = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-package"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" /><path d="M12 12l8 -4.5" /><path d="M12 12l0 9" /><path d="M12 12l-8 -4.5" /><path d="M16 5.25l-8 4.5" /></svg>
 const layerIcon = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-layers-subtract"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 4m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /><path d="M16 16v2a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-8a2 2 0 0 1 2 -2h2" /></svg>
@@ -38,13 +47,29 @@ const DocumentationConfigs = {
 	},
 	"Referências de Metadados":{
 		children: {
-			"package.json":{},
-			"services.json":{},
-			"endpoint-group.json":{},
-			"command-group.json":{},
-			"boot.json":{},
-			"startup-params.json":{},
-			"startup-params-schema.json":{}
+			"package.json":{
+				article: PackageMetadadoArticle
+			},
+			"services.json":{
+				article: ServicesMetadadoArticle
+			},
+			"endpoint-group.json":{
+				article: EndpointMetadadoArticle
+			},
+			"command-group.json":{
+				article: CommandGroupMetadadoArticle
+			},
+			"boot.json":{
+				article: BootMetadadoArticle
+			},
+			"startup-params.json":{
+				article: StartupParamsMetadadoArticle,
+				chidren: {
+					"schema":{
+						article: StartupParamsSchemaMetadadoArticle
+					}
+				}
+			}
 		}
 	},
 	"Referências de Aplicativos": {
