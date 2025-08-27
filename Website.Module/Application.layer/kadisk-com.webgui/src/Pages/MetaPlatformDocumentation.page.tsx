@@ -1,5 +1,16 @@
-import * as React from "react"
-import { useState, useEffect }  from "react"
+import * as React             from "react"
+import {useEffect, useState}  from "react"
+import { connect }            from "react-redux"
+import { bindActionCreators } from "redux"
+import qs from "query-string"
+import { 
+	useNavigate,
+	useLocation
+  } from "react-router-dom"
+
+
+import QueryParamsActionsCreator from "../Actions/QueryParams.actionsCreator"
+
 
 //@ts-ignore
 import logoMyPlatform from "../../Assets/logo-my-platform-final-write.svg"
@@ -42,19 +53,38 @@ const GetUriByStack = (stackIndex) => {
 	return stackIndex.join(".")
 }
 
-const MetaPlatformDocumentationPage = () => {
+const MetaPlatformDocumentationPage = ({
+    AddQueryParam,
+	QueryParams,
+	SetQueryParams
+}) => {
 
-	const [ articleUriCurrent, setArticleUriCurrent ] = useState()
+	const [ articleUriCurrent, setArticleUriCurrent ] = useState<any>()
 	const [ articleContent, setArticleContent ] = useState<React.ReactNode | null>(null)
 
 	const [ articles, setArticles ] = useState<any>()
+
+	const location = useLocation()
+  	const navigate = useNavigate()
+	const queryParams = qs.parse(location.search.substr(1))
 
 	useEffect(() => {
 		if(!articles){
 			setArticles(GetArticlesByConfigs(DocumentationConfigs))
 		}
 
+		if(Object.keys(queryParams).length > 0){
+			SetQueryParams(queryParams)
+			if(queryParams.articleUri)
+				setArticleUriCurrent(queryParams.articleUri)
+		}
+
 	}, [])
+
+	useEffect(() => {
+		const search = qs.stringify(QueryParams)
+		navigate({search: `?${search}`})
+	}, [QueryParams])
 
 	useEffect(() => {
 		if(articleUriCurrent){
@@ -72,13 +102,9 @@ const MetaPlatformDocumentationPage = () => {
 		e.stopPropagation()
 
 		const uri = GetUriByStack(stackIndex)
+		AddQueryParam("articleUri", uri)
 		setArticleUriCurrent(uri)
 	}
-
-	/*const resetSelection = () => {
-		setArticleContent(null)
-		setArticleUriCurrent(undefined)
-	}*/
 
 	const renderSimpleItem = (title, stackIndex) =>{
 		return <li className={`nav-item ${articleUriCurrent === GetUriByStack(stackIndex) && "active"}`} onClick={(e) => handleSelected(e, stackIndex)}>
@@ -150,7 +176,6 @@ const MetaPlatformDocumentationPage = () => {
 						</a>
 						{renderDropdownMenu(children, stackIndex)}
 					</li>
-
 	}
 
 	const renderMenuItem = (title, item, stackIndex) => {
@@ -199,4 +224,15 @@ const MetaPlatformDocumentationPage = () => {
 			</div>
 }
 
-export default MetaPlatformDocumentationPage
+const mapDispatchToProps = (dispatch:any) => bindActionCreators({
+	AddQueryParam    : QueryParamsActionsCreator.AddQueryParam,
+	SetQueryParams   : QueryParamsActionsCreator.SetQueryParams,
+	RemoveQueryParam : QueryParamsActionsCreator.RemoveQueryParam
+}, dispatch)
+
+const mapStateToProps = ({HTTPServerManager, QueryParams}:any) => ({
+	HTTPServerManager,
+	QueryParams
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(MetaPlatformDocumentationPage)
