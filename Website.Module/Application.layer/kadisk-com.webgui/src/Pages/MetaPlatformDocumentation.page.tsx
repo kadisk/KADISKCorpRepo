@@ -11,7 +11,6 @@ import {
 
 import QueryParamsActionsCreator from "../Actions/QueryParams.actionsCreator"
 
-
 //@ts-ignore
 import logoMyPlatform from "../../Assets/logo-my-platform-final-write.svg"
 
@@ -69,11 +68,19 @@ const MetaPlatformDocumentationPage = ({
 
 		if(Object.keys(queryParams).length > 0){
 			SetQueryParams(queryParams)
-			if(queryParams.articleUri)
-				setArticleUriCurrent(queryParams.articleUri)
 		}
 
 	}, [])
+
+	useEffect(() => {
+		
+		if(!articles)
+			setArticles(GetArticlesByConfigs(DocumentationConfigs))
+
+		if(queryParams.articleUri)
+			setArticleUriCurrent(queryParams.articleUri)
+
+	}, [queryParams.articleUri])
 
 	useEffect(() => {
 		const search = qs.stringify(QueryParams)
