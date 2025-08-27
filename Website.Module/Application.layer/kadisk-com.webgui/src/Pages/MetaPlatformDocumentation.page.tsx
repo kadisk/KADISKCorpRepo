@@ -1,34 +1,87 @@
 import * as React from "react"
-import {useState}  from "react"
+import { useState, useEffect }  from "react"
 
 //@ts-ignore
 import logoMyPlatform from "../../Assets/logo-my-platform-final-write.svg"
 
 import DocumentationConfigs from "../Configs/Documentation.configs"
 
+const GetArticlesByConfigs = (configs: any) => {
+
+	const GetList = (children, stackIndex) => {
+		const artileList = Object
+		.keys(children)
+		.reduce((acc, title, index) => {
+			
+			const { article, children: _children } = children[title]
+
+			if(article){
+				return [
+					...acc,
+					{
+						uri: [...stackIndex, index].join("."),
+						article
+					},
+					..._children?GetList(_children, [...stackIndex, index]):[]
+				]
+			}
+
+			return acc
+		}, [])
+
+		return artileList
+	}
+
+	return GetList(configs, [])
+		.reduce((acc, {uri, article})=> {
+			return { ...acc, [uri]: article }
+		}, {})
+}
+
+const GetUriByStack = (stackIndex) => {
+	return stackIndex.join(".")
+}
 
 const MetaPlatformDocumentationPage = () => {
 
-	const [ articleTitleCurrent, setArticleTitleCurrent ] = useState()
+	const [ articleUriCurrent, setArticleUriCurrent ] = useState()
 	const [ articleContent, setArticleContent ] = useState<React.ReactNode | null>(null)
 
-	const handleSelected = (e, {title, article}) => {
-		console.log(title)
-		console.log(article)
-		e.stopPropagation()
-		if(article){
-			setArticleTitleCurrent(title)
-			setArticleContent(article())
+	const [ articles, setArticles ] = useState<any>()
+
+	useEffect(() => {
+		if(!articles){
+			setArticles(GetArticlesByConfigs(DocumentationConfigs))
 		}
+
+	}, [])
+
+	useEffect(() => {
+		if(articleUriCurrent){
+			const article = articles[articleUriCurrent]
+			if(article){
+				setArticleContent(article())
+			}
+		} else {
+			setArticleContent(undefined)
+		}
+
+	}, [articleUriCurrent])
+
+	const handleSelected = (e, stackIndex) => {
+		e.stopPropagation()
+
+		const uri = GetUriByStack(stackIndex)
+		setArticleUriCurrent(uri)
 	}
 
-	const resetSelection = () => {
+	/*const resetSelection = () => {
 		setArticleContent(null)
-		setArticleTitleCurrent(undefined)
-	}
+		setArticleUriCurrent(undefined)
+	}*/
 
-	const renderSimpleItem = (title, article) =>{
-		return <li className={`nav-item ${articleTitleCurrent === title && "active"}`} onClick={(e) => handleSelected(e, {title, article})}>
+	const renderSimpleItem = (title, stackIndex) =>{
+		return <li className={`nav-item ${articleUriCurrent === GetUriByStack(stackIndex) && "active"}`} onClick={(e) => handleSelected(e, stackIndex)}>
 					<a className="nav-link">
 						<span className="nav-link-title">{title}</span>
 					</a>
@@ -37,31 +90,32 @@ const MetaPlatformDocumentationPage = () => {
 
 	const renderDropdownItem = ({
 		title,
-		article,
-		icon
+		icon,
+		stackIndex
 	}) => {
-		return <a className={`ms-3 dropdown-item ${articleTitleCurrent === title && "active"}`} onClick={(e) => handleSelected(e, {title, article})}>{icon}{title}</a>
+		return <a className={`ms-3 dropdown-item ${articleUriCurrent === GetUriByStack(stackIndex) && "active"}`} onClick={(e) => handleSelected(e, stackIndex)}>{icon}{title}</a>
 	}
 
 	const renderDropEnd = ({
 		title, 
-		article,
 		icon,
 		children,
+		stackIndex
 	}) => {
+
 		return <div className="ms-3">
-			<a className="dropdown-item dropdown-toggle" onClick={(e) => handleSelected(e, {title, article})} data-bs-toggle="dropdown" data-bs-auto-close="false" role="button" aria-expanded="false">
+			<a className="dropdown-item dropdown-toggle" onClick={(e) => handleSelected(e, stackIndex)} data-bs-toggle="dropdown" data-bs-auto-close="false" role="button" aria-expanded="false">
 			{icon}{title}
 			</a>
 			<div className="dropdown-menu">
 				{
 					Object.keys(children)
-					.map((title) => {
-						const { article, children: _children, icon } = children[title]
+					.map((title, index) => {
+						const { children: _children, icon } = children[title]
 						if(_children){
-							return renderDropEnd({ title, article, children: _children, icon })
+							return renderDropEnd({ title, children: _children, icon, stackIndex: [...stackIndex, index ] })
 						} else {
-							return renderDropdownItem({ title, article, icon })
+							return renderDropdownItem({ title, icon, stackIndex: [...stackIndex, index ] })
 						}
 					})
 				}
@@ -69,18 +123,18 @@ const MetaPlatformDocumentationPage = () => {
 		</div> 
 	}
 
-	const renderDropdownMenu = (children) => {
+	const renderDropdownMenu = (children, stackIndex) => {
 		return <div className="dropdown-menu show">
 							<div className="dropdown-menu-columns">
 								<div className="dropdown-menu-column">
 									{
 										Object.keys(children)
-										.map((title) => {
-											const { article, children: _children, icon } = children[title]
+										.map((title, index) => {
+											const { children: _children, icon } = children[title]
 											if(_children){
-												return renderDropEnd({ title, article, children: _children, icon})
+												return renderDropEnd({ title, children: _children, icon, stackIndex: [...stackIndex, index]})
 											} else {
-												return renderDropdownItem({ title, article, icon })
+												return renderDropdownItem({ title, icon, stackIndex: [...stackIndex, index] })
 											}
 										})
 									}
@@ -89,22 +143,22 @@ const MetaPlatformDocumentationPage = () => {
 						</div>
 	}
 
-	const renderNavItem = (title, article, children) => {
-		return <li className={`nav-item ${articleTitleCurrent === title && "active"}`} onClick={(e) => handleSelected(e, {title, article})}>
+	const renderNavItem = (title, children, stackIndex) => {
+		return <li className={`nav-item ${articleUriCurrent === GetUriByStack(stackIndex) && "active"}`} onClick={(e) => handleSelected(e, stackIndex)}>
 						<a className="nav-link dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button">
 							<span className="nav-link-title">{title}</span>
 						</a>
-						{renderDropdownMenu(children)}
+						{renderDropdownMenu(children, stackIndex)}
 					</li>
 
 	}
 
-	const renderMenuItem = (title, item) => {
-		const { article, children } = item
+	const renderMenuItem = (title, item, stackIndex) => {
+		const { children } = item
 		if(children){
-			return renderNavItem(title, article, children)
+			return renderNavItem(title, children, stackIndex)
 		} else 
-			return renderSimpleItem(title, article)
+			return renderSimpleItem(title, stackIndex)
 	}
 
 	return <div className="page">
@@ -118,7 +172,7 @@ const MetaPlatformDocumentationPage = () => {
 								{
 									Object
 									.keys(DocumentationConfigs)
-									.map((title) => renderMenuItem(title, DocumentationConfigs[title]))
+									.map((title, index) => renderMenuItem(title, DocumentationConfigs[title], [index]))
 								}
 							</ul>
 						</div>
