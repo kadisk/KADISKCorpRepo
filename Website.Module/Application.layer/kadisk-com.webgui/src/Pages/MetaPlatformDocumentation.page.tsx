@@ -10,7 +10,7 @@ import DocumentationConfigs from "../Configs/Documentation.configs"
 const MetaPlatformDocumentationPage = () => {
 
 	const [ articleTitleCurrent, setArticleTitleCurrent ] = useState()
-	const [ ArticleComponent, setArticleComponent ] = useState<any>()
+	const [ articleContent, setArticleContent ] = useState<React.ReactNode | null>(null)
 
 	const handleSelected = (e, {title, article}) => {
 		console.log(title)
@@ -18,12 +18,12 @@ const MetaPlatformDocumentationPage = () => {
 		e.stopPropagation()
 		if(article){
 			setArticleTitleCurrent(title)
-			setArticleComponent(article)
+			setArticleContent(article())
 		}
 	}
 
 	const resetSelection = () => {
-		setArticleComponent(undefined)
+		setArticleContent(null)
 		setArticleTitleCurrent(undefined)
 	}
 
@@ -126,10 +126,7 @@ const MetaPlatformDocumentationPage = () => {
 				</aside>
 				<div className="page-wrapper">
 					<div className="page-body">
-						{
-							ArticleComponent
-							&& <ArticleComponent />
-						}
+						{articleContent}
 					</div>
 						<footer className="footer footer-transparent d-print-none">
 						<div className="container-xl">
