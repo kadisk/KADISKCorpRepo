@@ -1,13 +1,13 @@
 import * as React from "react"
 
-const StartupParamsSchemaMetadadoArticle = () => {
+const PacoteWebguiArticle = () => {
 
 	return <div className="container-xl">
 				<div className="row">
 					<div className="col">
-					<h1>Metadado Startup Params Schema</h1>
+					<h1>Pacote tipo Lib</h1>
 					<p>
-						xyz
+						xpto
 					</p>
 					</div>
 				</div>
@@ -15,4 +15,5 @@ const StartupParamsSchemaMetadadoArticle = () => {
 
 }
 
-export default StartupParamsSchemaMetadadoArticle
+
+export default PacoteWebguiArticle

@@ -18,9 +18,7 @@ const MainPage = () => {
 		navigate({search: `?${search}`})
   }
 
-	return <HomepageContainer
-                queryParams         = {queryParams}
-                onChangeQueryParams = {handleChangeQueryParams}/>
+	return <HomepageContainer/>
 }
 
 export default MainPage

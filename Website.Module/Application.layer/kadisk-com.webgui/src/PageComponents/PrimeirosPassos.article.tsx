@@ -1,9 +1,5 @@
 import * as React from "react"
 
-import { connect } from "react-redux"
-import { bindActionCreators } from "redux"
-
-
 const PrimeirosPassosArticle = () => {
 
 	return <div className="container-xl">
@@ -107,13 +103,4 @@ Opções:
 						</div>
 }
 
-const mapDispatchToProps = (dispatch: any) =>
-	bindActionCreators({
-
-	}, dispatch)
-
-const mapStateToProps = ({ HTTPServerManager }: any) => ({
-	HTTPServerManager
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(PrimeirosPassosArticle)
+export default PrimeirosPassosArticle

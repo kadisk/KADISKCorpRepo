@@ -1,7 +1,4 @@
-import * as React from "react"
-
-import { connect } from "react-redux"
-import { bindActionCreators } from "redux"
+import React from "react"
 
 const PackageMetadadoArticle = () => {
 	return (
@@ -38,10 +35,4 @@ const PackageMetadadoArticle = () => {
 	)
 }
 
-const mapDispatchToProps = (dispatch: any) => 
-	bindActionCreators({}, dispatch)
-
-const mapStateToProps = ({ HTTPServerManager }: any) => 
-	({ HTTPServerManager })
-
-export default connect(mapStateToProps, mapDispatchToProps)(PackageMetadadoArticle)
+export default PackageMetadadoArticle

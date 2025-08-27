@@ -6,6 +6,14 @@ import ArquiteturaEcosistemaArticle from "../PageComponents/ArquiteturaEcosistem
 import RepositoriosArticle          from "../PageComponents/ArquiteturaEcosistema/Repositorios.article"
 import PacotesEMetadadosArticle     from "../PageComponents/ArquiteturaEcosistema/PacotesEMetadados.article"
 
+import PacoteLibArticle        from "../PageComponents/Referencias/Pacotes/PacoteLib.article"
+import PacoteServiceArticle    from "../PageComponents/Referencias/Pacotes/PacoteService.article"
+import PacoteWebserviceArticle from "../PageComponents/Referencias/Pacotes/PacoteWebservice.article"
+import PacoteWebguiArticle     from "../PageComponents/Referencias/Pacotes/PacoteWebgui.article"
+import PacoteCLIArticle        from "../PageComponents/Referencias/Pacotes/PacoteCLI.article"
+import PacoteWebappArticle     from "../PageComponents/Referencias/Pacotes/PacoteWebapp.article"
+import PacoteAppArticle        from "../PageComponents/Referencias/Pacotes/PacoteApp.article"
+
 import MetadadosArticle                   from "../PageComponents/Referencias/Metadados.article"
 import PackageMetadadoArticle             from "../PageComponents/Referencias/Metadados/PackageMetadado.article"
 import BootMetadadoArticle                from "../PageComponents/Referencias/Metadados/BootMetadado.article"
@@ -15,6 +23,7 @@ import ServicesMetadadoArticle            from "../PageComponents/Referencias/Me
 import StartupParamsMetadadoArticle       from "../PageComponents/Referencias/Metadados/StartupParamsMetadado.article"
 import StartupParamsSchemaMetadadoArticle from "../PageComponents/Referencias/Metadados/StartupParamsSchemaMetadado.article"
 
+debugger
 
 const pkgIcon = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-package"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" /><path d="M12 12l8 -4.5" /><path d="M12 12l0 9" /><path d="M12 12l-8 -4.5" /><path d="M16 5.25l-8 4.5" /></svg>
 const layerIcon = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-layers-subtract"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 4m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /><path d="M16 16v2a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-8a2 2 0 0 1 2 -2h2" /></svg>
@@ -67,11 +76,36 @@ const DocumentationConfigs = {
 			},
 			"startup-params.json":{
 				article: StartupParamsMetadadoArticle,
-				chidren: {
+				children: {
 					"schema":{
 						article: StartupParamsSchemaMetadadoArticle
 					}
 				}
+			}
+		}
+	},
+	"Referências de Pacotes": {
+		children: {
+			"lib": {
+				article: PacoteLibArticle
+			},
+			"service": {
+				article: PacoteServiceArticle
+			},
+			"webservice": {
+				article: PacoteWebserviceArticle
+			},
+			"webgui": {
+				article: PacoteWebguiArticle
+			},
+			"cli": {
+				article: PacoteCLIArticle
+			},
+			"webapp": {
+				article: PacoteWebappArticle
+			},
+			"app":{
+				article: PacoteAppArticle
 			}
 		}
 	},

@@ -1,9 +1,5 @@
 import * as React from "react"
 
-import { connect } from "react-redux"
-import { bindActionCreators } from "redux"
-
-
 const BootMetadadoArticle = () => {
 
 	return <div className="container-xl">
@@ -20,10 +16,5 @@ const BootMetadadoArticle = () => {
 
 }
 
-const mapDispatchToProps = (dispatch: any) => 
-	bindActionCreators({}, dispatch)
 
-const mapStateToProps = ({ HTTPServerManager }: any) => 
-	({ HTTPServerManager })
-
-export default connect(mapStateToProps, mapDispatchToProps)(BootMetadadoArticle)
+export default BootMetadadoArticle

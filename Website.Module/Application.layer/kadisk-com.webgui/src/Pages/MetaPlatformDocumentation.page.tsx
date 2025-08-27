@@ -1,8 +1,5 @@
 import * as React from "react"
-import {useEffect, useState}  from "react"
-
-import { connect } from "react-redux"
-import { bindActionCreators } from "redux"
+import {useState}  from "react"
 
 //@ts-ignore
 import logoMyPlatform from "../../Assets/logo-my-platform-final-write.svg"
@@ -10,27 +7,14 @@ import logoMyPlatform from "../../Assets/logo-my-platform-final-write.svg"
 import DocumentationConfigs from "../Configs/Documentation.configs"
 
 
-type HomepageParamsType = {
-	api?: string
-	summary?: string
-}
-
-type HomepageContainerProps = {
-	queryParams: HomepageParamsType
-	onChangeQueryParams: any
-	HTTPServerManager: any
-}
-
-const MetaPlatformDocumentationPage = ({
-	queryParams,
-	onChangeQueryParams,
-	HTTPServerManager
-}: HomepageContainerProps) => {
+const MetaPlatformDocumentationPage = () => {
 
 	const [ articleTitleCurrent, setArticleTitleCurrent ] = useState()
 	const [ ArticleComponent, setArticleComponent ] = useState<any>()
 
 	const handleSelected = (e, {title, article}) => {
+		console.log(title)
+		console.log(article)
 		e.stopPropagation()
 		if(article){
 			setArticleTitleCurrent(title)
@@ -164,13 +148,4 @@ const MetaPlatformDocumentationPage = ({
 			</div>
 }
 
-const mapDispatchToProps = (dispatch: any) =>
-	bindActionCreators({
-
-	}, dispatch)
-
-const mapStateToProps = ({ HTTPServerManager }: any) => ({
-	HTTPServerManager
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(MetaPlatformDocumentationPage)
+export default MetaPlatformDocumentationPage

@@ -1,9 +1,5 @@
 import * as React from "react"
 
-import { connect } from "react-redux"
-import { bindActionCreators } from "redux"
-
-
 const RepositoriosArticle = () => {
 	return (
 		<div className="container-xl">
@@ -51,10 +47,4 @@ const RepositoriosArticle = () => {
 	)
 }
 
-const mapDispatchToProps = (dispatch: any) =>
-	bindActionCreators({}, dispatch)
-
-const mapStateToProps = ({ HTTPServerManager }: any) =>
-	({ HTTPServerManager })
-
-export default connect(mapStateToProps, mapDispatchToProps)(RepositoriosArticle)
+export default RepositoriosArticle

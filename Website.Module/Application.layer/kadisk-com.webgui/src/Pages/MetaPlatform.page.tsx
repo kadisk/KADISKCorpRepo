@@ -1,30 +1,12 @@
 import * as React from "react"
 
-import { connect } from "react-redux"
-import { bindActionCreators } from "redux"
-
 //@ts-ignore
 import backgroundImageUrl from "../../Assets/pexels-ivan-samkov-4491829_2-otimizada.jpg"
 
 //@ts-ignore
 import logoMyPlatform from "../../Assets/logo-my-platform-final.svg"
 
-type HomepageParamsType = {
-    api?: string
-    summary?: string
-}
-
-type HomepageContainerProps = {
-    queryParams: HomepageParamsType
-    onChangeQueryParams: any
-    HTTPServerManager: any
-}
-
-const MetaPlatformPage = ({
-    queryParams,
-    onChangeQueryParams,
-    HTTPServerManager
-}: HomepageContainerProps) => {
+const MetaPlatformPage = () => {
 
     return <>
         <div className="" >
@@ -149,13 +131,4 @@ const MetaPlatformPage = ({
     </>
 }
 
-const mapDispatchToProps = (dispatch: any) =>
-    bindActionCreators({
-
-    }, dispatch)
-
-const mapStateToProps = ({ HTTPServerManager }: any) => ({
-    HTTPServerManager
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(MetaPlatformPage)
+export default MetaPlatformPage

@@ -1,8 +1,5 @@
 import * as React from "react"
 
-import { connect } from "react-redux"
-import { bindActionCreators } from "redux"
-
 //@ts-ignore
 import backgroundImageUrl from "../../Assets/pexels-ruiz-15275312.jpg"
 
@@ -12,22 +9,8 @@ import logo1svg from "../../Assets/logo.svg"
 //@ts-ignore
 import logoMyPlatform from "../../Assets/logo-my-platform-final.svg"
 
-type HomepageParamsType = {
-    api?: string
-    summary?: string
-}
 
-type HomepageContainerProps = {
-    queryParams: HomepageParamsType
-    onChangeQueryParams: any
-    HTTPServerManager: any
-}
-
-const HomepageContainer = ({
-    queryParams,
-    onChangeQueryParams,
-    HTTPServerManager
-}: HomepageContainerProps) => {
+const HomepageContainer = () => {
 
     return <div style={{
                 backgroundImage: `url(${backgroundImageUrl})`,
@@ -88,13 +71,4 @@ const HomepageContainer = ({
     </div>
 }
 
-const mapDispatchToProps = (dispatch: any) =>
-    bindActionCreators({
-
-    }, dispatch)
-
-const mapStateToProps = ({ HTTPServerManager }: any) => ({
-    HTTPServerManager
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(HomepageContainer)
+export default HomepageContainer
