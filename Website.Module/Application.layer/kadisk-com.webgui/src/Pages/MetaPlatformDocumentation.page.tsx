@@ -26,18 +26,12 @@ const GetArticlesByConfigs = (configs: any) => {
 			
 			const { article, children: _children } = children[title]
 
-			if(article){
-				return [
-					...acc,
-					{
-						uri: [...stackIndex, index].join("."),
-						article
-					},
-					..._children?GetList(_children, [...stackIndex, index]):[]
-				]
-			}
+			return [
+				...acc,
+				...article ? [{ uri: [...stackIndex, index].join("."), article}] : [],
+				..._children?GetList(_children, [...stackIndex, index]):[]
+			]
 
-			return acc
 		}, [])
 
 		return artileList
