@@ -23,7 +23,9 @@ import ServicesMetadadoArticle            from "../PageComponents/Referencias/Me
 import StartupParamsMetadadoArticle       from "../PageComponents/Referencias/Metadados/StartupParamsMetadado.article"
 import StartupParamsSchemaMetadadoArticle from "../PageComponents/Referencias/Metadados/StartupParamsSchemaMetadado.article"
 
-debugger
+import RepositoryManagerArticle from "../PageComponents/Referencias/Aplicativos/myrepo.article"
+import MaintenanceToolkitArticle from "../PageComponents/Referencias/Aplicativos/mytoolkit.article"
+import ExecutionSupervisorArticle from "../PageComponents/Referencias/Aplicativos/supervisor.article"
 
 const pkgIcon = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-package"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" /><path d="M12 12l8 -4.5" /><path d="M12 12l0 9" /><path d="M12 12l-8 -4.5" /><path d="M16 5.25l-8 4.5" /></svg>
 const layerIcon = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-layers-subtract"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 4m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /><path d="M16 16v2a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-8a2 2 0 0 1 2 -2h2" /></svg>
@@ -55,8 +57,46 @@ const DocumentationConfigs = {
 		}
 
 	},
-	"Referências Metadados":{
+	"Referência Aplicativos": {
 		isShow: true,
+		children: {
+			"repo" :{
+				article: RepositoryManagerArticle
+				/*children: {
+					"sources":{},
+					"list sources":{},
+					"list installed":{},
+					"install [repositoryNamespace] [sourceType]":{},
+					"update [repositoryNamespace] [sourceType]":{},
+					"show [repositoryNamespace]":{},
+					"register source [repositoryNamespace] [sourceType]":{},
+					"remove source [repositoryNamespace] [sourceType]":{}
+				}*/
+			},
+			"mytoolkit" :{
+				article: MaintenanceToolkitArticle,
+				/*children: {
+					"list-profiles":{},
+					"install [profile]":{},
+					"update [profile]":{},
+					"show profile [profile]":{}
+				}*/
+			},
+			"supervisor" :{
+				article: ExecutionSupervisorArticle
+				/*children:{
+					"sockets":{},
+					"status [socket]":{},
+					"tasks [socket]":{},
+					"log [socket]":{},
+					"kill [socket]":{},
+					"show task [taskId] [socket]":{}
+				}*/
+			}
+		}
+	},
+	"Referências Metadados":{
+		isShow: false,
 		article: MetadadosArticle,
 		children: {
 			"package.json":{
@@ -85,7 +125,7 @@ const DocumentationConfigs = {
 		}
 	},
 	"Referência Pacotes": {
-		isShow: true,
+		isShow: false,
 		children: {
 			"lib": {
 				article: PacoteLibArticle
@@ -107,42 +147,6 @@ const DocumentationConfigs = {
 			},
 			"app":{
 				article: PacoteAppArticle
-			}
-		}
-	},
-
-	"Referência Aplicativos": {
-		isShow: true,
-		children: {
-			"repo" :{
-				children: {
-					"sources":{},
-					"list sources":{},
-					"list installed":{},
-					"install [repositoryNamespace] [sourceType]":{},
-					"update [repositoryNamespace] [sourceType]":{},
-					"show [repositoryNamespace]":{},
-					"register source [repositoryNamespace] [sourceType]":{},
-					"remove source [repositoryNamespace] [sourceType]":{}
-				}
-			},
-			"mytoolkit" :{
-				children: {
-					"list-profiles":{},
-					"install [profile]":{},
-					"update [profile]":{},
-					"show profile [profile]":{}
-				}
-			},
-			"supervisor" :{
-				children:{
-					"sockets":{},
-					"status [socket]":{},
-					"tasks [socket]":{},
-					"log [socket]":{},
-					"kill [socket]":{},
-					"show task [taskId] [socket]":{}
-				}
 			}
 		}
 	},
