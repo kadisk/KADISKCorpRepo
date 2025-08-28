@@ -30,25 +30,25 @@ const MetadadosArticle = () => {
 					<h3>Arquivos de Metadados Disponíveis</h3>
 					<ul>
 						<li>
-							<strong>boot.json</strong> – Define como o pacote será executado. Presente em pacotes executáveis.
+							<strong>boot.json</strong> – Define como o pacote será executado. Presente em pacotes executáveis.Saiba mais em <a href="#/documentation?articleUri=3.4">Referência de metadado Inicialização</a>
 						</li>
 						<li>
 							<strong>startup-params.json</strong> e <strong>startup-params-schema.json</strong> – 
 							Disponíveis apenas em pacotes que possuem <code>boot.json</code>. 
 							Definem parâmetros de inicialização: o primeiro fornece valores padrão de execução e 
-							o segundo descreve a estrutura esperada desses parâmetros.
+							o segundo descreve a estrutura esperada desses parâmetros.Saiba mais em Referência de metadado <a href="#/documentation?articleUri=3.5">Paramêtros de Inicialização</a> e <a href="#/documentation?articleUri=3.5.0">Esquema de Paramêtros de Inicialização</a>
 						</li>
 						<li>
 							<strong>services.json</strong> – Encontrado em pacotes <em>service</em>, <em>app</em>, <em>cli</em> e <em>webapp</em>. 
-							Descreve os serviços disponíveis para uso.
+							Descreve os serviços disponíveis para uso.Saiba mais em <a href="#/documentation?articleUri=3.1">Referência de metadado Serviço</a>
 						</li>
 						<li>
 							<strong>endpoint-group.json</strong> – Presente em pacotes <em>webservice</em>, <em>webgui</em> e <em>webapp</em>. 
-							Define grupos de endpoints expostos.
+							Define grupos de endpoints expostos.Saiba mais em <a href="#/documentation?articleUri=3.2">Referência de metadado de Serviços Web</a>
 						</li>
 						<li>
 							<strong>command-group.json</strong> – Exclusivo de pacotes <em>cli</em>. 
-							Lista os comandos disponíveis que podem ser executados na aplicação.
+							Lista os comandos disponíveis que podem ser executados na aplicação.Saiba mais em <a href="#/documentation?articleUri=3.3">Referência de metadado de comandos</a>
 						</li>
 					</ul>
 				</div>

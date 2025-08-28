@@ -55,8 +55,8 @@ const DocumentationConfigs = {
 		}
 
 	},
-	"Referências de Metadados":{
-
+	"Referências Metadados":{
+		isShow: true,
 		article: MetadadosArticle,
 		children: {
 			"package.json":{
@@ -84,7 +84,8 @@ const DocumentationConfigs = {
 			}
 		}
 	},
-	"Referências de Pacotes": {
+	"Referência Pacotes": {
+		isShow: true,
 		children: {
 			"lib": {
 				article: PacoteLibArticle
@@ -109,12 +110,15 @@ const DocumentationConfigs = {
 			}
 		}
 	},
-	"Referências de Aplicativos": {
+	"Referência Aplicativos": {
+		isShow: true,
 		children: {
-			
+			"repo" :{},
+			"mytoolkit" :{},
+			"supervisor" :{}
 		}
 	},
-	"Referências Repositórios": {
+	"Referência Repositórios": {
 		children:{
 			"Essential": {
 				children:{

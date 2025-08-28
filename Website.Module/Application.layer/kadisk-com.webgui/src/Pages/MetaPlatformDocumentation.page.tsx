@@ -150,8 +150,8 @@ const MetaPlatformDocumentationPage = ({
 		</div> 
 	}
 
-	const renderDropdownMenu = (children, stackIndex) => {
-		return <div className="dropdown-menu show">
+	const renderDropdownMenu = (children, stackIndex, isShow) => {
+		return <div className={`dropdown-menu ${isShow ? "show" :""}`}>
 							<div className="dropdown-menu-columns">
 								<div className="dropdown-menu-column">
 									{
@@ -170,19 +170,19 @@ const MetaPlatformDocumentationPage = ({
 						</div>
 	}
 
-	const renderNavItem = (title, children, stackIndex) => {
+	const renderNavItem = (title, children, stackIndex, isShow) => {
 		return <li className={`nav-item ${articleUriCurrent === GetUriByStack(stackIndex) && "active"}`} onClick={(e) => handleSelected(e, stackIndex)}>
 						<a className="nav-link dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button">
 							<span className="nav-link-title">{title}</span>
 						</a>
-						{renderDropdownMenu(children, stackIndex)}
+						{renderDropdownMenu(children, stackIndex, isShow)}
 					</li>
 	}
 
 	const renderMenuItem = (title, item, stackIndex) => {
-		const { children } = item
+		const { children, isShow } = item
 		if(children){
-			return renderNavItem(title, children, stackIndex)
+			return renderNavItem(title, children, stackIndex, isShow)
 		} else 
 			return renderSimpleItem(title, stackIndex)
 	}
