@@ -20,15 +20,9 @@ const PackageMetadadoArticle = () => {
   "namespace": "@/minha-novo-biblioteca.lib"
 }`}
 					</pre>
-
-					<p>
-						É importante ressaltar que, por enquanto, o identificador <code>namespace</code> 
-						é único em todo o ecossistema.  
-						Isto significa que duplicações — mesmo em repositórios diferentes — podem causar problemas 
-						durante a execução.  
-						Em versões futuras, será possível reutilizar o mesmo identificador em diferentes contextos, 
-						o que aumentará a flexibilidade na organização dos pacotes.
-					</p>
+					<div className="alert alert-warning mt-4">
+						É importante ressaltar que, por enquanto, o identificador namespace é único em todo o ecossistema.Isto significa que duplicações — mesmo em repositórios diferentes — podem causar problemas durante a execução. Em versões futuras, será possível reutilizar o mesmo identificador em diferentes contextos, o que aumentará a flexibilidade na organização dos pacotes.
+					</div>
 				</div>
 			</div>
 		</div>

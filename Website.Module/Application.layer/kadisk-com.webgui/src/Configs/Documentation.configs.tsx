@@ -110,12 +110,40 @@ const DocumentationConfigs = {
 			}
 		}
 	},
+
 	"Referência Aplicativos": {
 		isShow: true,
 		children: {
-			"repo" :{},
-			"mytoolkit" :{},
-			"supervisor" :{}
+			"repo" :{
+				children: {
+					"sources":{},
+					"list sources":{},
+					"list installed":{},
+					"install [repositoryNamespace] [sourceType]":{},
+					"update [repositoryNamespace] [sourceType]":{},
+					"show [repositoryNamespace]":{},
+					"register source [repositoryNamespace] [sourceType]":{},
+					"remove source [repositoryNamespace] [sourceType]":{}
+				}
+			},
+			"mytoolkit" :{
+				children: {
+					"list-profiles":{},
+					"install [profile]":{},
+					"update [profile]":{},
+					"show profile [profile]":{}
+				}
+			},
+			"supervisor" :{
+				children:{
+					"sockets":{},
+					"status [socket]":{},
+					"tasks [socket]":{},
+					"log [socket]":{},
+					"kill [socket]":{},
+					"show task [taskId] [socket]":{}
+				}
+			}
 		}
 	},
 	"Referência Repositórios": {
