@@ -6,7 +6,7 @@ const EndpointMetadadoArticle = () => {
 			<div className="row">
 				<div className="col">
 					<h1>Metadados de Endpoint Group</h1>
-					<p className="lead">
+					<p>
 						Os metadados de <strong>grupos de endpoint</strong> descrevem os endpoints disponíveis
 						para consumo pelo <code>metadata/boot.json</code> e por outros pacotes do sistema.
 						Estes metadados são encontrados nos pacotes <em>webservice</em>, <em>webgui</em> e <em>webapp</em>.

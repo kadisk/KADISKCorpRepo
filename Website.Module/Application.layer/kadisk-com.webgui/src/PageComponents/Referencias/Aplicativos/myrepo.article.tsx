@@ -78,13 +78,13 @@ repo remove source MyPersonalRepo GOOGLE_DRIVE`}
 					<p>Instala um repositório especificado a partir de uma fonte.</p>
 					<pre>
 {`repo install [repositoryNamespace] [sourceType]
-repo install [repositoryNamespace] [sourceType] --executable exec1 "exec2" exec3`}
+repo install [repositoryNamespace] [sourceType] --executables exec1 "exec2" exec3`}
 					</pre>
 					<p><strong>Exemplo:</strong></p>
 					<pre>
 {`repo install EcosystemCoreRepo LOCAL_FS
-repo install EssentialRepo LOCAL_FS --executable supervisor mytoolkit repo
-repo install EcosystemCoreRepo GITHUB_RELEASE --executable "executor-manager" "executor-panel" explorer executor`}
+repo install EssentialRepo LOCAL_FS --executables supervisor mytoolkit repo
+repo install EcosystemCoreRepo GITHUB_RELEASE --executables "executor-manager" "executor-panel" explorer executor`}
 					</pre>
 					
 					<h5>Atualizar um Repositório Instalado</h5>

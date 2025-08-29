@@ -58,7 +58,7 @@ const DocumentationConfigs = {
 
 	},
 	"Referência Aplicativos": {
-		isShow: true,
+		isShow: false,
 		children: {
 			"repo" :{
 				article: RepositoryManagerArticle
@@ -96,7 +96,7 @@ const DocumentationConfigs = {
 		}
 	},
 	"Referências Metadados":{
-		isShow: false,
+		isShow: true,
 		article: MetadadosArticle,
 		children: {
 			"package.json":{
