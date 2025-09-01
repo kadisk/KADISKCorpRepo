@@ -125,7 +125,7 @@ const DocumentationConfigs = {
 		}
 	},
 	"Referência Pacotes": {
-		isShow: false,
+		isShow: true,
 		children: {
 			"lib": {
 				article: PacoteLibArticle
