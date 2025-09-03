@@ -31,7 +31,8 @@ const pkgIcon = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24
 const layerIcon = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-layers-subtract"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 4m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /><path d="M16 16v2a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-8a2 2 0 0 1 2 -2h2" /></svg>
 const moduleIcon = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-packages"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 16.5l-5 -3l5 -3l5 3v5.5l-5 3z" /><path d="M2 13.5v5.5l5 3" /><path d="M7 16.545l5 -3.03" /><path d="M17 16.5l-5 -3l5 -3l5 3v5.5l-5 3z" /><path d="M12 19l5 3" /><path d="M17 16.5l5 -3" /><path d="M12 13.5v-5.5l-5 -3l5 -3l5 3v5.5" /><path d="M7 5.03v5.455" /><path d="M12 8l5 -3" /></svg>
 const groupIcon = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-archive"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 4m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /><path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" /><path d="M10 12l4 0" /></svg>
-
+const terminal2Icon = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-terminal-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 9l3 3l-3 3" /><path d="M13 15l3 0" /><path d="M3 4m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /></svg>
+const fileCode2Icon = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-file-code-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12h-1v5h1" /><path d="M14 12h1v5h-1" /><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /></svg>
 
 const DocumentationConfigs = {
 	"Introdução":{
@@ -61,37 +62,37 @@ const DocumentationConfigs = {
 		isShow: false,
 		children: {
 			"repo" :{
-				article: RepositoryManagerArticle
-				/*children: {
-					"sources":{},
-					"list sources":{},
-					"list installed":{},
-					"install [repositoryNamespace] [sourceType]":{},
-					"update [repositoryNamespace] [sourceType]":{},
-					"show [repositoryNamespace]":{},
-					"register source [repositoryNamespace] [sourceType]":{},
-					"remove source [repositoryNamespace] [sourceType]":{}
-				}*/
+				icon: terminal2Icon,
+				article: RepositoryManagerArticle,
+				children: {
+					"Fontes disponíveis": {},
+					"Repositórios instalados": {},
+					"Instalação e atualização": {},
+					"Informações detalhadas": {},
+					"Gerenciamento de fontes": {}
+				}
 			},
 			"mytoolkit" :{
+				icon: terminal2Icon,
 				article: MaintenanceToolkitArticle,
-				/*children: {
-					"list-profiles":{},
-					"install [profile]":{},
-					"update [profile]":{},
-					"show profile [profile]":{}
-				}*/
+				children: {
+					"Listagem de perfis": {},
+					"Instalação do ecossistema": {},
+					"Atualização do ecossistema": {},
+					"Visualização de informações": {}
+				}
 			},
 			"supervisor" :{
-				article: ExecutionSupervisorArticle
-				/*children:{
-					"sockets":{},
-					"status [socket]":{},
-					"tasks [socket]":{},
-					"log [socket]":{},
-					"kill [socket]":{},
-					"show task [taskId] [socket]":{}
-				}*/
+				icon: terminal2Icon,
+				article: ExecutionSupervisorArticle,
+				children:{
+					"Listagem de sockets": {},
+					"Status de execução": {},
+					"Tarefas em execução": {},
+					"Visualização de logs": {},
+					"Controle de instâncias": {},
+					"Informações detalhadas de tarefas": {}
+				}
 			}
 		}
 	},
@@ -100,24 +101,31 @@ const DocumentationConfigs = {
 		article: MetadadosArticle,
 		children: {
 			"package.json":{
+				icon: fileCode2Icon,
 				article: PackageMetadadoArticle
 			},
 			"services.json":{
+				icon: fileCode2Icon,
 				article: ServicesMetadadoArticle
 			},
 			"endpoint-group.json":{
+				icon: fileCode2Icon,
 				article: EndpointMetadadoArticle
 			},
 			"command-group.json":{
+				icon: fileCode2Icon,
 				article: CommandGroupMetadadoArticle
 			},
 			"boot.json":{
+				icon: fileCode2Icon,
 				article: BootMetadadoArticle
 			},
 			"startup-params.json":{
+				icon: fileCode2Icon,
 				article: StartupParamsMetadadoArticle,
 				children: {
 					"schema":{
+						icon: fileCode2Icon,
 						article: StartupParamsSchemaMetadadoArticle
 					}
 				}
