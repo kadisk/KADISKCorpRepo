@@ -64,7 +64,10 @@ const HomepageContainer = () => {
         }}>
             <div className="container">
                 <div className="row py-2">
-                    <div className="col-auto"><strong>© {new Date().getFullYear()} Kadisk Engenharia de Software LTDA. Todos os direitos reservados.</strong></div>
+                    <div className="col-auto"><strong>© {new Date().getFullYear()} Kadisk Engenharia de Software LTDA. Todos os direitos reservados. </strong><i style={{ fontSize: "0.8rem" }}>
+                        Atualizado em: { new Date(process.env.BUILD_DATE).toLocaleString("pt-BR")}</i>
+                    </div>
+                    
                 </div>
             </div>
         </footer>

@@ -209,18 +209,20 @@ const MetaPlatformDocumentationPage = ({
 						{articleContent}
 					</div>
 						<footer className="footer footer-transparent d-print-none">
-						<div className="container-xl">
-							<div className="row text-center align-items-center flex-row-reverse">
-								<div className="col-lg-auto ms-lg-auto">
-									© 2025 Kadisk Engenharia de Software LTDA.  
-									Distribuído sob a licença BSD 3-Clause.  
-									<a href="https://opensource.org/licenses/BSD-3-Clause" target="_blank" rel="noopener noreferrer">
-									Saiba mais
-									</a>
+							<div className="container-xl">
+								<div className="row text-center align-items-center flex-row-reverse">
+									<div className="col-lg-auto ms-lg-auto">
+										© 2025 Kadisk Engenharia de Software LTDA.  
+										Distribuído sob a licença BSD 3-Clause.  
+										<a href="https://opensource.org/licenses/BSD-3-Clause" target="_blank" rel="noopener noreferrer">
+										Saiba mais  </a>
+										<i style={{ fontSize: "0.8rem", }}>
+											Atualizado em: { new Date(process.env.BUILD_DATE).toLocaleString("pt-BR")}
+										</i>
+									</div>
 								</div>
 							</div>
-						</div>
-					</footer>
+						</footer>
 				</div>
 			</div>
 }
