@@ -1,0 +1,14 @@
+{
+
+    "params" : [ "entryPort", "targetHost" ],
+    "services":[
+        {
+            "namespace": "@@/transit-proxy-service",
+            "dependency": "@/proxy.service/services/TransitProxyService",
+            "params":{
+                "entryPort":"{{entryPort}}",
+                "targetHost": "{{targetHost}}"
+            }
+        }
+    ]
+}

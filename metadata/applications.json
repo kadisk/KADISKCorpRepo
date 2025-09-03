@@ -8,25 +8,25 @@
     {
         "appType":"APP",
         "executable":"virtual-desk",
-        "packageNamespace":"VirtualDesk.Module/Applications.layer/kadisk-virtual-desk.webapp",
+        "packageNamespace":"VirtualDesk.Module/Applications.layer/virtual-desk.webapp",
         "supervisorSocketFileName":"virtual-desk.sock"
     },
     {
         "appType":"APP",
         "executable":"virtual-desk-gui",
-        "packageNamespace":"VirtualDesk.Module/UserInterfaces.layer/kadisk-virtual-desk.webgui",
+        "packageNamespace":"VirtualDesk.Module/UserInterfaces.layer/virtual-desk.webgui",
         "supervisorSocketFileName":"virtual-desk-gui.sock"
     },
     {
         "appType":"APP",
         "executable":"kadisk-transit-proxy",
-        "packageNamespace":"VirtualDesk.Module/Applications.layer/kadisk-transit-proxy.app",
+        "packageNamespace":"VirtualDesk.Module/Applications.layer/transit-proxy.app",
         "supervisorSocketFileName":"kadisk-transit-proxy.sock"
     },
     {
         "appType":"APP",
         "executable":"kadisk-domain-router-proxy",
-        "packageNamespace":"VirtualDesk.Module/Applications.layer/kadisk-domain-router-proxy.app",
+        "packageNamespace":"VirtualDesk.Module/Applications.layer/domain-router-proxy.app",
         "supervisorSocketFileName":"kadisk-domain-router-proxy.sock"
     }
 ]

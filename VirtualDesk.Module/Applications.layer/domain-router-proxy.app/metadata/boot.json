@@ -1,0 +1,13 @@
+{
+    "params" : [ "entryPort", "routeMappingTable"],
+    "services":[
+        {
+            "namespace": "@@/domain-router-proxy-service",
+            "dependency": "@/proxy.service/services/DomainRouterProxyService",
+            "params":{
+                "entryPort":"{{entryPort}}",
+                "routeMappingTable": "routeMappingTable"
+            }
+        }
+    ]
+}
