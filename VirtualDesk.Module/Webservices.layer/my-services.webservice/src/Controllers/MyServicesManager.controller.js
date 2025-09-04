@@ -10,13 +10,23 @@ const GetRequestParams = ({body, params:path, query}) => ({...path, ...body, ...
 
 const MyServicesManagerController = (params) => {
 
-    const { uploadDirPath, myServicesManagerService } = params
+    const {
+        uploadDirPath, 
+        myServicesManagerService,
+        repositoryStorageManagerService
+    } = params
 
     const uploadAbsolutDirPath = ConvertPathToAbsolutPath(uploadDirPath)
 
-    const GetMyServicesStatus = ({ authenticationData }) => {
+    const GetMyServicesStatus = async ({ authenticationData }) => {
         const { userId } = authenticationData
-        return myServicesManagerService.GetStatus(userId)
+        const repositoryCount = await repositoryStorageManagerService.CountNamespaceByUserId(userId)
+    
+        if (repositoryCount > 0) {
+            return "READY"
+        } else {
+            return "NO_REPOSITORIES"
+        }
     }
 
     const UploadProcess = ({
@@ -65,7 +75,7 @@ const MyServicesManagerController = (params) => {
             username,
             onUpload: async (repositoryFilePath) => {
                 const params = GetRequestParams(request)
-                return await myServicesManagerService.RegisterNamespaceAndRepositoryUploadedAndExtract({
+                return await repositoryStorageManagerService.RegisterNamespaceAndRepositoryUploadedAndExtract({
                     userId, 
                     username,
                     repositoryNamespace: params.repositoryNamespace, 
@@ -85,8 +95,8 @@ const MyServicesManagerController = (params) => {
             username,
             onUpload: async (repositoryFilePath) => {
                 const params = GetRequestParams(request)
-                const namespaceData = await myServicesManagerService.GetNamespace(params.namespaceId)
-                const repositoryImportedData =  await myServicesManagerService
+                const namespaceData = await repositoryStorageManagerService.GetNamespace(params.namespaceId)
+                const repositoryImportedData =  await repositoryStorageManagerService
                     .ExtractAndRegisterRepository({ 
                         username, 
                         repositoryNamespace: namespaceData.namespace,
@@ -133,7 +143,7 @@ const MyServicesManagerController = (params) => {
         personalAccessToken
     }, { authenticationData }) => {
         const { userId, username } = authenticationData
-        const namespaceData = await myServicesManagerService.GetNamespace(namespaceId)
+        const namespaceData = await repositoryStorageManagerService.GetNamespace(namespaceId)
         const repositoryCodePath = GetRepositoryCodePath({
             repositoryNamespace: namespaceData.namespace,
             userId,
@@ -144,7 +154,7 @@ const MyServicesManagerController = (params) => {
             repositoryGitUrl,
             personalAccessToken
         })
-        const repositoryImportedData = await myServicesManagerService
+        const repositoryImportedData = await repositoryStorageManagerService
         .RegisterImportedRepository({
             namespaceId: namespaceData.id,
             repositoryCodePath,
@@ -176,7 +186,7 @@ const MyServicesManagerController = (params) => {
             repositoryGitUrl,
             personalAccessToken
         })
-        const data = await myServicesManagerService
+        const data = await repositoryStorageManagerService
         .RegisterNamespaceAndRepositoryCloned({
                 userId, 
                 repositoryNamespace, 

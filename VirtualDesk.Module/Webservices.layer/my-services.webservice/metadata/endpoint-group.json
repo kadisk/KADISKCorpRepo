@@ -20,7 +20,8 @@
             "bound-params": {
                 "serverService":"serverService",
                 "controller-params":{
-                    "myServicesManagerService":"myServicesManagerService"
+                    "myServicesManagerService":"myServicesManagerService",
+                    "repositoryStorageManagerService":"repositoryStorageManagerService"
                 }
             }
         },
@@ -35,7 +36,8 @@
             "bound-params": {
                 "serverService":"serverService",
                 "controller-params":{
-                    "myServicesManagerService":"myServicesManagerService"
+                    "myServicesManagerService":"myServicesManagerService",
+                    "repositoryStorageManagerService":"repositoryStorageManagerService"
                 }
             }
         },

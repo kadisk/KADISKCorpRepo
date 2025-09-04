@@ -4,15 +4,9 @@
         "path": "Managers/MyServices.manager",
         "params": [ 
             "serviceStorageFilePath", 
-            "importedRepositoriesSourceCodeDirPath", 
-            "instanceDataDirPath", 
-            "ecosystemDefaultsFileRelativePath"
+            "instanceDataDirPath"
         ],
-        "bound-params":  [ 
-            "extractTarGzLib", 
-            "loadMetatadaDirLib", 
-            "ecosystemdataHandlerService", 
-            "jsonFileUtilitiesLib", 
+        "bound-params":  [
             "containerManagerService",
             "repositoryStorageManagerService"
         ]

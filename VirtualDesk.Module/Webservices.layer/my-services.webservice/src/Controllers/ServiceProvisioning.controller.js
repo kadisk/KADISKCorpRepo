@@ -1,11 +1,11 @@
 
 const ServiceProvisioningController = (params) => {
 
-    const { myServicesManagerService } = params
+    const { myServicesManagerService, repositoryStorageManagerService } = params
 
     const ListBootablePackages = ({ authenticationData }) => {
         const { userId, username } = authenticationData
-        return myServicesManagerService.ListBootablePackages({ userId, username })
+        return repositoryStorageManagerService.ListBootablePackages({ userId, username })
     }
 
 
@@ -32,7 +32,7 @@ const ServiceProvisioningController = (params) => {
     }
 
     const GetStartupParamsData = async (packageId) => { 
-        const metadata = await myServicesManagerService.GetMetadataByPackageId(packageId)
+        const metadata = await repositoryStorageManagerService.GetMetadataByPackageId(packageId)
 
         return metadata
     }
