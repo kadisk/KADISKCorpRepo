@@ -7,7 +7,7 @@ const GetContextTarStream = require("./GetContextTarStream")
 const CreateServiceHandler = ({
     absolutInstanceDataDirPath,
     MyWorkspaceDomainService,
-    RepositoryStorageDomainService,
+    repositoryStorageManagerService,
     BuildImageFromDockerfileString,
     CreateNewContainer
 }) => {
@@ -46,7 +46,7 @@ const CreateServiceHandler = ({
         serviceName,
         serviceDescription
     }) => {
-        const packageData = await RepositoryStorageDomainService.GetPackageById(packageId)
+        const packageData = await repositoryStorageManagerService.GetPackageById(packageId)
         const { repositoryCodePath } = packageData
 
         const instanceRepositoryCodePath = _MountPathInstanceRepositoriesSourceCodeDirPath({

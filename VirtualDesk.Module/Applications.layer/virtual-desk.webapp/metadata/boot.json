@@ -101,14 +101,21 @@
                 "loadMetatadaDirLib": "@/load-metatada-dir.lib",
                 "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",
                 "jsonFileUtilitiesLib": "@/json-file-utilities.lib",
-                "containerManagerService":"@@/container-manager-service"
+                "containerManagerService":"@@/container-manager-service",
+                "repositoryStorageManagerService": "@@/repository-storage-manager-service"
             },
             "params":{
                 "importedRepositoriesSourceCodeDirPath": "{{myServicesManagerImportedSourceCodeDirPath}}",
-                "repositoryStorageFilePath": "{{repositoryStorageFilePath}}",
                 "serviceStorageFilePath": "{{serviceStorageFilePath}}",
                 "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}",
                 "instanceDataDirPath": "{{myServicesInstanceDataDirPath}}"
+            }
+        },
+        {
+            "namespace": "@@/repository-storage-manager-service",
+            "dependency": "@/repository-storage-manager.service/services/RepositoryStorageManager",
+            "params":{
+                "repositoryStorageFilePath": "{{repositoryStorageFilePath}}"
             }
         }
     ],

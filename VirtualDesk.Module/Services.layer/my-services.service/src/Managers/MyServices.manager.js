@@ -5,15 +5,11 @@ const ConvertPathToAbsolutPath = (_path) => join(_path)
     .replace('~', os.homedir())
 
 const InitializeMyServicesPersistentStoreManager = require("../Helpers/InitializeMyServicesPersistentStoreManager")
-const InitializeRepositoryPersistentStoreManager = require("../Helpers/InitializeRepositoryPersistentStoreManager")
 const PrepareDirPath                             = require("../Helpers/PrepareDirPath")
-const CreateItemIndexer                          = require("../Helpers/CreateItemIndexer")
 const CreateMyWorkspaceDomainService             = require("../Helpers/CreateMyWorkspaceDomainService")
-const CreateRepositoryStorageDomainService       = require("../Helpers/CreateRepositoryStorageDomainService")
 const CreateServiceRuntimeStateManager           = require("../Helpers/CreateServiceRuntimeStateManager")
 
-const RequestTypes                     = require("../Helpers/Request.types")
-
+const RequestTypes = require("../Helpers/Request.types")
 
 const CreateServiceHandler = require("../Helpers/CreateServiceHandler")
 
@@ -22,12 +18,12 @@ const MyServicesManager = (params) => {
     const {
         onReady,
         serviceStorageFilePath,
-        repositoryStorageFilePath,
         importedRepositoriesSourceCodeDirPath,
         instanceDataDirPath,
         ecosystemDefaultsFileRelativePath,
         ecosystemdataHandlerService,
         containerManagerService,
+        repositoryStorageManagerService,
         extractTarGzLib,
         loadMetatadaDirLib,
         jsonFileUtilitiesLib
@@ -40,18 +36,10 @@ const MyServicesManager = (params) => {
     const ecosystemDefaultFilePath = resolve(ecosystemdataHandlerService.GetEcosystemDataPath(), ecosystemDefaultsFileRelativePath)
 
     const absolutServiceStorageFilePath                = ConvertPathToAbsolutPath(serviceStorageFilePath)
-    const absolutRepositoryStorageFilePath             = ConvertPathToAbsolutPath(repositoryStorageFilePath)
     const absolutImportedRepositoriesSourceCodeDirPath = ConvertPathToAbsolutPath(importedRepositoriesSourceCodeDirPath)
     const absolutInstanceDataDirPath                   = ConvertPathToAbsolutPath(instanceDataDirPath)
 
     const MyServicesPersistentStoreManager = InitializeMyServicesPersistentStoreManager(absolutServiceStorageFilePath)
-    const RepositoryPersistentStoreManager = InitializeRepositoryPersistentStoreManager(absolutRepositoryStorageFilePath)
-
-    const {
-        RepositoryNamespace : RepositoryNamespaceModel,
-        RepositoryImported  : RepositoryImportedModel,
-        RepositoryItem      : RepositoryItemModel
-    } = RepositoryPersistentStoreManager.models
 
     const {
         Service             : ServiceModel,
@@ -60,14 +48,6 @@ const MyServicesManager = (params) => {
         Container           : ContainerModel,
         ContainerEventLog   : ContainerEventLogModel
     } = MyServicesPersistentStoreManager.models
-
-    const ItemIndexer = CreateItemIndexer({RepositoryItemModel})
-
-    const RepositoryStorageDomainService = CreateRepositoryStorageDomainService({
-        RepositoryNamespaceModel,
-        RepositoryImportedModel,
-        RepositoryItemModel
-    })
 
     const MyWorkspaceDomainService = CreateMyWorkspaceDomainService({
         ServiceModel,
@@ -118,7 +98,7 @@ const MyServicesManager = (params) => {
         CreateInstance
     } = CreateServiceHandler({
         absolutInstanceDataDirPath,
-        RepositoryStorageDomainService,
+        repositoryStorageManagerService,
         MyWorkspaceDomainService,
         BuildImageFromDockerfileString,
         CreateNewContainer
@@ -131,7 +111,6 @@ const MyServicesManager = (params) => {
     }
 
     const _Start = async () => {
-        await RepositoryPersistentStoreManager.ConnectAndSync()
         await MyServicesPersistentStoreManager.ConnectAndSync()
 
         RegisterDockerEventListener((eventData) => {
@@ -253,7 +232,7 @@ const MyServicesManager = (params) => {
             sourceParams
         })
 
-        ItemIndexer.IndexRepository({
+        repositoryStorageManagerService.IndexRepository({
             repositoryId: repositoryImportedData.id,
             repositoryCodePath
         })
@@ -320,12 +299,12 @@ const MyServicesManager = (params) => {
     }
 
     const CreateNamespace = async ({ userId, repositoryNamespace }) => {
-        const existingNamespaceId = await RepositoryStorageDomainService.GetRepositoryNamespaceId(repositoryNamespace)
+        const existingNamespaceId = await repositoryStorageManagerService.GetRepositoryNamespaceId(repositoryNamespace)
 
         if (existingNamespaceId !== undefined) 
             throw new Error('Repository Namespace already exists')
 
-        const newNamespaceData = await RepositoryStorageDomainService
+        const newNamespaceData = await repositoryStorageManagerService
             .RegisterRepositoryNamespace({ namespace: repositoryNamespace , userId })
             
         return newNamespaceData
@@ -333,7 +312,7 @@ const MyServicesManager = (params) => {
 
     const CreateRepository = async ({ namespaceId, repositoryCodePath, sourceType, sourceParams }) => {
 
-        const newRepositoryImported = await RepositoryStorageDomainService
+        const newRepositoryImported = await repositoryStorageManagerService
             .RegisterRepositoryImported({ 
                 namespaceId,
                 repositoryCodePath, 
@@ -345,7 +324,7 @@ const MyServicesManager = (params) => {
     }
 
     const GetStatus = async (userId) => {
-        const repositoryCount = await RepositoryNamespaceModel.count({ where: { userId } })
+        const repositoryCount = await repositoryStorageManagerService.CountNamespaceByUserId(userId)
     
         if (repositoryCount > 0) {
             return "READY"
@@ -357,7 +336,7 @@ const MyServicesManager = (params) => {
     const GetMetadataByPackageId = async (packageId) => { 
         const ecosystemDefaults = await ReadJsonFile(ecosystemDefaultFilePath)
 
-        const packageData = await RepositoryStorageDomainService.GetItemById(packageId)
+        const packageData = await repositoryStorageManagerService.GetItemById(packageId)
 
         const packageAbsolutPath = join(packageData.repositoryCodePath, packageData.itemPath)
         console.log(`[INFO] Loading metadata for package item at path: ${packageAbsolutPath}`)
@@ -377,7 +356,7 @@ const MyServicesManager = (params) => {
     const ListBootablePackages = async ({ userId, username }) => {
 
         const ecosystemDefaults = await ReadJsonFile(ecosystemDefaultFilePath)
-        const packageItems  = await RepositoryStorageDomainService.ListLatestPackageItemsByUserId(userId)
+        const packageItems  = await repositoryStorageManagerService.ListLatestPackageItemsByUserId(userId)
         console.log(`[INFO] Found ${packageItems.length} package items for user ${username} userId ${userId}`)
 
         const packageItemsWithMetadataPromises = packageItems
@@ -405,7 +384,7 @@ const MyServicesManager = (params) => {
     }
 
     const ListRepositoryNamespace = async (userId) => {
-        const repositoryNamespaceDataList  = await RepositoryStorageDomainService.ListRepositoryNamespace(userId)
+        const repositoryNamespaceDataList  = await repositoryStorageManagerService.ListRepositoryNamespace(userId)
         
         const repositories = repositoryNamespaceDataList
             .map((repositoryData) => {
@@ -425,7 +404,7 @@ const MyServicesManager = (params) => {
         startupParams
     }) => {
 
-        const packageData = await RepositoryStorageDomainService.GetPackageById(originPackageId)
+        const packageData = await repositoryStorageManagerService.GetPackageById(originPackageId)
 
         const imageTagName = `ecosystem_${packageData.repositoryNamespace}_${packageData.packageName}-${packageData.packageType}:${serviceName}-${serviceId}`.toLowerCase()
 
@@ -492,7 +471,7 @@ const MyServicesManager = (params) => {
 
     const ListProvisionedServices = async (userId) => {
 
-        const repositories = await RepositoryStorageDomainService.ListRepositoriesByUserId(userId)
+        const repositories = await repositoryStorageManagerService.ListRepositoriesByUserId(userId)
         const repositoryIds = repositories.map(({id}) => id)
 
         const servicesData = await MyWorkspaceDomainService.ListServicesByRepositoryIds(repositoryIds)
@@ -540,7 +519,7 @@ const MyServicesManager = (params) => {
             instanceRepositoryCodePath
         } = serviceData
         
-        const packageData = await RepositoryStorageDomainService.GetPackageById(originPackageId)
+        const packageData = await repositoryStorageManagerService.GetPackageById(originPackageId)
 
         return {
             serviceId,
@@ -604,7 +583,7 @@ const MyServicesManager = (params) => {
     }
 
     const ListRepositories = async (namespaceId) => {
-        const repositories = await RepositoryStorageDomainService.ListRepositoriesByNamespace(namespaceId)
+        const repositories = await repositoryStorageManagerService.ListRepositoriesByNamespace(namespaceId)
         return repositories.map(({ id, createdAt, sourceType, sourceParams }) => ({
             id,
             createdAt,
@@ -645,7 +624,7 @@ const MyServicesManager = (params) => {
         GetNetworkModeData,
         UpdateServicePorts,
         UpdateServiceStartupParams,
-        GetNamespace: RepositoryStorageDomainService.GetNamespace
+        GetNamespace: repositoryStorageManagerService.GetNamespace
     }
 
 }

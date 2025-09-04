@@ -1,6 +1,7 @@
 [
 	{
 		"namespace": "RepositoryStorageManager",
-		"path": "Services/RepositoryStorageManager.service"
+		"path": "Services/RepositoryStorageManager.service",
+		"params": [ "repositoryStorageFilePath" ]
 	}
 ]
