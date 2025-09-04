@@ -4,7 +4,7 @@ const os = require('os')
 const ConvertPathToAbsolutPath = (_path) => join(_path)
     .replace('~', os.homedir())
 
-const InitializePersistentStoreManager     = require("../Helpers/InitializePersistentStoreManager")
+const InitializeMyServicePersistentStoreManager     = require("../Helpers/InitializeMyServicePersistentStoreManager")
 const PrepareDirPath                       = require("../Helpers/PrepareDirPath")
 const CreateItemIndexer                    = require("../Helpers/CreateItemIndexer")
 const CreateMyWorkspaceDomainService       = require("../Helpers/CreateMyWorkspaceDomainService")
@@ -41,7 +41,7 @@ const MyServicesManager = (params) => {
     const absolutImportedRepositoriesSourceCodeDirPath = ConvertPathToAbsolutPath(importedRepositoriesSourceCodeDirPath)
     const absolutInstanceDataDirPath                   = ConvertPathToAbsolutPath(instanceDataDirPath)
 
-    const PersistentStoreManager = InitializePersistentStoreManager(absolutStorageFilePath)
+    const PersistentStoreManager = InitializeMyServicePersistentStoreManager(absolutStorageFilePath)
 
     const {
         RepositoryNamespace : RepositoryNamespaceModel,
