@@ -24,7 +24,7 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
     const [ applicationsMetadata, setApplicationsMetadata ]                 = useState()
     const [ itemDataSelected, setItemDataSelected ]                         = useState<any>()
     const [ isPackageSelected, setIsPackageSelected ]                       = useState(false)
-    const [ packageSourceCodeTreeCurrent, setPackageSourceCodeTreeCurrent ] = useState()
+    const [ packageSourceCodeTreeCurrent, setPackageSourceCodeTreeCurrent ] = useState<any>()
     const [ packageMetadataCurrent, setPackageMetadataTreeCurrent ]         = useState()
     const [ indexTabFocus, setIndexTabFocus ]                               = useState<number>(0)
     const [ tabsSelectedData, setTabsSelectedData ]                         = useState([])
@@ -196,9 +196,13 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
                             <PackageMetadataSidebarSection 
                                 packageMetadata={packageMetadataCurrent}/>
 
-                            <PackageSourceTreeSidebarSection 
-                                onSelectSourceFile={(sourceFilePath) => selectSourceFile(sourceFilePath)}
-                                sourceTree={packageSourceCodeTreeCurrent}/>
+                            
+                            {
+                                packageSourceCodeTreeCurrent?.length > 0 || packageSourceCodeTreeCurrent === undefined
+                                && <PackageSourceTreeSidebarSection 
+                                    onSelectSourceFile={(sourceFilePath) => selectSourceFile(sourceFilePath)}
+                                    sourceTree={packageSourceCodeTreeCurrent}/>
+                            }
                         </aside>
                 }
             </div>

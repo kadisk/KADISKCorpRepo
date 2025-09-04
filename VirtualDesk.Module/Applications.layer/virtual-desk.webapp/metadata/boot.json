@@ -78,12 +78,9 @@
             "namespace": "@@/my-workspace-manager-service",
             "dependency": "@/my-workbench.service/services/MyWorkspaceManager",
             "params":{
-                "storageFilePath": "{{myWorkspaceManagerServiceStorageFilePath}}",
-                "repositoriesSourceCodeDirPath": "{{myWorkspaceRepositoriesSourceCodeDirPath}}",
                 "ecosystemDefaultsFileRelativePath":"{{ecosystemDefaultsFileRelativePath}}"
             },
             "bound-params":{
-                "extractTarGzLib":"@/extract-tar-gz.lib",
                 "jsonFileUtilitiesLib": "@/json-file-utilities.lib",
                 "loadMetatadaDirLib": "@/load-metatada-dir.lib",
                 "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",

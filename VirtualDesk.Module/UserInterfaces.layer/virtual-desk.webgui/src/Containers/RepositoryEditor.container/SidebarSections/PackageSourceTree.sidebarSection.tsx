@@ -111,7 +111,7 @@ const PackageSourceTreeSidebarSection = ({
         </div>
         <div className="p-2">
             {
-                sourceTree?.length > 0
+                sourceTree
                     ? renderHierarchy(sourceTree)
                     : <div className="text-center py-4">
                         <div className="spinner-border text-primary" role="status">
