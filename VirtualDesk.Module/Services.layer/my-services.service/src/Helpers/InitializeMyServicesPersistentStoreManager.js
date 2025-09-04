@@ -7,82 +7,6 @@ const InitializeMyServicesPersistentStoreManager = (storage) => {
         storage
     })
 
-    const RepositoryNamespaceModel = sequelize.define("RepositoryNamespace", {
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true
-        },
-        userId: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        namespace: {
-            type: DataTypes.STRING,
-            allowNull: false
-        }
-    })
-
-    
-    const RepositoryImportedModel = sequelize.define("RepositoryImported", { 
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true
-        },
-        namespaceId: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        repositoryCodePath: DataTypes.STRING,
-        sourceType:{
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        sourceParams: {
-            type: DataTypes.JSON,
-            allowNull: true
-        }
-    })
-
-    const RepositoryItemModel = sequelize.define("RepositoryItem", {
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true
-        },
-        itemName: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        itemType: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        itemPath: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        repositoryId: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            references: {
-                model: RepositoryImportedModel,
-                key: "id"
-            },
-            onDelete: "CASCADE"
-        },
-        parentId: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-            references: {
-                model: "RepositoryItems",
-                key: "id"
-            },
-            onDelete: "CASCADE"
-        }
-    })
-
     const ServiceModel = sequelize.define("Service", {
         id: {
             type: DataTypes.INTEGER,
@@ -104,21 +28,11 @@ const InitializeMyServicesPersistentStoreManager = (storage) => {
         },
         originRepositoryId: {
             type: DataTypes.INTEGER,
-            allowNull: false,
-            references: {
-                model: RepositoryImportedModel,
-                key: "id"
-            },
-            onDelete: "CASCADE"
+            allowNull: false
         },
-        packageId: {
+        originPackageId: {
             type: DataTypes.INTEGER,
-            allowNull: true,
-            references: {
-                model: RepositoryItemModel,
-                key: "id"
-            },
-            onDelete: "CASCADE"
+            allowNull: true
         }
     })
     
@@ -252,13 +166,10 @@ const InitializeMyServicesPersistentStoreManager = (storage) => {
     ContainerEventLogModel .belongsTo(ImageBuildHistoryModel,   { foreignKey: "containerId" })
     ImageBuildHistoryModel .belongsTo(InstanceModel,            { foreignKey: "instanceId" })
     InstanceModel          .belongsTo(ServiceModel,             { foreignKey: "serviceId" })
-    InstanceModel          .belongsTo(ServiceModel,             { foreignKey: "serviceId" })
+    
 
     return {
         models: {
-            RepositoryNamespace: RepositoryNamespaceModel,
-            RepositoryImported: RepositoryImportedModel,
-            RepositoryItem: RepositoryItemModel,
             Service: ServiceModel,
             ImageBuildHistory: ImageBuildHistoryModel,
             Instance: InstanceModel,

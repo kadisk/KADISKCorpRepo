@@ -1,11 +1,7 @@
-const { literal, Op } = require('sequelize')
+const { Op } = require('sequelize')
 
-const PACKAGE_ITEM_TYPE = ["app", "cli", "webapp", "webgui", "webservice", "service", "lib"]
 
 const CreateMyWorkspaceDomainService = ({
-    RepositoryNamespaceModel,
-    RepositoryImportedModel,
-    RepositoryItemModel,
     ServiceModel,
     ImageBuildHistoryModel,
     InstanceModel,
@@ -13,24 +9,9 @@ const CreateMyWorkspaceDomainService = ({
     ContainerEventLogModel
 }) => {
     
-    const ListServicesByUserId = async (userId) => {
+    const ListServicesByRepositoryIds = async (repositoryIds) => {
         const items = await ServiceModel.findAll({
             include: [
-                {
-                    model: RepositoryImportedModel,
-                    attributes: ["id"],
-                    include: [
-                        {
-                            model: RepositoryNamespaceModel,
-                            where: { userId },
-                            attributes: ["id", "namespace"]
-                        }
-                    ]
-                },
-                {
-                    model: RepositoryItemModel,
-                    attributes: ["id", "itemName", "itemType", "itemPath"]
-                },
                 {
                     model: InstanceModel,
                     include: [{
@@ -38,59 +19,28 @@ const CreateMyWorkspaceDomainService = ({
                     }]
                 }
             ],
+            where: {
+                originRepositoryId: {
+                    [Op.in]: repositoryIds
+                }
+            },
             raw: true
         })
         return items
-        .map( item => ({
-            ...item,
-            packageId: item['RepositoryItem.id'],
-            packageName: item['RepositoryItem.itemName'],
-            packageType: item['RepositoryItem.itemType'],
-            repositoryId: item['RepositoryImported.id'],
-            repositoryCodePath: item['RepositoryImported.repositoryCodePath'],
-            repositoryNamespace: item['RepositoryImported.RepositoryNamespace.namespace']
-        }))
     }
 
-    const ListServiceIds = async () => {
+    const ListAllServiceId = async () => {
         const items = await ServiceModel.findAll()
         return items?.map( item => item.id )
     }
 
-    const GetServiceById = async (serviceId) => {
-        const item = await ServiceModel.findOne({
-            include: [
-                {
-                    model: RepositoryImportedModel,
-                    attributes: ["id"],
-                    include: [
-                        {
-                            model: RepositoryNamespaceModel,
-                            attributes: ["id", "namespace"]
-                        }
-                    ]
-                },
-                {
-                    model: RepositoryItemModel,
-                    attributes: ["id", "itemName", "itemType", "itemPath"]
-                }
-            ],
+    const GetServiceById = async (serviceId) => 
+        await ServiceModel.findOne({
             where: {
                 id: serviceId
             },
             raw: true
         })
-        
-        return {
-            ...item,
-            packageId: item['RepositoryItem.id'],
-            packageName: item['RepositoryItem.itemName'],
-            packageType: item['RepositoryItem.itemType'],
-            repositoryId: item['RepositoryImported.id'],
-            repositoryCodePath: item['RepositoryImported.repositoryCodePath'],
-            repositoryNamespace: item['RepositoryImported.RepositoryNamespace.namespace']
-        }
-    }
 
 
     const RegisterServiceProvisioning = ({ 
@@ -202,8 +152,8 @@ const CreateMyWorkspaceDomainService = ({
         RegisterInstanceCreation,
         RegisterTerminateInstance,
         RegisterBuildedImage,
-        ListServiceIds,
-        ListServicesByUserId,
+        ListAllServiceId,
+        ListServicesByRepositoryIds,
         GetServiceById,
         ListImageBuildHistoryByServiceId,
         ListInstancesByServiceId,

@@ -59,7 +59,7 @@ const CreateServiceHandler = ({
                 serviceName,
                 serviceDescription,
                 originRepositoryId: packageData.repositoryId,
-                packageId: packageData.id,
+                packageId: packageData.packageId,
                 instanceRepositoryCodePath
         })
 

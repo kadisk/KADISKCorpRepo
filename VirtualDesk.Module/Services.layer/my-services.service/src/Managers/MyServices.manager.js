@@ -70,9 +70,6 @@ const MyServicesManager = (params) => {
     })
 
     const MyWorkspaceDomainService = CreateMyWorkspaceDomainService({
-        RepositoryNamespaceModel,
-        RepositoryImportedModel, 
-        RepositoryItemModel, 
         ServiceModel,
         ImageBuildHistoryModel,
         InstanceModel,
@@ -133,8 +130,9 @@ const MyServicesManager = (params) => {
     }
 
     const _Start = async () => {
-
+        await RepositoryPersistentStoreManager.ConnectAndSync()
         await MyServicesPersistentStoreManager.ConnectAndSync()
+
         RegisterDockerEventListener((eventData) => {
 
             const { Type, Action, Actor } = eventData
@@ -194,7 +192,7 @@ const MyServicesManager = (params) => {
                     await RemoveContainer(data.containerHashId)
                     break
                 case RequestTypes.SERVICE_DATA:
-                    const serviceData = await MyWorkspaceDomainService.GetServiceById(data.serviceId)
+                    const serviceData = await GetServiceData(data.serviceId)
                     return serviceData
                 case RequestTypes.CREATE_NEW_INSTANCE:
                     const instanceData = await CreateInstance({
@@ -236,7 +234,7 @@ const MyServicesManager = (params) => {
     }
 
     const InitializeAllServiceStateManagement = async  () => {
-        const serviceIds = await MyWorkspaceDomainService.ListServiceIds()
+        const serviceIds = await MyWorkspaceDomainService.ListAllServiceId()
         serviceIds.forEach(serviceId => LoadServiceInStateManagement(serviceId))
     }
 
@@ -406,9 +404,9 @@ const MyServicesManager = (params) => {
     }
 
     const ListRepositoryNamespace = async (userId) => {
-        const repositoriesData  = await RepositoryStorageDomainService.ListRepositoryNamespace(userId)
+        const repositoryNamespaceDataList  = await RepositoryStorageDomainService.ListRepositoryNamespace(userId)
         
-        const repositories = repositoriesData
+        const repositories = repositoryNamespaceDataList
             .map((repositoryData) => {
                 const { id, namespace } = repositoryData
                 return { id, namespace } 
@@ -428,13 +426,13 @@ const MyServicesManager = (params) => {
 
         const packageData = await RepositoryStorageDomainService.GetPackageById(packageId)
 
-        const imageTagName = `ecosystem_${packageData.repositoryNamespace}_${packageData.itemName}-${packageData.itemType}:${serviceName}-${serviceId}`.toLowerCase()
+        const imageTagName = `ecosystem_${packageData.repositoryNamespace}_${packageData.packageName}-${packageData.packageType}:${serviceName}-${serviceId}`.toLowerCase()
 
         const buildData = await BuildImage({
                 imageTagName,
                 repositoryCodePath,
                 repositoryNamespace: packageData.repositoryNamespace,
-                packagePath: packageData.itemPath,
+                packagePath: packageData.packagePath,
                 instanceId,
                 startupParams
             })
@@ -493,7 +491,10 @@ const MyServicesManager = (params) => {
 
     const ListProvisionedServices = async (userId) => {
 
-        const servicesData = await MyWorkspaceDomainService.ListServicesByUserId(userId)
+        const repositories = await RepositoryStorageDomainService.ListRepositoriesByUserId(userId)
+        const repositoryIds = repositories.map(({id}) => id)
+
+        const servicesData = await MyWorkspaceDomainService.ListServicesByRepositoryIds(repositoryIds)
 
         const provisionedServicesData = servicesData
             .map((provisionedService) => {
@@ -529,16 +530,13 @@ const MyServicesManager = (params) => {
     const GetServiceData = async (serviceId) => {
             
         const serviceData = await MyWorkspaceDomainService.GetServiceById(serviceId)
+
+        const packageData = await RepositoryStorageDomainService.GetPackageById(packageId)
         
         const {
             serviceName,
             serviceDescription,
-            appType,
-            packageId,
-            packageName,
-            packageType,
-            repositoryNamespace,
-            repositoryId
+            appType
         } = serviceData
 
         return {
@@ -546,11 +544,11 @@ const MyServicesManager = (params) => {
             serviceName,
             serviceDescription,
             appType,
-            repositoryId,
-            repositoryNamespace,
-            packageId,
-            packageName,
-            packageType,
+            packageId: packageData.packageId,
+            packageName: packageData.packageName,
+            packageType: packageData.packageType,
+            repositoryNamespace: packageData.repositoryNamespace,
+            repositoryId: packageData.repositoryId
         }
 
     }
@@ -562,7 +560,7 @@ const MyServicesManager = (params) => {
 
     const GetInstanceStartupParamsSchema = async (serviceId) => {
         const serviceData = await MyWorkspaceDomainService.GetServiceById(serviceId)
-        const metadata = await GetMetadataByPackageId(serviceData.packageId)
+        const metadata = await GetMetadataByPackageId(serviceData.originPackageId)
         return metadata?.schema || {}
     }
 
@@ -602,7 +600,7 @@ const MyServicesManager = (params) => {
     }
 
     const ListRepositories = async (namespaceId) => {
-        const repositories = await RepositoryStorageDomainService.ListRepositories(namespaceId)
+        const repositories = await RepositoryStorageDomainService.ListRepositoriesByNamespace(namespaceId)
         return repositories.map(({ id, createdAt, sourceType, sourceParams }) => ({
             id,
             createdAt,

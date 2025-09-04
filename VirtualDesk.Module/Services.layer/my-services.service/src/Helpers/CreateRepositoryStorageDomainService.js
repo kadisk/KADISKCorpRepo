@@ -10,7 +10,19 @@ const CreateRepositoryStorageDomainService = ({
 
     const ListRepositoryNamespace = (userId) => RepositoryNamespaceModel.findAll({where: { userId }})
 
-    const ListRepositories = (namespaceId) => RepositoryImportedModel.findAll({ where: { namespaceId }, order: [['createdAt', 'DESC']]})
+    const ListRepositoriesByNamespace = (namespaceId) => RepositoryImportedModel.findAll({ where: { namespaceId }, order: [['createdAt', 'DESC']]})
+
+    const ListRepositoriesByUserId = async (userId) => {
+        const repositories = await RepositoryImportedModel.findAll({
+            include: [{
+                model: RepositoryNamespaceModel,
+                attributes: [],
+                where: { userId }
+            }],
+            raw: true
+        })
+        return repositories
+    }
 
     const GetRepositoryNamespaceId = async (namespace) => {
         const respositoryNamespaceData = await RepositoryNamespaceModel.findOne({ where: { namespace } })
@@ -152,7 +164,11 @@ const CreateRepositoryStorageDomainService = ({
         })
     
         return {
-            ...item,
+            packageId: item['id'],
+            packageName: item['itemName'],
+            packageType: item['itemType'],
+            packagePath: item['itemPath'],
+            repositoryId: item['RepositoryImported.id'],
             repositoryCodePath: item['RepositoryImported.repositoryCodePath'],
             repositoryNamespace: item['RepositoryImported.RepositoryNamespace.namespace']
         }
@@ -163,7 +179,8 @@ const CreateRepositoryStorageDomainService = ({
         RegisterRepositoryNamespace,
         RegisterRepositoryImported,
         ListRepositoryNamespace,
-        ListRepositories,
+        ListRepositoriesByNamespace,
+        ListRepositoriesByUserId,
         GetRepositoryNamespaceId,
         GetRepositoryNamespaceByRepositoryId,
         GetRepositoryImported,
