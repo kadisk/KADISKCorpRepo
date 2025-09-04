@@ -150,7 +150,7 @@ const CreateRepositoryStorageDomainService = ({
         const item = await RepositoryItemModel.findOne({
             include: [{
                 model: RepositoryImportedModel,
-                attributes: ['repositoryCodePath'],
+                attributes: ['id', 'repositoryCodePath'],
                 include: [{
                     model: RepositoryNamespaceModel,
                     attributes: ['namespace']

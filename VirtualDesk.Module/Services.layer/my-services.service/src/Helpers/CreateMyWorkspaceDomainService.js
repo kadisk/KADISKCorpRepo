@@ -47,7 +47,7 @@ const CreateMyWorkspaceDomainService = ({
         serviceName,
         serviceDescription,
         originRepositoryId,
-        packageId,
+        originPackageId,
         instanceRepositoryCodePath
     }) => 
         ServiceModel
@@ -55,7 +55,7 @@ const CreateMyWorkspaceDomainService = ({
                 serviceName,
                 serviceDescription,
                 originRepositoryId,
-                packageId,
+                originPackageId,
                 instanceRepositoryCodePath
             })
 

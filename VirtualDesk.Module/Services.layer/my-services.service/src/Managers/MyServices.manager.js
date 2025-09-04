@@ -118,6 +118,7 @@ const MyServicesManager = (params) => {
         CreateInstance
     } = CreateServiceHandler({
         absolutInstanceDataDirPath,
+        RepositoryStorageDomainService,
         MyWorkspaceDomainService,
         BuildImageFromDockerfileString,
         CreateNewContainer
@@ -207,7 +208,7 @@ const MyServicesManager = (params) => {
                         serviceName        : data.serviceName,
                         serviceId          : data.serviceId,
                         instanceId         : data.instanceId,
-                        packageId          : data.packageId,
+                        originPackageId    : data.originPackageId,
                         repositoryCodePath : data.repositoryCodePath,
                         startupParams      : data.startupParams
                     })
@@ -324,7 +325,7 @@ const MyServicesManager = (params) => {
         if (existingNamespaceId !== undefined) 
             throw new Error('Repository Namespace already exists')
 
-        const newNamespaceData = await MyWorkspaceDomainService
+        const newNamespaceData = await RepositoryStorageDomainService
             .RegisterRepositoryNamespace({ namespace: repositoryNamespace , userId })
             
         return newNamespaceData
@@ -332,7 +333,7 @@ const MyServicesManager = (params) => {
 
     const CreateRepository = async ({ namespaceId, repositoryCodePath, sourceType, sourceParams }) => {
 
-        const newRepositoryImported = await MyWorkspaceDomainService
+        const newRepositoryImported = await RepositoryStorageDomainService
             .RegisterRepositoryImported({ 
                 namespaceId,
                 repositoryCodePath, 
@@ -419,12 +420,12 @@ const MyServicesManager = (params) => {
         serviceName,
         serviceId,
         instanceId,
-        packageId,
+        originPackageId,
         repositoryCodePath,
         startupParams
     }) => {
 
-        const packageData = await RepositoryStorageDomainService.GetPackageById(packageId)
+        const packageData = await RepositoryStorageDomainService.GetPackageById(originPackageId)
 
         const imageTagName = `ecosystem_${packageData.repositoryNamespace}_${packageData.packageName}-${packageData.packageType}:${serviceName}-${serviceId}`.toLowerCase()
 
@@ -531,13 +532,15 @@ const MyServicesManager = (params) => {
             
         const serviceData = await MyWorkspaceDomainService.GetServiceById(serviceId)
 
-        const packageData = await RepositoryStorageDomainService.GetPackageById(packageId)
-        
         const {
             serviceName,
             serviceDescription,
-            appType
+            appType,
+            originPackageId,
+            instanceRepositoryCodePath
         } = serviceData
+        
+        const packageData = await RepositoryStorageDomainService.GetPackageById(originPackageId)
 
         return {
             serviceId,
@@ -548,7 +551,8 @@ const MyServicesManager = (params) => {
             packageName: packageData.packageName,
             packageType: packageData.packageType,
             repositoryNamespace: packageData.repositoryNamespace,
-            repositoryId: packageData.repositoryId
+            repositoryId: packageData.repositoryId,
+            instanceRepositoryCodePath
         }
 
     }

@@ -83,7 +83,7 @@ const CreateServiceRuntimeStateManager = () => {
                         serviceId,
                         instanceId,
                         serviceName        : serviceData.serviceName,
-                        packageId          : serviceData.packageId,
+                        originPackageId    : serviceData.originPackageId,
                         repositoryCodePath : serviceData.repositoryCodePath,
                         startupParams      : data.startupParams,
                         networkmode        : data.networkmode,
@@ -292,7 +292,7 @@ const CreateServiceRuntimeStateManager = () => {
                         serviceName        : serviceData.serviceName,
                         serviceDescription : serviceData.serviceDescription,
                         repositoryCodePath : serviceData.instanceRepositoryCodePath,
-                        packageId          : serviceData.packageId,
+                        originPackageId    : serviceData.packageId,
                     })
                     ChangeStatus(SERVICE_STATE_GROUP, requestData.serviceId, requestData.nextStatus)
                     break
