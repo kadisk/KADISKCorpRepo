@@ -12,58 +12,6 @@ const CreateMyWorkspaceDomainService = ({
     ContainerModel,
     ContainerEventLogModel
 }) => {
-
-
-    
-
-    const GetPackageItemByPath = async ({ path, userId }) => {
-        const item = await RepositoryItemModel.findOne({
-            include: [{
-                model: RepositoryImportedModel,
-                attributes: ['repositoryCodePath'],
-                include: [{
-                    model: RepositoryNamespaceModel,
-                    where: { userId },
-                    attributes: ['namespace']
-                }]
-            }],
-            where: {
-                itemPath: path,
-                itemType: PACKAGE_ITEM_TYPE
-            },
-            raw: true
-        })
-    
-        return {
-            ...item,
-            repositoryCodePath: item['RepositoryImported.repositoryCodePath'],
-            repositoryNamespace: item['RepositoryImported.RepositoryNamespace.namespace']
-        }
-    }
-
-    const GetPackageById = async (id) => {
-        const item = await RepositoryItemModel.findOne({
-            include: [{
-                model: RepositoryImportedModel,
-                attributes: ['repositoryCodePath'],
-                include: [{
-                    model: RepositoryNamespaceModel,
-                    attributes: ['namespace']
-                }]
-            }],
-            where: {
-                id,
-                itemType: PACKAGE_ITEM_TYPE
-            },
-            raw: true
-        })
-    
-        return {
-            ...item,
-            repositoryCodePath: item['RepositoryImported.repositoryCodePath'],
-            repositoryNamespace: item['RepositoryImported.RepositoryNamespace.namespace']
-        }
-    }
     
     const ListServicesByUserId = async (userId) => {
         const items = await ServiceModel.findAll({
@@ -254,8 +202,6 @@ const CreateMyWorkspaceDomainService = ({
         RegisterInstanceCreation,
         RegisterTerminateInstance,
         RegisterBuildedImage,
-        GetPackageById,
-        GetPackageItemByPath,
         ListServiceIds,
         ListServicesByUserId,
         GetServiceById,
