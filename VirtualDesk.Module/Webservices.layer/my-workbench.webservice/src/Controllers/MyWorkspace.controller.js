@@ -22,7 +22,7 @@ const MyWorkspaceController = (params) => {
         return myWorkspaceManagerService.CreateNewRepository({ userId, username, repositoryNamespace })
     }
 
-    const ListRepositories = ({ authenticationData }) => {
+    const ListRepositoryNamespace = ({ authenticationData }) => {
         const { userId } = authenticationData
         return repositoryStorageManagerService.ListRepositoryNamespace(userId)
     }
@@ -90,7 +90,7 @@ const MyWorkspaceController = (params) => {
     const controllerServiceObject = {
         controllerName : "MyWorkspaceController",
         CreateNewRepository,
-        ListRepositories,
+        ListRepositoryNamespace,
         ImportRepository,
         UploadRepository,
         GetItemHierarchy                    : myWorkspaceManagerService.GetItemHierarchy,

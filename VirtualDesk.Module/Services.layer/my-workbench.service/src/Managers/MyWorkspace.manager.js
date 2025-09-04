@@ -23,6 +23,7 @@ const MyWorkspaceManager = (params) => {
         extractTarGzLib,
         jsonFileUtilitiesLib,
         ecosystemdataHandlerService,
+        repositoryStorageManagerService,
         loadMetatadaDirLib
     } = params
 
@@ -120,11 +121,10 @@ const MyWorkspaceManager = (params) => {
         return __BuildTree()
     }
 
-    const GetRepositoryGeneralInformation = async (repositoryId) => {
-        const repositoryData = await MyWorkspaceDomainService.GetRepository.ById(repositoryId)
-
+    const GetRepositoryGeneralInformation = async (namespaceId) => {
+        const namespaceData = await repositoryStorageManagerService.GetNamespace(namespaceId)
         return {
-            repositoryNamespace: repositoryData.namespace
+            repositoryNamespace: namespaceData.namespace
         }
     }
 

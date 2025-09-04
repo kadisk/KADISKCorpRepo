@@ -77,8 +77,8 @@ const {
         
         const repositories = repositoryNamespaceDataList
             .map((repositoryData) => {
-                const { id, namespace } = repositoryData
-                return { id, namespace } 
+                const { id, namespace, createdAt } = repositoryData
+                return { id, namespace, createdAt } 
             })
 
         return repositories

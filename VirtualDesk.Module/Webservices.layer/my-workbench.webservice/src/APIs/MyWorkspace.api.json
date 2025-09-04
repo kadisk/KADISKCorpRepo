@@ -2,9 +2,9 @@
 	"name": "MyWorkspace",
 	"endpoints": [
 		{
-			"path": "/repositories",
+			"path": "/repository-namespaces",
 			"method": "GET",
-			"summary": "ListRepositories"
+			"summary": "ListRepositoryNamespace"
 		},
 		{
 			"path": "/repository/create",

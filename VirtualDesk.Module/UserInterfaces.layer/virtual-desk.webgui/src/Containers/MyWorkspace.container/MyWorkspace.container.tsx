@@ -21,14 +21,14 @@ const DEFAULT_MODE             = Symbol()
 const MyWorkspaceContainer = ({ HTTPServerManager }) => {
 
     const [ interfaceModeType,  changeMode] = useState<any>(DEFAULT_MODE)
-    const [ repositoriesCurrent, setRepositoriesCurrent ] = useState<any[]>()
+    const [ repositoryNamespacesCurrent, setRepositoryNamespacesCurrent ] = useState<any[]>()
     const [ importDataCurrent, setImportDataCurrent ] = useState<{repositoryNamespace:string, sourceCodeURL:string}>()
 
     const [ repositoryIdSelected, setRepositoryIdSelected ] = useState()
 
     useEffect(() => {
         if(interfaceModeType === DEFAULT_MODE){
-            fetchRepositories()
+            fetchRepositoryNamespace()
         }
     }, [interfaceModeType])
 
@@ -38,11 +38,11 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
             serverManagerInformation: HTTPServerManager
         })
 
-    const fetchRepositories = async () => {
-        setRepositoriesCurrent(undefined)
+    const fetchRepositoryNamespace = async () => {
+        setRepositoryNamespacesCurrent(undefined)
         const api = _GetMyWorkspaceAPI()
-        const response = await api.ListRepositories()
-        setRepositoriesCurrent(response.data)
+        const response = await api.ListRepositoryNamespace()
+        setRepositoryNamespacesCurrent(response.data)
     }
 
     const handleCloseModal = () => changeMode(DEFAULT_MODE)
@@ -64,8 +64,8 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
                     </div>
                     
                     {
-                        repositoriesCurrent
-                        && repositoriesCurrent.length > 0
+                        repositoryNamespacesCurrent
+                        && repositoryNamespacesCurrent.length > 0
                         && <div className="col-auto ms-auto d-print-none">
                                 <div className="btn-list">
                                     <span className="d-none d-sm-inline">
@@ -90,22 +90,22 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
                                                                     onFinishedImport={handleFinishedImportModal}/> }
                     <div className="container py-4">
                         {
-                            repositoriesCurrent 
+                            repositoryNamespacesCurrent 
                             && <div className="row">
                                     {
-                                        repositoriesCurrent.map((repo, index) => (
+                                        repositoryNamespacesCurrent.map((namespaceData, index) => (
                                             <div key={index} className="col-md-4">
                                                 <div className="card card-link mb-3">
                                                     <div className="card-header py-2">
-                                                        <h4 className="mb-0">{repo.namespace}</h4>
+                                                        <h4 className="mb-0">{namespaceData.namespace}</h4>
                                                         <div className="card-actions">
-                                                            <a className="btn btn-ghost-info p-1"  href={`#/my-workspace/repository-editor?repositoryId=${repo.id}`}>Repository editor
+                                                            <a className="btn btn-ghost-info p-1"  href={`#/my-workspace/repository-editor?namespaceId=${namespaceData.id}`}>Repository editor
                                                                 <svg xmlns="http://www.w3.org/2000/svg" className="icon ms-1 m-0" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path><path d="M16 5l3 3"></path></svg>
                                                             </a>
                                                         </div>
                                                     </div>
                                                     <div className="card-body">
-                                                        <div className="mb-2">Created at: <strong>{repo.createdAt}</strong></div>
+                                                        <div className="mb-2">Created at: <strong>{namespaceData.createdAt}</strong></div>
                                                     </div>
                                                 </div>
                                             </div>))
@@ -113,11 +113,11 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
                                 </div>
                         }
                         {
-                            !repositoriesCurrent && <p className="text-center text-muted">Loading repository...</p>
+                            !repositoryNamespacesCurrent && <p className="text-center text-muted">Loading repository...</p>
                         }
                         {
-                            repositoriesCurrent 
-                            && repositoriesCurrent.length === 0
+                            repositoryNamespacesCurrent 
+                            && repositoryNamespacesCurrent.length === 0
                             && <WelcomeWorkspace
                                     onSelectCreateRepository={() => changeMode(CREATE_MODE)}
                                     onSelectImportRepository={() => changeMode(IMPORT_SELECT_MODE)}/>

@@ -86,7 +86,8 @@
                 "extractTarGzLib":"@/extract-tar-gz.lib",
                 "jsonFileUtilitiesLib": "@/json-file-utilities.lib",
                 "loadMetatadaDirLib": "@/load-metatada-dir.lib",
-                "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service"
+                "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",
+                "repositoryStorageManagerService": "@@/repository-storage-manager-service"
             }
         },
         {
