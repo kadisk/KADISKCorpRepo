@@ -36,6 +36,8 @@ const CreateRepositoryStorageDomainService = ({
 
     const GetRepositoryImported = (id) => RepositoryImportedModel.findOne({ where: { id } })
 
+    const GetRepositoryImportedByNamespace = (namespace) => RepositoryModel.findOne({ where: { namespace } })
+
     const RegisterRepositoryNamespace = ({ namespace , userId }) => 
         RepositoryNamespaceModel.create({ namespace, userId })
 
@@ -184,6 +186,7 @@ const CreateRepositoryStorageDomainService = ({
         GetRepositoryNamespaceId,
         GetRepositoryNamespaceByRepositoryId,
         GetRepositoryImported,
+        GetRepositoryImportedByNamespace,
         ListItemByRepositoryId,
         GetItemById,
         ListLatestPackageItemsByUserId,

@@ -55,7 +55,10 @@ const {
         ListRepositoriesByNamespace,
         GetNamespace,
         RegisterRepositoryNamespace,
-        RegisterRepositoryImported
+        RegisterRepositoryImported,
+        GetRepositoryImported,
+        ListItemByRepositoryId,
+        GetRepositoryImportedByNamespace
     } = RepositoryStorageDomainService
 
     const _MountPathImportedRepositoriesSourceCodeDirPath = ({username, repositoryNamespace}) => {
@@ -261,7 +264,11 @@ const {
         ListRepositoryNamespace,
         GetNamespace,
         GetMetadataByPackageId,
-        ListBootablePackages
+        ListBootablePackages,
+        GetRepositoryImported,
+        ListItemByRepositoryId,
+        GetItemById,
+        GetRepositoryImportedByNamespace
     }
 }
 
