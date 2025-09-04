@@ -23,9 +23,8 @@ const MyServicesManager = (params) => {
         repositoryStorageManagerService
     } = params
 
-
-    const absolutServiceStorageFilePath                = ConvertPathToAbsolutPath(serviceStorageFilePath)
-    const absolutInstanceDataDirPath                   = ConvertPathToAbsolutPath(instanceDataDirPath)
+    const absolutServiceStorageFilePath = ConvertPathToAbsolutPath(serviceStorageFilePath)
+    const absolutInstanceDataDirPath    = ConvertPathToAbsolutPath(instanceDataDirPath)
 
     const MyServicesPersistentStoreManager = InitializeMyServicesPersistentStoreManager(absolutServiceStorageFilePath)
 
@@ -55,7 +54,6 @@ const MyServicesManager = (params) => {
         StopContainer
     } = containerManagerService
 
-    
     const ServiceRuntimeStateManager = CreateServiceRuntimeStateManager()
 
     const {

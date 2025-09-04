@@ -256,7 +256,6 @@ const {
         RegisterNamespaceAndRepositoryCloned,
         CountNamespaceByUserId, 
         GetPackageById,
-        ListLatestPackageItemsByUserId,
         ListRepositoriesByUserId,
         ListRepositories,
         ListRepositoryNamespace,

@@ -9,6 +9,8 @@ import CreateNewRepositoryModal from "./CreateNewRepository.modal"
 import ImportRepositoryModal from "./ImportRepository.modal"
 import ImportingModal from "./Importing.modal"
 
+import ImportedRepositoriesOffcanvas from "./ImportedRepositories.offcanvas"
+
 import PageHeader from "../../Components/PageHeader"
 
 import GetAPI from "../../Utils/GetAPI"
@@ -24,7 +26,8 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
     const [ repositoryNamespacesCurrent, setRepositoryNamespacesCurrent ] = useState<any[]>()
     const [ importDataCurrent, setImportDataCurrent ] = useState<{repositoryNamespace:string, sourceCodeURL:string}>()
 
-    const [ repositoryIdSelected, setRepositoryIdSelected ] = useState()
+    const [ namespaceIdSelected, setNamespaceIdSelected ] = useState()
+    const [ namespaceSelected, setNamespaceSelected ] = useState()
 
     useEffect(() => {
         if(interfaceModeType === DEFAULT_MODE){
@@ -56,7 +59,24 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
         changeMode(IMPORTING_MODE)
     }
 
+    const handleCloseImportedRepositories = () => {
+        setNamespaceIdSelected(undefined)
+        setNamespaceSelected(undefined)
+    }
+
+    const handleSelectRepositoryNamespace = (id, namespace) => {
+        setNamespaceIdSelected(id)
+        setNamespaceSelected(namespace)
+    }
+
     return <>
+    {
+                        namespaceIdSelected !== undefined
+                        && <ImportedRepositoriesOffcanvas 
+                                namespaceId={namespaceIdSelected}
+                                namespace={namespaceSelected}
+                                onClose={() => handleCloseImportedRepositories()} />
+                    }
                 <PageHeader>
                     <div className="col">
                         <div className="page-pretitle">Workbench</div>
@@ -93,19 +113,17 @@ const MyWorkspaceContainer = ({ HTTPServerManager }) => {
                             repositoryNamespacesCurrent 
                             && <div className="row">
                                     {
-                                        repositoryNamespacesCurrent.map((namespaceData, index) => (
+                                        repositoryNamespacesCurrent.map(({ namespace, createdAt, id }, index) => (
                                             <div key={index} className="col-md-4">
                                                 <div className="card card-link mb-3">
                                                     <div className="card-header py-2">
-                                                        <h4 className="mb-0">{namespaceData.namespace}</h4>
+                                                        <h4 className="mb-0">{namespace}</h4>
                                                         <div className="card-actions">
-                                                            <a className="btn btn-ghost-info p-1"  href={`#/my-workspace/repository-editor?namespaceId=${namespaceData.id}`}>Repository editor
-                                                                <svg xmlns="http://www.w3.org/2000/svg" className="icon ms-1 m-0" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path><path d="M16 5l3 3"></path></svg>
-                                                            </a>
+                                                            <button className="btn btn-sm btn-ghost-info" onClick={() => handleSelectRepositoryNamespace(id, namespace)}>Imported repository</button>
                                                         </div>
                                                     </div>
                                                     <div className="card-body">
-                                                        <div className="mb-2">Created at: <strong>{namespaceData.createdAt}</strong></div>
+                                                        <div className="mb-2">Created at: <strong>{createdAt}</strong></div>
                                                     </div>
                                                 </div>
                                             </div>))

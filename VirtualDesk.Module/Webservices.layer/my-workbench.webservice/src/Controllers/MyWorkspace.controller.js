@@ -86,6 +86,13 @@ const MyWorkspaceController = (params) => {
         })
 
     }
+
+    const ListRepositories = async (namespaceId, {authenticationData}) => {
+        const { userId } = authenticationData
+        const repositories = await repositoryStorageManagerService.ListRepositories(namespaceId)
+
+        return repositories
+    }
     
     const controllerServiceObject = {
         controllerName : "MyWorkspaceController",
@@ -93,6 +100,7 @@ const MyWorkspaceController = (params) => {
         ListRepositoryNamespace,
         ImportRepository,
         UploadRepository,
+        ListRepositories,
         GetItemHierarchy                    : myWorkspaceManagerService.GetItemHierarchy,
         GetRepositoryGeneralInformation     : myWorkspaceManagerService.GetRepositoryGeneralInformation,
         GetItemInformation                  : myWorkspaceManagerService.GetItemInformation,
