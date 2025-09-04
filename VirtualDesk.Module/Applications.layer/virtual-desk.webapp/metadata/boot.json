@@ -202,7 +202,8 @@
             "dependency": "@/my-services.webservice/endpoint-group",
             "bound-params":{
                 "serverService": "@@/server-service",
-                "myServicesManagerService": "@@/my-services-manager-service"
+                "myServicesManagerService": "@@/my-services-manager-service",
+                "repositoryStorageManagerService": "@@/repository-storage-manager-service"
             },
             "params":{
                 "uploadDirPath":"{{myServicesRepositoriesUploadDirPath}}",

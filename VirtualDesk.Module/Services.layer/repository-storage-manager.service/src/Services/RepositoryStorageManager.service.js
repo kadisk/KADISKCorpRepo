@@ -37,7 +37,6 @@ const {
         GetRepositoryNamespaceId,
         GetItemById,
         ListLatestPackageItemsByUserId,
-        ListRepositoryNamespace,
         ListRepositoriesByUserId,
         ListRepositoriesByNamespace,
         GetNamespace
@@ -51,6 +50,29 @@ const {
 
     const CountNamespaceByUserId = (userId) =>  RepositoryNamespaceModel.count({ where: { userId } })
 
+
+    const ListRepositoryNamespace = async (userId) => {
+        const repositoryNamespaceDataList  = await RepositoryStorageDomainService.ListRepositoryNamespace(userId)
+        
+        const repositories = repositoryNamespaceDataList
+            .map((repositoryData) => {
+                const { id, namespace } = repositoryData
+                return { id, namespace } 
+            })
+
+        return repositories
+    }
+
+    const ListRepositories = async (namespaceId) => {
+        const repositories = await ListRepositoriesByNamespace(namespaceId)
+        return repositories.map(({ id, createdAt, sourceType, sourceParams }) => ({
+            id,
+            createdAt,
+            sourceType,
+            sourceParams
+        }))
+    }
+
     _Start()
 
     return {
@@ -60,9 +82,9 @@ const {
         GetRepositoryNamespaceId,
         GetItemById,
         ListLatestPackageItemsByUserId,
-        ListRepositoryNamespace,
         ListRepositoriesByUserId,
-        ListRepositoriesByNamespace,
+        ListRepositories,
+        ListRepositoryNamespace,
         GetNamespace
     }
 }

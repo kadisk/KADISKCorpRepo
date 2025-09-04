@@ -383,18 +383,6 @@ const MyServicesManager = (params) => {
         
     }
 
-    const ListRepositoryNamespace = async (userId) => {
-        const repositoryNamespaceDataList  = await repositoryStorageManagerService.ListRepositoryNamespace(userId)
-        
-        const repositories = repositoryNamespaceDataList
-            .map((repositoryData) => {
-                const { id, namespace } = repositoryData
-                return { id, namespace } 
-            })
-
-        return repositories
-    }
-
     const _BuildImage = async ({
         serviceName,
         serviceId,
@@ -582,16 +570,6 @@ const MyServicesManager = (params) => {
         })
     }
 
-    const ListRepositories = async (namespaceId) => {
-        const repositories = await repositoryStorageManagerService.ListRepositoriesByNamespace(namespaceId)
-        return repositories.map(({ id, createdAt, sourceType, sourceParams }) => ({
-            id,
-            createdAt,
-            sourceType,
-            sourceParams
-        }))
-    }
-
     _Start()
 
     return {
@@ -601,11 +579,9 @@ const MyServicesManager = (params) => {
         RegisterImportedRepository,
         GetStatus,
         ListBootablePackages,
-        ListRepositoryNamespace,
         ProvisionService,
         ListProvisionedServices,
         GetServiceData,
-        ListRepositories,
         ListInstances,
         ListContainers,
         ListImageBuildHistory,

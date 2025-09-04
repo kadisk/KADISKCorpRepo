@@ -1,17 +1,17 @@
 const RepositoryServiceManagerController = (params) => {
 
-    const { myServicesManagerService } = params
+    const { repositoryStorageManagerService } = params
 
     const ListRepositories = async (namespaceId, {authenticationData}) => {
         const { userId } = authenticationData
-        const repositories = await myServicesManagerService.ListRepositories(namespaceId)
+        const repositories = await repositoryStorageManagerService.ListRepositories(namespaceId)
 
         return repositories
     }
 
     const ListNamespaces = async ({authenticationData}) => {
         const { userId } = authenticationData
-        const namespaces = await myServicesManagerService.ListRepositoryNamespace(userId)
+        const namespaces = await repositoryStorageManagerService.ListRepositoryNamespace(userId)
 
         return namespaces
     }
