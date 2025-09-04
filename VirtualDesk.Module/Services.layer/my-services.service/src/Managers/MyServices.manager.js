@@ -22,6 +22,7 @@ const MyServicesManager = (params) => {
     const {
         onReady,
         serviceStorageFilePath,
+        repositoryStorageFilePath,
         importedRepositoriesSourceCodeDirPath,
         instanceDataDirPath,
         ecosystemDefaultsFileRelativePath,
@@ -39,16 +40,20 @@ const MyServicesManager = (params) => {
     const ecosystemDefaultFilePath = resolve(ecosystemdataHandlerService.GetEcosystemDataPath(), ecosystemDefaultsFileRelativePath)
 
     const absolutServiceStorageFilePath                = ConvertPathToAbsolutPath(serviceStorageFilePath)
+    const absolutRepositoryStorageFilePath             = ConvertPathToAbsolutPath(repositoryStorageFilePath)
     const absolutImportedRepositoriesSourceCodeDirPath = ConvertPathToAbsolutPath(importedRepositoriesSourceCodeDirPath)
     const absolutInstanceDataDirPath                   = ConvertPathToAbsolutPath(instanceDataDirPath)
 
     const MyServicesPersistentStoreManager = InitializeMyServicesPersistentStoreManager(absolutServiceStorageFilePath)
-    //const InitializeRepositoryPersistentStoreManager()
+    const RepositoryPersistentStoreManager = InitializeRepositoryPersistentStoreManager(absolutRepositoryStorageFilePath)
 
     const {
         RepositoryNamespace : RepositoryNamespaceModel,
         RepositoryImported  : RepositoryImportedModel,
-        RepositoryItem      : RepositoryItemModel,
+        RepositoryItem      : RepositoryItemModel
+    } = RepositoryPersistentStoreManager.models
+
+    const {
         Service             : ServiceModel,
         ImageBuildHistory   : ImageBuildHistoryModel,
         Instance            : InstanceModel,

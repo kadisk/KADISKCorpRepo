@@ -240,10 +240,6 @@ const InitializeMyServicesPersistentStoreManager = (storage) => {
         }
     })
 
-    RepositoryNamespaceModel.hasMany(RepositoryImportedModel, { foreignKey: "namespaceId", onDelete: "CASCADE" })
-    RepositoryImportedModel .hasMany(RepositoryItemModel,    { foreignKey: "repositoryId", onDelete: "CASCADE" })
-    RepositoryItemModel     .hasMany(RepositoryItemModel,    { foreignKey: "parentId", as: "children", onDelete: "CASCADE" })
-    RepositoryImportedModel .hasMany(ServiceModel,           { foreignKey: "originRepositoryId", onDelete: "CASCADE" })
     ServiceModel            .hasMany(ImageBuildHistoryModel, { foreignKey: "serviceId",   onDelete: "CASCADE" })
     InstanceModel           .hasMany(ImageBuildHistoryModel, { foreignKey: "instanceId",  onDelete: "CASCADE" })
     InstanceModel           .hasMany(ContainerModel,         { foreignKey: "instanceId",  onDelete: "CASCADE" })
@@ -251,17 +247,12 @@ const InitializeMyServicesPersistentStoreManager = (storage) => {
     ServiceModel            .hasMany(InstanceModel,          { foreignKey: "serviceId",   onDelete: "CASCADE" })
     ContainerModel          .hasMany(ContainerEventLogModel, { foreignKey: "containerId", onDelete: "CASCADE" })
 
-    RepositoryImportedModel.belongsTo(RepositoryNamespaceModel, { foreignKey: "namespaceId" })
-    RepositoryItemModel    .belongsTo(RepositoryImportedModel,  { foreignKey: "repositoryId" })
-    ServiceModel           .belongsTo(RepositoryImportedModel,  { foreignKey: "originRepositoryId" })
-    ServiceModel           .belongsTo(RepositoryItemModel,      { foreignKey: "packageId" })
     ContainerModel         .belongsTo(InstanceModel,            { foreignKey: "instanceId" })
     ContainerModel         .belongsTo(ImageBuildHistoryModel,   { foreignKey: "buildId" })
     ContainerEventLogModel .belongsTo(ImageBuildHistoryModel,   { foreignKey: "containerId" })
     ImageBuildHistoryModel .belongsTo(InstanceModel,            { foreignKey: "instanceId" })
     InstanceModel          .belongsTo(ServiceModel,             { foreignKey: "serviceId" })
     InstanceModel          .belongsTo(ServiceModel,             { foreignKey: "serviceId" })
-    RepositoryItemModel    .belongsTo(RepositoryItemModel,      { foreignKey: "parentId", as: "parent"})
 
     return {
         models: {
