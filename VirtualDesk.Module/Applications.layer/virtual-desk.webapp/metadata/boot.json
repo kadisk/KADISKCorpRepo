@@ -193,7 +193,8 @@
             "bound-params":{
                 "serverService": "@@/server-service",
                 "myWorkspaceManagerService":"@@/my-workspace-manager-service",
-                "containerManagerService":"@@/container-manager-service"
+                "containerManagerService":"@@/container-manager-service",
+                "repositoryStorageManagerService": "@@/repository-storage-manager-service"
             },
             "params":{
                 "uploadDirPath": "{{myWorkbenchRepositoriesUploadDirPath}}",

@@ -11,6 +11,7 @@ const MyWorkspaceController = (params) => {
 
     const {
         myWorkspaceManagerService,
+        repositoryStorageManagerService,
         uploadDirPath
     } = params
 
@@ -23,7 +24,7 @@ const MyWorkspaceController = (params) => {
 
     const ListRepositories = ({ authenticationData }) => {
         const { userId } = authenticationData
-        return myWorkspaceManagerService.ListRepositoryNamespace(userId)
+        return repositoryStorageManagerService.ListRepositoryNamespace(userId)
     }
 
     const ImportRepository = ({ repositoryNamespace, sourceCodeURL }, { authenticationData }) => {

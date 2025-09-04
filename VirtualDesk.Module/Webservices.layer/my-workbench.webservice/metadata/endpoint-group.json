@@ -2,6 +2,7 @@
     "bound-params":[
         "serverService",
         "myWorkspaceManagerService",
+        "repositoryStorageManagerService",
         "containerManagerService"
     ],
     "params": [ "needsAuth", "uploadDirPath" ],
@@ -20,6 +21,7 @@
             "bound-params": {
                 "serverService":"serverService",
                 "controller-params":{
+                    "repositoryStorageManagerService": "repositoryStorageManagerService",
                     "myWorkspaceManagerService": "myWorkspaceManagerService"
                 }
             }
