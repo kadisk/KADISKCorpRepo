@@ -8,6 +8,7 @@
     "eventManagerServiceStorageFilePath"                   : "~/virtual-desk-state/local-databases/event-manager-service.sqlite",
     "instanceMonitoringManagerServiceStorageFilePath"      : "~/virtual-desk-state/local-databases/instance-monitoring-manager-service.sqlite",
     "myWorkspaceManagerServiceStorageFilePath"             : "~/virtual-desk-state/local-databases/my-workspace-manager-service.sqlite",
+    "repositoryStorageFilePath"                            : "~/virtual-desk-state/local-databases/repository-storage-manager-service.sqlite",
     "serviceStorageFilePath"                               : "~/virtual-desk-state/local-databases/my-services-manager-service.sqlite",
     "myWorkspaceRepositoriesSourceCodeDirPath"             : "~/virtual-desk-state/local-app-data/my-workspaces-imported-repositories",
     "myServicesManagerImportedSourceCodeDirPath"           : "~/virtual-desk-state/local-app-data/my-services-imported-repositories",

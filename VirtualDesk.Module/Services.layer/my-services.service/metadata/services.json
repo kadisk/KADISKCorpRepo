@@ -4,6 +4,7 @@
         "path": "Managers/MyServices.manager",
         "params": [ 
             "serviceStorageFilePath", 
+            "repositoryStorageFilePath",
             "importedRepositoriesSourceCodeDirPath", 
             "instanceDataDirPath", 
             "ecosystemDefaultsFileRelativePath"
