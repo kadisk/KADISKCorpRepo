@@ -2,7 +2,12 @@
     {
         "namespace": "MyServicesManager",
         "path": "Managers/MyServices.manager",
-        "params": [ "storageFilePath", "importedRepositoriesSourceCodeDirPath", "instanceDataDirPath", "ecosystemDefaultsFileRelativePath" ],
+        "params": [ 
+            "serviceStorageFilePath", 
+            "importedRepositoriesSourceCodeDirPath", 
+            "instanceDataDirPath", 
+            "ecosystemDefaultsFileRelativePath"
+        ],
         "bound-params":  [ "extractTarGzLib", "loadMetatadaDirLib", "ecosystemdataHandlerService", "jsonFileUtilitiesLib", "containerManagerService"]
         
     }

@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize')
 
-const InitializeMyServicePersistentStoreManager = (storage) => {
+const InitializeMyServicesPersistentStoreManager = (storage) => {
 
     const sequelize = new Sequelize({
         dialect: 'sqlite',
@@ -95,4 +95,4 @@ const InitializeMyServicePersistentStoreManager = (storage) => {
     }
 }
 
-module.exports = InitializeMyServicePersistentStoreManager
+module.exports = InitializeMyServicesPersistentStoreManager

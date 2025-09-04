@@ -4,12 +4,13 @@ const os = require('os')
 const ConvertPathToAbsolutPath = (_path) => join(_path)
     .replace('~', os.homedir())
 
-const InitializeMyServicePersistentStoreManager     = require("../Helpers/InitializeMyServicePersistentStoreManager")
-const PrepareDirPath                       = require("../Helpers/PrepareDirPath")
-const CreateItemIndexer                    = require("../Helpers/CreateItemIndexer")
-const CreateMyWorkspaceDomainService       = require("../Helpers/CreateMyWorkspaceDomainService")
-const CreateRepositoryStorageDomainService = require("../Helpers/CreateRepositoryStorageDomainService")
-const CreateServiceRuntimeStateManager     = require("../Helpers/CreateServiceRuntimeStateManager")
+const InitializeMyServicesPersistentStoreManager = require("../Helpers/InitializeMyServicesPersistentStoreManager")
+const InitializeRepositoryPersistentStoreManager = require("../Helpers/InitializeRepositoryPersistentStoreManager")
+const PrepareDirPath                             = require("../Helpers/PrepareDirPath")
+const CreateItemIndexer                          = require("../Helpers/CreateItemIndexer")
+const CreateMyWorkspaceDomainService             = require("../Helpers/CreateMyWorkspaceDomainService")
+const CreateRepositoryStorageDomainService       = require("../Helpers/CreateRepositoryStorageDomainService")
+const CreateServiceRuntimeStateManager           = require("../Helpers/CreateServiceRuntimeStateManager")
 
 const RequestTypes                     = require("../Helpers/Request.types")
 
@@ -20,7 +21,7 @@ const MyServicesManager = (params) => {
 
     const {
         onReady,
-        storageFilePath,
+        serviceStorageFilePath,
         importedRepositoriesSourceCodeDirPath,
         instanceDataDirPath,
         ecosystemDefaultsFileRelativePath,
@@ -37,11 +38,12 @@ const MyServicesManager = (params) => {
 
     const ecosystemDefaultFilePath = resolve(ecosystemdataHandlerService.GetEcosystemDataPath(), ecosystemDefaultsFileRelativePath)
 
-    const absolutStorageFilePath                       = ConvertPathToAbsolutPath(storageFilePath)
+    const absolutServiceStorageFilePath                = ConvertPathToAbsolutPath(serviceStorageFilePath)
     const absolutImportedRepositoriesSourceCodeDirPath = ConvertPathToAbsolutPath(importedRepositoriesSourceCodeDirPath)
     const absolutInstanceDataDirPath                   = ConvertPathToAbsolutPath(instanceDataDirPath)
 
-    const PersistentStoreManager = InitializeMyServicePersistentStoreManager(absolutStorageFilePath)
+    const MyServicesPersistentStoreManager = InitializeMyServicesPersistentStoreManager(absolutServiceStorageFilePath)
+    //const InitializeRepositoryPersistentStoreManager()
 
     const {
         RepositoryNamespace : RepositoryNamespaceModel,
@@ -52,7 +54,7 @@ const MyServicesManager = (params) => {
         Instance            : InstanceModel,
         Container           : ContainerModel,
         ContainerEventLog   : ContainerEventLogModel
-    } = PersistentStoreManager.models
+    } = MyServicesPersistentStoreManager.models
 
     const ItemIndexer = CreateItemIndexer({RepositoryItemModel})
 
@@ -127,7 +129,7 @@ const MyServicesManager = (params) => {
 
     const _Start = async () => {
 
-        await PersistentStoreManager.ConnectAndSync()
+        await MyServicesPersistentStoreManager.ConnectAndSync()
         RegisterDockerEventListener((eventData) => {
 
             const { Type, Action, Actor } = eventData

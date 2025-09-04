@@ -9,7 +9,7 @@
         "eventManagerServiceStorageFilePath",
         "instanceMonitoringManagerServiceStorageFilePath",
         "myWorkspaceManagerServiceStorageFilePath",
-        "myServicesManagerServiceStorageFilePath",
+        "serviceStorageFilePath",
         "myWorkspaceRepositoriesSourceCodeDirPath",
         "myServicesManagerImportedSourceCodeDirPath",
         "myServicesRepositoriesUploadDirPath",
@@ -104,7 +104,7 @@
             },
             "params":{
                 "importedRepositoriesSourceCodeDirPath": "{{myServicesManagerImportedSourceCodeDirPath}}",
-                "storageFilePath": "{{myServicesManagerServiceStorageFilePath}}",
+                "serviceStorageFilePath": "{{serviceStorageFilePath}}",
                 "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}",
                 "instanceDataDirPath": "{{myServicesInstanceDataDirPath}}"
             }
