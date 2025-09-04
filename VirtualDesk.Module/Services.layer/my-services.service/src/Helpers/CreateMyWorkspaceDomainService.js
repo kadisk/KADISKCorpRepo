@@ -24,7 +24,7 @@ const CreateMyWorkspaceDomainService = ({
                     [Op.in]: repositoryIds
                 }
             },
-            raw: true
+            distinct: true 
         })
         return items
     }
