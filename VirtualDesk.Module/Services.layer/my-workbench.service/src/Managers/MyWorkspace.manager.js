@@ -193,21 +193,8 @@ const MyWorkspaceManager = (params) => {
         })
     }
 
-    const ListRepositoryNamespace = async (userId) => {
-        const repositoriesData  = await MyWorkspaceDomainService.ListRepositoryNamespace(userId)
-        
-        const repositories = repositoriesData
-            .map((repositoryData) => {
-                const { id, namespace } = repositoryData
-                return { id, namespace } 
-            })
-
-        return repositories
-    }
-
     return {
         CreateNewRepository,
-        ListRepositoryNamespace,
         ListRepositories: MyWorkspaceDomainService.ListRepositories,
         ImportRepository,
         GetItemHierarchy,
