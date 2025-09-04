@@ -6,7 +6,7 @@ const os = require('os')
 const ConvertPathToAbsolutPath = (_path) => join(_path)
     .replace('~', os.homedir())
 
-const InitializeMyServicePersistentStoreManager = require("../Helpers/InitializeMyServicePersistentStoreManager")
+const InitializePersistentStoreManager = require("../Helpers/InitializePersistentStoreManager")
 const DownloadFile                     = require("../Helpers/DownloadFile")
 const PrepareDirPath                   = require("../Helpers/PrepareDirPath")
 const CreateItemIndexer                = require("../Helpers/CreateItemIndexer")
@@ -35,7 +35,7 @@ const MyWorkspaceManager = (params) => {
 
     const ecosystemDefaultFilePath = resolve(ecosystemdataHandlerService.GetEcosystemDataPath(), ecosystemDefaultsFileRelativePath)
 
-    const PersistentStoreManager = InitializeMyServicePersistentStoreManager(absolutStorageFilePath)
+    const PersistentStoreManager = InitializePersistentStoreManager(absolutStorageFilePath)
     const {
         Repository     : RepositoryModel,
         RepositoryItem : RepositoryItemModel
