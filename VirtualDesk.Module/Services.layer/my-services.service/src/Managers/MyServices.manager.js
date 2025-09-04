@@ -4,11 +4,12 @@ const os = require('os')
 const ConvertPathToAbsolutPath = (_path) => join(_path)
     .replace('~', os.homedir())
 
-const InitializePersistentStoreManager = require("../Helpers/InitializePersistentStoreManager")
-const PrepareDirPath                   = require("../Helpers/PrepareDirPath")
-const CreateItemIndexer                = require("../Helpers/CreateItemIndexer")
-const CreateMyWorkspaceDomainService   = require("../Helpers/CreateMyWorkspaceDomainService")
-const CreateServiceRuntimeStateManager = require("../Helpers/CreateServiceRuntimeStateManager")
+const InitializePersistentStoreManager     = require("../Helpers/InitializePersistentStoreManager")
+const PrepareDirPath                       = require("../Helpers/PrepareDirPath")
+const CreateItemIndexer                    = require("../Helpers/CreateItemIndexer")
+const CreateMyWorkspaceDomainService       = require("../Helpers/CreateMyWorkspaceDomainService")
+const CreateRepositoryStorageDomainService = require("../Helpers/CreateRepositoryStorageDomainService")
+const CreateServiceRuntimeStateManager     = require("../Helpers/CreateServiceRuntimeStateManager")
 
 const RequestTypes                     = require("../Helpers/Request.types")
 
@@ -55,6 +56,12 @@ const MyServicesManager = (params) => {
 
     const ItemIndexer = CreateItemIndexer({RepositoryItemModel})
 
+    const RepositoryStorageDomainService = CreateRepositoryStorageDomainService({
+        RepositoryNamespaceModel,
+        RepositoryImportedModel,
+        RepositoryItemModel
+    })
+
     const MyWorkspaceDomainService = CreateMyWorkspaceDomainService({
         RepositoryNamespaceModel,
         RepositoryImportedModel, 
@@ -76,6 +83,7 @@ const MyServicesManager = (params) => {
         StopContainer
     } = containerManagerService
 
+    
     const ServiceRuntimeStateManager = CreateServiceRuntimeStateManager()
 
     const {
@@ -306,7 +314,7 @@ const MyServicesManager = (params) => {
     }
 
     const CreateNamespace = async ({ userId, repositoryNamespace }) => {
-        const existingNamespaceId = await MyWorkspaceDomainService.GetRepositoryNamespaceId(repositoryNamespace)
+        const existingNamespaceId = await RepositoryStorageDomainService.GetRepositoryNamespaceId(repositoryNamespace)
 
         if (existingNamespaceId !== undefined) 
             throw new Error('Repository Namespace already exists')
@@ -343,7 +351,7 @@ const MyServicesManager = (params) => {
     const GetMetadataByPackageId = async (packageId) => { 
         const ecosystemDefaults = await ReadJsonFile(ecosystemDefaultFilePath)
 
-        const packageData = await MyWorkspaceDomainService.GetItemById(packageId)
+        const packageData = await RepositoryStorageDomainService.GetItemById(packageId)
 
         const packageAbsolutPath = join(packageData.repositoryCodePath, packageData.itemPath)
         console.log(`[INFO] Loading metadata for package item at path: ${packageAbsolutPath}`)
@@ -363,7 +371,7 @@ const MyServicesManager = (params) => {
     const ListBootablePackages = async ({ userId, username }) => {
 
         const ecosystemDefaults = await ReadJsonFile(ecosystemDefaultFilePath)
-        const packageItems  = await MyWorkspaceDomainService.ListLatestPackageItemsByUserId(userId)
+        const packageItems  = await RepositoryStorageDomainService.ListLatestPackageItemsByUserId(userId)
         console.log(`[INFO] Found ${packageItems.length} package items for user ${username} userId ${userId}`)
 
         const packageItemsWithMetadataPromises = packageItems
@@ -391,7 +399,7 @@ const MyServicesManager = (params) => {
     }
 
     const ListRepositoryNamespace = async (userId) => {
-        const repositoriesData  = await MyWorkspaceDomainService.ListRepositoryNamespace(userId)
+        const repositoriesData  = await RepositoryStorageDomainService.ListRepositoryNamespace(userId)
         
         const repositories = repositoriesData
             .map((repositoryData) => {
@@ -411,7 +419,7 @@ const MyServicesManager = (params) => {
         startupParams
     }) => {
 
-        const packageData = await MyWorkspaceDomainService.GetPackageById(packageId)
+        const packageData = await RepositoryStorageDomainService.GetPackageById(packageId)
 
         const imageTagName = `ecosystem_${packageData.repositoryNamespace}_${packageData.itemName}-${packageData.itemType}:${serviceName}-${serviceId}`.toLowerCase()
 
@@ -587,7 +595,7 @@ const MyServicesManager = (params) => {
     }
 
     const ListRepositories = async (namespaceId) => {
-        const repositories = await MyWorkspaceDomainService.ListRepositories(namespaceId)
+        const repositories = await RepositoryStorageDomainService.ListRepositories(namespaceId)
         return repositories.map(({ id, createdAt, sourceType, sourceParams }) => ({
             id,
             createdAt,
@@ -628,7 +636,7 @@ const MyServicesManager = (params) => {
         GetNetworkModeData,
         UpdateServicePorts,
         UpdateServiceStartupParams,
-        GetNamespace: MyWorkspaceDomainService.GetNamespace
+        GetNamespace: RepositoryStorageDomainService.GetNamespace
     }
 
 }
