@@ -54,8 +54,8 @@ const MyWorkspaceManager = (params) => {
         return __BuildTree()
     }
 
-    const GetRepositoryGeneralInformation = async (namespaceId) => {
-        const namespaceData = await repositoryStorageManagerService.GetNamespace(namespaceId)
+    const GetRepositoryGeneralInformation = async (repositoryId) => {
+        const namespaceData = await repositoryStorageManagerService.GetNamespaceByRepositoryId(repositoryId)
         return {
             repositoryNamespace: namespaceData.namespace
         }
@@ -86,11 +86,11 @@ const MyWorkspaceManager = (params) => {
 
     const GetPackageSourceTree = async (itemId) => {
         const itemData = await repositoryStorageManagerService.GetItemById(itemId)
-        const { itemPath } = itemData
-        const srcPath = resolve(itemPath, "src")
-        
+        const { itemPath, repositoryCodePath } = itemData
+        const srcPath = join(repositoryCodePath, itemPath, "src")
+
         try {
-            return await ListFilesRecursive(srcPath, srcPath)
+            return await ListFilesRecursive(srcPath, repositoryCodePath)
         } catch (error) {
             throw new Error(`Error reading source tree: ${error.message}`)
         }
@@ -98,9 +98,9 @@ const MyWorkspaceManager = (params) => {
 
     const GetPackageSourceFileContent = async ({itemId, sourceFilePath}) => {
         const itemData = await repositoryStorageManagerService.GetItemById(itemId)
-        const { itemPath, itemName, itemType } = itemData
-
-        const absolutePath = join(itemPath, "src", sourceFilePath)
+        const { itemName, itemType, repositoryCodePath } = itemData
+        
+        const absolutePath = join(repositoryCodePath, sourceFilePath)
 
         try {
             const content = await readFile(absolutePath, "utf8")
@@ -117,12 +117,14 @@ const MyWorkspaceManager = (params) => {
 
     const GetPackageMetadata = async (itemId) => {
         const itemData = await repositoryStorageManagerService.GetItemById(itemId)
-        const { itemPath} = itemData
+        const { itemPath, repositoryCodePath } = itemData
         const ecosystemDefaults = await ReadJsonFile(ecosystemDefaultFilePath)
+
+        const absolutePath = join(repositoryCodePath, itemPath)
 
         return await LoadMetadataDir({
             metadataDirName: ecosystemDefaults.PKG_CONF_DIRNAME_METADATA,
-            path: itemPath
+            path: absolutePath
         })
     }
 

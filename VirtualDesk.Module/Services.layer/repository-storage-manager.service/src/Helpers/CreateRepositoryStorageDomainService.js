@@ -34,6 +34,24 @@ const CreateRepositoryStorageDomainService = ({
         return respositoryNamespaceData
     }
 
+    const GetNamespaceByRepositoryId = async (repositoryId) => {
+        const repositoryImported = await RepositoryImportedModel.findOne({
+            include: [{
+                model: RepositoryNamespaceModel,
+                attributes: ['id', 'namespace']
+            }],
+            where: { id: repositoryId },
+            raw: true
+        })
+
+        if (!repositoryImported) return null
+
+        return {
+            id: repositoryImported['RepositoryNamespace.id'],
+            namespace: repositoryImported['RepositoryNamespace.namespace']
+        }
+    }
+
     const GetRepositoryImported = (id) => RepositoryImportedModel.findOne({ where: { id } })
 
     const GetRepositoryImportedByNamespace = (namespace) => RepositoryModel.findOne({ where: { namespace } })
@@ -192,7 +210,8 @@ const CreateRepositoryStorageDomainService = ({
         ListLatestPackageItemsByUserId,
         GetPackageById,
         GetPackageItemByPath,
-        GetNamespace
+        GetNamespace,
+        GetNamespaceByRepositoryId
     }
 }
 

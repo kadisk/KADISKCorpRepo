@@ -54,6 +54,7 @@ const {
         ListRepositoriesByUserId,
         ListRepositoriesByNamespace,
         GetNamespace,
+        GetNamespaceByRepositoryId,
         RegisterRepositoryNamespace,
         RegisterRepositoryImported,
         GetRepositoryImported,
@@ -268,7 +269,8 @@ const {
         GetRepositoryImported,
         ListItemByRepositoryId,
         GetItemById,
-        GetRepositoryImportedByNamespace
+        GetRepositoryImportedByNamespace,
+        GetNamespaceByRepositoryId
     }
 }
 

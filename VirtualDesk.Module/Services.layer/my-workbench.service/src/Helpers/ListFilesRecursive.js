@@ -4,7 +4,7 @@ const {
     readdir
 } = require('node:fs/promises')
 
-const ListFilesRecursive = async (dirPath, basePath) => {
+const ListFilesRecursive = async (dirPath, basePathForRemove) => {
     const tree = []
     try {
         const entries = await readdir(dirPath, { withFileTypes: true })
@@ -14,14 +14,14 @@ const ListFilesRecursive = async (dirPath, basePath) => {
             if (entry.isDirectory()) {
                 tree.push({
                     name: entry.name,
-                    path:entry.path.replace(basePath, ""),
+                    path:entry.path.replace(basePathForRemove, ""),
                     type: 'directory',
-                    children: await ListFilesRecursive(fullPath, basePath)
+                    children: await ListFilesRecursive(fullPath, basePathForRemove)
                 })
             } else {
                 tree.push({
                     name: entry.name,
-                    path:entry.path.replace(basePath, ""),
+                    path:entry.path.replace(basePathForRemove, ""),
                     type: 'file'
                 })
             }
