@@ -48,12 +48,18 @@ const ImportingModal = ({
             serverManagerInformation: HTTPServerManager
         })
 
+    const _GetRepositoryServiceManagerAPI = () =>
+        GetAPI({
+            apiName: "RepositoryServiceManager",
+            serverManagerInformation: HTTPServerManager
+        })
+
 
     const UploadRepository = async ({
         repositoryNamespace,
         repositoryFile
     }) => {
-        const response = await _GetMyServicesManagerAPI()
+        const response = await _GetRepositoryServiceManagerAPI()
         .UploadRepository({
             repositoryNamespace,
             repositoryFile
@@ -66,7 +72,7 @@ const ImportingModal = ({
         repositoryGitUrl,
         personalAccessToken
     }) => {
-        const response = await _GetMyServicesManagerAPI()
+        const response = await _GetRepositoryServiceManagerAPI()
         .CloneRepository({
             repositoryNamespace,
             repositoryGitUrl,

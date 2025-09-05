@@ -151,7 +151,7 @@ const NamespaceAndRepositoryManagerModal = ({
 
         if(importType === GIT_CLONE_IMPORT_TYPE){
             const { repositoryGitUrl, personalAccessToken } = formUpdateValues
-            await _GetMyServicesManager().UpdateRepositoryWithGitClone({
+            await _GetRepositoryServiceManager().UpdateRepositoryWithGitClone({
                 namespaceId: namespaceIdSelected,
                 repositoryGitUrl,
                 personalAccessToken
@@ -159,7 +159,7 @@ const NamespaceAndRepositoryManagerModal = ({
             await FetchRepositories()
             BackToRepositoryManagerMode()
         } else if(importType === TAR_GZ_UPLOAD_IMPORT_TYPE){
-            await _GetMyServicesManager()
+            await _GetRepositoryServiceManager()
             .UpdateRepositoryWithUpload({
                 namespaceId: namespaceIdSelected,
                 repositoryFile: repositoryFileForUpload

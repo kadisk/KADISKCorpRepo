@@ -115,20 +115,26 @@ const ServiceProvisioningModal = ({
     }, [typeMode])
 
 
-    const _GetServiceProvisioningManagerAPI = () =>
+    const _GetMyServicesManagerAPI = () =>
         GetAPI({
-            apiName: "ServiceProvisioning",
+            apiName: "MyServicesManager",
+            serverManagerInformation: HTTPServerManager
+        })
+    
+    const _GetRepositoryServiceManagerAPI = () =>
+        GetAPI({
+            apiName: "RepositoryServiceManager",
             serverManagerInformation: HTTPServerManager
         })
 
     const FetchBootablePackages = async () => {
-        const response = await _GetServiceProvisioningManagerAPI()
+        const response = await _GetRepositoryServiceManagerAPI()
             .ListBootablePackages()
         setPackageList(response.data)
     }
 
     const FetchStartupParamsData = async () => {
-        const response = await _GetServiceProvisioningManagerAPI()
+        const response = await _GetRepositoryServiceManagerAPI()
             .GetStartupParamsData({
                 packageId: selectedPackageData?.id
             })
@@ -142,7 +148,7 @@ const ServiceProvisioningModal = ({
 
     const handleProvision = async () => {
         changeTypeMode(PROVISIONING_SERVICE_MODE)
-        const { ProvisionService } = _GetServiceProvisioningManagerAPI()
+        const { ProvisionService } = _GetMyServicesManagerAPI()
 
         try {
             await ProvisionService({

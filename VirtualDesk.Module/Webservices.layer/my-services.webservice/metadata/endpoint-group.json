@@ -12,32 +12,12 @@
             "params": {
                 "api-template": "APIs/MyServicesManager.api.json",
                 "controller": "Controllers/MyServicesManager.controller",
-                "needsAuth": "needsAuth",
-                "controller-params":{
-                    "uploadDirPath": "{{uploadDirPath}}"
-                }
-            },
-            "bound-params": {
-                "serverService":"serverService",
-                "controller-params":{
-                    "myServicesManagerService":"myServicesManagerService",
-                    "repositoryStorageManagerService":"repositoryStorageManagerService"
-                }
-            }
-        },
-        {
-            "url": "/service-provisioning",
-            "type": "controller",
-            "params": {
-                "api-template": "APIs/ServiceProvisioning.api.json",
-                "controller": "Controllers/ServiceProvisioning.controller",
                 "needsAuth": "needsAuth"
             },
             "bound-params": {
                 "serverService":"serverService",
                 "controller-params":{
-                    "myServicesManagerService":"myServicesManagerService",
-                    "repositoryStorageManagerService":"repositoryStorageManagerService"
+                    "myServicesManagerService":"myServicesManagerService"
                 }
             }
         },
@@ -47,7 +27,10 @@
             "params": {
                 "api-template": "APIs/RepositoryServiceManager.api.json",
                 "controller": "Controllers/RepositoryServiceManager.controller",
-                "needsAuth": "needsAuth"
+                "needsAuth": "needsAuth",
+                "controller-params":{
+                    "uploadDirPath": "{{uploadDirPath}}"
+                }
             },
             "bound-params": {
                 "serverService":"serverService",

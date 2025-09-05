@@ -87,6 +87,11 @@ const MyServicesContainer = ({
             apiName:"MyServicesManager",  
             serverManagerInformation: HTTPServerManager
         })
+    const _RepositoryServiceAPI = () => 
+        GetAPI({ 
+            apiName:"RepositoryServiceManager",  
+            serverManagerInformation: HTTPServerManager
+        })
 
     const updateServiceStatus = ({serviceId, status}) => {
         const listWithStatusUpdated = provisionedServicesListRef.current
@@ -107,8 +112,8 @@ const MyServicesContainer = ({
 	})
 
     const fetchMyServicesStatus = async () => {
-        const api = _MyServicesAPI()
-        const response = await api.GetMyServicesStatus()
+        const api = _RepositoryServiceAPI()
+        const response = await api.CheckRepositoryImported()
         if(response.data === "READY"){
             changeMode(DEFAULT_MODE)
         } else if (response.data === "NO_REPOSITORIES"){

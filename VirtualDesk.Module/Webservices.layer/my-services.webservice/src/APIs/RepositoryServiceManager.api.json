@@ -18,6 +18,122 @@
 					"required": true
 				}
 			]
+		},
+		{
+			"path": "/update-upload-repository",
+			"method": "POST",
+			"summary": "UpdateRepositoryWithUpload",
+			"isMultipartFormData": true,
+			"forwardRawRequest": true,
+			"parameters": [
+				{
+					"in": "body",
+					"name": "namespaceId",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "repositoryFile",
+					"type": "file",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/clone-repository",
+			"method": "POST",
+			"summary": "CloneRepository",
+			"parameters": [
+				{
+					"in": "body",
+					"name": "repositoryNamespace",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "repositoryGitUrl",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "personalAccessToken",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/update-clone-repository",
+			"method": "POST",
+			"summary": "UpdateRepositoryWithGitClone",
+			"parameters": [
+				{
+					"in": "body",
+					"name": "namespaceId",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "repositoryGitUrl",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "personalAccessToken",
+					"type": "string",
+					"required": true
+				}
+			]
+			
+		},
+		{
+			"path": "/check-repository-imported",
+			"method": "GET",
+			"summary": "CheckRepositoryImported"
+		},
+		{
+			"path": "/upload-repository",
+			"method": "POST",
+			"summary": "UploadRepository",
+			"isMultipartFormData": true,
+			"forwardRawRequest": true,
+			"parameters": [
+				{
+					"in": "body",
+					"name": "repositoryNamespace",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "repositoryFile",
+					"type": "file",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/bootable-packages",
+			"method": "GET",
+			"summary": "ListBootablePackages"
+		},
+		{
+			"path": "/package/startup-params/data/:packageId",
+			"method": "GET",
+			"summary":"GetStartupParamsData",
+			"parameters": [
+				{
+					"name": "packageId",
+					"in": "path",
+					"type": "number",
+					"required": true
+				}
+			]
 		}
 	]
 }
