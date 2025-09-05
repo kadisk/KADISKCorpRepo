@@ -122,7 +122,7 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
         <>
             <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top" style={{ zIndex: 9999 }}>
                 <div className="container-fluid">
-                    <a className="navbar-brand d-flex align-items-center p-0" href="#/my-services">
+                    <a className="navbar-brand d-flex align-items-center p-0" href="#/my-workspace">
                         <img src={logoVirtualDesk2} width={150} className="me-2" />
                         <div className="ps-3 d-flex align-items-start">
                             <div>
@@ -197,12 +197,9 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
                                 packageMetadata={packageMetadataCurrent}/>
 
                             
-                            {
-                                packageSourceCodeTreeCurrent?.length > 0 || packageSourceCodeTreeCurrent === undefined
-                                && <PackageSourceTreeSidebarSection 
+                            <PackageSourceTreeSidebarSection 
                                     onSelectSourceFile={(sourceFilePath) => selectSourceFile(sourceFilePath)}
                                     sourceTree={packageSourceCodeTreeCurrent}/>
-                            }
                         </aside>
                 }
             </div>

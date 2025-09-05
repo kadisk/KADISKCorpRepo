@@ -27,7 +27,7 @@ const ListFilesRecursive = async (dirPath, basePath) => {
             }
         }
     } catch(e){
-        
+        console.log(e)
     }
 
     return tree
