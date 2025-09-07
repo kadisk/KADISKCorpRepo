@@ -1,10 +1,9 @@
 {
     "bound-params":[
         "serverService",
-        "myServicesManagerService",
-        "repositoryStorageManagerService"
+        "myServicesManagerService"
     ],
-    "params": [ "needsAuth", "uploadDirPath" ],
+    "params": [ "needsAuth"],
     "endpoints": [
         {
             "url": "/my-service-manager",
@@ -20,24 +19,6 @@
                     "myServicesManagerService":"myServicesManagerService"
                 }
             }
-        },
-        {
-            "url": "/repository-service-manager",
-            "type": "controller",
-            "params": {
-                "api-template": "APIs/RepositoryServiceManager.api.json",
-                "controller": "Controllers/RepositoryServiceManager.controller",
-                "needsAuth": "needsAuth",
-                "controller-params":{
-                    "uploadDirPath": "{{uploadDirPath}}"
-                }
-            },
-            "bound-params": {
-                "serverService":"serverService",
-                "controller-params":{
-                    "repositoryStorageManagerService":"repositoryStorageManagerService"
-                }
-            }
-        }  
+        }
     ]
 }

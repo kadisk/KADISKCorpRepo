@@ -203,7 +203,16 @@
             "dependency": "@/my-services.webservice/endpoint-group",
             "bound-params":{
                 "serverService": "@@/server-service",
-                "myServicesManagerService": "@@/my-services-manager-service",
+                "myServicesManagerService": "@@/my-services-manager-service"
+            },
+            "params":{
+                "needsAuth": true
+            }
+        },
+        {
+            "dependency": "@/repository-manager.webservice/endpoint-group",
+            "bound-params":{
+                "serverService": "@@/server-service",
                 "repositoryStorageManagerService": "@@/repository-storage-manager-service"
             },
             "params":{
