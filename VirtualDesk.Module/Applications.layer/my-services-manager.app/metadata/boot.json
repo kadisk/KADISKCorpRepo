@@ -1,0 +1,90 @@
+{
+    "params" : [
+        "port", 
+        "serverName",
+        "repositoryStorageFilePath",
+        "serviceStorageFilePath",
+        "myServicesManagerImportedSourceCodeDirPath",
+        "myServicesInstanceDataDirPath",
+        "installDataDirPath",
+        "ecosystemDefaultsFileRelativePath",
+        "secretKey"
+    ],
+    "services": [
+        {
+            "namespace": "@@/server-service",
+            "dependency": "@/server-manager.service/services/HTTPServerService",
+            "params":{
+                "name":"{{serverName}}",
+                "port": "{{port}}"
+            },
+            "bound-params":{
+                "authenticationService": "@@/jwt-authentication-service"
+            }
+        },
+        {
+            "namespace": "@@/jwt-authentication-service",
+            "dependency": "@/server-manager.service/services/JWTAuthenticationService",
+            "params":{
+                "secretKey":"{{secretKey}}"
+            }
+        },
+        {
+            "namespace": "@@/ecosystemdata-handler-service",
+            "dependency": "@/ecosystem-control-panel.service/services/EcosystemDataHandlerService",
+            "params":{
+                "installDataDirPath": "{{installDataDirPath}}"
+            }
+        },
+        {
+            "namespace": "@@/container-manager-service",
+            "dependency": "@/container-manager.service/services/ContainerManager"
+        },
+        {
+            "namespace": "@@/my-services-manager-service",
+            "dependency": "@/my-services.service/services/MyServicesManager",
+            "bound-params":{
+                "containerManagerService":"@@/container-manager-service",
+                "repositoryStorageManagerService": "@@/repository-storage-manager-service"
+            },
+            "params":{
+                "serviceStorageFilePath": "{{serviceStorageFilePath}}",
+                "instanceDataDirPath": "{{myServicesInstanceDataDirPath}}"
+            }
+        },
+        {
+            "namespace": "@@/repository-storage-manager-service",
+            "dependency": "@/repository-storage-manager.service/services/RepositoryStorageManager",
+            "params":{
+                "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}",
+                "importedRepositoriesSourceCodeDirPath": "{{myServicesManagerImportedSourceCodeDirPath}}",
+                "repositoryStorageFilePath": "{{repositoryStorageFilePath}}"
+            },
+            "bound-params":{
+                "extractTarGzLib":"@/extract-tar-gz.lib",
+                "loadMetatadaDirLib": "@/load-metatada-dir.lib",
+                "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",
+                "jsonFileUtilitiesLib": "@/json-file-utilities.lib"
+            }
+        }
+    ],
+    "endpoints": [
+        {
+            "dependency": "@/server-manager.webservice/endpoint-group",
+            "bound-params":{
+               "serverServiceForController":"@@/server-service",
+               "serverService": "@@/server-service"
+            }
+        },
+        {
+            "dependency": "@/my-services.webservice/endpoint-group",
+            "bound-params":{
+                "serverService": "@@/server-service",
+                "myServicesManagerService": "@@/my-services-manager-service"
+            },
+            "params":{
+                "needsAuth": true
+            }
+        }
+    ]
+}
