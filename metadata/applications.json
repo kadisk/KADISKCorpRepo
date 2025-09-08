@@ -28,5 +28,11 @@
         "executable":"kadisk-domain-router-proxy",
         "packageNamespace":"VirtualDesk.Module/Applications.layer/domain-router-proxy.app",
         "supervisorSocketFileName":"kadisk-domain-router-proxy.sock"
+    },
+    {
+        "appType":"APP",
+        "executable":"my-services-manager",
+        "packageNamespace":"VirtualDesk.Module/Applications.layer/my-services-manager.app",
+        "supervisorSocketFileName":"my-services-manager.sock"
     }
 ]
