@@ -107,9 +107,6 @@ const DocumentationConfigs = {
 			"executor":{
 				icon: terminal2Icon,
 			},
-			"mylauncher":{
-				icon: appWindowIcon
-			},
 			"super-dash":{
 				icon: appWindowIcon
 			},
