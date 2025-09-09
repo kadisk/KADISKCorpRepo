@@ -1,14 +1,13 @@
 {
     "params" : [
-        "port", 
+        "socket", 
         "serverName",
         "repositoryStorageFilePath",
         "serviceStorageFilePath",
         "myServicesManagerImportedSourceCodeDirPath",
         "myServicesInstanceDataDirPath",
         "installDataDirPath",
-        "ecosystemDefaultsFileRelativePath",
-        "secretKey"
+        "ecosystemDefaultsFileRelativePath"
     ],
     "services": [
         {
@@ -16,17 +15,7 @@
             "dependency": "@/server-manager.service/services/HTTPServerService",
             "params":{
                 "name":"{{serverName}}",
-                "port": "{{port}}"
-            },
-            "bound-params":{
-                "authenticationService": "@@/jwt-authentication-service"
-            }
-        },
-        {
-            "namespace": "@@/jwt-authentication-service",
-            "dependency": "@/server-manager.service/services/JWTAuthenticationService",
-            "params":{
-                "secretKey":"{{secretKey}}"
+                "port": "{{socket}}"
             }
         },
         {
