@@ -1,0 +1,305 @@
+{
+	"name": "ServiceManagerInterface",
+	"endpoints": [
+		{
+			"path": "/provisioned-services",
+			"method": "GET",
+			"summary": "ListProvisionedServices",
+			"parameters": [
+				{
+					"name": "userId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/data",
+			"method": "GET",
+			"summary": "GetServiceData",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/image-build-history",
+			"method": "GET",
+			"summary": "ListImageBuildHistory",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/instances",
+			"method": "GET",
+			"summary": "ListInstances",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/containers",
+			"method": "GET",
+			"summary": "ListContainers",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/instance-list/:serviceId",
+			"method": "WS",
+			"summary": "InstanceListChange",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "path",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/container-list/:serviceId",
+			"method": "WS",
+			"summary": "ContainerListChange",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "path",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/image-build-history-list/:serviceId",
+			"method": "WS",
+			"summary": "ImageBuildHistoryListChange",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "path",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/start",
+			"method": "POST",
+			"summary": "StartService",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "body",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/stop",
+			"method": "POST",
+			"summary": "StopService",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "body",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/status",
+			"method": "GET",
+			"summary": "GetServiceStatus",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"summary": "ServicesStatusChange",
+			"method": "WS",
+			"path": "/services/status-change"
+		},
+		{
+			"path": "/service/networks-settings",
+			"method": "GET",
+			"summary": "GetNetworksSettings",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/instance/startup-params",
+			"method": "GET",
+			"summary": "GetInstanceStartupParamsData",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/instance/startup-params-schema",
+			"method": "GET",
+			"summary": "GetInstanceStartupParamsSchema",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/instance/ports",
+			"method": "GET",
+			"summary": "GetInstancePortsData",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/ports",
+			"method": "POST",
+			"summary": "UpdateServicePorts",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "body",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "ports",
+					"type": "json",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/startup-params",
+			"method": "POST",
+			"summary": "UpdateServiceStartupParams",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "body",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "startupParams",
+					"type": "json",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/service/instance/network-mode",
+			"method": "GET",
+			"summary": "GetNetworkModeData",
+			"parameters": [
+				{
+					"name": "serviceId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/provision-service/package",
+			"method": "POST",
+			"summary":"ProvisionService",
+			"parameters": [
+				{
+					"in": "body",
+					"name": "username",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "packageId",
+					"type": "number",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "serviceName",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "serviceDescription",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "startupParams",
+					"type": "json",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "ports",
+					"type": "json",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "networkmode",
+					"type": "string",
+					"required": true
+				}
+			]
+		}
+	]
+}
