@@ -1,10 +1,10 @@
 {
-    "socket"                                               :"/home/kadisk/EcosystemData/sockets/my-services-manager.app.sock",
-    "serverName"                                           : "MyServicesManagerAppInstance",
-    "repositoryStorageFilePath"                            : "~/virtual-desk-state/local-databases/repository-storage-manager-service.sqlite",
-    "serviceStorageFilePath"                               : "~/virtual-desk-state/local-databases/my-services-manager-service.sqlite",
-    "myServicesManagerImportedSourceCodeDirPath"           : "~/virtual-desk-state/local-app-data/my-services-imported-repositories",
-    "myServicesInstanceDataDirPath"                        : "~/virtual-desk-state/local-app-data/my-services-instance-data",
-    "installDataDirPath"                                   : "~/EcosystemData",
-    "ecosystemDefaultsFileRelatviePath"                    : "./config-files/ecosystem-defaults.json"
+    "socket"                                     : "/home/kadisk/EcosystemData/sockets/my-services-manager.app.sock",
+    "serverName"                                 : "MyServicesManagerAppInstance",
+    "repositoryStorageFilePath"                  : "~/virtual-desk-state/local-databases/repository-storage-manager-service.sqlite",
+    "serviceStorageFilePath"                     : "~/virtual-desk-state/local-databases/my-services-manager-service.sqlite",
+    "myServicesManagerImportedSourceCodeDirPath" : "~/virtual-desk-state/local-app-data/my-services-imported-repositories",
+    "myServicesInstanceDataDirPath"              : "~/virtual-desk-state/local-app-data/my-services-instance-data",
+    "installDataDirPath"                         : "~/EcosystemData",
+    "ecosystemDefaultsFileRelatviePath"          : "./config-files/ecosystem-defaults.json"
 }

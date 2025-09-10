@@ -10,15 +10,15 @@
         "instanceMonitoringManagerServiceStorageFilePath",
         "myWorkspaceManagerServiceStorageFilePath",
         "repositoryStorageFilePath",
-        "serviceStorageFilePath",
         "myWorkspaceRepositoriesSourceCodeDirPath",
         "myServicesManagerImportedSourceCodeDirPath",
         "myServicesRepositoriesUploadDirPath",
-        "myServicesInstanceDataDirPath",
         "myWorkbenchRepositoriesUploadDirPath",
         "installDataDirPath",
         "ecosystemDefaultsFileRelativePath",
-        "secretKey"
+        "secretKey",
+        "myServiceManagerSocketPath",
+        "myServiceManagerUrl"
     ],
     "services": [
         {
@@ -90,18 +90,6 @@
         {
             "namespace": "@@/container-manager-service",
             "dependency": "@/container-manager.service/services/ContainerManager"
-        },
-        {
-            "namespace": "@@/my-services-manager-service",
-            "dependency": "@/my-services.service/services/MyServicesManager",
-            "bound-params":{
-                "containerManagerService":"@@/container-manager-service",
-                "repositoryStorageManagerService": "@@/repository-storage-manager-service"
-            },
-            "params":{
-                "serviceStorageFilePath": "{{serviceStorageFilePath}}",
-                "instanceDataDirPath": "{{myServicesInstanceDataDirPath}}"
-            }
         },
         {
             "namespace": "@@/repository-storage-manager-service",
@@ -203,9 +191,11 @@
             "dependency": "@/my-services.webservice/endpoint-group",
             "bound-params":{
                 "serverService": "@@/server-service",
-                "myServicesManagerService": "@@/my-services-manager-service"
+                "commandExecutorLib": "@/command-executor.lib"
             },
             "params":{
+                "myServiceManagerSocketPath":"{{myServiceManagerSocketPath}}",
+                "myServiceManagerUrl":"{{myServiceManagerUrl}}",
                 "needsAuth": true
             }
         },

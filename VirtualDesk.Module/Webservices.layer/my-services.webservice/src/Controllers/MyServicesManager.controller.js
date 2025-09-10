@@ -1,97 +1,58 @@
 const MyServicesManagerController = (params) => {
 
     const {
-        myServicesManagerService
+        myServiceManagerSocketPath,
+        myServiceManagerUrl,
+        commandExecutorLib
     } = params
-
-    const ListProvisionedServices = ({ authenticationData }) => {
-        const { userId } = authenticationData
-        return myServicesManagerService.ListProvisionedServices(userId)
-    }
-
-    const GetServiceData = (serviceId, { authenticationData }) => {
-        return myServicesManagerService.GetServiceData(serviceId)
-    }
-
-    const ListImageBuildHistory = (serviceId, { authenticationData }) => {
-        return myServicesManagerService.ListImageBuildHistory(serviceId)
-    }
-
-    const ListInstances = (serviceId, { authenticationData }) => {
-        return myServicesManagerService.ListInstances(serviceId)
-    }
-
-    const ListContainers = (serviceId, { authenticationData }) => {
-        return myServicesManagerService.ListContainers(serviceId)
-    }
     
-    const ServicesStatusChange = async (websocket, { authenticationData }) => {
-        myServicesManagerService
-            .onChangeServiceStatus(({ serviceId, status }) => {
-                websocket.send(JSON.stringify({ serviceId, status }))
-            })
+    const CommandExecutor = commandExecutorLib.require("CommandExecutor")
+
+    const ServiceManagerCommand = async (CommandFunction) => {
+        const APICommandFunction = async ({ APIs }) => {
+            const API = APIs
+            .MyServicesManagerAppInstance
+            .ServiceManagerInterface
+            return await CommandFunction(API)
+        }
+
+        return await CommandExecutor({
+            serverResourceEndpointPath: myServiceManagerUrl,
+            mainApplicationSocketPath: myServiceManagerSocketPath,
+            CommandFunction: APICommandFunction
+        })
     }
 
-    const StartService = ( serviceId ) => 
-        myServicesManagerService.StartService(serviceId)
-
-    const StopService  = ( serviceId ) =>
-        myServicesManagerService.StopService(serviceId)
-
-    const GetServiceStatus = (serviceId, { authenticationData }) => {
-        return myServicesManagerService.GetServiceStatus(serviceId) 
+    const ServiceManagerSocketBridgeCommand = (websocket, GetSocket) => {
+        ServiceManagerCommand((API) => {
+            const socket =  GetSocket(API)
+            socket.onmessage = (event) => {
+                const {data} = event
+                websocket.send(data)
+            }
+        })
     }
 
-    const GetNetworksSettings = (serviceId, { authenticationData }) => {
-        return myServicesManagerService.GetNetworksSettings(serviceId)
-    }
+    const ListProvisionedServices        = ( { authenticationData:{ userId } } ) => ServiceManagerCommand((API) => API.ListProvisionedServices({ userId }))
+    const GetServiceData                 = ( serviceId )                         => ServiceManagerCommand((API) => API.GetServiceData({ serviceId }))
+    const ListImageBuildHistory          = ( serviceId )                         => ServiceManagerCommand((API) => API.ListImageBuildHistory({ serviceId }))
+    const ListInstances                  = ( serviceId )                         => ServiceManagerCommand((API) => API.ListInstances({ serviceId }))
+    const ListContainers                 = ( serviceId )                         => ServiceManagerCommand((API) => API.ListContainers({ serviceId }))
+    const StartService                   = ( serviceId )                         => ServiceManagerCommand((API) => API.StartService({ serviceId }))
+    const StopService                    = ( serviceId )                         => ServiceManagerCommand((API) => API.StopService({ serviceId }))
+    const GetServiceStatus               = ( serviceId )                         => ServiceManagerCommand((API) => API.GetServiceStatus({ serviceId }))
+    const GetNetworksSettings            = ( serviceId )                         => ServiceManagerCommand((API) => API.GetNetworksSettings({ serviceId }))
+    const GetInstanceStartupParamsData   = ( serviceId )                         => ServiceManagerCommand((API) => API.GetInstanceStartupParamsData({ serviceId }))
+    const GetInstanceStartupParamsSchema = ( serviceId )                         => ServiceManagerCommand((API) => API.GetInstanceStartupParamsSchema({ serviceId }))
+    const GetInstancePortsData           = ( serviceId )                         => ServiceManagerCommand((API) => API.GetInstancePortsData({ serviceId }))
+    const GetNetworkModeData             = ( serviceId )                         => ServiceManagerCommand((API) => API.GetNetworkModeData(serviceId))
+    const UpdateServicePorts             = ({ serviceId, ports })                => ServiceManagerCommand((API) => API.UpdateServicePorts({ serviceId, ports }))
+    const UpdateServiceStartupParams     = ({ serviceId, startupParams })        => ServiceManagerCommand((API) => API.UpdateServiceStartupParams({ serviceId, startupParams }))
 
-    const GetInstanceStartupParamsData = (serviceId, { authenticationData }) => {
-        return myServicesManagerService.GetInstanceStartupParamsData(serviceId)
-    }
-
-    const GetInstanceStartupParamsSchema = (serviceId, { authenticationData }) => {
-        return myServicesManagerService.GetInstanceStartupParamsSchema(serviceId)
-    }
-
-    const GetInstancePortsData = (serviceId, { authenticationData }) => {
-        return myServicesManagerService.GetInstancePortsData(serviceId)
-    }
-
-    const GetNetworkModeData = (serviceId, { authenticationData }) => {
-        return myServicesManagerService.GetNetworkModeData(serviceId)
-    }
-
-    const UpdateServicePorts = async ({ serviceId, ports }, { authenticationData }) => {
-        const { userId, username } = authenticationData 
-        await myServicesManagerService.UpdateServicePorts({ serviceId, ports })
-    }
-
-    const UpdateServiceStartupParams = async ({ serviceId, startupParams }, { authenticationData }) => {
-        const { userId, username } = authenticationData 
-        await myServicesManagerService.UpdateServiceStartupParams({ serviceId, startupParams })
-    }
-
-    const InstanceListChange = async (websocket, serviceId, { authenticationData }) => {
-        myServicesManagerService
-            .onChangeInstanceListData(serviceId, (instanceList) => {
-                websocket.send(JSON.stringify(instanceList))
-            })
-    }
-
-    const ContainerListChange = async (websocket, serviceId, { authenticationData }) => {
-        myServicesManagerService
-            .onChangeContainerListData(serviceId, (containerList) => {
-                websocket.send(JSON.stringify(containerList))
-            })
-    }
-
-    const ImageBuildHistoryListChange = async (websocket, serviceId, { authenticationData }) => {
-        myServicesManagerService
-            .onChangeImageBuildHistoryListData(serviceId, (imageBuildHistoryList) => {
-                websocket.send(JSON.stringify(imageBuildHistoryList))
-            })
-    }
+    const ServicesStatusChange        = (websocket)            => ServiceManagerSocketBridgeCommand(websocket, (API) => API.ServicesStatusChange())
+    const InstanceListChange          = (websocket, serviceId) => ServiceManagerSocketBridgeCommand(websocket, (API) => API.InstanceListChange({serviceId}))
+    const ContainerListChange         = (websocket, serviceId) => ServiceManagerSocketBridgeCommand(websocket, (API) => API.ContainerListChange({serviceId}))
+    const ImageBuildHistoryListChange = (websocket, serviceId) => ServiceManagerSocketBridgeCommand(websocket, (API) => API.ImageBuildHistoryListChange({serviceId}))
 
     const ProvisionService = async ({
         packageId,
@@ -103,8 +64,8 @@ const MyServicesManagerController = (params) => {
     }, { authenticationData }) => {
          const { userId, username } = authenticationData
         
-        await myServicesManagerService
-            .ProvisionService({
+        await ServiceManagerCommand((API) => 
+            API.ProvisionService({
                 username,
                 packageId,
                 serviceName,
@@ -112,7 +73,7 @@ const MyServicesManagerController = (params) => {
                 startupParams, 
                 ports,
                 networkmode
-            })
+            }))
     }
 
     const controllerServiceObject = {

@@ -1,9 +1,9 @@
 {
     "bound-params":[
         "serverService",
-        "myServicesManagerService"
+        "commandExecutorLib"
     ],
-    "params": [ "needsAuth"],
+    "params": [ "needsAuth", "myServiceManagerSocketPath", "myServiceManagerUrl"],
     "endpoints": [
         {
             "url": "/my-service-manager",
@@ -11,12 +11,16 @@
             "params": {
                 "api-template": "APIs/MyServicesManager.api.json",
                 "controller": "Controllers/MyServicesManager.controller",
-                "needsAuth": "needsAuth"
+                "needsAuth": "needsAuth",
+                "controller-params": {
+                    "myServiceManagerSocketPath": "myServiceManagerSocketPath",
+                    "myServiceManagerUrl": "myServiceManagerUrl"
+                }
             },
             "bound-params": {
                 "serverService":"serverService",
                 "controller-params":{
-                    "myServicesManagerService":"myServicesManagerService"
+                    "commandExecutorLib": "commandExecutorLib"
                 }
             }
         }
