@@ -11,7 +11,7 @@ const MyServicesManagerController = (params) => {
     const ServiceManagerCommand = async (CommandFunction) => {
         const APICommandFunction = async ({ APIs }) => {
             const API = APIs
-            .MyServicesManagerAppInstance
+            .ServiceOrchestratorAppInstance
             .ServiceManagerInterface
             return await CommandFunction(API)
         }

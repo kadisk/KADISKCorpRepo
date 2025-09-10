@@ -5,7 +5,7 @@
         "repositoryStorageFilePath",
         "serviceStorageFilePath",
         "myServicesManagerImportedSourceCodeDirPath",
-        "myServicesInstanceDataDirPath",
+        "servicesInstanceDataDirPath",
         "installDataDirPath",
         "ecosystemDefaultsFileRelativePath"
     ],
@@ -38,7 +38,7 @@
             },
             "params":{
                 "serviceStorageFilePath": "{{serviceStorageFilePath}}",
-                "instanceDataDirPath": "{{myServicesInstanceDataDirPath}}"
+                "instanceDataDirPath": "{{servicesInstanceDataDirPath}}"
             }
         },
         {

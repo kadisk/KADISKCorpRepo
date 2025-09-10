@@ -188,7 +188,7 @@
             }
         },
         {
-            "dependency": "@/my-services.webservice/endpoint-group",
+            "dependency": "@/service-orchestrator.webservice/endpoint-group",
             "bound-params":{
                 "serverService": "@@/server-service",
                 "commandExecutorLib": "@/command-executor.lib"
