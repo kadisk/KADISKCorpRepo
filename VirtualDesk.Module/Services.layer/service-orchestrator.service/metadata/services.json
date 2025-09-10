@@ -1,7 +1,7 @@
 [
     {
-        "namespace": "MyServicesManager",
-        "path": "Managers/MyServices.manager",
+        "namespace": "ServiceOrchestratorManager",
+        "path": "Managers/ServiceOrchestratorManager.manager",
         "params": [ 
             "serviceStorageFilePath", 
             "instanceDataDirPath"

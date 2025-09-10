@@ -30,8 +30,8 @@
             "dependency": "@/container-manager.service/services/ContainerManager"
         },
         {
-            "namespace": "@@/my-services-manager-service",
-            "dependency": "@/my-services.service/services/MyServicesManager",
+            "namespace": "@@/service-orchestrator-service",
+            "dependency": "@/service-orchestrator.service/services/ServiceOrchestratorManager",
             "bound-params":{
                 "containerManagerService":"@@/container-manager-service",
                 "repositoryStorageManagerService": "@@/repository-storage-manager-service"
@@ -69,7 +69,7 @@
             "dependency": "@//endpoint-group",
             "bound-params":{
                 "serverService": "@@/server-service",
-                "myServicesManagerService": "@@/my-services-manager-service"
+                "myServicesManagerService": "@@/service-orchestrator-service"
             },
             "params":{
                 "needsAuth": true

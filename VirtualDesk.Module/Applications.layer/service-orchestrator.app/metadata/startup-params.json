@@ -2,7 +2,7 @@
     "socket"                                     : "/home/kadisk/EcosystemData/sockets/service-orchestrator.app.sock",
     "serverName"                                 : "ServiceOrchestratorAppInstance",
     "repositoryStorageFilePath"                  : "~/virtual-desk-state/local-databases/repository-storage-manager-service.sqlite",
-    "serviceStorageFilePath"                     : "~/virtual-desk-state/local-databases/my-services-manager-service.sqlite",
+    "serviceStorageFilePath"                     : "~/virtual-desk-state/local-databases/service-orchestrator-service.sqlite",
     "myServicesManagerImportedSourceCodeDirPath" : "~/virtual-desk-state/local-app-data/my-services-imported-repositories",
     "servicesInstanceDataDirPath"                : "~/virtual-desk-state/local-app-data/services-instance-data",
     "installDataDirPath"                         : "~/EcosystemData",

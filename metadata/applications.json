@@ -31,8 +31,8 @@
     },
     {
         "appType":"APP",
-        "executable":"my-services-manager",
+        "executable":"service-orchestrator",
         "packageNamespace":"VirtualDesk.Module/Applications.layer/service-orchestrator.app",
-        "supervisorSocketFileName":"my-services-manager.sock"
+        "supervisorSocketFileName":"service-orchestrator.sock"
     }
 ]

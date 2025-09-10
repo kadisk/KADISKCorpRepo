@@ -13,7 +13,7 @@ const RequestTypes = require("../Helpers/Request.types")
 
 const CreateServiceHandler = require("../Helpers/CreateServiceHandler")
 
-const MyServicesManager = (params) => {
+const ServiceOrchestratorManager = (params) => {
 
     const {
         onReady,
@@ -412,4 +412,4 @@ const MyServicesManager = (params) => {
 
 }
 
-module.exports = MyServicesManager
+module.exports = ServiceOrchestratorManager
