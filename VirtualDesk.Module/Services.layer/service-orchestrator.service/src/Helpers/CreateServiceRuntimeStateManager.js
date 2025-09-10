@@ -78,18 +78,21 @@ const CreateServiceRuntimeStateManager = () => {
 
         switch (status) {
             case CREATED:
-                if(serviceData.serviceName)
+                if(serviceData.serviceName){
+                    debugger
                     _RequestData(RequestTypes.BUILD_NEW_IMAGE, {
                         serviceId,
                         instanceId,
-                        serviceName        : serviceData.serviceName,
-                        originPackageId    : serviceData.originPackageId,
-                        repositoryCodePath : serviceData.repositoryCodePath,
-                        startupParams      : data.startupParams,
-                        networkmode        : data.networkmode,
-                        ports              : data.ports
+                        serviceName               : serviceData.serviceName,
+                        originPackageId           : serviceData.originPackageId,
+                        originRepositoryCodePath  : serviceData.originRepositoryCodePath,
+                        originRepositoryNamespace : serviceData.originRepositoryNamespace,
+                        originPackagePath         : serviceData.originPackagePath,
+                        startupParams             : data.startupParams,
+                        networkmode               : data.networkmode,
+                        ports                     : data.ports
                     })
-                else setImmediate(() => _ProcessInstanceStatusChange(instanceId))
+                } else setImmediate(() => _ProcessInstanceStatusChange(instanceId))
                 break
             case WAITING:
                 _RequestData(RequestTypes.CONTAINER_DATA, { serviceId, instanceId })
@@ -289,10 +292,16 @@ const CreateServiceRuntimeStateManager = () => {
                     const serviceData = await onRequestData(requestType, { serviceId: requestData.serviceId })
 
                     UpdateData(SERVICE_STATE_GROUP, requestData.serviceId, { 
-                        serviceName        : serviceData.serviceName,
-                        serviceDescription : serviceData.serviceDescription,
-                        repositoryCodePath : serviceData.instanceRepositoryCodePath,
-                        originPackageId    : serviceData.packageId,
+                        serviceName               : serviceData.serviceName,
+                        serviceDescription        : serviceData.serviceDescription,
+                        repositoryCodePath        : serviceData.instanceRepositoryCodePath,
+                        originRepositoryId        : serviceData.originRepositoryId,
+                        originRepositoryNamespace : serviceData.originRepositoryNamespace,
+                        originRepositoryCodePath  : serviceData.originRepositoryCodePath,   
+                        originPackageId           : serviceData.originPackageId,
+                        originPackageName         : serviceData.originPackageName,
+                        originPackageType         : serviceData.originPackageType,
+                        originPackagePath         : serviceData.originPackagePath,
                     })
                     ChangeStatus(SERVICE_STATE_GROUP, requestData.serviceId, requestData.nextStatus)
                     break

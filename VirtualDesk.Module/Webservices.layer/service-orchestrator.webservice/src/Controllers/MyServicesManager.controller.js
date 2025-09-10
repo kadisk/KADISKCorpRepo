@@ -1,6 +1,7 @@
 const MyServicesManagerController = (params) => {
 
     const {
+        repositoryStorageManagerService,
         myServiceManagerSocketPath,
         myServiceManagerUrl,
         commandExecutorLib
@@ -33,8 +34,29 @@ const MyServicesManagerController = (params) => {
         })
     }
 
-    const ListProvisionedServices        = ( { authenticationData:{ userId } } ) => ServiceManagerCommand((API) => API.ListProvisionedServices({ userId }))
-    const GetServiceData                 = ( serviceId )                         => ServiceManagerCommand((API) => API.GetServiceData({ serviceId }))
+    const ListProvisionedServices = ( { authenticationData:{ userId } } ) => {
+        return ServiceManagerCommand(async (API) => {
+            const repositories = await repositoryStorageManagerService.ListRepositoriesByUserId(userId)
+            const repositoryIds = repositories.map(({id}) => id)
+            return API.ListServicesByRepositoryIds({ repositoryIds })
+        })
+    }
+
+    const GetServiceData = ( serviceId ) => {
+        return ServiceManagerCommand(async (API) => {
+            const packageData = await repositoryStorageManagerService.GetPackageById(originPackageId)
+            const serviceInfo = await API.GetService({ serviceId })
+            return {
+                ...serviceInfo,
+                packageId           : packageData.packageId,
+                packageName         : packageData.packageName,
+                packageType         : packageData.packageType,
+                repositoryNamespace : packageData.repositoryNamespace,
+                repositoryId        : packageData.repositoryId
+            }
+        })
+    }
+
     const ListImageBuildHistory          = ( serviceId )                         => ServiceManagerCommand((API) => API.ListImageBuildHistory({ serviceId }))
     const ListInstances                  = ( serviceId )                         => ServiceManagerCommand((API) => API.ListInstances({ serviceId }))
     const ListContainers                 = ( serviceId )                         => ServiceManagerCommand((API) => API.ListContainers({ serviceId }))
@@ -63,13 +85,31 @@ const MyServicesManagerController = (params) => {
         networkmode
     }, { authenticationData }) => {
          const { userId, username } = authenticationData
+
+        const packageData = await repositoryStorageManagerService.GetPackageById(packageId)
+        const { 
+            repositoryId,
+            repositoryNamespace,
+            repositoryCodePath,
+            packageName,
+            packageType,
+            packagePath
+        } = packageData
+
+        
         
         await ServiceManagerCommand((API) => 
             API.ProvisionService({
                 username,
-                packageId,
                 serviceName,
                 serviceDescription,
+                originRepositoryId: repositoryId,
+                originRepositoryNamespace: repositoryNamespace,
+                originRepositoryCodePath: repositoryCodePath,
+                originPackageId: packageId,
+                originPackageName: packageName,
+                originPackageType: packageType,
+                originPackagePath: packagePath,
                 startupParams, 
                 ports,
                 networkmode

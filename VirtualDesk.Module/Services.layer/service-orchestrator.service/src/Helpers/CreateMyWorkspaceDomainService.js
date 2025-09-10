@@ -46,17 +46,27 @@ const CreateMyWorkspaceDomainService = ({
     const RegisterServiceProvisioning = ({ 
         serviceName,
         serviceDescription,
+        instanceRepositoryCodePath,
         originRepositoryId,
+        originRepositoryNamespace,
+        originRepositoryCodePath,
         originPackageId,
-        instanceRepositoryCodePath
+        originPackageName,
+        originPackageType,
+        originPackagePath
     }) => 
         ServiceModel
             .create({ 
                 serviceName,
                 serviceDescription,
+                instanceRepositoryCodePath,
                 originRepositoryId,
+                originRepositoryNamespace,
+                originRepositoryCodePath,
                 originPackageId,
-                instanceRepositoryCodePath
+                originPackageName,
+                originPackageType,
+                originPackagePath
             })
 
     const RegisterBuildedImage = ({

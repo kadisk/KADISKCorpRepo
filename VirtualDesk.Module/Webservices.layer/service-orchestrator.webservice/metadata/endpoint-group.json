@@ -1,7 +1,8 @@
 {
     "bound-params":[
         "serverService",
-        "commandExecutorLib"
+        "commandExecutorLib",
+        "repositoryStorageManagerService"
     ],
     "params": [ "needsAuth", "myServiceManagerSocketPath", "myServiceManagerUrl"],
     "endpoints": [
@@ -20,6 +21,7 @@
             "bound-params": {
                 "serverService":"serverService",
                 "controller-params":{
+                    "repositoryStorageManagerService": "repositoryStorageManagerService",
                     "commandExecutorLib": "commandExecutorLib"
                 }
             }

@@ -3,13 +3,13 @@
 	"endpoints": [
 		{
 			"path": "/provisioned-services",
-			"method": "GET",
-			"summary": "ListProvisionedServices",
+			"method": "POST",
+			"summary": "ListServicesByRepositoryIds",
 			"parameters": [
 				{
-					"name": "userId",
-					"in": "query",
-					"type": "string",
+					"name": "repositoryIds",
+					"in": "body",
+					"type": "json",
 					"required": true
 				}
 			]
@@ -17,7 +17,7 @@
 		{
 			"path": "/service/data",
 			"method": "GET",
-			"summary": "GetServiceData",
+			"summary": "GetService",
 			"parameters": [
 				{
 					"name": "serviceId",
@@ -265,12 +265,6 @@
 				},
 				{
 					"in": "body",
-					"name": "packageId",
-					"type": "number",
-					"required": true
-				},
-				{
-					"in": "body",
 					"name": "serviceName",
 					"type": "string",
 					"required": true
@@ -278,6 +272,48 @@
 				{
 					"in": "body",
 					"name": "serviceDescription",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "originRepositoryId",
+					"type": "number",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "originRepositoryNamespace",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "originRepositoryCodePath",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "originPackageId",
+					"type": "number",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "originPackageName",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "originPackageType",
+					"type": "string",
+					"required": true
+				},
+				{
+					"in": "body",
+					"name": "originPackagePath",
 					"type": "string",
 					"required": true
 				},

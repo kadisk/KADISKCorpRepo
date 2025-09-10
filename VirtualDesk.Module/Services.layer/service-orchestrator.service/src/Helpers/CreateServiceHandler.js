@@ -7,7 +7,6 @@ const GetContextTarStream = require("./GetContextTarStream")
 const CreateServiceHandler = ({
     absolutInstanceDataDirPath,
     MyWorkspaceDomainService,
-    repositoryStorageManagerService,
     BuildImageFromDockerfileString,
     CreateNewContainer
 }) => {
@@ -42,16 +41,20 @@ const CreateServiceHandler = ({
 
     const CreateService = async ({
         username,
-        packageId,
         serviceName,
-        serviceDescription
+        serviceDescription,
+        originRepositoryId,
+        originRepositoryNamespace,
+        originRepositoryCodePath,
+        originPackageId,
+        originPackageName,
+        originPackageType,
+        originPackagePath
     }) => {
-        const packageData = await repositoryStorageManagerService.GetPackageById(packageId)
-        const { repositoryCodePath } = packageData
 
         const instanceRepositoryCodePath = _MountPathInstanceRepositoriesSourceCodeDirPath({
             username, 
-            repositoryNamespace: packageData.repositoryNamespace,
+            repositoryNamespace: originRepositoryNamespace,
             serviceDataDirName:serviceName
         })
 
@@ -59,17 +62,18 @@ const CreateServiceHandler = ({
             .RegisterServiceProvisioning({
                 serviceName,
                 serviceDescription,
-                originRepositoryId: packageData.repositoryId,
-                originPackageId: packageData.packageId,
-                instanceRepositoryCodePath
+                instanceRepositoryCodePath,
+                originRepositoryId,
+                originRepositoryNamespace,
+                originRepositoryCodePath,
+                originPackageId,
+                originPackageName,
+                originPackageType,
+                originPackagePath
         })
-
-        await CopyDirRepository(repositoryCodePath, instanceRepositoryCodePath)
-
+        await CopyDirRepository(originRepositoryCodePath, instanceRepositoryCodePath)
         return serviceData
-
     }
-
 
     const CreateInstance = async({
         serviceId,

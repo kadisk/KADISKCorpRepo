@@ -2,12 +2,8 @@
     "params" : [
         "socket", 
         "serverName",
-        "repositoryStorageFilePath",
         "serviceStorageFilePath",
-        "myServicesManagerImportedSourceCodeDirPath",
-        "servicesInstanceDataDirPath",
-        "installDataDirPath",
-        "ecosystemDefaultsFileRelativePath"
+        "servicesInstanceDataDirPath"
     ],
     "services": [
         {
@@ -19,13 +15,6 @@
             }
         },
         {
-            "namespace": "@@/ecosystemdata-handler-service",
-            "dependency": "@/ecosystem-control-panel.service/services/EcosystemDataHandlerService",
-            "params":{
-                "installDataDirPath": "{{installDataDirPath}}"
-            }
-        },
-        {
             "namespace": "@@/container-manager-service",
             "dependency": "@/container-manager.service/services/ContainerManager"
         },
@@ -33,27 +22,11 @@
             "namespace": "@@/service-orchestrator-service",
             "dependency": "@/service-orchestrator.service/services/ServiceOrchestratorManager",
             "bound-params":{
-                "containerManagerService":"@@/container-manager-service",
-                "repositoryStorageManagerService": "@@/repository-storage-manager-service"
+                "containerManagerService":"@@/container-manager-service"
             },
             "params":{
                 "serviceStorageFilePath": "{{serviceStorageFilePath}}",
                 "instanceDataDirPath": "{{servicesInstanceDataDirPath}}"
-            }
-        },
-        {
-            "namespace": "@@/repository-storage-manager-service",
-            "dependency": "@/repository-storage-manager.service/services/RepositoryStorageManager",
-            "params":{
-                "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}",
-                "importedRepositoriesSourceCodeDirPath": "{{myServicesManagerImportedSourceCodeDirPath}}",
-                "repositoryStorageFilePath": "{{repositoryStorageFilePath}}"
-            },
-            "bound-params":{
-                "extractTarGzLib":"@/extract-tar-gz.lib",
-                "loadMetatadaDirLib": "@/load-metatada-dir.lib",
-                "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",
-                "jsonFileUtilitiesLib": "@/json-file-utilities.lib"
             }
         }
     ],

@@ -6,8 +6,8 @@ const ServiceManagerInterfaceController = (params) => {
 
 
     const {
-        ListProvisionedServices,
-        GetServiceData,
+        ListServicesByRepositoryIds,
+        GetService,
         GetNetworksSettings,
         ListImageBuildHistory,
         ListInstances,
@@ -56,8 +56,8 @@ const ServiceManagerInterfaceController = (params) => {
 
     const controllerServiceObject = {
         controllerName: "ServiceManagerInterfaceController",
-        ListProvisionedServices,
-        GetServiceData,
+        ListServicesByRepositoryIds,
+        GetService,
         GetNetworksSettings,
         ListImageBuildHistory,
         ListInstances,

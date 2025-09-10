@@ -19,8 +19,7 @@ const ServiceOrchestratorManager = (params) => {
         onReady,
         serviceStorageFilePath,
         instanceDataDirPath,
-        containerManagerService,
-        repositoryStorageManagerService
+        containerManagerService
     } = params
 
     const absolutServiceStorageFilePath = ConvertPathToAbsolutPath(serviceStorageFilePath)
@@ -83,7 +82,6 @@ const ServiceOrchestratorManager = (params) => {
         CreateInstance
     } = CreateServiceHandler({
         absolutInstanceDataDirPath,
-        repositoryStorageManagerService,
         MyWorkspaceDomainService,
         BuildImageFromDockerfileString,
         CreateNewContainer
@@ -151,7 +149,7 @@ const ServiceOrchestratorManager = (params) => {
                     await RemoveContainer(data.containerHashId)
                     break
                 case RequestTypes.SERVICE_DATA:
-                    const serviceData = await GetServiceData(data.serviceId)
+                    const serviceData = await GetService(data.serviceId)
                     return serviceData
                 case RequestTypes.CREATE_NEW_INSTANCE:
                     const instanceData = await CreateInstance({
@@ -163,12 +161,13 @@ const ServiceOrchestratorManager = (params) => {
                     return instanceData
                 case RequestTypes.BUILD_NEW_IMAGE:
                     const buildData = await _BuildImage({
-                        serviceName        : data.serviceName,
-                        serviceId          : data.serviceId,
-                        instanceId         : data.instanceId,
-                        originPackageId    : data.originPackageId,
-                        repositoryCodePath : data.repositoryCodePath,
-                        startupParams      : data.startupParams
+                        serviceName         : data.serviceName,
+                        serviceId           : data.serviceId,
+                        instanceId          : data.instanceId,
+                        repositoryNamespace : data.originRepositoryNamespace,
+                        packagePath         : data.originPackagePath,
+                        repositoryCodePath  : data.originRepositoryCodePath,
+                        startupParams       : data.startupParams
                     })
                     return buildData
                 case RequestTypes.CREATE_NEW_CONTAINER:
@@ -202,20 +201,19 @@ const ServiceOrchestratorManager = (params) => {
         serviceName,
         serviceId,
         instanceId,
-        originPackageId,
+        repositoryNamespace,
+        packagePath,
         repositoryCodePath,
         startupParams
     }) => {
 
-        const packageData = await repositoryStorageManagerService.GetPackageById(originPackageId)
-
-        const imageTagName = `ecosystem_${packageData.repositoryNamespace}_${packageData.packageName}-${packageData.packageType}:${serviceName}-${serviceId}`.toLowerCase()
+        const imageTagName = `ecosystem_${repositoryNamespace}:${serviceName}-${serviceId}`.toLowerCase()
 
         const buildData = await BuildImage({
                 imageTagName,
                 repositoryCodePath,
-                repositoryNamespace: packageData.repositoryNamespace,
-                packagePath: packageData.packagePath,
+                repositoryNamespace,
+                packagePath,
                 instanceId,
                 startupParams
             })
@@ -250,9 +248,15 @@ const ServiceOrchestratorManager = (params) => {
 
     const ProvisionService = async ({
         username,
-        packageId,
         serviceName,
         serviceDescription,
+        originRepositoryId,
+        originRepositoryNamespace,
+        originRepositoryCodePath,
+        originPackageId,
+        originPackageName,
+        originPackageType,
+        originPackagePath,
         startupParams,
         ports = [],
         networkmode= "bridge"
@@ -260,9 +264,15 @@ const ServiceOrchestratorManager = (params) => {
 
         const serviceData = await CreateService({
                 username,
-                packageId,
                 serviceName,
-                serviceDescription
+                serviceDescription,
+                originRepositoryId,
+                originRepositoryNamespace,
+                originRepositoryCodePath,
+                originPackageId,
+                originPackageName,
+                originPackageType,
+                originPackagePath
             })
 
         CreateServiceInStateManagement(serviceData.id, {
@@ -272,10 +282,7 @@ const ServiceOrchestratorManager = (params) => {
         })
     }
 
-    const ListProvisionedServices = async (userId) => {
-
-        const repositories = await repositoryStorageManagerService.ListRepositoriesByUserId(userId)
-        const repositoryIds = repositories.map(({id}) => id)
+    const ListServicesByRepositoryIds = async (repositoryIds) => {
 
         const servicesData = await MyWorkspaceDomainService.ListServicesByRepositoryIds(repositoryIds)
 
@@ -310,7 +317,7 @@ const ServiceOrchestratorManager = (params) => {
     }
 
 
-    const GetServiceData = async (serviceId) => {
+    const GetService = async (serviceId) => {
             
         const serviceData = await MyWorkspaceDomainService.GetServiceById(serviceId)
 
@@ -318,23 +325,29 @@ const ServiceOrchestratorManager = (params) => {
             serviceName,
             serviceDescription,
             appType,
+            instanceRepositoryCodePath,
+            originRepositoryId,
+            originRepositoryNamespace,
+            originRepositoryCodePath,
             originPackageId,
-            instanceRepositoryCodePath
+            originPackageName,
+            originPackageType,
+            originPackagePath
         } = serviceData
-        
-        const packageData = await repositoryStorageManagerService.GetPackageById(originPackageId)
 
         return {
             serviceId,
             serviceName,
             serviceDescription,
             appType,
-            packageId: packageData.packageId,
-            packageName: packageData.packageName,
-            packageType: packageData.packageType,
-            repositoryNamespace: packageData.repositoryNamespace,
-            repositoryId: packageData.repositoryId,
-            instanceRepositoryCodePath
+            instanceRepositoryCodePath,
+            originRepositoryId,
+            originRepositoryNamespace,
+            originRepositoryCodePath,
+            originPackageId,
+            originPackageName,
+            originPackageType,
+            originPackagePath
         }
 
     }
@@ -389,8 +402,8 @@ const ServiceOrchestratorManager = (params) => {
 
     return {
         ProvisionService,
-        ListProvisionedServices,
-        GetServiceData,
+        ListServicesByRepositoryIds,
+        GetService,
         ListInstances,
         ListContainers,
         ListImageBuildHistory,
