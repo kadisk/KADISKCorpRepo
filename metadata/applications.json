@@ -32,7 +32,7 @@
     {
         "appType":"APP",
         "executable":"my-services-manager",
-        "packageNamespace":"VirtualDesk.Module/Applications.layer/my-services-manager.app",
+        "packageNamespace":"VirtualDesk.Module/Applications.layer/service-orchestrator.app",
         "supervisorSocketFileName":"my-services-manager.sock"
     }
 ]
