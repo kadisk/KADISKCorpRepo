@@ -46,6 +46,13 @@
                "serverServiceForController":"@@/server-service",
                "serverService": "@@/server-service"
             }
+        },
+        {
+            "dependency": "@//endpoint-group",
+            "bound-params":{
+                "serverService": "@@/server-service",
+                "repositoryStorageManagerService": "@@/repository-storage-manager-service"
+            }
         }
     ]
 }

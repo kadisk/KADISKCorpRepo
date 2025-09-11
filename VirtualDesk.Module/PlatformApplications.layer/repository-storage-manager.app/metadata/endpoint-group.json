@@ -1,0 +1,22 @@
+{
+    "bound-params":[
+        "serverService",
+        "repositoryStorageManagerService"
+    ],
+    "endpoints": [
+        {
+            "url": "/repository-storage-manager",
+            "type": "controller",
+            "params": {
+                "api-template": "APIs/RepositoryStorageManager.api.json",
+                "controller": "Controllers/RepositoryStorageManager.controller"
+            },
+            "bound-params": {
+                "serverService":"serverService",
+                "controller-params":{
+                    "repositoryStorageManagerService":"repositoryStorageManagerService"
+                }
+            }
+        }  
+    ]
+}

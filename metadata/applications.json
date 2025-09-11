@@ -40,5 +40,14 @@
         "executable":"my-services",
         "packageNamespace":"VirtualDesk.Module/PlatformApplications.layer/my-service-manager.cli",
         "supervisorSocketFileName":"my-services.sock"
+    },
+    {
+        "appType":"APP",
+        "executable":"repository-storage-manager",
+        "packageNamespace":"VirtualDesk.Module/PlatformApplications.layer/repository-storage-manager.app",
+        "supervisorSocketFileName":"repository-storage-manager.sock"
     }
+
+
+    
 ]
