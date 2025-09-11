@@ -1,0 +1,46 @@
+{
+	"commands": [
+		{
+			"namespace": "ListServices",
+			"path": "Commands/ListServices.command",
+			"command": "list",
+			"description": "Lista todos os serviços provisionados"
+		},
+		{
+			"namespace": "GetServiceData",
+			"path": "Commands/GetServiceData.command",
+			"command": "service [serviceName]",
+			"description": "Mostra informações de um serviço espeficico"
+		},
+		{
+			"namespace": "StartService",
+			"path": "Commands/StartService.command",
+			"command": "start [serviceName]",
+			"description": "Iniciar um serviço parado"
+		},
+		{
+			"namespace": "StopService",
+			"path": "Commands/StopService.command",
+			"command": "stop [serviceName]",
+			"description": "Para um serviço que esta em execução"
+		},
+		{
+			"namespace": "ProvisionService",
+			"path": "Commands/ProvisionService.command",
+			"command": "provision",
+			"description": "Provisiona um novo serviço"
+		},
+		{
+			"namespace": "ListInstance",
+			"path": "Commands/ListInstance.command",
+			"command": "instance list",
+			"description": "Lista todas as instancias de um serviço"
+		},
+		{
+			"namespace": "ListImageBuildHistory",
+			"path": "Commands/ListImageBuildHistory.command",
+			"command": "build-history",
+			"description": "Mostra os hitórico de construção de imagens"
+		}
+	]
+}
