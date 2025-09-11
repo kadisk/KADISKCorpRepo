@@ -4,9 +4,13 @@ const RepositoryStorageManagerController = (params) => {
         repositoryStorageManagerService 
     } = params
 
+    const {
+        GetTotalNamespaceByUserId
+    } = repositoryStorageManagerService
 
     const controllerServiceObject = {
-        controllerName: "RepositoryStorageManagerController"
+        controllerName: "RepositoryStorageManagerController",
+        GetTotalNamespaceByUserId,
     }
 
     return Object.freeze(controllerServiceObject)

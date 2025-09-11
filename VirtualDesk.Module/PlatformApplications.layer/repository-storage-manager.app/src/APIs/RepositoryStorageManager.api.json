@@ -1,6 +1,18 @@
 {
 	"name": "RepositoryStorageManager",
 	"endpoints": [
-		
+		{
+			"path": "/namespaces-total",
+			"method": "GET",
+			"summary": "GetTotalNamespaceByUserId",
+			"parameters": [
+				{
+					"name": "userId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		}
 	]
 }

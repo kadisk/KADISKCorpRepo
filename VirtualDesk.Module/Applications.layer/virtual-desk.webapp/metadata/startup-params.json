@@ -10,7 +10,7 @@
     "myWorkspaceManagerServiceStorageFilePath"        : "~/virtual-desk-state/local-databases/my-workspace-manager-service.sqlite",
     "repositoryStorageFilePath"                       : "~/virtual-desk-state/local-databases/repository-storage-manager-service.sqlite",
     "myWorkspaceRepositoriesSourceCodeDirPath"        : "~/virtual-desk-state/local-app-data/my-workspaces-imported-repositories",
-    "importedRepositoriesSourceCodeDirPath"      : "~/virtual-desk-state/local-app-data/my-services-imported-repositories",
+    "importedRepositoriesSourceCodeDirPath"           : "~/virtual-desk-state/local-app-data/my-services-imported-repositories",
     "myServicesRepositoriesUploadDirPath"             : "~/virtual-desk-state/local-app-data/my-services-uploded-repositories",
     "myServicesRepositoriesClonedDirPath"             : "~/virtual-desk-state/local-app-data/my-services-cloned-repositories",
     "myWorkbenchRepositoriesUploadDirPath"            : "~/virtual-desk-state/local-app-data/my-workbench-uploded-repositories",
@@ -18,5 +18,7 @@
     "ecosystemDefaultsFileRelativePath"               : "./config-files/ecosystem-defaults.json",
     "secretKey"                                       : "kajsdhfg&(#Ndg",
     "serviceOrchestratorSocketPath"                   : "/home/kadisk/EcosystemData/sockets/service-orchestrator.app.sock",
-    "serviceOrchestratorServerManagerUrl"             : "/server-manager/status"
+    "serviceOrchestratorServerManagerUrl"             : "/server-manager/status",
+    "repositoryStorageSocketPath"                     : "/home/kadisk/EcosystemData/sockets/repository-storage-manager.app.sock",
+    "repositoryStorageServerManagerUrl"               : "/server-manager/status"
 }

@@ -18,7 +18,9 @@
         "ecosystemDefaultsFileRelativePath",
         "secretKey",
         "serviceOrchestratorSocketPath",
-        "serviceOrchestratorServerManagerUrl"
+        "serviceOrchestratorServerManagerUrl",
+        "repositoryStorageSocketPath",
+        "repositoryStorageServerManagerUrl"
     ],
     "services": [
         {
@@ -204,10 +206,13 @@
             "dependency": "@/repository-manager.webservice/endpoint-group",
             "bound-params":{
                 "serverService": "@@/server-service",
-                "repositoryStorageManagerService": "@@/repository-storage-manager-service"
+                "repositoryStorageManagerService": "@@/repository-storage-manager-service",
+                "commandExecutorLib": "@/command-executor.lib"
             },
             "params":{
                 "uploadDirPath":"{{myServicesRepositoriesUploadDirPath}}",
+                "repositoryStorageSocketPath":"{{repositoryStorageSocketPath}}",
+                "repositoryStorageServerManagerUrl":"{{repositoryStorageServerManagerUrl}}",
                 "needsAuth": true
             }
         }

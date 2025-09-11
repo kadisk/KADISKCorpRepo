@@ -12,8 +12,29 @@ const RepositoryServiceManagerController = (params) => {
 
     const { 
         uploadDirPath, 
-        repositoryStorageManagerService 
+        repositoryStorageManagerService,
+        commandExecutorLib,
+        repositoryStorageSocketPath,
+        repositoryStorageServerManagerUrl,
     } = params
+
+    const CommandExecutor = commandExecutorLib.require("CommandExecutor")
+
+    const RepositoryStorageCommand = async (CommandFunction) => {
+        const APICommandFunction = async ({ APIs }) => {
+            debugger
+            const API = APIs
+            .RepositoryStorageManagerAppInstance
+            .RepositoryStorageManager
+            return await CommandFunction(API)
+        }
+
+        return await CommandExecutor({
+            serverResourceEndpointPath: repositoryStorageServerManagerUrl,
+            mainApplicationSocketPath: repositoryStorageSocketPath,
+            CommandFunction: APICommandFunction
+        })
+    }
 
     const uploadAbsolutDirPath = ConvertPathToAbsolutPath(uploadDirPath)
 
@@ -33,8 +54,9 @@ const RepositoryServiceManagerController = (params) => {
 
     const CheckRepositoryImported = async ({ authenticationData }) => {
         const { userId } = authenticationData
-        const repositoryCount = await repositoryStorageManagerService.CountNamespaceByUserId(userId)
-    
+
+       const repositoryCount = await RepositoryStorageCommand((API) => API.GetTotalNamespaceByUserId({ userId }))
+
         if (repositoryCount > 0) {
             return "READY"
         } else {

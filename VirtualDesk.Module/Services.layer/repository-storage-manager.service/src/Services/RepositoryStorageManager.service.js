@@ -11,7 +11,7 @@ const PrepareDirPath                             = require("../Helpers/PrepareDi
 
 const RepositoryStorageManagerService = (params) => {
 
-const {
+    const {
         onReady,
         ecosystemDefaultsFileRelativePath,
         importedRepositoriesSourceCodeDirPath,
@@ -73,8 +73,7 @@ const {
         onReady()
     }
 
-    const CountNamespaceByUserId = (userId) =>  RepositoryNamespaceModel.count({ where: { userId } })
-
+    const GetTotalNamespaceByUserId = (userId) =>  RepositoryNamespaceModel.count({ where: { userId } })
 
     const ListRepositoryNamespace = async (userId) => {
         const repositoryNamespaceDataList  = await RepositoryStorageDomainService.ListRepositoryNamespace(userId)
@@ -254,11 +253,12 @@ const {
     _Start()
 
     return {
+        GetTotalNamespaceByUserId, 
+
         RegisterNamespaceAndRepositoryUploadedAndExtract,
         ExtractAndRegisterRepository,
         RegisterImportedRepository,
         RegisterNamespaceAndRepositoryCloned,
-        CountNamespaceByUserId, 
         GetPackageById,
         ListRepositoriesByUserId,
         ListRepositories,

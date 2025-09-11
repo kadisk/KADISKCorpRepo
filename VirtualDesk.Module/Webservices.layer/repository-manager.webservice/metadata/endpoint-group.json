@@ -1,9 +1,15 @@
 {
     "bound-params":[
         "serverService",
+        "commandExecutorLib",
         "repositoryStorageManagerService"
     ],
-    "params": [ "needsAuth", "uploadDirPath" ],
+    "params": [ 
+        "needsAuth", 
+        "uploadDirPath", 
+        "repositoryStorageSocketPath", 
+        "repositoryStorageServerManagerUrl" 
+    ],
     "endpoints": [
         {
             "url": "/repository-service-manager",
@@ -13,13 +19,16 @@
                 "controller": "Controllers/RepositoryServiceManager.controller",
                 "needsAuth": "needsAuth",
                 "controller-params":{
-                    "uploadDirPath": "{{uploadDirPath}}"
+                    "uploadDirPath": "{{uploadDirPath}}",
+                    "repositoryStorageSocketPath":"{{repositoryStorageSocketPath}}",
+                    "repositoryStorageServerManagerUrl":"{{repositoryStorageServerManagerUrl}}"
                 }
             },
             "bound-params": {
                 "serverService":"serverService",
                 "controller-params":{
-                    "repositoryStorageManagerService":"repositoryStorageManagerService"
+                    "repositoryStorageManagerService":"repositoryStorageManagerService",
+                    "commandExecutorLib":"commandExecutorLib"
                 }
             }
         }  

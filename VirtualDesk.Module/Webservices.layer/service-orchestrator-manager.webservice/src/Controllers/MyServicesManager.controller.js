@@ -67,7 +67,7 @@ const MyServicesManagerController = (params) => {
     const GetInstanceStartupParamsData   = ( serviceId )                  => ServiceOrchestratorCommand((API) => API.GetInstanceStartupParamsData({ serviceId }))
     const GetInstanceStartupParamsSchema = ( serviceId )                  => ServiceOrchestratorCommand((API) => API.GetInstanceStartupParamsSchema({ serviceId }))
     const GetInstancePortsData           = ( serviceId )                  => ServiceOrchestratorCommand((API) => API.GetInstancePortsData({ serviceId }))
-    const GetNetworkModeData             = ( serviceId )                  => ServiceOrchestratorCommand((API) => API.GetNetworkModeData(serviceId))
+    const GetNetworkModeData             = ( serviceId )                  => ServiceOrchestratorCommand((API) => API.GetNetworkModeData({ serviceId }))
     const UpdateServicePorts             = ({ serviceId, ports })         => ServiceOrchestratorCommand((API) => API.UpdateServicePorts({ serviceId, ports }))
     const UpdateServiceStartupParams     = ({ serviceId, startupParams }) => ServiceOrchestratorCommand((API) => API.UpdateServiceStartupParams({ serviceId, startupParams }))
 
