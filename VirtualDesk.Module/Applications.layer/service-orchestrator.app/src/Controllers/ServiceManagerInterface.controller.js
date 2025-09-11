@@ -1,7 +1,7 @@
 const ServiceManagerInterfaceController = (params) => {
 
     const {
-        myServicesManagerService
+        servicesOrchestratorService
     } = params
 
     const {
@@ -22,31 +22,31 @@ const ServiceManagerInterfaceController = (params) => {
         UpdateServicePorts,
         UpdateServiceStartupParams,
         ProvisionService
-    } = myServicesManagerService
+    } = servicesOrchestratorService
 
     const ServicesStatusChange = async (websocket) => {
-        myServicesManagerService
+        servicesOrchestratorService
             .onChangeServiceStatus(({ serviceId, status }) => {
                 websocket.send(JSON.stringify({ serviceId, status }))
             })
     }
 
     const InstanceListChange = async (websocket, serviceId) => {
-        myServicesManagerService
+        servicesOrchestratorService
             .onChangeInstanceListData(serviceId, (instanceList) => {
                 websocket.send(JSON.stringify(instanceList))
             })
     }
 
     const ContainerListChange = async (websocket, serviceId) => {
-        myServicesManagerService
+        servicesOrchestratorService
             .onChangeContainerListData(serviceId, (containerList) => {
                 websocket.send(JSON.stringify(containerList))
             })
     }
 
     const ImageBuildHistoryListChange = async (websocket, serviceId) => {
-        myServicesManagerService
+        servicesOrchestratorService
             .onChangeImageBuildHistoryListData(serviceId, (imageBuildHistoryList) => {
                 websocket.send(JSON.stringify(imageBuildHistoryList))
             })

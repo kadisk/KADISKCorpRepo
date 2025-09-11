@@ -1,7 +1,7 @@
 {
     "bound-params":[
         "serverService",
-        "myServicesManagerService"
+        "servicesOrchestratorService"
     ],
     "endpoints": [
         {
@@ -14,7 +14,7 @@
             "bound-params": {
                 "serverService":"serverService",
                 "controller-params":{
-                    "myServicesManagerService":"myServicesManagerService"
+                    "servicesOrchestratorService":"servicesOrchestratorService"
                 }
             }
         }

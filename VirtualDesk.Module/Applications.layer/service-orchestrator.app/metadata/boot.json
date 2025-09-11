@@ -42,7 +42,7 @@
             "dependency": "@//endpoint-group",
             "bound-params":{
                 "serverService": "@@/server-service",
-                "myServicesManagerService": "@@/service-orchestrator-service"
+                "servicesOrchestratorService": "@@/service-orchestrator-service"
             },
             "params":{
                 "needsAuth": true
