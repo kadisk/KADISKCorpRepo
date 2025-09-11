@@ -188,7 +188,7 @@
             }
         },
         {
-            "dependency": "@/service-orchestrator.webservice/endpoint-group",
+            "dependency": "@/service-orchestrator-manager.webservice/endpoint-group",
             "bound-params":{
                 "serverService": "@@/server-service",
                 "repositoryStorageManagerService": "@@/repository-storage-manager-service",

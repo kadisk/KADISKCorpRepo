@@ -1,5 +1,5 @@
 {
-  "name": "service-orchestrator.webservice",
+  "name": "service-orchestrator-manager.webservice",
   "version": "0.0.1",
   "author": "Kaio Cezar <kadisk.shark@gmail.com>",
   "dependencies": {}
