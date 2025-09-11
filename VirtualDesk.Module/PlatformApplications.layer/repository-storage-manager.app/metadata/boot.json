@@ -1,0 +1,51 @@
+{
+    "params" : [
+        "socket", 
+        "serverName",
+        "ecosystemDefaultsFileRelativePath",
+        "importedRepositoriesSourceCodeDirPath",
+        "repositoryStorageFilePath",
+        "installDataDirPath"
+    ],
+    "services": [
+        {
+            "namespace": "@@/server-service",
+            "dependency": "@/server-manager.service/services/HTTPServerService",
+            "params":{
+                "name":"{{serverName}}",
+                "port": "{{socket}}"
+            }
+        },
+        {
+            "namespace": "@@/repository-storage-manager-service",
+            "dependency": "@/repository-storage-manager.service/services/RepositoryStorageManager",
+            "params":{
+                "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}",
+                "importedRepositoriesSourceCodeDirPath": "{{importedRepositoriesSourceCodeDirPath}}",
+                "repositoryStorageFilePath": "{{repositoryStorageFilePath}}"
+            },
+            "bound-params":{
+                "extractTarGzLib":"@/extract-tar-gz.lib",
+                "loadMetatadaDirLib": "@/load-metatada-dir.lib",
+                "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",
+                "jsonFileUtilitiesLib": "@/json-file-utilities.lib"
+            }
+        },
+        {
+            "namespace": "@@/ecosystemdata-handler-service",
+            "dependency": "@/ecosystem-control-panel.service/services/EcosystemDataHandlerService",
+            "params":{
+                "installDataDirPath": "{{installDataDirPath}}"
+            }
+        }
+    ],
+    "endpoints": [
+        {
+            "dependency": "@/server-manager.webservice/endpoint-group",
+            "bound-params":{
+               "serverServiceForController":"@@/server-service",
+               "serverService": "@@/server-service"
+            }
+        }
+    ]
+}

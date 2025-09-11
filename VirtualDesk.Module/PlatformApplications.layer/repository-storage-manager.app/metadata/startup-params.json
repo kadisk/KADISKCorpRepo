@@ -1,0 +1,8 @@
+{
+    "socket"                                : "/home/kadisk/EcosystemData/sockets/repository-storage-manager.app.sock",
+    "serverName"                            : "RepositoryStorageManagerAppInstance",
+    "ecosystemDefaultsFileRelativePath"     : "./config-files/ecosystem-defaults.json",
+    "importedRepositoriesSourceCodeDirPath" : "~/virtual-desk-state/local-app-data/my-services-imported-repositories",
+    "repositoryStorageFilePath"             : "~/virtual-desk-state/local-databases/repository-storage-manager-service.sqlite",
+    "installDataDirPath"                    : "~/EcosystemData"
+}

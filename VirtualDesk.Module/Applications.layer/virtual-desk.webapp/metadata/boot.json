@@ -11,7 +11,7 @@
         "myWorkspaceManagerServiceStorageFilePath",
         "repositoryStorageFilePath",
         "myWorkspaceRepositoriesSourceCodeDirPath",
-        "myServicesManagerImportedSourceCodeDirPath",
+        "importedRepositoriesSourceCodeDirPath",
         "myServicesRepositoriesUploadDirPath",
         "myWorkbenchRepositoriesUploadDirPath",
         "installDataDirPath",
@@ -96,7 +96,7 @@
             "dependency": "@/repository-storage-manager.service/services/RepositoryStorageManager",
             "params":{
                 "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}",
-                "importedRepositoriesSourceCodeDirPath": "{{myServicesManagerImportedSourceCodeDirPath}}",
+                "importedRepositoriesSourceCodeDirPath": "{{importedRepositoriesSourceCodeDirPath}}",
                 "repositoryStorageFilePath": "{{repositoryStorageFilePath}}"
             },
             "bound-params":{
