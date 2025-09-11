@@ -1,4 +1,4 @@
-const CreateServiceManagerCommand = ({
+const CreateServiceOrchestratorCommand = ({
     CommandExecutor,
     serviceOrchestratorServerManagerUrl,
     serviceOrchestratorSocketPath
@@ -17,5 +17,5 @@ const CreateServiceManagerCommand = ({
         })
     }
 
-module.exports = CreateServiceManagerCommand
+module.exports = CreateServiceOrchestratorCommand
 

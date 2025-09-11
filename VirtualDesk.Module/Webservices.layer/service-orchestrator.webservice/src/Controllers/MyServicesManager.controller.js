@@ -9,7 +9,7 @@ const MyServicesManagerController = (params) => {
     
     const CommandExecutor = commandExecutorLib.require("CommandExecutor")
 
-    const ServiceManagerCommand = async (CommandFunction) => {
+    const ServiceOrchestratorCommand = async (CommandFunction) => {
         const APICommandFunction = async ({ APIs }) => {
             const API = APIs
             .ServiceOrchestratorAppInstance
@@ -25,7 +25,7 @@ const MyServicesManagerController = (params) => {
     }
 
     const ServiceManagerSocketBridgeCommand = (websocket, GetSocket) => {
-        ServiceManagerCommand((API) => {
+        ServiceOrchestratorCommand((API) => {
             const socket =  GetSocket(API)
             socket.onmessage = (event) => {
                 const {data} = event
@@ -35,7 +35,7 @@ const MyServicesManagerController = (params) => {
     }
 
     const ListProvisionedServices = ( { authenticationData:{ userId } } ) => {
-        return ServiceManagerCommand(async (API) => {
+        return ServiceOrchestratorCommand(async (API) => {
             const repositories = await repositoryStorageManagerService.ListRepositoriesByUserId(userId)
             const repositoryIds = repositories.map(({id}) => id)
             return API.ListServicesByRepositoryIds({ repositoryIds })
@@ -43,7 +43,7 @@ const MyServicesManagerController = (params) => {
     }
 
     const GetServiceData = ( serviceId ) => {
-        return ServiceManagerCommand(async (API) => {
+        return ServiceOrchestratorCommand(async (API) => {
             const packageData = await repositoryStorageManagerService.GetPackageById(originPackageId)
             const serviceInfo = await API.GetService({ serviceId })
             return {
@@ -57,19 +57,19 @@ const MyServicesManagerController = (params) => {
         })
     }
 
-    const ListImageBuildHistory          = ( serviceId )                         => ServiceManagerCommand((API) => API.ListImageBuildHistory({ serviceId }))
-    const ListInstances                  = ( serviceId )                         => ServiceManagerCommand((API) => API.ListInstances({ serviceId }))
-    const ListContainers                 = ( serviceId )                         => ServiceManagerCommand((API) => API.ListContainers({ serviceId }))
-    const StartService                   = ( serviceId )                         => ServiceManagerCommand((API) => API.StartService({ serviceId }))
-    const StopService                    = ( serviceId )                         => ServiceManagerCommand((API) => API.StopService({ serviceId }))
-    const GetServiceStatus               = ( serviceId )                         => ServiceManagerCommand((API) => API.GetServiceStatus({ serviceId }))
-    const GetNetworksSettings            = ( serviceId )                         => ServiceManagerCommand((API) => API.GetNetworksSettings({ serviceId }))
-    const GetInstanceStartupParamsData   = ( serviceId )                         => ServiceManagerCommand((API) => API.GetInstanceStartupParamsData({ serviceId }))
-    const GetInstanceStartupParamsSchema = ( serviceId )                         => ServiceManagerCommand((API) => API.GetInstanceStartupParamsSchema({ serviceId }))
-    const GetInstancePortsData           = ( serviceId )                         => ServiceManagerCommand((API) => API.GetInstancePortsData({ serviceId }))
-    const GetNetworkModeData             = ( serviceId )                         => ServiceManagerCommand((API) => API.GetNetworkModeData(serviceId))
-    const UpdateServicePorts             = ({ serviceId, ports })                => ServiceManagerCommand((API) => API.UpdateServicePorts({ serviceId, ports }))
-    const UpdateServiceStartupParams     = ({ serviceId, startupParams })        => ServiceManagerCommand((API) => API.UpdateServiceStartupParams({ serviceId, startupParams }))
+    const ListImageBuildHistory          = ( serviceId )                         => ServiceOrchestratorCommand((API) => API.ListImageBuildHistory({ serviceId }))
+    const ListInstances                  = ( serviceId )                         => ServiceOrchestratorCommand((API) => API.ListInstances({ serviceId }))
+    const ListContainers                 = ( serviceId )                         => ServiceOrchestratorCommand((API) => API.ListContainers({ serviceId }))
+    const StartService                   = ( serviceId )                         => ServiceOrchestratorCommand((API) => API.StartService({ serviceId }))
+    const StopService                    = ( serviceId )                         => ServiceOrchestratorCommand((API) => API.StopService({ serviceId }))
+    const GetServiceStatus               = ( serviceId )                         => ServiceOrchestratorCommand((API) => API.GetServiceStatus({ serviceId }))
+    const GetNetworksSettings            = ( serviceId )                         => ServiceOrchestratorCommand((API) => API.GetNetworksSettings({ serviceId }))
+    const GetInstanceStartupParamsData   = ( serviceId )                         => ServiceOrchestratorCommand((API) => API.GetInstanceStartupParamsData({ serviceId }))
+    const GetInstanceStartupParamsSchema = ( serviceId )                         => ServiceOrchestratorCommand((API) => API.GetInstanceStartupParamsSchema({ serviceId }))
+    const GetInstancePortsData           = ( serviceId )                         => ServiceOrchestratorCommand((API) => API.GetInstancePortsData({ serviceId }))
+    const GetNetworkModeData             = ( serviceId )                         => ServiceOrchestratorCommand((API) => API.GetNetworkModeData(serviceId))
+    const UpdateServicePorts             = ({ serviceId, ports })                => ServiceOrchestratorCommand((API) => API.UpdateServicePorts({ serviceId, ports }))
+    const UpdateServiceStartupParams     = ({ serviceId, startupParams })        => ServiceOrchestratorCommand((API) => API.UpdateServiceStartupParams({ serviceId, startupParams }))
 
     const ServicesStatusChange        = (websocket)            => ServiceManagerSocketBridgeCommand(websocket, (API) => API.ServicesStatusChange())
     const InstanceListChange          = (websocket, serviceId) => ServiceManagerSocketBridgeCommand(websocket, (API) => API.InstanceListChange({serviceId}))
@@ -98,7 +98,7 @@ const MyServicesManagerController = (params) => {
 
         
         
-        await ServiceManagerCommand((API) => 
+        await ServiceOrchestratorCommand((API) => 
             API.ProvisionService({
                 username,
                 serviceName,

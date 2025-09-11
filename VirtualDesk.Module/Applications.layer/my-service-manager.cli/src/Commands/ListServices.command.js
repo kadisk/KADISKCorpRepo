@@ -1,35 +1,18 @@
 const Table = require('cli-table')
 
-const CreateServiceManagerCommand = require('../Helpers/CreateServiceManagerCommand')
+const MountServiceOrchestratorCommand = require('../Helpers/MountServiceOrchestratorCommand')
 
 const ListServicesCommand = async ({ args, startupParams, params }) => {
 
-    const {
-        serviceOrchestratorSocketPath,
-        serviceOrchestratorServerManagerUrl
-    } = startupParams
+    const ServiceOrchestratorCommand = MountServiceOrchestratorCommand({ startupParams, params })
+    const serviceInfoList = await ServiceOrchestratorCommand((API) => API.ListServices())
 
-    const {
-        commandExecutorLib
-    } = params
-
-    const CommandExecutor = commandExecutorLib.require("CommandExecutor")
-
-    const ServiceManagerCommand = CreateServiceManagerCommand({
-        CommandExecutor,
-        serviceOrchestratorServerManagerUrl,
-        serviceOrchestratorSocketPath
-    })
-
-    const serviceInfoList = await ServiceManagerCommand((API) => API.ListServices())
-
-    // Cria a tabela agrupando colunas
     const table = new Table({
         head: [
             'Status',
-            'Service',
-            'Origin Package',
-            'Origin Repository'
+            '[ID] Service',
+            '[ID] Origin Package',
+            '[ID] Origin Repository'
         ]
     })
 
