@@ -17,8 +17,8 @@
         "installDataDirPath",
         "ecosystemDefaultsFileRelativePath",
         "secretKey",
-        "myServiceManagerSocketPath",
-        "myServiceManagerUrl"
+        "serviceOrchestratorSocketPath",
+        "serviceOrchestratorServerManagerUrl"
     ],
     "services": [
         {
@@ -195,8 +195,8 @@
                 "commandExecutorLib": "@/command-executor.lib"
             },
             "params":{
-                "myServiceManagerSocketPath":"{{myServiceManagerSocketPath}}",
-                "myServiceManagerUrl":"{{myServiceManagerUrl}}",
+                "serviceOrchestratorSocketPath":"{{serviceOrchestratorSocketPath}}",
+                "serviceOrchestratorServerManagerUrl":"{{serviceOrchestratorServerManagerUrl}}",
                 "needsAuth": true
             }
         },

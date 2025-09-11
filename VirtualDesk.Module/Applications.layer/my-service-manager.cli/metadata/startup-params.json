@@ -1,0 +1,4 @@
+{
+    "serviceOrchestratorSocketPath"       : "/home/kadisk/EcosystemData/sockets/service-orchestrator.app.sock",
+    "serviceOrchestratorServerManagerUrl" : "/server-manager/status"
+}

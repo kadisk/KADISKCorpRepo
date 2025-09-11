@@ -2,8 +2,8 @@ const MyServicesManagerController = (params) => {
 
     const {
         repositoryStorageManagerService,
-        myServiceManagerSocketPath,
-        myServiceManagerUrl,
+        serviceOrchestratorSocketPath,
+        serviceOrchestratorServerManagerUrl,
         commandExecutorLib
     } = params
     
@@ -18,8 +18,8 @@ const MyServicesManagerController = (params) => {
         }
 
         return await CommandExecutor({
-            serverResourceEndpointPath: myServiceManagerUrl,
-            mainApplicationSocketPath: myServiceManagerSocketPath,
+            serverResourceEndpointPath: serviceOrchestratorServerManagerUrl,
+            mainApplicationSocketPath: serviceOrchestratorSocketPath,
             CommandFunction: APICommandFunction
         })
     }

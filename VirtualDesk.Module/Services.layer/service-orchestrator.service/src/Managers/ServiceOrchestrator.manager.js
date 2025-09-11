@@ -282,37 +282,40 @@ const ServiceOrchestratorManager = (params) => {
         })
     }
 
-    const ListServicesByRepositoryIds = async (repositoryIds) => {
+    const _GetProvisionedServiceInfo = (serviceData) => {
+        const { 
+            id: serviceId,
+            serviceName,
+            originPackageId,
+            originPackageName,
+            originPackageType,
+            originRepositoryId,
+            originRepositoryNamespace
+        } = serviceData   
 
-        const servicesData = await MyWorkspaceDomainService.ListServicesByRepositoryIds(repositoryIds)
+        return {
+            status : GetServiceStatus(serviceId),
+            serviceId,
+            serviceName,
+            originPackageId,
+            originPackageName,
+            originPackageType,
+            originRepositoryId,
+            originRepositoryNamespace
+        }
+    }
 
+    const ListServices = async () => {
+        const servicesData = await MyWorkspaceDomainService.ListServices()
         const provisionedServicesData = servicesData
-            .map((provisionedService) => {
+            .map((servicesData) => _GetProvisionedServiceInfo(servicesData))
+        return provisionedServicesData
+    }
 
-                const { 
-                    id: serviceId,
-                    serviceName,
-                    packageId,
-                    packageName,
-                    packageType,
-                    repositoryId,
-                    repositoryNamespace
-                } = provisionedService
-
-
-                return {
-                    status : GetServiceStatus(serviceId),
-                    serviceId,
-                    serviceName,
-                    packageId,
-                    repositoryId,
-                    repositoryNamespace,
-                    packageName,
-                    packageType
-                }
-                
-            })
-
+    const ListServicesByRepositoryIds = async (repositoryIds) => {
+        const servicesData = await MyWorkspaceDomainService.ListServicesByRepositoryIds(repositoryIds)
+        const provisionedServicesData = servicesData
+            .map((servicesData) => _GetProvisionedServiceInfo(servicesData))
         return provisionedServicesData
     }
 
@@ -404,6 +407,7 @@ const ServiceOrchestratorManager = (params) => {
         ProvisionService,
         ListServicesByRepositoryIds,
         GetService,
+        ListServices,
         ListInstances,
         ListContainers,
         ListImageBuildHistory,

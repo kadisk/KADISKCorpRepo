@@ -1,10 +1,12 @@
 {
+	"bound-params":[ "commandExecutorLib" ],
 	"commands": [
 		{
 			"namespace": "ListServices",
 			"path": "Commands/ListServices.command",
 			"command": "list",
-			"description": "Lista todos os serviços provisionados"
+			"description": "Lista todos os serviços provisionados",
+            "parametersToLoad": [ "commandExecutorLib" ]
 		},
 		{
 			"namespace": "GetServiceData",

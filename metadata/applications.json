@@ -34,5 +34,11 @@
         "executable":"service-orchestrator",
         "packageNamespace":"VirtualDesk.Module/Applications.layer/service-orchestrator.app",
         "supervisorSocketFileName":"service-orchestrator.sock"
+    },
+    {
+        "appType":"CLI",
+        "executable":"my-services",
+        "packageNamespace":"VirtualDesk.Module/Applications.layer/my-service-manager.cli",
+        "supervisorSocketFileName":"my-services.sock"
     }
 ]

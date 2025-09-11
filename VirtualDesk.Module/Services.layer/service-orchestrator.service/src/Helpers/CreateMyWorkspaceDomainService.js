@@ -8,6 +8,11 @@ const CreateMyWorkspaceDomainService = ({
     ContainerModel,
     ContainerEventLogModel
 }) => {
+
+    const ListServices = async () => {
+        const items = await ServiceModel.findAll()
+        return items
+    }
     
     const ListServicesByRepositoryIds = async (repositoryIds) => {
         const items = await ServiceModel.findAll({
@@ -163,6 +168,7 @@ const CreateMyWorkspaceDomainService = ({
         RegisterTerminateInstance,
         RegisterBuildedImage,
         ListAllServiceId,
+        ListServices,
         ListServicesByRepositoryIds,
         GetServiceById,
         ListImageBuildHistoryByServiceId,

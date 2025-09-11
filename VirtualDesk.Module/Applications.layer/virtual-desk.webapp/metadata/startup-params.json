@@ -17,6 +17,6 @@
     "installDataDirPath"                              : "~/EcosystemData",
     "ecosystemDefaultsFileRelativePath"               : "./config-files/ecosystem-defaults.json",
     "secretKey"                                       : "kajsdhfg&(#Ndg",
-    "myServiceManagerSocketPath"                      : "/home/kadisk/EcosystemData/sockets/service-orchestrator.app.sock",
-    "myServiceManagerUrl"                             : "/server-manager/status"
+    "serviceOrchestratorSocketPath"                   : "/home/kadisk/EcosystemData/sockets/service-orchestrator.app.sock",
+    "serviceOrchestratorServerManagerUrl"             : "/server-manager/status"
 }

@@ -2,6 +2,11 @@
 	"name": "ServiceManagerInterface",
 	"endpoints": [
 		{
+			"path": "/services",
+			"method": "GET",
+			"summary": "ListServices"
+		},
+		{
 			"path": "/provisioned-services",
 			"method": "POST",
 			"summary": "ListServicesByRepositoryIds",

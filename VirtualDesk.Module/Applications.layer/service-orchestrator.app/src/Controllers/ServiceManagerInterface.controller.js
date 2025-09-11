@@ -4,8 +4,8 @@ const ServiceManagerInterfaceController = (params) => {
         myServicesManagerService
     } = params
 
-
     const {
+        ListServices,
         ListServicesByRepositoryIds,
         GetService,
         GetNetworksSettings,
@@ -23,7 +23,6 @@ const ServiceManagerInterfaceController = (params) => {
         UpdateServiceStartupParams,
         ProvisionService
     } = myServicesManagerService
-
 
     const ServicesStatusChange = async (websocket) => {
         myServicesManagerService
@@ -53,9 +52,9 @@ const ServiceManagerInterfaceController = (params) => {
             })
     }
 
-
     const controllerServiceObject = {
         controllerName: "ServiceManagerInterfaceController",
+        ListServices,
         ListServicesByRepositoryIds,
         GetService,
         GetNetworksSettings,

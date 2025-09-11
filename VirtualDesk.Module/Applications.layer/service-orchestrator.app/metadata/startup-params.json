@@ -1,6 +1,6 @@
 {
-    "socket"                                     : "/home/kadisk/EcosystemData/sockets/service-orchestrator.app.sock",
-    "serverName"                                 : "ServiceOrchestratorAppInstance",
-    "serviceStorageFilePath"                     : "~/virtual-desk-state/local-databases/service-orchestrator-service.sqlite",
-    "servicesInstanceDataDirPath"                : "~/virtual-desk-state/local-app-data/services-instance-data"
+    "socket"                      : "/home/kadisk/EcosystemData/sockets/service-orchestrator.app.sock",
+    "serverName"                  : "ServiceOrchestratorAppInstance",
+    "serviceStorageFilePath"      : "~/virtual-desk-state/local-databases/service-orchestrator-service.sqlite",
+    "servicesInstanceDataDirPath" : "~/virtual-desk-state/local-app-data/services-instance-data"
 }
