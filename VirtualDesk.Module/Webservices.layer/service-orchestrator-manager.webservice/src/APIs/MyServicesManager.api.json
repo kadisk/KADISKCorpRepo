@@ -59,6 +59,19 @@
 			]
 		},
 		{
+			"path": "/repositories",
+			"method": "GET",
+			"summary": "ListRepositoriesByUserId",
+			"parameters": [
+				{
+					"name": "userId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
 			"path": "/service/instance-list/:serviceId",
 			"method": "WS",
 			"summary": "InstanceListChange",

@@ -5,12 +5,44 @@ const RepositoryStorageManagerController = (params) => {
     } = params
 
     const {
-        GetTotalNamespaceByUserId
+        GetTotalNamespaceByUserId,
+        ListRepositories,
+        ListRepositoryNamespace,
+        RegisterNamespaceAndRepositoryUploadedAndExtract,
+        GetNamespace,
+        ExtractAndRegisterRepository,
+        RegisterImportedRepository,
+        RegisterNamespaceAndRepositoryCloned,
+        GetMetadataByPackageId,
+        ListBootablePackages,
+        ListRepositoriesByUserId,
+        GetPackageById,
+        GetRepositoryImportedByNamespace,
+        GetRepositoryImported,
+        ListItemByRepositoryId,
+        GetNamespaceByRepositoryId,
+        GetItemById
     } = repositoryStorageManagerService
 
     const controllerServiceObject = {
         controllerName: "RepositoryStorageManagerController",
         GetTotalNamespaceByUserId,
+        ListRepositories,
+        ListRepositoryNamespace,
+        RegisterNamespaceAndRepositoryUploadedAndExtract,
+        GetNamespace,
+        ExtractAndRegisterRepository,
+        RegisterImportedRepository,
+        RegisterNamespaceAndRepositoryCloned,
+        GetMetadataByPackageId,
+        ListBootablePackages,
+        ListRepositoriesByUserId,
+        GetPackageById,
+        GetRepositoryImportedByNamespace,
+        ListItemByRepositoryId,
+        GetNamespaceByRepositoryId,
+        GetRepositoryImported,
+        GetItemById
     }
 
     return Object.freeze(controllerServiceObject)

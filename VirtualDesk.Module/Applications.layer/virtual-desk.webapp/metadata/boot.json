@@ -9,9 +9,7 @@
         "eventManagerServiceStorageFilePath",
         "instanceMonitoringManagerServiceStorageFilePath",
         "myWorkspaceManagerServiceStorageFilePath",
-        "repositoryStorageFilePath",
         "myWorkspaceRepositoriesSourceCodeDirPath",
-        "importedRepositoriesSourceCodeDirPath",
         "myServicesRepositoriesUploadDirPath",
         "myWorkbenchRepositoriesUploadDirPath",
         "installDataDirPath",
@@ -80,33 +78,20 @@
             "namespace": "@@/my-workspace-manager-service",
             "dependency": "@/my-workbench.service/services/MyWorkspaceManager",
             "params":{
-                "ecosystemDefaultsFileRelativePath":"{{ecosystemDefaultsFileRelativePath}}"
+                "ecosystemDefaultsFileRelativePath":"{{ecosystemDefaultsFileRelativePath}}",
+                "repositoryStorageSocketPath":"{{repositoryStorageSocketPath}}",
+                "repositoryStorageServerManagerUrl":"{{repositoryStorageServerManagerUrl}}"
             },
             "bound-params":{
                 "jsonFileUtilitiesLib": "@/json-file-utilities.lib",
                 "loadMetatadaDirLib": "@/load-metatada-dir.lib",
                 "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",
-                "repositoryStorageManagerService": "@@/repository-storage-manager-service"
+                "commandExecutorLib": "@/command-executor.lib"
             }
         },
         {
             "namespace": "@@/container-manager-service",
             "dependency": "@/container-manager.service/services/ContainerManager"
-        },
-        {
-            "namespace": "@@/repository-storage-manager-service",
-            "dependency": "@/repository-storage-manager.service/services/RepositoryStorageManager",
-            "params":{
-                "ecosystemDefaultsFileRelativePath": "{{ecosystemDefaultsFileRelativePath}}",
-                "importedRepositoriesSourceCodeDirPath": "{{importedRepositoriesSourceCodeDirPath}}",
-                "repositoryStorageFilePath": "{{repositoryStorageFilePath}}"
-            },
-            "bound-params":{
-                "extractTarGzLib":"@/extract-tar-gz.lib",
-                "loadMetatadaDirLib": "@/load-metatada-dir.lib",
-                "ecosystemdataHandlerService": "@@/ecosystemdata-handler-service",
-                "jsonFileUtilitiesLib": "@/json-file-utilities.lib"
-            }
         }
     ],
     "endpoints": [
@@ -182,10 +167,12 @@
                 "serverService": "@@/server-service",
                 "myWorkspaceManagerService":"@@/my-workspace-manager-service",
                 "containerManagerService":"@@/container-manager-service",
-                "repositoryStorageManagerService": "@@/repository-storage-manager-service"
+                "commandExecutorLib": "@/command-executor.lib"
             },
             "params":{
                 "uploadDirPath": "{{myWorkbenchRepositoriesUploadDirPath}}",
+                "repositoryStorageSocketPath":"{{repositoryStorageSocketPath}}",
+                "repositoryStorageServerManagerUrl":"{{repositoryStorageServerManagerUrl}}",
                 "needsAuth": true
             }
         },
@@ -193,12 +180,13 @@
             "dependency": "@/service-orchestrator-manager.webservice/endpoint-group",
             "bound-params":{
                 "serverService": "@@/server-service",
-                "repositoryStorageManagerService": "@@/repository-storage-manager-service",
                 "commandExecutorLib": "@/command-executor.lib"
             },
             "params":{
                 "serviceOrchestratorSocketPath":"{{serviceOrchestratorSocketPath}}",
                 "serviceOrchestratorServerManagerUrl":"{{serviceOrchestratorServerManagerUrl}}",
+                "repositoryStorageSocketPath":"{{repositoryStorageSocketPath}}",
+                "repositoryStorageServerManagerUrl":"{{repositoryStorageServerManagerUrl}}",
                 "needsAuth": true
             }
         },
@@ -206,7 +194,6 @@
             "dependency": "@/repository-manager.webservice/endpoint-group",
             "bound-params":{
                 "serverService": "@@/server-service",
-                "repositoryStorageManagerService": "@@/repository-storage-manager-service",
                 "commandExecutorLib": "@/command-executor.lib"
             },
             "params":{

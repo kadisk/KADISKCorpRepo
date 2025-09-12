@@ -1,10 +1,15 @@
 {
     "bound-params":[
         "serverService",
-        "commandExecutorLib",
-        "repositoryStorageManagerService"
+        "commandExecutorLib"
     ],
-    "params": [ "needsAuth", "serviceOrchestratorSocketPath", "serviceOrchestratorServerManagerUrl"],
+    "params": [ 
+        "needsAuth", 
+        "serviceOrchestratorSocketPath", 
+        "serviceOrchestratorServerManagerUrl", 
+        "repositoryStorageSocketPath", 
+        "repositoryStorageServerManagerUrl" 
+    ],
     "endpoints": [
         {
             "url": "/my-service-manager",
@@ -14,14 +19,15 @@
                 "controller": "Controllers/MyServicesManager.controller",
                 "needsAuth": "needsAuth",
                 "controller-params": {
-                    "serviceOrchestratorSocketPath": "serviceOrchestratorSocketPath",
-                    "serviceOrchestratorServerManagerUrl": "serviceOrchestratorServerManagerUrl"
+                    "serviceOrchestratorSocketPath": "{{serviceOrchestratorSocketPath}}",
+                    "serviceOrchestratorServerManagerUrl": "{{serviceOrchestratorServerManagerUrl}}",
+                    "repositoryStorageSocketPath":"{{repositoryStorageSocketPath}}",
+                    "repositoryStorageServerManagerUrl":"{{repositoryStorageServerManagerUrl}}"
                 }
             },
             "bound-params": {
                 "serverService":"serverService",
                 "controller-params":{
-                    "repositoryStorageManagerService": "repositoryStorageManagerService",
                     "commandExecutorLib": "commandExecutorLib"
                 }
             }

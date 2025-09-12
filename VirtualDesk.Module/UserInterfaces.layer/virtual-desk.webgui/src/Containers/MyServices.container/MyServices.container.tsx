@@ -198,7 +198,7 @@ const MyServicesContainer = ({
                                                     <div className="card-header py-2">
                                                         <div>
                                                             <h4 className="card-title"><span className={`${GetStatusBadgeClasses(provisionedService.status)} me-2`}>{provisionedService.status}</span><strong>{provisionedService.serviceName}</strong></h4>
-                                                            <p className="card-subtitle">{provisionedService.repositoryNamespace}/{provisionedService.packageName}/{provisionedService.packageType}</p>
+                                                            <p className="card-subtitle">{provisionedService.originRepositoryNamespace}/{provisionedService.originPackageName}/{provisionedService.originPackageType}</p>
                                                         </div>
                                                     </div>
                                                     {

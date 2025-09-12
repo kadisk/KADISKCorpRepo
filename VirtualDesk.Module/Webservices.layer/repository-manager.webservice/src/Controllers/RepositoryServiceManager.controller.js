@@ -11,8 +11,7 @@ const GetRequestParams = ({body, params:path, query}) => ({...path, ...body, ...
 const RepositoryServiceManagerController = (params) => {
 
     const { 
-        uploadDirPath, 
-        repositoryStorageManagerService,
+        uploadDirPath,
         commandExecutorLib,
         repositoryStorageSocketPath,
         repositoryStorageServerManagerUrl,
@@ -22,7 +21,6 @@ const RepositoryServiceManagerController = (params) => {
 
     const RepositoryStorageCommand = async (CommandFunction) => {
         const APICommandFunction = async ({ APIs }) => {
-            debugger
             const API = APIs
             .RepositoryStorageManagerAppInstance
             .RepositoryStorageManager
@@ -40,15 +38,13 @@ const RepositoryServiceManagerController = (params) => {
 
     const ListRepositories = async (namespaceId, {authenticationData}) => {
         const { userId } = authenticationData
-        const repositories = await repositoryStorageManagerService.ListRepositories(namespaceId)
-
+        const repositories = await RepositoryStorageCommand((API) => API.ListRepositories({ namespaceId }))
         return repositories
     }
 
     const ListNamespaces = async ({authenticationData}) => {
         const { userId } = authenticationData
-        const namespaces = await repositoryStorageManagerService.ListRepositoryNamespace(userId)
-
+        const namespaces = await RepositoryStorageCommand((API) => API.ListRepositoryNamespace({ userId }))
         return namespaces
     }
 
@@ -110,12 +106,14 @@ const RepositoryServiceManagerController = (params) => {
             username,
             onUpload: async (repositoryFilePath) => {
                 const params = GetRequestParams(request)
-                return await repositoryStorageManagerService.RegisterNamespaceAndRepositoryUploadedAndExtract({
-                    userId, 
-                    username,
-                    repositoryNamespace: params.repositoryNamespace, 
-                    repositoryFilePath
-                })
+
+                return await RepositoryStorageCommand((API) => 
+                    API.RegisterNamespaceAndRepositoryUploadedAndExtract({
+                        userId, 
+                        username,
+                        repositoryNamespace: params.repositoryNamespace, 
+                        repositoryFilePath
+                    }))
             }
         })
     }
@@ -130,14 +128,16 @@ const RepositoryServiceManagerController = (params) => {
             username,
             onUpload: async (repositoryFilePath) => {
                 const params = GetRequestParams(request)
-                const namespaceData = await repositoryStorageManagerService.GetNamespace(params.namespaceId)
-                const repositoryImportedData =  await repositoryStorageManagerService
-                    .ExtractAndRegisterRepository({ 
+      
+                const namespaceData = await RepositoryStorageCommand((API) => API.GetNamespace({ namespaceId: params.namespaceId }))
+
+                const repositoryImportedData =  await RepositoryStorageCommand((API) => 
+                    API.ExtractAndRegisterRepository({ 
                         username, 
                         repositoryNamespace: namespaceData.namespace,
                         namespaceId: namespaceData.id,
                         repositoryFilePath
-                    })
+                    }))
                 return {
                     repositoryNamespace: namespaceData,
                     repositoryImported: repositoryImportedData
@@ -178,7 +178,9 @@ const RepositoryServiceManagerController = (params) => {
         personalAccessToken
     }, { authenticationData }) => {
         const { userId, username } = authenticationData
-        const namespaceData = await repositoryStorageManagerService.GetNamespace(namespaceId)
+
+        const namespaceData = await RepositoryStorageCommand((API) => API.GetNamespace({ namespaceId }))
+        
         const repositoryCodePath = GetRepositoryCodePath({
             repositoryNamespace: namespaceData.namespace,
             userId,
@@ -189,8 +191,8 @@ const RepositoryServiceManagerController = (params) => {
             repositoryGitUrl,
             personalAccessToken
         })
-        const repositoryImportedData = await repositoryStorageManagerService
-        .RegisterImportedRepository({
+
+        const repositoryImportedData = await RepositoryStorageCommand((API) => API.RegisterImportedRepository({
             namespaceId: namespaceData.id,
             repositoryCodePath,
             sourceType:"GIT_CLONE",
@@ -198,7 +200,8 @@ const RepositoryServiceManagerController = (params) => {
                 repositoryGitUrl,
                 personalAccessToken
             }
-        })
+        }))
+
         return {
             repositoryNamespace: namespaceData,
             repositoryImported: repositoryImportedData
@@ -210,19 +213,21 @@ const RepositoryServiceManagerController = (params) => {
         repositoryGitUrl,
         personalAccessToken
     }, { authenticationData }) => {
+
         const { userId, username } = authenticationData
         const repositoryCodePath = GetRepositoryCodePath({
             repositoryNamespace,
             userId,
             username
         })
+
         await Clone({
             repositoryCodePath,
             repositoryGitUrl,
             personalAccessToken
         })
-        const data = await repositoryStorageManagerService
-        .RegisterNamespaceAndRepositoryCloned({
+
+        const data = await RepositoryStorageCommand((API) => API.RegisterNamespaceAndRepositoryCloned({
                 userId, 
                 repositoryNamespace, 
                 repositoryCodePath,
@@ -230,18 +235,18 @@ const RepositoryServiceManagerController = (params) => {
                     repositoryGitUrl,
                     personalAccessToken
                 }
-        })
+        }))
+        
         return data
     }
 
     const ListBootablePackages = ({ authenticationData }) => {
         const { userId, username } = authenticationData
-        return repositoryStorageManagerService.ListBootablePackages({ userId, username })
+        return RepositoryStorageCommand((API) => API.ListBootablePackages({ userId, username }))
     }
 
     const GetStartupParamsData = async (packageId) => { 
-        const metadata = await repositoryStorageManagerService.GetMetadataByPackageId(packageId)
-
+        const metadata = await RepositoryStorageCommand((API) => API.GetMetadataByPackageId({ packageId }))
         return metadata
     }
 

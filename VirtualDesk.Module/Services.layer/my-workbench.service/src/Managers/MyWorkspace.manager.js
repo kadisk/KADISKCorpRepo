@@ -10,13 +10,31 @@ const MyWorkspaceManager = (params) => {
         ecosystemDefaultsFileRelativePath,
         jsonFileUtilitiesLib,
         ecosystemdataHandlerService,
-        repositoryStorageManagerService,
+        commandExecutorLib,
+        repositoryStorageSocketPath,
+        repositoryStorageServerManagerUrl,
         loadMetatadaDirLib
     } = params
 
 
     const ReadJsonFile    = jsonFileUtilitiesLib.require("ReadJsonFile")
     const LoadMetadataDir = loadMetatadaDirLib.require("LoadMetadataDir")
+    const CommandExecutor = commandExecutorLib.require("CommandExecutor")
+
+    const RepositoryStorageCommand = async (CommandFunction) => {
+        const APICommandFunction = async ({ APIs }) => {
+            const API = APIs
+            .RepositoryStorageManagerAppInstance
+            .RepositoryStorageManager
+            return await CommandFunction(API)
+        }
+
+        return await CommandExecutor({
+            serverResourceEndpointPath: repositoryStorageServerManagerUrl,
+            mainApplicationSocketPath: repositoryStorageSocketPath,
+            CommandFunction: APICommandFunction
+        })
+    }
 
     const ecosystemDefaultFilePath = resolve(ecosystemdataHandlerService.GetEcosystemDataPath(), ecosystemDefaultsFileRelativePath)
 
@@ -27,18 +45,17 @@ const MyWorkspaceManager = (params) => {
     _Start()
 
     const CreateNewRepository = async ({userId, repositoryCodePath, repositoryNamespace}) => {
-        const existingNamespace = await repositoryStorageManagerService.GetRepositoryImportedByNamespace(repositoryNamespace)
+        const existingNamespace = await RepositoryStorageCommand((API) => API.GetRepositoryImportedByNamespace({ repositoryNamespace }))
 
         if (existingNamespace) 
             throw new Error('Repository Namespace already exists')
 
-        //const newRepository = await repositoryStorageManagerService.CreateRepository({ repositoryNamespace , userId, repositoryCodePath })
         return newRepository
     }
 
     const GetItemHierarchy = async (repositoryId) => {
 
-        const items = await repositoryStorageManagerService.ListItemByRepositoryId(repositoryId)
+        const items = await RepositoryStorageCommand((API) => API.ListItemByRepositoryId({ repositoryId }))
         
         const __BuildTree = (parentId = null) => {
             return items
@@ -55,14 +72,14 @@ const MyWorkspaceManager = (params) => {
     }
 
     const GetRepositoryGeneralInformation = async (repositoryId) => {
-        const namespaceData = await repositoryStorageManagerService.GetNamespaceByRepositoryId(repositoryId)
+        const namespaceData = await RepositoryStorageCommand((API) => API.GetNamespaceByRepositoryId({ repositoryId }))
         return {
             repositoryNamespace: namespaceData.namespace
         }
     }
 
     const GetRepositoryMetadata = async (repositoryId) => {
-        const repositoryData = await repositoryStorageManagerService.GetRepositoryImported(repositoryId)
+        const repositoryData = await RepositoryStorageCommand((API) => API.GetRepositoryImported({ repositoryId }))
         const ecosystemDefaults = await ReadJsonFile(ecosystemDefaultFilePath)
 
         return await LoadMetadataDir({
@@ -77,15 +94,13 @@ const MyWorkspaceManager = (params) => {
     }
 
     const GetItemInformation = async (itemId) => {
-
-        const itemData = await repositoryStorageManagerService.GetItemById(itemId)
+        const itemData = await RepositoryStorageCommand((API) => API.GetItemById({ itemId }))
         const { id, itemName, itemType } = itemData
         return { id, itemName, itemType }
-
     }
 
     const GetPackageSourceTree = async (itemId) => {
-        const itemData = await repositoryStorageManagerService.GetItemById(itemId)
+        const itemData = await RepositoryStorageCommand((API) => API.GetItemById({ itemId }))
         const { itemPath, repositoryCodePath } = itemData
         const srcPath = join(repositoryCodePath, itemPath, "src")
 
@@ -97,7 +112,7 @@ const MyWorkspaceManager = (params) => {
     }
 
     const GetPackageSourceFileContent = async ({itemId, sourceFilePath}) => {
-        const itemData = await repositoryStorageManagerService.GetItemById(itemId)
+        const itemData = await RepositoryStorageCommand((API) => API.GetItemById({ itemId }))
         const { itemName, itemType, repositoryCodePath } = itemData
         
         const absolutePath = join(repositoryCodePath, sourceFilePath)
@@ -116,7 +131,7 @@ const MyWorkspaceManager = (params) => {
     }
 
     const GetPackageMetadata = async (itemId) => {
-        const itemData = await repositoryStorageManagerService.GetItemById(itemId)
+        const itemData = await RepositoryStorageCommand((API) => API.GetItemById({ itemId }))
         const { itemPath, repositoryCodePath } = itemData
         const ecosystemDefaults = await ReadJsonFile(ecosystemDefaultFilePath)
 

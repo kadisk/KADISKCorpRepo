@@ -2,7 +2,7 @@
 	"name": "RepositoryStorageManager",
 	"endpoints": [
 		{
-			"path": "/namespaces-total",
+			"path": "/total-namespaces",
 			"method": "GET",
 			"summary": "GetTotalNamespaceByUserId",
 			"parameters": [
@@ -13,6 +13,296 @@
 					"required": true
 				}
 			]
+		},
+		{
+			"path": "/repositories",
+			"method": "GET",
+			"summary": "ListRepositories",
+			"parameters": [
+				{
+					"name": "namespaceId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/namespaces",
+			"method": "GET",
+			"summary": "ListRepositoryNamespace",
+			"parameters": [
+				{
+					"name": "userId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/items",
+			"method": "GET",
+			"summary": "ListItemByRepositoryId",
+			"parameters": [
+				{
+					"name": "repositoryId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/user/repositories",
+			"method": "GET",
+			"summary": "ListRepositoriesByUserId",
+			"parameters": [
+				{
+					"name": "userId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/bootable-packages",
+			"method": "GET",
+			"summary": "ListBootablePackages",
+			"parameters": [
+				{
+					"name": "userId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "username",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/register-namespace-upload-extract",
+			"method": "POST",
+			"summary": "RegisterNamespaceAndRepositoryUploadedAndExtract",
+			"parameters": [
+				{
+					"name": "userId",
+					"in": "body",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "username",
+					"in": "body",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "repositoryNamespace",
+					"in": "body",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "repositoryFilePath",
+					"in": "body",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/extract-register-repository",
+			"method": "POST",
+			"summary": "ExtractAndRegisterRepository",
+			"parameters": [
+				{
+					"name": "username",
+					"in": "body",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "repositoryNamespace",
+					"in": "body",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "namespaceId",
+					"in": "body",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "repositoryFilePath",
+					"in": "body",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/register-imported-repository",
+			"method": "POST",
+			"summary": "RegisterImportedRepository",
+			"parameters": [
+				{
+					"name": "username",
+					"in": "body",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "repositoryNamespace",
+					"in": "body",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "namespaceId",
+					"in": "body",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "repositoryFilePath",
+					"in": "body",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/register-namespace-repository-cloned",
+			"method": "POST",
+			"summary": "RegisterNamespaceAndRepositoryCloned",
+			"parameters": [
+				{
+					"name": "userId",
+					"in": "body",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "repositoryNamespace",
+					"in": "body",
+					"type": "string",
+					"required": true
+				},
+				{
+					"name": "sourceParams",
+					"in": "body",
+					"type": "json",
+					"required": true
+				},
+				{
+					"name": "repositoryCodePath",
+					"in": "body",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/namespace/:namespaceId",
+			"method": "GET",
+			"summary": "GetNamespace",
+			"parameters": [
+				{
+					"name": "namespaceId",
+					"in": "path",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/namespace",
+			"method": "GET",
+			"summary": "GetNamespaceByRepositoryId",
+			"parameters": [
+				{
+					"name": "repositoryId",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/metadata/:packageId",
+			"method": "GET",
+			"summary": "GetMetadataByPackageId",
+			"parameters": [
+				{
+					"name": "packageId",
+					"in": "path",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/package/:packageId",
+			"method": "GET",
+			"summary": "GetPackageById",
+			"parameters": [
+				{
+					"name": "packageId",
+					"in": "path",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/repository",
+			"method": "GET",
+			"summary": "GetRepositoryImportedByNamespace",
+			"parameters": [
+				{
+					"name": "repositoryNamespace",
+					"in": "query",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/repository/:repositoryId",
+			"method": "GET",
+			"summary": "GetRepositoryImported",
+			"parameters": [
+				{
+					"name": "repositoryId",
+					"in": "path",
+					"type": "string",
+					"required": true
+				}
+			]
+		},
+		{
+			"path": "/item/:itemId",
+			"method": "GET",
+			"summary": "GetItemById",
+			"parameters": [
+				{
+					"name": "itemId",
+					"in": "path",
+					"type": "string",
+					"required": true
+				}
+			]
 		}
+
+
+		
+		
 	]
 }

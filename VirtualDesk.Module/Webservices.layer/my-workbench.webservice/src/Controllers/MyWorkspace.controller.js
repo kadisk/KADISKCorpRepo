@@ -11,9 +11,28 @@ const MyWorkspaceController = (params) => {
 
     const {
         myWorkspaceManagerService,
-        repositoryStorageManagerService,
+        repositoryStorageSocketPath,
+        repositoryStorageServerManagerUrl,
+        commandExecutorLib,
         uploadDirPath
     } = params
+
+    const CommandExecutor = commandExecutorLib.require("CommandExecutor")
+
+    const RepositoryStorageCommand = async (CommandFunction) => {
+        const APICommandFunction = async ({ APIs }) => {
+            const API = APIs
+            .RepositoryStorageManagerAppInstance
+            .RepositoryStorageManager
+            return await CommandFunction(API)
+        }
+
+        return await CommandExecutor({
+            serverResourceEndpointPath: repositoryStorageServerManagerUrl,
+            mainApplicationSocketPath: repositoryStorageSocketPath,
+            CommandFunction: APICommandFunction
+        })
+    }
 
     const uploadAbsolutDirPath = ConvertPathToAbsolutPath(uploadDirPath)
 
@@ -24,7 +43,7 @@ const MyWorkspaceController = (params) => {
 
     const ListRepositoryNamespace = ({ authenticationData }) => {
         const { userId } = authenticationData
-        return repositoryStorageManagerService.ListRepositoryNamespace(userId)
+        return RepositoryStorageCommand((API) => API.ListRepositoryNamespace({ userId }))
     }
 
     const ImportRepository = ({ repositoryNamespace, sourceCodeURL }, { authenticationData }) => {
@@ -89,8 +108,7 @@ const MyWorkspaceController = (params) => {
 
     const ListRepositories = async (namespaceId, {authenticationData}) => {
         const { userId } = authenticationData
-        const repositories = await repositoryStorageManagerService.ListRepositories(namespaceId)
-
+        const repositories = await RepositoryStorageCommand((API) => API.ListRepositories({ namespaceId }))
         return repositories
     }
     

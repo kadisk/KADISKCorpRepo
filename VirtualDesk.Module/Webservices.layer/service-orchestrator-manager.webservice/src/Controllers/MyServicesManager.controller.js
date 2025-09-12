@@ -1,9 +1,10 @@
 const MyServicesManagerController = (params) => {
 
     const {
-        repositoryStorageManagerService,
         serviceOrchestratorSocketPath,
         serviceOrchestratorServerManagerUrl,
+        repositoryStorageSocketPath,
+        repositoryStorageServerManagerUrl,
         commandExecutorLib
     } = params
     
@@ -24,6 +25,21 @@ const MyServicesManagerController = (params) => {
         })
     }
 
+    const RepositoryStorageCommand = async (CommandFunction) => {
+        const APICommandFunction = async ({ APIs }) => {
+            const API = APIs
+            .RepositoryStorageManagerAppInstance
+            .RepositoryStorageManager
+            return await CommandFunction(API)
+        }
+
+        return await CommandExecutor({
+            serverResourceEndpointPath: repositoryStorageServerManagerUrl,
+            mainApplicationSocketPath: repositoryStorageSocketPath,
+            CommandFunction: APICommandFunction
+        })
+    }
+
     const ServiceManagerSocketBridgeCommand = (websocket, GetSocket) => {
         ServiceOrchestratorCommand((API) => {
             const socket =  GetSocket(API)
@@ -36,27 +52,13 @@ const MyServicesManagerController = (params) => {
 
     const ListProvisionedServices = ( { authenticationData:{ userId } } ) => {
         return ServiceOrchestratorCommand(async (API) => {
-            const repositories = await repositoryStorageManagerService.ListRepositoriesByUserId(userId)
+            const repositories = await RepositoryStorageCommand((API) => API.ListRepositoriesByUserId({ userId }))
             const repositoryIds = repositories.map(({id}) => id)
             return API.ListServicesByRepositoryIds({ repositoryIds })
         })
     }
 
-    const GetServiceData = ( serviceId ) => {
-        return ServiceOrchestratorCommand(async (API) => {
-            const packageData = await repositoryStorageManagerService.GetPackageById(originPackageId)
-            const serviceInfo = await API.GetService({ serviceId })
-            return {
-                ...serviceInfo,
-                packageId           : packageData.packageId,
-                packageName         : packageData.packageName,
-                packageType         : packageData.packageType,
-                repositoryNamespace : packageData.repositoryNamespace,
-                repositoryId        : packageData.repositoryId
-            }
-        })
-    }
-
+    const GetServiceData                 = ( serviceId )                  => ServiceOrchestratorCommand((API) => API.GetService({ serviceId }))
     const ListImageBuildHistory          = ( serviceId )                  => ServiceOrchestratorCommand((API) => API.ListImageBuildHistory({ serviceId }))
     const ListInstances                  = ( serviceId )                  => ServiceOrchestratorCommand((API) => API.ListInstances({ serviceId }))
     const ListContainers                 = ( serviceId )                  => ServiceOrchestratorCommand((API) => API.ListContainers({ serviceId }))
@@ -86,7 +88,8 @@ const MyServicesManagerController = (params) => {
     }, { authenticationData }) => {
          const { userId, username } = authenticationData
 
-        const packageData = await repositoryStorageManagerService.GetPackageById(packageId)
+        const packageData = await RepositoryStorageCommand((API) => API.GetPackageById({ packageId }))
+        
         const { 
             repositoryId,
             repositoryNamespace,

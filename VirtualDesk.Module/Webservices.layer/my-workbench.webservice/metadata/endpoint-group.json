@@ -2,10 +2,15 @@
     "bound-params":[
         "serverService",
         "myWorkspaceManagerService",
-        "repositoryStorageManagerService",
-        "containerManagerService"
+        "containerManagerService",
+        "commandExecutorLib"
     ],
-    "params": [ "needsAuth", "uploadDirPath" ],
+    "params": [ 
+        "needsAuth", 
+        "uploadDirPath", 
+        "repositoryStorageSocketPath", 
+        "repositoryStorageServerManagerUrl" 
+    ],
     "endpoints": [
         {
             "url": "/my-workspace",
@@ -15,14 +20,16 @@
                 "controller": "Controllers/MyWorkspace.controller",
                 "needsAuth": "needsAuth",
                 "controller-params":{
-                    "uploadDirPath": "{{uploadDirPath}}"
+                    "uploadDirPath": "{{uploadDirPath}}",
+                    "repositoryStorageSocketPath":"{{repositoryStorageSocketPath}}",
+                    "repositoryStorageServerManagerUrl":"{{repositoryStorageServerManagerUrl}}"
                 }
             },
             "bound-params": {
                 "serverService":"serverService",
                 "controller-params":{
-                    "repositoryStorageManagerService": "repositoryStorageManagerService",
-                    "myWorkspaceManagerService": "myWorkspaceManagerService"
+                    "myWorkspaceManagerService": "myWorkspaceManagerService",
+                    "commandExecutorLib": "commandExecutorLib"
                 }
             }
         },

@@ -1,8 +1,7 @@
 {
     "bound-params":[
         "serverService",
-        "commandExecutorLib",
-        "repositoryStorageManagerService"
+        "commandExecutorLib"
     ],
     "params": [ 
         "needsAuth", 
@@ -27,7 +26,6 @@
             "bound-params": {
                 "serverService":"serverService",
                 "controller-params":{
-                    "repositoryStorageManagerService":"repositoryStorageManagerService",
                     "commandExecutorLib":"commandExecutorLib"
                 }
             }

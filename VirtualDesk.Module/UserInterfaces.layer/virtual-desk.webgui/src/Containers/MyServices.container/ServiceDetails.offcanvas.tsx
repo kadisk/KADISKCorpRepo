@@ -265,9 +265,9 @@ const ServiceDetailsOffcanvas = ({
                             <dt className="col-5">package:</dt>
                             <dd className="col-7">{serviceData?.packageName}</dd>
                             <dt className="col-5">type:</dt>
-                            <dd className="col-7">{serviceData?.packageType}</dd>
+                            <dd className="col-7">{serviceData?.originPackageType}</dd>
                             <dt className="col-5">repository namespace:</dt>
-                            <dd className="col-7">{serviceData?.repositoryNamespace}</dd>
+                            <dd className="col-7">{serviceData?.originRepositoryNamespace}</dd>
                         </dl>
                         <div className="hr-text hr-text-center hr-text-spaceless my-3 mt-5">Instance Startup Params</div>
                         {
