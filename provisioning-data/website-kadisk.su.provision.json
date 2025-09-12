@@ -1,0 +1,26 @@
+{
+  "username": "su",
+  "serviceName": "website-kadisk",
+  "serviceDescription": "Website da empresa Kadisk",
+  "originRepositoryId": 1,
+  "originRepositoryNamespace": "KADISKCorpRepo",
+  "originRepositoryCodePath": "/home/kadisk/virtual-desk-state/local-app-data/my-services-uploded-repositories/su1/KADISKCorpRepo-nm5850xqzeqv1sfiktggxj",
+  "originPackageId": 28,
+  "originPackageName": "kadisk-com",
+  "originPackageType": "webgui",
+  "originPackagePath": "Website.Module/Application.layer/kadisk-com.webgui",
+  "startupParams": {
+    "port": "8003",
+    "serverName": "KadiskComWebguiInstance",
+    "serverManagerUrl": "https://localhost:8880/server-manager/status",
+    "RT_ENV_GENERATED_DIR_NAME": ".generated_data",
+    "isWatch": true
+  },
+  "ports": [
+    {
+      "servicePort": "8003",
+      "hostPort": "8003"
+    }
+  ],
+  "networkmode": "my-services"
+}

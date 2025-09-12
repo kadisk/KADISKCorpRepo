@@ -1,5 +1,5 @@
 {
-	"bound-params":[ "commandExecutorLib" ],
+	"bound-params":[ "jsonFileUtilitiesLib", "commandExecutorLib" ],
 	"commands": [
 		{
 			"namespace": "ListServices",
@@ -56,9 +56,17 @@
 		{
 			"namespace": "ProvisionService",
 			"path": "Commands/ProvisionService.command",
-			"command": "provision",
+			"command": "provision [provisionFilePath]",
 			"description": "Provisiona um novo serviço",
-            "parametersToLoad": [ "commandExecutorLib" ]
+			"parameters": [
+				{
+					"key": "provisionFilePath",
+					"paramType": "positional",
+					"valueType": "string",
+					"describe": "Arquivo JSON de provisionamento do serviço *.provision.json"
+				}
+			],
+            "parametersToLoad": [ "jsonFileUtilitiesLib", "commandExecutorLib" ]
 		},
 		{
 			"namespace": "ListInstance",
