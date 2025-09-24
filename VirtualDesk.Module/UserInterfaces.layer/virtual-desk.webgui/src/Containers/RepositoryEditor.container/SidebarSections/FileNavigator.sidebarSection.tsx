@@ -46,7 +46,7 @@ const IsPackage = (typeItem) => {
 }
 
 
-const PackageSourceTreeSidebarSection = ({
+const FileNavigatorSidebarSection = ({
     sourceTree,
     onSelectSourceFile
 }) => {
@@ -105,9 +105,9 @@ const PackageSourceTreeSidebarSection = ({
         )
     }
 
-    return <div className="col-12 mb-3 bg-azure-lt">
-        <div className="justify-content-start align-items-center p-1 bg-azure text-azure-fg">
-            <strong>package source code</strong>
+    return <div className="col-12 mb-3 bg-cyan-lt">
+        <div className="justify-content-start align-items-center p-1 bg-cyan text-cyan-fg">
+            <strong>Package File Navigator</strong>
         </div>
         <div className="p-2">
             {
@@ -124,4 +124,4 @@ const PackageSourceTreeSidebarSection = ({
     </div>
 }
 
-export default PackageSourceTreeSidebarSection
+export default FileNavigatorSidebarSection

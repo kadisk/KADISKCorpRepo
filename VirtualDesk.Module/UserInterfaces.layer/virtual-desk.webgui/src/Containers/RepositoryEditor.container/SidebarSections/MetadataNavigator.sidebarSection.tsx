@@ -52,7 +52,7 @@ const IsObjectOrArray = (value) => {
     return false
   }
 
-const PackageMetadataSidebarSection = ({
+const MetadataNavigatorSidebarSection = ({
     packageMetadata
 }) => {
 
@@ -178,7 +178,7 @@ const PackageMetadataSidebarSection = ({
 
     return <div className="col-12 bg-indigo-lt">
         <div className="justify-content-start align-items-center p-1 bg-indigo text-indigo-fg">
-            <strong>package metadata</strong>
+            <strong>metadata navigator</strong>
         </div>
         <div className="p-2">
             {
@@ -195,4 +195,4 @@ const PackageMetadataSidebarSection = ({
     </div>
 }
 
-export default PackageMetadataSidebarSection
+export default MetadataNavigatorSidebarSection
