@@ -20,6 +20,10 @@
         "page":"RepositoryEditorPage"
     },
     {
+        "path":"/my-workspace/package-editor",
+        "page":"PackageEditorPage"
+    },
+    {
         "path":"/my-storages",
         "page":"MyStoragesPage"
     },

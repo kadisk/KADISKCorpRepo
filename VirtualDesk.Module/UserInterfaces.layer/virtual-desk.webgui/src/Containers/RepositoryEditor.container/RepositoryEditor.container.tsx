@@ -14,7 +14,11 @@ import PackageSourceTreeSidebarSection  from "./SidebarSections/PackageSourceTre
 import PackageMetadataSidebarSection    from "./SidebarSections/PackageMetadata.sidebarSection"
 import RepositoryMetadataSidebarSection from "./SidebarSections/RepositoryMetadata.sidebarSection"
 
+const PENCIL_CODE = <svg xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-pencil-code me-1"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" /><path d="M13.5 6.5l4 4" /><path d="M20 21l2 -2l-2 -2" /><path d="M17 17l-2 2l2 2" /></svg>
+
 const PACKAGE_ITEM_TYPE_LIST = ["lib", "service", "webservice", "webgui", "webpapp", "app", "cli"]
+
+const IsPackageItem = (itemType) => PACKAGE_ITEM_TYPE_LIST.indexOf(itemType) > -1
 
 const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
 
@@ -26,8 +30,7 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
     const [ isPackageSelected, setIsPackageSelected ]                       = useState(false)
     const [ packageSourceCodeTreeCurrent, setPackageSourceCodeTreeCurrent ] = useState<any>()
     const [ packageMetadataCurrent, setPackageMetadataTreeCurrent ]         = useState()
-    const [ indexTabFocus, setIndexTabFocus ]                               = useState<number>(0)
-    const [ tabsSelectedData, setTabsSelectedData ]                         = useState([])
+    const [ fileSelectedData, setFileSelectedData ]                         = useState<any>()
 
     useEffect(() => {
         fetchRepositoryHierarchy()
@@ -44,7 +47,7 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
 
     useEffect(() => {
 
-        if (itemDataSelected && PACKAGE_ITEM_TYPE_LIST.indexOf(itemDataSelected.itemType) > -1) {
+        if (itemDataSelected && IsPackageItem(itemDataSelected.itemType)) {
             fetchPackageSourceTree()
             fetchPackageMetadata()
             setIsPackageSelected(true)
@@ -104,25 +107,30 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
         return response.data
     }
 
-    const openTab = ({ label, data }) => {
-        setTabsSelectedData([...tabsSelectedData, { label, data }])
-    }
-
     const selectSourceFile = async (sourceFilePath) => {
         const sourceFileContentData = await getPackageSourceFileContent(sourceFilePath)
-        openTab({
-            label: <strong>{sourceFileContentData.sourceFilePath}</strong>,
+        setFileSelectedData({
+            filePath: sourceFileContentData.sourceFilePath,
             data:sourceFileContentData
         })
     }
 
-    const changeFocusTab = (indexTab) => setIndexTabFocus(indexTab)
+    const findPathToId = function findPathToId(nodes: any[], targetId: any): any[] {
+        if (!nodes || !targetId) return []
+        for (const node of nodes) {
+            const nodeId = node.id ?? node.itemId ?? node.Id ?? node.itemID
+            if (nodeId === targetId) return [node]
+            const childPath = findPathToId(node.children || [], targetId)
+            if (childPath.length) return [node, ...childPath]
+        }
+        return []
+    }
 
     return (
         <>
-            <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top" style={{ zIndex: 9999 }}>
+            <nav className="navbar navbar-expand-lg bg-gray-300 fixed-top" style={{ zIndex: 9999 }}>
                 <div className="container-fluid">
-                    <a className="navbar-brand d-flex align-items-center p-0" href="#/my-workspace">
+                    <div className="d-flex align-items-center p-0">
                         <img src={logoVirtualDesk2} width={150} className="me-2" />
                         <div className="ps-3 d-flex align-items-start">
                             <div>
@@ -132,7 +140,28 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
                                 </h2>
                             </div>
                         </div>
-                    </a>
+                        <ol className="breadcrumb breadcrumb-muted ms-3">
+                            {
+                                (() => {
+                                    const targetId = itemDataSelected?.id ?? itemDataSelected?.itemId ?? itemDataSelected?.Id
+                                    const path = targetId ? findPathToId(repositoryHierarchy, targetId) : []
+                                    return path.map((item) => {
+                   
+                                        const isPackageItem = IsPackageItem(item.itemType)
+
+                                        return <li className="breadcrumb-item" >
+                                                    {
+                                                        isPackageItem
+                                                        ? <a href={`#/my-workspace/package-editor?packageId=${item.id}`}>{PENCIL_CODE}<strong>{item.itemName}.{item.itemType}</strong></a>
+                                                        : <a>{item.itemName}.<i>{item.itemType}</i></a>
+                                                    }
+                                                </li>
+                                    })
+                                })()
+                            }
+                        </ol>
+                    </div>
+
                 </div>
             </nav>
 
@@ -141,55 +170,6 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
                     <RepositoryMetadataSidebarSection applicationsMetadata={applicationsMetadata} />
                     <RepositoryItemSidebarSection repoItemSelectedId={repoItemSelectedId} onSelectItem={(id) => setRepoItemSelectedId(id)} repositoryHierarchy={repositoryHierarchy} />
                 </aside>
-
-                <div className="page-wrapper flex-grow-1 d-flex flex-column" style={{ overflowY: "auto", minWidth: 0, paddingTop: ".5rem", margin: 0 }}>
-                    <div className="container-fluid flex-grow-1 d-flex p-0">
-                        <div className="row flex-grow-1 m-0">
-                            <div className="col-12">
-                                <div className="card-tabs">
-
-                                    <ul className="nav nav-tabs" role="tablist">
-                                        {
-                                            tabsSelectedData
-                                            .map(({label}, index) => <li className="nav-item cursor-pointer" onClick={() => changeFocusTab(index)}><a className={`nav-link ${index === indexTabFocus ?"active":""}`}>{label}</a></li>)
-                                        }
-                                    </ul>
-                                    <div className="tab-content flex-grow-1 d-flex">
-                                        <div className="card tab-pane active show flex-grow-1 d-flex flex-column">
-                                            {tabsSelectedData[indexTabFocus] && (
-                                                <div className="card-body d-flex flex-column flex-grow-1 p-0">
-                                                    <Editor
-                                                        height="calc(105vh - 163px)"
-                                                        defaultLanguage="javascript"
-                                                        value={tabsSelectedData[indexTabFocus]?.data.content || ""}
-                                                        onMount={(editor, monaco) => {
-                                                            
-                                                            monaco.editor.defineTheme("myLightGrayTheme", {
-                                                            base: "vs",
-                                                            inherit: true,
-                                                            rules: [],
-                                                            colors: {
-                                                                "editor.background": "#e0f1ff"
-                                                            }
-                                                            })
-                                                            
-                                                            monaco.editor.setTheme("myLightGrayTheme")
-                                                        }}
-                                                        options={{
-                                                            readOnly: true,
-                                                            minimap: { enabled: false },
-                                                            fontSize: 14,
-                                                            wordWrap: "on",
-                                                        }}/>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 {
                     isPackageSelected
                     && <aside className="navbar navbar-vertical navbar-expand-lg d-flex flex-column border-start" style={{ width: "auto", position: "relative", margin: 0, overflowY: "auto" }}>
@@ -202,6 +182,58 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
                                     sourceTree={packageSourceCodeTreeCurrent}/>
                         </aside>
                 }
+
+                <div className="page-wrapper flex-grow-1 d-flex flex-column" style={{ overflowY: "auto", minWidth: 0, paddingTop: ".5rem", margin: 0 }}>
+                    <div className="container-fluid flex-grow-1 d-flex p-0">
+                        <div className="row flex-grow-1 m-0">
+                            <div className="col-12">
+                                {
+                                    fileSelectedData
+                                    && <div className="card">
+                                            <div className="card-header">
+                                                {fileSelectedData.filePath}
+                                            </div>
+                                            <div className="card-body">
+
+                                                <div className="tab-content flex-grow-1 d-flex">
+                                                    <div className="card tab-pane active show flex-grow-1 d-flex flex-column">
+                                                        <div className="card-body d-flex flex-column flex-grow-1 p-0">
+                                                                <Editor
+                                                                    height="calc(105vh - 163px)"
+                                                                    defaultLanguage="javascript"
+                                                                    value={fileSelectedData.data.content || ""}
+                                                                    onMount={(editor, monaco) => {
+                                                                        
+                                                                        monaco.editor.defineTheme("myLightGrayTheme", {
+                                                                        base: "vs",
+                                                                        inherit: true,
+                                                                        rules: [],
+                                                                        colors: {
+                                                                            "editor.background": "#e0f1ff"
+                                                                        }
+                                                                        })
+                                                                        
+                                                                        monaco.editor.setTheme("myLightGrayTheme")
+                                                                    }}
+                                                                    options={{
+                                                                        readOnly: true,
+                                                                        minimap: { enabled: false },
+                                                                        fontSize: 14,
+                                                                        wordWrap: "on",
+                                                                    }}/>
+                                                            </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                }
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
             </div>
         </>
     )

@@ -4,6 +4,7 @@ import ServiceSettingsPage from "../Pages/ServiceSettings.page"
 
 import MyWorkspacePage        from "../Pages/Workbench/MyWorkspaces.page"
 import RepositoryEditorPage from "../Pages/Workbench/MyWorkspaces/RepositoryEditor.page"
+import PackageEditorPage from "../Pages/Workbench/MyWorkspaces/PackageEditor.page"
 
 import MyStoragesPage        from "../Pages/Workbench/MyStorages.page"
 import MyDatabasesPage       from "../Pages/Workbench/MyDatabases.page"
@@ -44,5 +45,6 @@ export default {
     HostOSSettingsPage,
     ContainerManagerPage,
     RepositoryEditorPage,
+    PackageEditorPage,
     ServiceSettingsPage
 }
