@@ -53,10 +53,10 @@ const ApplicationsSidebarSection = ({
 
     return <div className="col-12 border-bottom bg-dark-lt">
         <div className="d-flex justify-content-start align-items-center p-1 bg-dark text-dark-fg">
-            <strong className="mb-0 d-flex align-items-center">
+            <span className="mb-0 d-flex align-items-center">
                 <span className="d-inline-flex align-items-center me-2">{iconApps}</span>
-                Applications
-            </strong>
+                APPLICATIONS
+            </span>
             <button className="btn btn-sm btn-link" onClick={() => toggleExpand()}>
                 {expanded ? iconCaretDown : iconCaretRight}
             </button>
@@ -64,7 +64,7 @@ const ApplicationsSidebarSection = ({
         {
             applicationsMetadata?.length > 0
                 ? expanded
-                        && <div className="ms-2 mt-1 border-start ps-3">
+                        && <div className="p-2">
                             <ul className="list-group">
                                 {
                                     applicationsMetadata

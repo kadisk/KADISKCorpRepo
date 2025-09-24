@@ -105,9 +105,9 @@ const FileNavigatorSidebarSection = ({
         )
     }
 
-    return <div className="col-12 mb-3 bg-cyan-lt">
+    return <div className="col-12 bg-cyan-lt">
         <div className="justify-content-start align-items-center p-1 bg-cyan text-cyan-fg">
-            <strong>Package File Navigator</strong>
+            FILE NAVIGATOR
         </div>
         <div className="p-2">
             {

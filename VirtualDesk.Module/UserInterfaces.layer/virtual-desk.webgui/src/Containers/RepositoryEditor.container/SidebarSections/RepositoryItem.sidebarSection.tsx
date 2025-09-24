@@ -111,11 +111,7 @@ const RepositoryItemSidebarSection = ({
     return <div className="col-12 bg-muted-lt">
         <div className="row justify-content-between align-items-center p-1 bg-muted text-muted-fg">
             <div className="col">
-                <strong>repository structure</strong>
-            </div>
-            <div className="col-auto">
-                <button className="btn btn-sm btn-ghost-light"><svg xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-plus m-0"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg></button>
-                <button className="btn btn-sm btn-ghost-dark">{iconCaretDown}</button>
+                REPOSITORY STRUTUCTURE
             </div>
         </div>
         <div className="p-2">

@@ -10,9 +10,11 @@ import GetAPI from "../../Utils/GetAPI"
 import logoVirtualDesk2 from "../../../Assets/logo-virtual-desk2.svg"
 
 import RepositoryItemSidebarSection     from "./SidebarSections/RepositoryItem.sidebarSection"
-import FileNavigatorSidebarSection  from "./SidebarSections/FileNavigator.sidebarSection"
+import FileNavigatorSidebarSection      from "./SidebarSections/FileNavigator.sidebarSection"
 import MetadataNavigatorSidebarSection  from "./SidebarSections/MetadataNavigator.sidebarSection"
 import ApplicationsSidebarSection       from "./SidebarSections/Applications.sidebarSection"
+import EndpointGroupSidebarSection      from "./SidebarSections/EndpointGroup.sidebarSection"
+import ServicesSidebarSection           from "./SidebarSections/Services.sidebarSection"
 
 const PENCIL_CODE = <svg xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-pencil-code me-1"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" /><path d="M13.5 6.5l4 4" /><path d="M20 21l2 -2l-2 -2" /><path d="M17 17l-2 2l2 2" /></svg>
 
@@ -29,7 +31,7 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
     const [ itemDataSelected, setItemDataSelected ]                         = useState<any>()
     const [ isPackageSelected, setIsPackageSelected ]                       = useState(false)
     const [ packageSourceCodeTreeCurrent, setPackageSourceCodeTreeCurrent ] = useState<any>()
-    const [ packageMetadataCurrent, setPackageMetadataTreeCurrent ]         = useState()
+    const [ packageMetadataCurrent, setPackageMetadataTreeCurrent ]         = useState<any>()
     const [ fileSelectedData, setFileSelectedData ]                         = useState<any>()
 
     useEffect(() => {
@@ -47,6 +49,7 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
 
     useEffect(() => {
 
+        setFileSelectedData(undefined)
         if (itemDataSelected && IsPackageItem(itemDataSelected.itemType)) {
             fetchPackageSourceTree()
             fetchPackageMetadata()
@@ -170,62 +173,79 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
                     <ApplicationsSidebarSection applicationsMetadata={applicationsMetadata} />
                     <RepositoryItemSidebarSection repoItemSelectedId={repoItemSelectedId} onSelectItem={(id) => setRepoItemSelectedId(id)} repositoryHierarchy={repositoryHierarchy} />
                 </aside>
-                {
-                    isPackageSelected
-                    && <aside className="navbar navbar-vertical navbar-expand-lg d-flex flex-column border-start" style={{ width: "auto", position: "relative", margin: 0, overflowY: "auto" }}>
-                            <FileNavigatorSidebarSection 
-                                    onSelectSourceFile={(sourceFilePath) => selectSourceFile(sourceFilePath)}
-                                    sourceTree={packageSourceCodeTreeCurrent}/>
-                            <MetadataNavigatorSidebarSection 
-                                packageMetadata={packageMetadataCurrent}/>
-                        </aside>
-                }
-
                 <div className="page-wrapper flex-grow-1 d-flex flex-column" style={{ overflowY: "auto", minWidth: 0, paddingTop: ".5rem", margin: 0 }}>
                     <div className="container-fluid flex-grow-1 d-flex p-0">
                         <div className="row flex-grow-1 m-0">
-                            <div className="col-12">
+                            <div className="col-12 p-0">
                                 {
-                                    fileSelectedData
-                                    && <div className="card">
-                                            <div className="card-header">
-                                                {fileSelectedData.filePath}
-                                            </div>
-                                            <div className="card-body">
-
-                                                <div className="tab-content flex-grow-1 d-flex">
-                                                    <div className="card tab-pane active show flex-grow-1 d-flex flex-column">
-                                                        <div className="card-body d-flex flex-column flex-grow-1 p-0">
-                                                                <Editor
-                                                                    height="calc(105vh - 163px)"
-                                                                    defaultLanguage="javascript"
-                                                                    value={fileSelectedData.data.content || ""}
-                                                                    onMount={(editor, monaco) => {
-                                                                        
-                                                                        monaco.editor.defineTheme("myLightGrayTheme", {
-                                                                        base: "vs",
-                                                                        inherit: true,
-                                                                        rules: [],
-                                                                        colors: {
-                                                                            "editor.background": "#e0f1ff"
-                                                                        }
-                                                                        })
-                                                                        
-                                                                        monaco.editor.setTheme("myLightGrayTheme")
-                                                                    }}
-                                                                    options={{
-                                                                        readOnly: true,
-                                                                        minimap: { enabled: false },
-                                                                        fontSize: 14,
-                                                                        wordWrap: "on",
-                                                                    }}/>
-                                                            </div>
-                                                    </div>
-                                                </div>
-
+                                    packageMetadataCurrent
+                                    && <div className="ps-3 d-flex align-items-start">
+                                            <div>
+                                                <div className="page-pretitle">Package Namespace</div>
+                                                <h2 className="page-title" style={{ color: "black", marginBottom: "0" }}>
+                                                    { packageMetadataCurrent?.package?.namespace }
+                                                </h2>
                                             </div>
                                         </div>
                                 }
+                                <div className="d-flex align-items-start" style={{ gap: "1rem" }}>
+                                    {
+                                        isPackageSelected
+                                        && <aside className="mt-2 navbar navbar-vertical navbar-expand-lg d-flex flex-column border-start flex-shrink-0" style={{ width: "fit-content", maxWidth: "480px", position: "relative", margin: 0, overflowY: "auto" }}>
+                                                {
+                                                    packageMetadataCurrent?.services
+                                                    && <ServicesSidebarSection servicesMetadata={packageMetadataCurrent.services}/>
+                                                }
+                                                {
+                                                    packageMetadataCurrent?.["endpoint-group"]
+                                                    && <EndpointGroupSidebarSection endpointGroupMetadata={packageMetadataCurrent["endpoint-group"]}/>
+                                                }
+                                                {
+                                                    packageSourceCodeTreeCurrent?.length > 0
+                                                    && <FileNavigatorSidebarSection 
+                                                        onSelectSourceFile={(sourceFilePath) => selectSourceFile(sourceFilePath)}
+                                                        sourceTree={packageSourceCodeTreeCurrent}/>
+                                                }
+                                                <MetadataNavigatorSidebarSection 
+                                                    packageMetadata={packageMetadataCurrent}/>
+                                                
+                                            </aside>
+                                    }
+
+                                    {
+                                        fileSelectedData
+                                        && <div className="card mt-2 flex-grow-1" style={{ minWidth: 0 }}>
+                                                <div className="card-header py-1">
+                                                    <strong>{fileSelectedData?.filePath ? fileSelectedData.filePath.split(/[\\/]/).pop() : ""}</strong>
+                                                </div>
+                                                <div className="card-body d-flex flex-column flex-grow-1 p-0" style={{ minWidth: 0 }}>
+                                                    <Editor
+                                                        height="calc(100vh - 163px)"
+                                                        defaultLanguage="javascript"
+                                                        value={fileSelectedData.data.content || ""}
+                                                        onMount={(editor, monaco) => {
+                                                            
+                                                            monaco.editor.defineTheme("myLightGrayTheme", {
+                                                            base: "vs",
+                                                            inherit: true,
+                                                            rules: [],
+                                                            colors: {
+                                                                "editor.background": "#e0f1ff"
+                                                            }
+                                                            })
+                                                            
+                                                            monaco.editor.setTheme("myLightGrayTheme")
+                                                        }}
+                                                        options={{
+                                                            readOnly: true,
+                                                            minimap: { enabled: false },
+                                                            fontSize: 14,
+                                                            wordWrap: "on",
+                                                        }}/>
+                                                </div>
+                                            </div>
+                                    }
+                                </div>
                                 
                             </div>
                         </div>

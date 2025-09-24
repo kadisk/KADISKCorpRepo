@@ -178,7 +178,7 @@ const MetadataNavigatorSidebarSection = ({
 
     return <div className="col-12 bg-indigo-lt">
         <div className="justify-content-start align-items-center p-1 bg-indigo text-indigo-fg">
-            <strong>metadata navigator</strong>
+            METADATA NAVIGATOR
         </div>
         <div className="p-2">
             {
