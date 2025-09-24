@@ -9,22 +9,18 @@ import GetAPI from "../../Utils/GetAPI"
 //@ts-ignore
 import logoVirtualDesk2 from "../../../Assets/logo-virtual-desk2.svg"
 
-
-import PackageSourceTreeSidebarSection  from "./SidebarSections/PackageSourceTree.sidebarSection"
-import PackageMetadataSidebarSection    from "./SidebarSections/PackageMetadata.sidebarSection"
-
+import SourceTreeSidebarSection  from "./SidebarSections/SourceTree.sidebarSection"
+import MetadataSidebarSection    from "./SidebarSections/Metadata.sidebarSection"
 
 const PACKAGE_ITEM_TYPE_LIST = ["lib", "service", "webservice", "webgui", "webpapp", "app", "cli"]
 
 const PackageEditorContainer = ({ packageId, HTTPServerManager }) => {
 
-    const [ packageData, setPackageData ]                                  = useState<any>()
-    const [ isPackageSelected, setIsPackageSelected ]                       = useState(false)
+    const [ packageData, setPackageData ]                                   = useState<any>()
     const [ packageSourceCodeTreeCurrent, setPackageSourceCodeTreeCurrent ] = useState<any>()
     const [ packageMetadataCurrent, setPackageMetadataTreeCurrent ]         = useState()
     const [ indexTabFocus, setIndexTabFocus ]                               = useState<number>(0)
     const [ tabsSelectedData, setTabsSelectedData ]                         = useState([])
-
 
     useEffect(() =>{
         fetchItemInformation()
@@ -35,9 +31,6 @@ const PackageEditorContainer = ({ packageId, HTTPServerManager }) => {
         if (packageData && PACKAGE_ITEM_TYPE_LIST.indexOf(packageData.itemType) > -1) {
             fetchPackageSourceTree()
             fetchPackageMetadata()
-            setIsPackageSelected(true)
-        }else {
-            setIsPackageSelected(false)
         }
 
     }, [packageData])
@@ -109,11 +102,11 @@ const PackageEditorContainer = ({ packageId, HTTPServerManager }) => {
 
             <div className="d-flex" style={{ height: "94vh", overflow: "hidden", marginTop: "56px" }}>
                 <aside className="navbar navbar-vertical navbar-expand-lg d-flex flex-column" style={{ width: "auto", position: "relative", overflowY: "auto" }}>
-                    <PackageMetadataSidebarSection 
+                    <MetadataSidebarSection 
                         packageMetadata={packageMetadataCurrent}/>
 
                     
-                    <PackageSourceTreeSidebarSection 
+                    <SourceTreeSidebarSection 
                             onSelectSourceFile={(sourceFilePath) => selectSourceFile(sourceFilePath)}
                             sourceTree={packageSourceCodeTreeCurrent}/>
                 </aside>
