@@ -23,6 +23,51 @@ const PACKAGE_ITEM_TYPE_LIST = ["lib", "service", "webservice", "webgui", "webpa
 
 const IsPackageItem = (itemType) => PACKAGE_ITEM_TYPE_LIST.indexOf(itemType) > -1
 
+const X_ICON = <svg  xmlns="http://www.w3.org/2000/svg"  width={24}  height={24}  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth={2}  strokeLinecap="round"  strokeLinejoin="round"  className="m-0 icon icon-tabler icons-tabler-outline icon-tabler-x"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18 6l-12 12" /><path d="M6 6l12 12" /></svg>
+
+const TabsContentView = ({ contentList, onCloseTab }) => {
+
+    const [ indexTabFocus, setIndexFocus ] = useState(0)
+
+    const changeFocusTab = (index) => setIndexFocus(index)
+
+    const handleCloseTab = (indexForClose) => {
+
+        if(indexForClose === indexTabFocus) {
+            if(indexTabFocus > 0){
+                setIndexFocus(indexTabFocus-1)
+            } else if(indexTabFocus === 0 && contentList.length > 0){
+                setIndexFocus(indexTabFocus+1)
+            }
+        } else if(indexForClose < indexTabFocus) {
+            setIndexFocus(indexTabFocus-1)
+        }
+
+        onCloseTab(indexForClose)
+    }
+
+    return <div className="mt-2 card-tabs d-flex flex-column flex-grow-1" style={{ height: "100%" }}>
+
+                <ul className="nav nav-tabs" role="tablist">
+                    {
+                        contentList
+                        .map(({label, tabClassName}, index) => 
+                        <li className="nav-item cursor-pointer" onClick={() => changeFocusTab(index)}>
+                            <a className={`nav-link py-1 pe-0  ${tabClassName} ${index === indexTabFocus ?"active":""}`}>{index === indexTabFocus ? <strong>{label}</strong> :label}<button onClick={(e) => { e.stopPropagation(); handleCloseTab(index); }} className="btn btn-sm btn-link">{X_ICON}</button></a>
+                        </li>)
+                    }
+                </ul>
+                <div className="tab-content flex-grow-1 d-flex" style={{ minHeight: 0 }}>
+                    <div className="card tab-pane active show flex-grow-1 d-flex flex-column">
+                         <div className="card-body d-flex flex-column flex-grow-1 p-0" style={{ minHeight: 0 }}>
+                            {contentList[indexTabFocus]?.component}
+                         </div>
+                    </div>
+                </div>
+            </div>
+}
+
+
 const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
 
     const [ repositoryInformation, setRepositoryInformation ]               = useState<any>()
@@ -33,7 +78,9 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
     const [ isPackageSelected, setIsPackageSelected ]                       = useState(false)
     const [ packageSourceCodeTreeCurrent, setPackageSourceCodeTreeCurrent ] = useState<any>()
     const [ packageMetadataCurrent, setPackageMetadataTreeCurrent ]         = useState<any>()
-    const [ fileSelectedData, setFileSelectedData ]                         = useState<any>()
+
+
+    const [ contentOpenList, setContentOpenList ] = useState<any[]>([])
 
     useEffect(() => {
         fetchRepositoryHierarchy()
@@ -49,8 +96,7 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
     }, [repoItemSelectedId])
 
     useEffect(() => {
-
-        setFileSelectedData(undefined)
+        setContentOpenList([])
         if (itemDataSelected && IsPackageItem(itemDataSelected.itemType)) {
             fetchPackageSourceTree()
             fetchPackageMetadata()
@@ -112,11 +158,41 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
     }
 
     const selectSourceFile = async (sourceFilePath) => {
+
         const sourceFileContentData = await getPackageSourceFileContent(sourceFilePath)
-        setFileSelectedData({
-            filePath: sourceFileContentData.sourceFilePath,
-            data:sourceFileContentData
-        })
+
+        const { content } = sourceFileContentData
+
+        setContentOpenList([
+            ...contentOpenList,
+            {
+                label: sourceFilePath ? sourceFilePath.split(/[\\/]/).pop() : "",
+                tabClassName: "bg-cyan-lt text-cyan-lt-fg",
+                component: <Editor
+                                height="calc(105vh - 22vh)"
+                                defaultLanguage="javascript"
+                                value={content || ""}
+                                onMount={(editor, monaco) => {
+                                    
+                                    monaco.editor.defineTheme("myLightGrayTheme", {
+                                    base: "vs",
+                                    inherit: true,
+                                    rules: [],
+                                    colors: {
+                                        "editor.background": "#e0f1ff"
+                                    }
+                                    })
+                                    
+                                    monaco.editor.setTheme("myLightGrayTheme")
+                                }}
+                                options={{
+                                    readOnly: true,
+                                    minimap: { enabled: false },
+                                    fontSize: 14,
+                                    wordWrap: "on",
+                                }}/>
+            }
+        ])
     }
 
     const findPathToId = function findPathToId(nodes: any[], targetId: any): any[] {
@@ -129,6 +205,8 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
         }
         return []
     }
+
+    const handleCloseTab = index => setContentOpenList(prev => prev.filter((_, i) => i !== index))
 
     return (
         <>
@@ -174,7 +252,9 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
                     <ApplicationsSidebarSection applicationsMetadata={applicationsMetadata} />
                     <RepositoryItemSidebarSection repoItemSelectedId={repoItemSelectedId} onSelectItem={(id) => setRepoItemSelectedId(id)} repositoryHierarchy={repositoryHierarchy} />
                 </aside>
-                <div className="page-wrapper flex-grow-1 d-flex flex-column" style={{ overflowY: "auto", minWidth: 0, paddingTop: ".5rem", margin: 0 }}>
+                <div 
+                    className="page-wrapper flex-grow-1 d-flex flex-column" 
+                    style={{ overflowY: "auto", minWidth: 0, paddingTop: ".5rem", margin: 0 }}>
                     <div className="container-fluid flex-grow-1 d-flex p-0">
                         <div className="row flex-grow-1 m-0">
                             <div className="col-12 p-0">
@@ -192,7 +272,8 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
                                 <div className="d-flex align-items-start" style={{ gap: "1rem" }}>
                                     {
                                         isPackageSelected
-                                        && <aside className="mt-2 navbar navbar-vertical navbar-expand-lg d-flex flex-column border-start flex-shrink-0" style={{ width: "fit-content", maxWidth: "480px", position: "relative", margin: 0, overflowY: "auto" }}>
+                                        &&<>
+                                            <aside className="mt-2 navbar navbar-vertical navbar-expand-lg d-flex flex-column border-start flex-shrink-0" style={{ width: "fit-content", maxWidth: "480px", position: "relative", margin: 0, overflowY: "auto" }}>
                                                 {
                                                     packageMetadataCurrent?.["command-group"]
                                                     && <CommandGroupSidebarSection 
@@ -217,41 +298,10 @@ const RepositoryEditorContainer = ({ repositoryId, HTTPServerManager }) => {
                                                     packageMetadata={packageMetadataCurrent}/>
                                                 
                                             </aside>
+                                            <TabsContentView contentList={contentOpenList} onCloseTab={handleCloseTab} />
+                                        </>
                                     }
 
-                                    {
-                                        fileSelectedData
-                                        && <div className="card mt-2 flex-grow-1" style={{ minWidth: 0 }}>
-                                                <div className="card-header py-1">
-                                                    <strong>{fileSelectedData?.filePath ? fileSelectedData.filePath.split(/[\\/]/).pop() : ""}</strong>
-                                                </div>
-                                                <div className="card-body d-flex flex-column flex-grow-1 p-0" style={{ minWidth: 0 }}>
-                                                    <Editor
-                                                        height="calc(100vh - 163px)"
-                                                        defaultLanguage="javascript"
-                                                        value={fileSelectedData.data.content || ""}
-                                                        onMount={(editor, monaco) => {
-                                                            
-                                                            monaco.editor.defineTheme("myLightGrayTheme", {
-                                                            base: "vs",
-                                                            inherit: true,
-                                                            rules: [],
-                                                            colors: {
-                                                                "editor.background": "#e0f1ff"
-                                                            }
-                                                            })
-                                                            
-                                                            monaco.editor.setTheme("myLightGrayTheme")
-                                                        }}
-                                                        options={{
-                                                            readOnly: true,
-                                                            minimap: { enabled: false },
-                                                            fontSize: 14,
-                                                            wordWrap: "on",
-                                                        }}/>
-                                                </div>
-                                            </div>
-                                    }
                                 </div>
                                 
                             </div>
