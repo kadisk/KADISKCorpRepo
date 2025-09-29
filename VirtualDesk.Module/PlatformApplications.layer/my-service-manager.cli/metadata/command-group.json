@@ -87,7 +87,7 @@
 			"namespace": "ListImageBuildHistory",
 			"path": "Commands/ListImageBuildHistory.command",
 			"command": "builds  [serviceId]",
-			"description": "Mostra os hitórico de construção de imagens",
+			"description": "Mostra os histórico de construção de imagens",
 			"parameters": [
 				{
 					"key": "serviceId",
