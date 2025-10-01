@@ -26,5 +26,5 @@ repo install KADISKCorpRepo LOCAL_FS --executables "kadisk-transit-proxy" "kadis
 ## Atualizando o repositório no ecosistema
 
 ```bash
-repo update KADISKCorpRepo LOCAL_FS
+repo update KADISKCorpRepo
 ```

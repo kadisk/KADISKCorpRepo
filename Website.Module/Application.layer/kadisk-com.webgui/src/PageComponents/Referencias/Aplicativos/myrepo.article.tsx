@@ -89,9 +89,9 @@ repo install EcosystemCoreRepo GITHUB_RELEASE --executables "executor-manager" "
 					
 					<h5>Atualizar um Repositório Instalado</h5>
 					<p>Atualiza um repositório instalado para a versão mais recente disponível na fonte especificada.</p>
-					<pre>repo update [repositoryNamespace] [sourceType]</pre>
+					<pre>repo update [repositoryNamespace]</pre>
 					<p><strong>Exemplo:</strong></p>
-					<pre>repo update EssentialRepo LOCAL_FS</pre>
+					<pre>repo update EssentialRepo</pre>
 				</div>
 			</div>
 		</div>
